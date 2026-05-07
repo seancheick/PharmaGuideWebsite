@@ -92,12 +92,16 @@
 
 ## 🔜 Phase 3 — Infrastructure Strip
 
-- [ ] Create `src/components/sections/InfrastructureStrip.tsx`
-- [ ] Single horizontal centered line
-- [ ] Three items: "Cross-referenced catalog · Evidence-graded · Privacy-first architecture"
-- [ ] Subtle (60% opacity, 13px text)
-- [ ] Fade-in on scroll
-- [ ] Approve
+- [x] Create `src/components/sections/InfrastructureStrip.tsx`
+- [x] Three items: "Cross-referenced catalog · Evidence-graded · Privacy-first architecture"
+- [x] Mono uppercase eyebrow size (12px), `text-muted` for restraint
+- [x] Wide tracking via `--ls-eyebrow` token
+- [x] Stacks vertically on mobile, inline with dot separators on tablet+
+- [x] Subtle `bg-surface-subtle/30` band + `border-y border-border/60`
+- [x] `whileInView` opacity fade with `once: true` and `-15%` viewport margin
+- [x] Mounted in `page.tsx` directly under Hero
+- [x] aria-label="Platform principles" on the section
+- [ ] **User approves Phase 3** ← gating
 
 ---
 

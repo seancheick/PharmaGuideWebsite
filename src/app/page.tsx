@@ -1,12 +1,13 @@
 import { Header } from "@/components/layout/Header";
 import { Hero } from "@/components/sections/Hero";
+import { InfrastructureStrip } from "@/components/sections/InfrastructureStrip";
 import { TokenPreview } from "@/components/preview/TokenPreview";
 
 /**
- * Phase 2: Hero is live. TokenPreview remains below so the design system
- * stays inspectable while remaining sections come online. Placeholder anchor
- * for #problem ensures the secondary CTA scrolls somewhere meaningful until
- * the real Problem section ships in Phase 4.
+ * Phase 3: Infrastructure Strip mounted directly under the Hero, acts as
+ * a quiet "register change" before the (still-stub) Problem section.
+ *
+ * TokenPreview remains below for inspection until all sections ship.
  */
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <Header />
       <main id="main">
         <Hero />
+        <InfrastructureStrip />
         {/* Anchor stub — keeps the "Why interactions matter ↓" link working
             until Phase 4 mounts the real Problem section. */}
         <div id="problem" aria-hidden="true" className="h-px w-full" />

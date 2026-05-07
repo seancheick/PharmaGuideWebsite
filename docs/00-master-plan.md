@@ -37,16 +37,22 @@ and tracks one concern. Don't lose track — this file is the entry point.
 - [x] CTA: "Request Access"
 - [x] **User approved Phase 1**
 
-### Phase 2 — Hero `(in progress)`
+### Phase 2 — Hero
 - [x] Two-column layout (copy left, animated phone right)
-- [x] Animated app UI loop (Framer Motion, ~9s cycle, no video)
+- [x] Animated app UI loop (Framer Motion, ~7s cycle, no video)
 - [x] CTA buttons + trust row + secondary "Why interactions matter ↓"
 - [x] Phone mockup with subtle tilt + 6s float
 - [x] Cursor-blink keyframe added to Tailwind config
-- [ ] **User approves Phase 2** ← gating
+- [x] PharmaGuide wordmark + accent dot inside the phone
+- [x] "Good fit with timing adjustment" personalization moment
+- [x] Pharmacist-mature interaction copy + accent halo depth
+- [x] **User approved Phase 2**
 
-### Phase 3 — Infrastructure Strip
-- [ ] Single-line dot-separated row under hero
+### Phase 3 — Infrastructure Strip `(in progress)`
+- [x] Subtle divider band with three platform claims
+- [x] Mono uppercase eyebrow type, dot separators on tablet+
+- [x] `whileInView` opacity fade
+- [ ] **User approves Phase 3** ← gating
 
 ### Phase 4 — Problem
 - [ ] Headline + 3 supporting statements + closing thesis

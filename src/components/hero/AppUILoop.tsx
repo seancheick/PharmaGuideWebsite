@@ -404,7 +404,7 @@ export function AppUILoop() {
                   </svg>
                 </span>
                 <span className="text-[10.5px] font-medium text-ink">
-                  Good fit with timing adjustment
+                  Good fit for you with timing adjustment
                 </span>
               </span>
               <span className="font-mono text-[8.5px] font-medium uppercase tracking-[0.1em] text-subtle">

@@ -133,9 +133,53 @@
   fluid scale
 
 **Open:**
-- Awaiting Phase 2 approval
 - Phone tilt `2.5deg` could be tuned to taste
 - Loop timing could be faster/slower based on user preference
+
+---
+
+## 2026-05-07 — Phase 2 (Hero) refinement pass
+
+**Triggered by review feedback.** Tightened pacing, fixed status bar,
+branded the mockup, surfaced personalization, added depth.
+
+**Changes:**
+- Loop: 9s → 7s (cut idle pause, faster typing, tighter transitions)
+- Status bar: rectangular bars (not circles), bottom-aligned (was upside-down)
+- App header: PharmaGuide wordmark with accent dot + "Add to stack" subtitle
+- Interaction copy: "Magnesium may reduce levothyroxine absorption when
+  taken too closely together" + "Separate by at least 4 hours."
+- Screen background: subtle 3-stop gradient (white → background → surface-subtle)
+- Cards: shadow ladder (xs → sm → md → lg) for layered hierarchy
+- Interaction card: soft accent halo behind it (bg-accent/10 + blur-2xl)
+- New "Good fit with timing adjustment" personalization chip — appears 1s
+  after the interaction card, distinct visual plane (backdrop-blur),
+  severity-safe checkmark, "For You" eyebrow on the right
+- Hero trust row: "180,000+" → "180,000+ products"
+- Updated reduced-motion snapshot to include the new chip
+
+---
+
+## 2026-05-07 — Phase 3 (Infrastructure Strip) shipped
+
+**What shipped:**
+- `src/components/sections/InfrastructureStrip.tsx`
+- Subtle band: `bg-surface-subtle/30` + `border-y border-border/60`
+- Three platform claims: "Cross-referenced catalog · Evidence-graded ·
+  Privacy-first architecture"
+- Type: mono uppercase eyebrow (12px), wide letter-spacing, muted color
+- Mobile: stacked vertically (gap-y-2)
+- Tablet+: inline with dot separators
+- `whileInView` opacity fade with `once: true` and `-15%` viewport margin
+- aria-label="Platform principles" on the section
+- Mounted in page.tsx directly under Hero, above the #problem anchor stub
+
+**Decisions made:**
+- Subtle bg tint instead of plain background — gives the strip its own
+  "register" without competing with the hero halo or future Problem section
+- Both top + bottom borders (not just one) — definition matters for a band
+- whileInView once-only — strip enters viewport ~1 scroll-tick after hero,
+  so it should feel like a quiet reveal, not a re-trigger
 
 ---
 

@@ -4,34 +4,18 @@ import { motion } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 
 /**
- * Trust Block — the section that earns the right to be believed.
+ * Trust Block — compressed.
  *
- * Three positive trust claims (what we DO) followed by four restraint
- * claims (what we DON'T do). The negative section is structurally
- * important — confident companies admit limits, and the contrast against
- * the trust cards makes both sets feel more honest.
+ * The original 3-trust-cards-then-4-restraint-cards version felt too long.
+ * The 3 trust cards (Evidence-graded · AI-assisted · Privacy-first) were
+ * restating the Infrastructure Strip at the top of the page — redundant.
  *
- * Closing freshness signal — tiny pulsing dot — communicates "this is
- * a living system" without being noisy.
- *
- * No ambient decoration in this section. Trust is the message; visual
- * restraint is the proof.
+ * Compressed to: headline + subhead + the 4 restraint cards + freshness
+ * signal. The restraint group is the section's reason for existing — no
+ * other section says "we don't diagnose / replace your clinician / tell
+ * you to stop meds / sell your data." That's the silent-objection-handler
+ * that earns its place right before the conversion CTA.
  */
-
-const TRUST_CARDS = [
-  {
-    title: "Evidence-graded.",
-    body: "Each interaction includes the strength of supporting evidence — and we tell you when there isn't any.",
-  },
-  {
-    title: "AI-assisted. Human-reviewed.",
-    body: "Educational content and interaction logic are reviewed by clinicians for accuracy, clarity, and safety framing.",
-  },
-  {
-    title: "Privacy is part of the architecture.",
-    body: "Your stack and health context stay under your control. We never sell, license, or share it.",
-  },
-] as const;
 
 const RESTRAINT = [
   "We don't diagnose conditions.",
@@ -45,16 +29,16 @@ export function TrustBlock() {
     <section
       id="trust"
       aria-labelledby="trust-heading"
-      className="relative section-y"
+      className="relative section-y-sm"
     >
       <div className="container relative mx-auto">
-        {/* Header — eyebrow + headline + subhead, all centered */}
+        {/* Header */}
         <motion.div
           variants={fadeUpContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
-          className="mx-auto flex max-w-3xl flex-col items-center gap-7 text-center md:gap-9"
+          className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
         >
           <motion.p
             variants={fadeUpItem}
@@ -63,10 +47,12 @@ export function TrustBlock() {
             How we think
           </motion.p>
 
+          {/* display-md (was display-lg) so "Built to explain uncertainty —"
+              fits on one line at max-w-3xl */}
           <motion.h2
             id="trust-heading"
             variants={fadeUpItem}
-            className="text-balance text-display-lg text-ink"
+            className="text-balance text-display-md text-ink"
           >
             Built to explain uncertainty —
             <br />
@@ -81,86 +67,45 @@ export function TrustBlock() {
           </motion.p>
         </motion.div>
 
-        {/* Three trust cards */}
-        <motion.div
+        {/* Restraint group — the section's reason for being */}
+        <motion.ul
           variants={{
             hidden: {},
             visible: {
-              transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+              transition: { staggerChildren: 0.08, delayChildren: 0.15 },
             },
           }}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-10%" }}
-          className="mx-auto mt-16 grid max-w-5xl gap-5 md:mt-20 md:grid-cols-3 md:gap-6"
+          viewport={{ once: true, margin: "-8%" }}
+          className="mx-auto mt-12 grid max-w-5xl gap-3 sm:grid-cols-2 md:mt-14 lg:grid-cols-4"
+          aria-label="Things PharmaGuide does not do"
         >
-          {TRUST_CARDS.map((card, i) => (
-            <motion.article
+          {RESTRAINT.map((text, i) => (
+            <motion.li
               key={i}
               variants={fadeUpItem}
-              className="rounded-2xl border border-border bg-surface p-7 shadow-sm transition-shadow duration-fast ease-smooth hover:shadow-md sm:p-8"
+              className="flex items-start gap-3 rounded-xl border border-border/70 bg-surface/50 px-4 py-3.5 backdrop-blur-sm"
             >
-              <h3 className="font-serif text-h3 italic leading-tight text-ink">
-                {card.title}
-              </h3>
-              <p className="mt-4 text-body-sm leading-relaxed text-muted">
-                {card.body}
-              </p>
-            </motion.article>
-          ))}
-        </motion.div>
-
-        {/* Restraint group — "What we don't do" */}
-        <div className="mx-auto mt-20 max-w-5xl md:mt-24">
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={transitions.reveal}
-            className="text-center font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
-          >
-            What we don&apos;t do
-          </motion.p>
-
-          <motion.ul
-            variants={{
-              hidden: {},
-              visible: {
-                transition: { staggerChildren: 0.08, delayChildren: 0.15 },
-              },
-            }}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-8%" }}
-            className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
-            aria-label="Things PharmaGuide does not do"
-          >
-            {RESTRAINT.map((text, i) => (
-              <motion.li
-                key={i}
-                variants={fadeUpItem}
-                className="flex items-start gap-3 rounded-xl border border-border/70 bg-surface/40 px-4 py-3.5 backdrop-blur-sm"
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                aria-hidden="true"
+                className="mt-[3px] shrink-0 text-muted"
               >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  aria-hidden="true"
-                  className="mt-[3px] shrink-0 text-muted"
-                >
-                  <path
-                    d="M3 3l8 8M11 3l-8 8"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <p className="text-body-sm leading-snug text-ink">{text}</p>
-              </motion.li>
-            ))}
-          </motion.ul>
-        </div>
+                <path
+                  d="M3 3l8 8M11 3l-8 8"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <p className="text-body-sm leading-snug text-ink">{text}</p>
+            </motion.li>
+          ))}
+        </motion.ul>
 
         {/* Freshness signal — pulsing dot + tiny mono caption */}
         <motion.div
@@ -168,7 +113,7 @@ export function TrustBlock() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-15%" }}
           transition={{ ...transitions.ambient, delay: 0.4 }}
-          className="mt-14 flex items-center justify-center md:mt-16"
+          className="mt-10 flex items-center justify-center md:mt-12"
         >
           <span className="inline-flex items-center gap-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">
             <span className="relative flex h-1.5 w-1.5">

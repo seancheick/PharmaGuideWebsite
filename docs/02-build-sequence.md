@@ -123,19 +123,27 @@
 - [x] Closing thesis: `font-serif italic`, `text-display-md`, ink color, centered
 - [x] Section uses `id="problem"` so the Hero secondary CTA scrolls here
 - [x] Anchor stub removed from page.tsx
-- [ ] **User approves Phase 4** ← gating
+- [x] **User approved Phase 4** (with refinement pass)
 
 ---
 
-## 🔜 Phase 5 — Interaction Ladder
+## 🔜 Phase 5 — Interaction Ladder `(in progress)`
 
-- [ ] Create `src/components/sections/InteractionLadder.tsx`
-- [ ] Headline: "Clear verdicts. Cited reasoning."
-- [ ] Subheadline
-- [ ] 5-tier pill row (uses `severityTiers` from tokens)
-- [ ] Featured example card: Magnesium + Levothyroxine
-- [ ] Hover lift on tiers
-- [ ] Approve
+- [x] Create `src/components/sections/InteractionLadder.tsx`
+- [x] Eyebrow: "Severity"
+- [x] Headline: "Clear verdicts. / Cited reasoning." (line 2 muted)
+- [x] Subheadline: "We translate complex interaction data into simple safety
+  levels — so you know what deserves attention, and why."
+- [x] 5 tier cards in a row (1 col mobile, 5 cols desktop) — uses
+  `severityTiers` from tokens
+- [x] Each card: severity-color dot + label + description + 01–05 number
+- [x] Hover: lift + shadow upgrade + border-strong
+- [x] Featured example card: Magnesium + Levothyroxine — Monitor
+  - [x] Soft accent halo behind it (matches hero depth language)
+  - [x] Title row with "Interaction detected" eyebrow + verdict pill
+  - [x] Body text + recommendation + evidence row (sm:grid-cols)
+- [x] Section bg: `bg-surface-subtle/30` band differentiates from Problem
+- [ ] **User approves Phase 5** ← gating
 
 ---
 

@@ -54,15 +54,18 @@ and tracks one concern. Don't lose track — this file is the entry point.
 - [x] `whileInView` opacity fade
 - [x] **User approved Phase 3** (with copy revision)
 
-### Phase 4 — Problem `(in progress)`
+### Phase 4 — Problem
 - [x] Headline + 3 supporting statements + italic-serif closing thesis
 - [x] Three independent scroll-triggered groups
+- [x] Two-tone statement hierarchy + ambient capsule depth
 - [x] `id="problem"` wired to Hero secondary CTA
-- [ ] **User approves Phase 4** ← gating
+- [x] **User approved Phase 4** (with refinement pass)
 
-### Phase 5 — Interaction Ladder
-- [ ] 5-tier severity row + featured example card
-- [ ] Hover-expand behavior
+### Phase 5 — Interaction Ladder `(in progress)`
+- [x] 5-tier severity row (severityTiers tokens drive colors)
+- [x] Featured example card with accent halo
+- [x] Hover lift on tier cards
+- [ ] **User approves Phase 5** ← gating
 
 ### Phase 6 — Real-Life Moments
 - [ ] Horizontal scroll carousel (Oura-style)

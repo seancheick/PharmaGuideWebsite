@@ -2,11 +2,12 @@ import { Header } from "@/components/layout/Header";
 import { Hero } from "@/components/sections/Hero";
 import { InfrastructureStrip } from "@/components/sections/InfrastructureStrip";
 import { Problem } from "@/components/sections/Problem";
+import { InteractionLadder } from "@/components/sections/InteractionLadder";
 import { TokenPreview } from "@/components/preview/TokenPreview";
 
 /**
- * Phase 4: Problem section is live. The "Why interactions matter ↓" CTA
- * in the Hero now scrolls to a real section instead of an anchor stub.
+ * Phase 5: Interaction Ladder mounted. Severity colors finally land in
+ * the design via the 5-tier card row + featured example interaction card.
  *
  * TokenPreview remains below for inspection until all sections ship.
  */
@@ -18,6 +19,7 @@ export default function Home() {
         <Hero />
         <InfrastructureStrip />
         <Problem />
+        <InteractionLadder />
         <TokenPreview />
       </main>
     </>

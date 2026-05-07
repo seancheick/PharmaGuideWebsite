@@ -223,4 +223,53 @@ docs/03-content-spec.md updated to match.
 
 ---
 
+## 2026-05-07 — Phase 5 (Interaction Ladder) shipped
+
+**What shipped:**
+- `src/components/sections/InteractionLadder.tsx`
+- Section bg: `bg-surface-subtle/30` band — visually distinct from Problem
+- Header (centered, max-w-3xl):
+  - Eyebrow: "Severity" (mono uppercase, foreground/80)
+  - Headline: "Clear verdicts. / Cited reasoning." (line 2 muted, mirrors
+    the Problem and Hero rhythm)
+  - Subhead: "We translate complex interaction data into simple safety
+    levels — so you know what deserves attention, and why."
+- Five tier cards (1 col mobile, 5 cols desktop, gap-3/4/5):
+  - Each: severity-color dot + label in tier color + description below +
+    01–05 number on the right (tabular nums, monos eyebrow size, subtle)
+  - Hover: -translate-y-0.5 + shadow-md + border-strong/80
+  - All severity styling drives off `severityTiers` from tokens.ts
+  - Stagger: 70ms staggerChildren via custom variant
+- Featured example card (max-w-2xl, centered):
+  - "Example interaction" eyebrow above the card
+  - Soft accent halo behind it (-inset-x-6 -inset-y-2, accent/[0.06] +
+    blur-2xl) — matches the hero's depth language
+  - Card itself: rounded-2xl + shadow-lg + p-6/8
+  - Header row: "Interaction detected" eyebrow + Magnesium + Levothyroxine
+    title (text-h2) + Monitor verdict pill in severity-monitor color
+  - Body: "Magnesium may reduce levothyroxine absorption when taken too
+    closely together." (body-lg muted)
+  - Bottom row: Recommendation ("Separate by at least 4 hours.") on the
+    left, Evidence (Moderate) right-aligned on sm+, stacked on mobile
+  - Border-top divider in `border-border-strong/50` for soft separation
+
+**Decisions made:**
+- Tier numbering (01–05): adds the "ladder" structure without a literal
+  ladder visual, helps users orient on the severity gradient
+- Hover lift on tiers but no expand-on-click — descriptions are short
+  enough to stay always-visible. Click-expand would slow scanning
+- Featured card uses same content as the in-phone interaction card so it
+  feels like "the same product, larger" — continuity from hero to here
+- Section bg-tint instead of decorative shapes (capsules) — Problem already
+  has capsules; back-to-back ambient decoration would compete
+- "Severity" eyebrow chosen over "Five levels" / "The ladder" — most
+  literal, lowest jargon
+- text-display-lg headline matches Problem's headline scale (consistency
+  across copy moments)
+
+**Open:**
+- Awaiting Phase 5 approval
+
+---
+
 <!-- Append new entries above this line as phases complete -->

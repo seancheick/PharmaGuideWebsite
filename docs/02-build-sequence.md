@@ -196,19 +196,38 @@
 
 ---
 
-## 🔜 Phase 7 — FitScore
+## 🔜 Phase 7 — Your Fit `(in progress)`
 
-- [ ] Create `src/components/sections/FitScore.tsx`
-- [ ] Two-column desktop, centered mobile
-- [ ] Headline: "A score that changes with your stack."
-- [ ] Subheadline (revised, no "conditions/goals" overload)
-- [ ] Microcopy: "Product quality matters. Personal context matters too."
-- [ ] Circular FitScore visual:
-  - [ ] Score number (Geist Mono, tabular nums)
-  - [ ] Ring fills clockwise on view
-  - [ ] Counts up 0 → 82 over 1.2s
-  - [ ] Notes appear after count
-- [ ] Approve
+**Renamed from "FitScore"** — the personal assessment is no longer purely
+numerical. PharmaGuide does TWO reads on every product:
+  1. Quality (numerical: 89/100)
+  2. Your Fit (qualitative: Excellent / Good / Limited / Concerning / Not recommended)
+
+The section teaches that duality.
+
+- [x] Create `src/components/sections/YourFit.tsx`
+- [x] Two-column desktop (copy left, card right), stacked mobile
+- [x] Eyebrow: "Your Fit"
+- [x] Headline: "What's high quality for one person / *may deserve a
+      second look for another.*" (italic-serif punchline matches site rhythm)
+- [x] Subheadline: "PharmaGuide gives you two reads on every product —
+      objective quality, and personal fit."
+- [x] Italic-serif callback line: "Quality is what's in the bottle. /
+      Fit is everything around it."  (callbacks to the Problem section's
+      "label tells you what's in the bottle" thesis)
+- [x] Single dual-assessment card with two stacked sections:
+  - [x] Top: Product label · QUALITY · count-up score (0→89 in 1.2s) ·
+        progress bar fills · descriptor line
+  - [x] Animated divider draws horizontally
+  - [x] Bottom: YOUR FIT · pill badge in severity-safe ("Good fit") ·
+        bulleted notes that stagger in
+  - [x] Footer line: "Personalised to your stack · updated continuously"
+- [x] useInView hook triggers count-up animation when card scrolls into view
+- [x] Soft accent halo behind card (matches site depth language)
+- [x] Animation choreography:
+      0→200ms card fades · 200→1400 quality bar+score animate · 1400→1900
+      divider draws · 1600→2100 fit badge appears · 1900→2400 notes stagger
+- [ ] **User approves Phase 7** ← gating
 
 ---
 

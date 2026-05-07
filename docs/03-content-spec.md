@@ -192,35 +192,67 @@ situations people assume are harmless.
 
 ---
 
-## FitScore
+## Your Fit
+
+**Renamed from "FitScore"** — the personal assessment is now qualitative
+(Excellent / Good / Limited / Concerning / Not recommended). PharmaGuide
+does TWO reads on every product: objective Quality + personal Fit.
+
+**Eyebrow:**
+```
+Your Fit
+```
 
 **Headline:**
 ```
-A score that changes with your stack.
+What's high quality for one person
+may deserve a second look for another.
 ```
+(Line 2 in italic Newsreader serif — site's punchline rhythm.)
 
 **Subheadline:**
 ```
-FitScore weighs your full stack — products, timing, and personal context —
-because what works for one person may deserve a second look for another.
+PharmaGuide gives you two reads on every product —
+objective quality, and personal fit.
 ```
 
-**Visual content:**
+**Italic-serif callback line:**
 ```
-       ╭────────╮
-      ╱   82    ╲
-     │  Good fit │
-      ╲         ╱
-       ╰────────╯
+Quality is what's in the bottle.
+Fit is everything around it.
+```
+Direct callback to the Problem section's "A label tells you what's in
+the bottle. Not what happens with your other bottles." Closes the loop.
 
-   2 timing notes
-   1 interaction to review
+**Visual — single dual-assessment card:**
+```
+┌─────────────────────────────────────┐
+│ Magnesium Glycinate · 200 mg        │  ← product label
+│                                      │
+│ QUALITY                          89  │  ← counts 0→89, bar fills
+│ ████████████████████████░░░          │
+│ Excellent quality · 3rd-party tested │
+│                                      │
+│ ─────────────────────────────────── │  ← divider draws in
+│                                      │
+│ YOUR FIT                             │
+│ ● Good fit                           │  ← pill in severity-safe color
+│                                      │
+│   • 2 timing notes                   │  ← stagger in
+│   • 1 interaction to review          │
+│   • No major conflicts detected      │
+│                                      │
+│ PERSONALISED TO YOUR STACK · UPDATED │  ← footer attribution
+└─────────────────────────────────────┘
 ```
 
-**Microcopy under visual:**
-```
-Product quality matters. Personal context matters too.
-```
+**Animation choreography:**
+- T=0       card fades in
+- T=200ms   quality bar fills + score counts 0→89 (1200ms easeOutCubic)
+- T=1400ms  divider draws in horizontally
+- T=1600ms  Your Fit badge slides up
+- T=1900ms  notes stagger in (100ms between)
+- T=2500ms  footer attribution fades in
 
 ---
 

@@ -75,9 +75,12 @@ and tracks one concern. Don't lose track — this file is the entry point.
 - [x] Severity-color "Example flag" chips reinforce the tier system
 - [ ] **User approves Phase 6** ← gating
 
-### Phase 7 — FitScore
-- [ ] Circular UI with count-up animation
-- [ ] Two-column copy layout
+### Phase 7 — Your Fit `(in progress)`
+- [x] Renamed from "FitScore" (personal read is now qualitative)
+- [x] Dual-assessment card (Quality numerical + Your Fit qualitative)
+- [x] Italic-serif callback to Problem section's thesis
+- [x] Count-up animation (0→89) + bar fill + reveal choreography
+- [ ] **User approves Phase 7** ← gating
 
 ### Phase 8 — Trust Block
 - [ ] 3 trust cards + 4 restraint cards

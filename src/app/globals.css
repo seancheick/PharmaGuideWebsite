@@ -1,0 +1,327 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================================================
+   PharmaGuide Design Tokens
+   Single source of truth. Tailwind config and motion presets pull from here.
+   Never hardcode colors / sizes / curves in components — extend tokens instead.
+   ============================================================================= */
+
+@layer base {
+  :root {
+    /* ────────────── COLOR ──────────────
+       RGB triplets so Tailwind can compose with /<alpha> opacity modifiers.
+       Palette: warm neutral surfaces + deep slate-teal accent ("calm clinical").
+       Avoids wellness greens, biotech blues, and aggressive medical reds.
+    */
+
+    /* Surfaces */
+    --color-background: 250 249 246;        /* warm off-white  #FAF9F6 */
+    --color-surface: 255 255 255;           /* card white      #FFFFFF */
+    --color-surface-raised: 252 251 248;    /* slight warmth   #FCFBF8 */
+    --color-surface-subtle: 245 243 238;    /* warm neutral    #F5F3EE */
+
+    /* Foreground / text */
+    --color-foreground: 24 26 27;           /* near-black warm #181A1B */
+    --color-ink: 17 19 20;                  /* deepest text    #111314 */
+    --color-muted: 99 102 106;              /* secondary       #63666A */
+    --color-subtle: 142 145 150;            /* tertiary        #8E9196 */
+
+    /* Borders / dividers */
+    --color-border: 229 226 219;            /* warm hairline   #E5E2DB */
+    --color-border-strong: 209 205 196;     /* visible border  #D1CDC4 */
+
+    /* Accent — single restrained brand color (deep slate teal) */
+    --color-accent: 31 58 77;               /* primary CTA     #1F3A4D */
+    --color-accent-strong: 19 41 56;        /* hover/active    #132938 */
+    --color-accent-soft: 230 234 238;       /* tinted bg       #E6EAEE */
+
+    /* Severity (5-tier verdict system)
+       Polished, restrained values. Easily replaced when matching Flutter app.
+       Each pairs with -bg (10% tint) for chip backgrounds. */
+    --color-severity-contraindicated: 159 41 41;   /* deep red       #9F2929 */
+    --color-severity-avoid: 184 84 41;             /* burnt orange   #B85429 */
+    --color-severity-caution: 173 122 36;          /* warm amber     #AD7A24 */
+    --color-severity-monitor: 130 113 64;          /* muted ochre    #827140 */
+    --color-severity-safe: 71 110 87;              /* sage green     #476E57 */
+
+    /* Severity backgrounds (10% tint, ready to use) */
+    --color-severity-contraindicated-bg: 245 230 230;
+    --color-severity-avoid-bg: 247 235 227;
+    --color-severity-caution-bg: 246 240 226;
+    --color-severity-monitor-bg: 240 237 226;
+    --color-severity-safe-bg: 230 238 232;
+
+    /* ────────────── TYPOGRAPHY ──────────────
+       Pairing: Geist Sans (UI / headlines) + Newsreader (editorial display moments)
+                + Geist Mono (data / FitScore numbers).
+       Loaded via next/font in layout.tsx — these CSS vars receive the values.
+       Restrained weight usage: 400 / 500 / 600 only. No 700+.
+    */
+    --font-sans: var(--font-geist-sans);
+    --font-serif: var(--font-newsreader);
+    --font-mono: var(--font-geist-mono);
+
+    /* Weights */
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-display: 500;     /* never bold; restraint = premium */
+
+    /* Fluid font-size scale using clamp(min, viewport, max).
+       Min targets readable mobile. Max targets desktop-large.
+       The middle term (viewport-based) interpolates smoothly. */
+
+    /* Display (hero, section headlines) */
+    --fs-display-xl: clamp(2.75rem, 5.5vw + 0.5rem, 5.5rem);   /* 44 → 88 */
+    --fs-display-lg: clamp(2.25rem, 4.5vw + 0.5rem, 4.5rem);   /* 36 → 72 */
+    --fs-display-md: clamp(2rem, 3.5vw + 0.5rem, 3.5rem);      /* 32 → 56 */
+    --fs-display-sm: clamp(1.75rem, 2.5vw + 0.5rem, 2.75rem);  /* 28 → 44 */
+
+    /* Headline */
+    --fs-h1: clamp(1.875rem, 2vw + 1rem, 2.5rem);     /* 30 → 40 */
+    --fs-h2: clamp(1.5rem, 1.5vw + 0.875rem, 2rem);   /* 24 → 32 */
+    --fs-h3: clamp(1.25rem, 1vw + 0.75rem, 1.5rem);   /* 20 → 24 */
+    --fs-h4: clamp(1.125rem, 0.5vw + 1rem, 1.25rem);  /* 18 → 20 */
+
+    /* Body */
+    --fs-body-xl: 1.25rem;    /* 20 — section subheads */
+    --fs-body-lg: 1.125rem;   /* 18 — body emphasis     */
+    --fs-body: 1rem;          /* 16 — base              */
+    --fs-body-sm: 0.9375rem;  /* 15 — secondary body    */
+
+    /* Micro */
+    --fs-micro: 0.8125rem;    /* 13 — captions, footer  */
+    --fs-eyebrow: 0.75rem;    /* 12 — eyebrows, labels  */
+
+    /* Line-heights — generous = premium */
+    --lh-display: 1.05;
+    --lh-tight: 1.15;
+    --lh-snug: 1.3;
+    --lh-normal: 1.5;
+    --lh-relaxed: 1.65;
+    --lh-loose: 1.8;
+
+    /* Letter-spacing */
+    --ls-display: -0.022em;   /* large display text — slight tighten */
+    --ls-tight: -0.012em;
+    --ls-normal: 0;
+    --ls-wide: 0.02em;
+    --ls-eyebrow: 0.08em;     /* eyebrow tracking */
+
+    /* ────────────── SPACING ──────────────
+       4px base; geometric for vertical rhythm.
+       Used via Tailwind's default scale (extends seamlessly).
+    */
+
+    /* Section vertical padding (clamp for fluid responsive) */
+    --section-y: clamp(4rem, 8vw, 8rem);          /* 64 → 128 */
+    --section-y-sm: clamp(3rem, 5vw, 5rem);       /* 48 → 80  */
+
+    /* Container */
+    --container-max: 1280px;
+    --container-padding: 1.25rem;       /* 20 — mobile  */
+    --container-padding-sm: 1.5rem;     /* 24 — tablet  */
+    --container-padding-lg: 2rem;       /* 32 — desktop */
+    --gutter: 1.5rem;                   /* 24 — between cards */
+
+    /* Prose */
+    --prose-max: 65ch;
+
+    /* ────────────── RADIUS ──────────────
+       Subtle on small UI. More generous on cards. Pill for floating header.
+    */
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius: 8px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-2xl: 28px;
+    --radius-3xl: 36px;
+    --radius-pill: 9999px;
+
+    /* ────────────── SHADOWS ──────────────
+       Layered, soft. Never harsh. Multiple shadows per token = realistic.
+    */
+    --shadow-xs: 0 1px 2px 0 rgb(17 19 20 / 0.04);
+    --shadow-sm: 0 1px 3px 0 rgb(17 19 20 / 0.04), 0 1px 2px 0 rgb(17 19 20 / 0.03);
+    --shadow: 0 2px 6px -1px rgb(17 19 20 / 0.05), 0 1px 3px -1px rgb(17 19 20 / 0.04);
+    --shadow-md: 0 4px 12px -2px rgb(17 19 20 / 0.06), 0 2px 6px -2px rgb(17 19 20 / 0.04);
+    --shadow-lg: 0 12px 28px -8px rgb(17 19 20 / 0.08), 0 4px 12px -4px rgb(17 19 20 / 0.05);
+    --shadow-xl: 0 24px 48px -12px rgb(17 19 20 / 0.12), 0 10px 20px -8px rgb(17 19 20 / 0.06);
+    --shadow-2xl: 0 32px 64px -16px rgb(17 19 20 / 0.16), 0 16px 32px -12px rgb(17 19 20 / 0.08);
+    --shadow-glow: 0 0 0 1px rgb(31 58 77 / 0.06), 0 8px 24px -4px rgb(31 58 77 / 0.12);
+
+    /* ────────────── MOTION ──────────────
+       Premium = slow + emphasized + restrained.
+       Curves tuned for "Apple / Linear / Oura" feel.
+    */
+
+    /* Durations (ms) */
+    --duration-instant: 100ms;
+    --duration-fast: 180ms;
+    --duration: 280ms;
+    --duration-slow: 420ms;
+    --duration-slower: 640ms;
+    --duration-slowest: 960ms;
+
+    /* Easing curves */
+    --ease-smooth: cubic-bezier(0.65, 0, 0.35, 1);          /* buttery default */
+    --ease-emphasized: cubic-bezier(0.32, 0.72, 0, 1);      /* premium ease-out */
+    --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);          /* reveal */
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);       /* gentle bounce */
+
+    /* Stagger steps */
+    --stagger-fast: 60ms;
+    --stagger: 80ms;
+    --stagger-slow: 120ms;
+
+    /* ────────────── BLUR ──────────────
+       For floating header glass effect.
+    */
+    --blur-xs: 4px;
+    --blur-sm: 8px;
+    --blur: 12px;
+    --blur-md: 16px;
+    --blur-lg: 24px;
+    --blur-xl: 40px;
+
+    /* ────────────── Z-INDEX ────────────── */
+    --z-base: 0;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-header: 300;
+    --z-overlay: 400;
+    --z-modal: 500;
+    --z-toast: 600;
+
+    /* ────────────── GRADIENTS ──────────────
+       Reusable gradient tokens for hero halo, CTA backgrounds, section transitions.
+    */
+    --gradient-warm-fade: linear-gradient(180deg, rgb(250 249 246 / 0) 0%, rgb(245 243 238 / 1) 100%);
+    --gradient-hero-halo: radial-gradient(80% 60% at 50% 0%, rgb(230 234 238 / 0.6) 0%, rgb(250 249 246 / 0) 70%);
+    --gradient-cta-glow: radial-gradient(50% 80% at 50% 50%, rgb(31 58 77 / 0.04) 0%, rgb(31 58 77 / 0) 100%);
+  }
+
+  /* ────────────── DARK MODE TOKENS ──────────────
+     Activated via `class="dark"` on <html>. V1 ships light only; tokens
+     are pre-defined so dark mode is a one-line toggle later. */
+  .dark {
+    --color-background: 12 14 16;
+    --color-surface: 20 22 24;
+    --color-surface-raised: 26 28 31;
+    --color-surface-subtle: 16 18 20;
+    --color-foreground: 240 240 238;
+    --color-ink: 250 250 248;
+    --color-muted: 158 161 165;
+    --color-subtle: 110 113 118;
+    --color-border: 38 42 46;
+    --color-border-strong: 58 62 68;
+    --color-accent: 178 200 215;
+    --color-accent-strong: 210 224 234;
+    --color-accent-soft: 26 36 46;
+  }
+
+  /* ────────────── BASE STYLES ────────────── */
+
+  * {
+    border-color: rgb(var(--color-border));
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "ss01", "cv11", "calt";
+  }
+
+  body {
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    line-height: var(--lh-normal);
+    overflow-x: hidden;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: rgb(var(--color-accent) / 0.18);
+    color: rgb(var(--color-ink));
+  }
+
+  /* Focus ring — visible but elegant */
+  :focus-visible {
+    outline: 2px solid rgb(var(--color-accent));
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* Reduce motion preference — respected globally */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Scrollbar — subtle */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--color-border-strong) / 0.6);
+    border-radius: var(--radius-pill);
+    border: 2px solid rgb(var(--color-background));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--color-muted) / 0.5);
+  }
+}
+
+@layer utilities {
+  /* Section padding helper */
+  .section-y {
+    padding-top: var(--section-y);
+    padding-bottom: var(--section-y);
+  }
+  .section-y-sm {
+    padding-top: var(--section-y-sm);
+    padding-bottom: var(--section-y-sm);
+  }
+
+  /* Glass effect for floating header */
+  .glass {
+    background-color: rgb(var(--color-background) / 0.72);
+    backdrop-filter: blur(var(--blur-md)) saturate(1.4);
+    -webkit-backdrop-filter: blur(var(--blur-md)) saturate(1.4);
+  }
+
+  /* Smooth gradient fade — used between sections */
+  .fade-warm {
+    background-image: var(--gradient-warm-fade);
+  }
+  .halo-hero {
+    background-image: var(--gradient-hero-halo);
+  }
+  .glow-cta {
+    background-image: var(--gradient-cta-glow);
+  }
+
+  /* Number tabular — for FitScore counters */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+}

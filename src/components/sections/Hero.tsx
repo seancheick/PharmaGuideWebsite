@@ -39,7 +39,7 @@ export function Hero() {
             </p>
 
             <p className="animate-fade-up text-body-sm text-muted [animation-delay:240ms]">
-              <span className="font-medium text-ink tnum">180,000+</span>{" "}
+              <span className="font-medium text-ink tnum">180,000+</span> products
               <span className="mx-1.5 text-border-strong">·</span>
               Evidence-graded
               <span className="mx-1.5 text-border-strong">·</span>

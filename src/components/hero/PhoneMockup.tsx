@@ -135,7 +135,7 @@ export function PhoneMockup() {
           className="relative w-[300px] sm:w-[320px] md:w-[340px] lg:w-[360px]"
         >
           {/* Phone+cards container — anchors the floating cards' positioning */}
-          <div className="relative aspect-[9/19]">
+          <div className="relative aspect-[9/18]">
             {/* Outer bezel */}
             <div className="relative h-full w-full rounded-[3rem] bg-ink p-[3px] shadow-2xl">
               {/* Bezel highlight — soft top-left → transparent */}
@@ -233,39 +233,40 @@ export function PhoneMockup() {
               )}
             </AnimatePresence>
 
-            {/* Floating fit-tag chip — quieter, fully inside phone bounds */}
+            {/* Floating fit-tag — slightly bigger, springs up like the
+                interaction card so the two feel like one motion family */}
             <AnimatePresence>
               {showFitTag && (
                 <motion.div
                   key="fit"
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -2 }}
-                  transition={{ ...transitions.reveal, duration: 0.36 }}
-                  className="absolute z-10 flex items-center justify-between rounded-xl border border-border/80 bg-surface/85 px-3 py-1.5 shadow-sm backdrop-blur-sm"
-                  style={{ bottom: "5%", left: "16px", right: "16px" }}
+                  initial={{ y: 22, opacity: 0, scale: 0.96 }}
+                  animate={{ y: 0, opacity: 1, scale: 1 }}
+                  exit={{ y: 18, opacity: 0 }}
+                  transition={transitions.spring}
+                  className="absolute z-10 flex items-center justify-between gap-3 rounded-xl border border-border bg-surface/90 px-3.5 py-2 shadow-md backdrop-blur-sm"
+                  style={{ bottom: "5%", left: "14px", right: "14px" }}
                 >
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-2">
                     <span
                       aria-hidden="true"
-                      className="flex h-3 w-3 items-center justify-center rounded-full bg-severity-safe/15"
+                      className="flex h-4 w-4 items-center justify-center rounded-full bg-severity-safe/15"
                     >
-                      <svg width="6" height="6" viewBox="0 0 6 6" fill="none">
+                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
                         <path
-                          d="M1 3L2.5 4.5L5 1.5"
+                          d="M1.5 4L3.3 5.8L6.5 2.2"
                           stroke="currentColor"
-                          strokeWidth="1"
+                          strokeWidth="1.2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           className="text-severity-safe"
                         />
                       </svg>
                     </span>
-                    <span className="text-[10.5px] font-medium text-ink">
+                    <span className="text-[11.5px] font-medium leading-tight text-ink">
                       Good fit with timing adjustment
                     </span>
                   </span>
-                  <span className="font-mono text-[8.5px] font-medium uppercase tracking-[0.1em] text-subtle">
+                  <span className="font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-subtle">
                     For You
                   </span>
                 </motion.div>

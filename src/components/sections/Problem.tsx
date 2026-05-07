@@ -97,19 +97,21 @@ export function Problem() {
           </motion.h2>
         </motion.div>
 
-        {/* Block 2 — three statements with two-tone hierarchy */}
+        {/* Block 2 — three statements with two-tone hierarchy.
+            Wider container + per-statement max so statement 2 can fit on
+            two visual lines on desktop (lead + tail). */}
         <motion.div
           variants={statementsContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-12%" }}
-          className="mx-auto mt-20 grid max-w-5xl gap-12 md:mt-24 md:grid-cols-3 md:gap-10 lg:gap-14"
+          className="mx-auto mt-20 grid max-w-6xl gap-12 md:mt-24 md:grid-cols-3 md:gap-12 lg:gap-16"
         >
           {STATEMENTS.map((s, i) => (
             <motion.p
               key={i}
               variants={fadeUpItem}
-              className="mx-auto max-w-[260px] text-balance text-h3 leading-snug md:mx-0"
+              className="mx-auto max-w-[300px] text-balance text-h3 leading-snug md:mx-0 md:max-w-none"
             >
               <span className="text-ink">{s.lead}</span>{" "}
               <span className="text-muted">{s.tail}</span>
@@ -117,16 +119,19 @@ export function Problem() {
           ))}
         </motion.div>
 
-        {/* Block 3 — closing thesis (smaller, tighter, subtler scale-up) */}
+        {/* Block 3 — closing thesis (smaller, tighter, subtler scale-up).
+            Wider on desktop so the first half fits on one line; mobile lets
+            it wrap naturally. The forced break sits between the two clauses
+            on tablet/desktop where the line otherwise overflows the eye. */}
         <motion.p
           initial={{ opacity: 0, y: 12, scale: 0.985 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-20%" }}
           transition={transitions.reveal}
-          className="mx-auto mt-24 max-w-2xl text-balance text-center font-serif text-display-sm italic leading-[1.12] text-ink md:mt-28"
+          className="mx-auto mt-24 max-w-2xl text-balance text-center font-serif text-display-sm italic leading-[1.12] text-ink md:mt-28 md:max-w-4xl"
         >
           Because interactions happen between products
-          <br className="hidden sm:inline" />{" "}
+          <br className="hidden md:inline" />{" "}
           — not in isolation.
         </motion.p>
       </div>

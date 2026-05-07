@@ -26,7 +26,9 @@
 **Decisions made:**
 - Tailwind v3 over v4 for ecosystem stability
 - Geist + Newsreader pairing for premium-but-free typography
-- Accent color: deep slate teal `#1F3A4D`
+- Accent color: deep teal `#183B3F` (revised from `#1F3A4D` after preview)
+- Surface-subtle cooled to `#F4F2EE` (was `#F5F3EE`, read tan on some monitors)
+- Severity-safe deepened to `#3F6250` (was `#476E57`, felt too "organic wellness")
 - Build directly in code (no Figma middle step)
 - 8 sections in homepage (compressed from dev's 11)
 - About in nav, no Features, no Clinician page V1

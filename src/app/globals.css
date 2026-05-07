@@ -20,7 +20,7 @@
     --color-background: 250 249 246;        /* warm off-white  #FAF9F6 */
     --color-surface: 255 255 255;           /* card white      #FFFFFF */
     --color-surface-raised: 252 251 248;    /* slight warmth   #FCFBF8 */
-    --color-surface-subtle: 245 243 238;    /* warm neutral    #F5F3EE */
+    --color-surface-subtle: 244 242 238;    /* cooler neutral  #F4F2EE */
 
     /* Foreground / text */
     --color-foreground: 24 26 27;           /* near-black warm #181A1B */
@@ -32,10 +32,10 @@
     --color-border: 229 226 219;            /* warm hairline   #E5E2DB */
     --color-border-strong: 209 205 196;     /* visible border  #D1CDC4 */
 
-    /* Accent — single restrained brand color (deep slate teal) */
-    --color-accent: 31 58 77;               /* primary CTA     #1F3A4D */
-    --color-accent-strong: 19 41 56;        /* hover/active    #132938 */
-    --color-accent-soft: 230 234 238;       /* tinted bg       #E6EAEE */
+    /* Accent — single restrained brand color (deep teal) */
+    --color-accent: 24 59 63;               /* primary CTA     #183B3F */
+    --color-accent-strong: 16 42 45;        /* hover/active    #102A2D */
+    --color-accent-soft: 230 236 236;       /* tinted bg       #E6ECEC */
 
     /* Severity (5-tier verdict system)
        Polished, restrained values. Easily replaced when matching Flutter app.
@@ -44,14 +44,14 @@
     --color-severity-avoid: 184 84 41;             /* burnt orange   #B85429 */
     --color-severity-caution: 173 122 36;          /* warm amber     #AD7A24 */
     --color-severity-monitor: 130 113 64;          /* muted ochre    #827140 */
-    --color-severity-safe: 71 110 87;              /* sage green     #476E57 */
+    --color-severity-safe: 63 98 80;               /* deep sage      #3F6250 */
 
     /* Severity backgrounds (10% tint, ready to use) */
     --color-severity-contraindicated-bg: 245 230 230;
     --color-severity-avoid-bg: 247 235 227;
     --color-severity-caution-bg: 246 240 226;
     --color-severity-monitor-bg: 240 237 226;
-    --color-severity-safe-bg: 230 238 232;
+    --color-severity-safe-bg: 233 238 234;
 
     /* ────────────── TYPOGRAPHY ──────────────
        Pairing: Geist Sans (UI / headlines) + Newsreader (editorial display moments)
@@ -151,7 +151,7 @@
     --shadow-lg: 0 12px 28px -8px rgb(17 19 20 / 0.08), 0 4px 12px -4px rgb(17 19 20 / 0.05);
     --shadow-xl: 0 24px 48px -12px rgb(17 19 20 / 0.12), 0 10px 20px -8px rgb(17 19 20 / 0.06);
     --shadow-2xl: 0 32px 64px -16px rgb(17 19 20 / 0.16), 0 16px 32px -12px rgb(17 19 20 / 0.08);
-    --shadow-glow: 0 0 0 1px rgb(31 58 77 / 0.06), 0 8px 24px -4px rgb(31 58 77 / 0.12);
+    --shadow-glow: 0 0 0 1px rgb(24 59 63 / 0.06), 0 8px 24px -4px rgb(24 59 63 / 0.12);
 
     /* ────────────── MOTION ──────────────
        Premium = slow + emphasized + restrained.
@@ -199,9 +199,9 @@
     /* ────────────── GRADIENTS ──────────────
        Reusable gradient tokens for hero halo, CTA backgrounds, section transitions.
     */
-    --gradient-warm-fade: linear-gradient(180deg, rgb(250 249 246 / 0) 0%, rgb(245 243 238 / 1) 100%);
-    --gradient-hero-halo: radial-gradient(80% 60% at 50% 0%, rgb(230 234 238 / 0.6) 0%, rgb(250 249 246 / 0) 70%);
-    --gradient-cta-glow: radial-gradient(50% 80% at 50% 50%, rgb(31 58 77 / 0.04) 0%, rgb(31 58 77 / 0) 100%);
+    --gradient-warm-fade: linear-gradient(180deg, rgb(250 249 246 / 0) 0%, rgb(244 242 238 / 1) 100%);
+    --gradient-hero-halo: radial-gradient(80% 60% at 50% 0%, rgb(230 236 236 / 0.6) 0%, rgb(250 249 246 / 0) 70%);
+    --gradient-cta-glow: radial-gradient(50% 80% at 50% 50%, rgb(24 59 63 / 0.04) 0%, rgb(24 59 63 / 0) 100%);
   }
 
   /* ────────────── DARK MODE TOKENS ──────────────
@@ -218,9 +218,9 @@
     --color-subtle: 110 113 118;
     --color-border: 38 42 46;
     --color-border-strong: 58 62 68;
-    --color-accent: 178 200 215;
-    --color-accent-strong: 210 224 234;
-    --color-accent-soft: 26 36 46;
+    --color-accent: 175 198 200;
+    --color-accent-strong: 200 218 220;
+    --color-accent-soft: 22 36 38;
   }
 
   /* ────────────── BASE STYLES ────────────── */

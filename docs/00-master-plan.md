@@ -84,7 +84,7 @@ and tracks one concern. Don't lose track — this file is the entry point.
 
 - **Stack:** Next.js 16 App Router, React 19, TypeScript strict, Tailwind v3, Framer Motion 11
 - **Fonts:** Geist Sans (UI/headlines), Newsreader (editorial display), Geist Mono (data)
-- **Accent color:** Deep slate teal (`#1F3A4D`)
+- **Accent color:** Deep teal (`#183B3F`)
 - **Severity colors:** Polished defaults — match Flutter app exactly later
 - **Logo:** Typographic placeholder for V1
 - **Images:** Placeholder URLs in `lib/site.ts` — swap when ready

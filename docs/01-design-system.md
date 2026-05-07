@@ -30,7 +30,7 @@ All values are RGB triplets so Tailwind's `/<alpha>` modifier works
 | `background` | `#FAF9F6` (warm off-white) | Page background |
 | `surface` | `#FFFFFF` | Card backgrounds |
 | `surface-raised` | `#FCFBF8` | Elevated cards (hover, focus) |
-| `surface-subtle` | `#F5F3EE` | Recessed surfaces (footer, dividers) |
+| `surface-subtle` | `#F4F2EE` | Recessed surfaces (footer, dividers) |
 
 ### Foreground
 
@@ -52,9 +52,9 @@ All values are RGB triplets so Tailwind's `/<alpha>` modifier works
 
 | Token | Value | Usage |
 |---|---|---|
-| `accent` | `#1F3A4D` (deep slate teal) | Primary CTA, links, focus |
-| `accent-strong` | `#132938` | Hover/active state |
-| `accent-soft` | `#E6EAEE` | Tinted accent backgrounds |
+| `accent` | `#183B3F` (deep teal) | Primary CTA, links, focus |
+| `accent-strong` | `#102A2D` | Hover/active state |
+| `accent-soft` | `#E6ECEC` | Tinted accent backgrounds |
 
 ### Severity (5-tier)
 
@@ -66,7 +66,7 @@ These are polished defaults. Match the Flutter app exactly when ready.
 | 2 | `severity-avoid` | `#B85429` | Strong reason to separate |
 | 3 | `severity-caution` | `#AD7A24` | Risk depends on context |
 | 4 | `severity-monitor` | `#827140` | Manage with timing/awareness |
-| 5 | `severity-safe` | `#476E57` | No known concern |
+| 5 | `severity-safe` | `#3F6250` | No known concern |
 
 Each pairs with a 10% tinted background variant (`-bg`) for chip surfaces.
 

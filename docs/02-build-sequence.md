@@ -212,7 +212,9 @@ Capture key decisions as they're made. Avoids re-litigating later.
 | 2026-05-07 | Build directly in code, skip Figma | Faster, single source of truth, no handoff degradation |
 | 2026-05-07 | Tailwind v3 (not v4) | More stable ecosystem, no surprise tooling issues |
 | 2026-05-07 | Geist Sans + Newsreader + Geist Mono | Free, premium, distinctive italic serif for editorial moments |
-| 2026-05-07 | Accent: deep slate teal `#1F3A4D` | "Calm clinical" — neither wellness green nor biotech blue |
+| 2026-05-07 | Accent: deep teal `#183B3F` | "Calm clinical" — leans teal, neither wellness green nor biotech blue |
+| 2026-05-07 | Surface-subtle cooled `#F5F3EE → #F4F2EE` | Avoid "tan" rendering on warm-shifted monitors |
+| 2026-05-07 | Severity-safe deepened `#476E57 → #3F6250` | Less "organic wellness", more clinical confidence |
 | 2026-05-07 | No Features page | Premium products don't list features in nav |
 | 2026-05-07 | About in nav, not About Us | Cleaner, more modern |
 | 2026-05-07 | No Clinician page in V1 | Premature without traction/published validation |

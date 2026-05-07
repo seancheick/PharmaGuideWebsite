@@ -3,11 +3,12 @@ import { Hero } from "@/components/sections/Hero";
 import { InfrastructureStrip } from "@/components/sections/InfrastructureStrip";
 import { Problem } from "@/components/sections/Problem";
 import { InteractionLadder } from "@/components/sections/InteractionLadder";
+import { RealLifeMoments } from "@/components/sections/RealLifeMoments";
 import { TokenPreview } from "@/components/preview/TokenPreview";
 
 /**
- * Phase 5: Interaction Ladder mounted. Severity colors finally land in
- * the design via the 5-tier card row + featured example interaction card.
+ * Phase 6: Real-Life Moments mounted — four expand-on-tap scenario cards.
+ * Severity colors reinforced through per-card "Example flag" chips.
  *
  * TokenPreview remains below for inspection until all sections ship.
  */
@@ -20,6 +21,7 @@ export default function Home() {
         <InfrastructureStrip />
         <Problem />
         <InteractionLadder />
+        <RealLifeMoments />
         <TokenPreview />
       </main>
     </>

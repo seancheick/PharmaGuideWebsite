@@ -61,16 +61,19 @@ and tracks one concern. Don't lose track — this file is the entry point.
 - [x] `id="problem"` wired to Hero secondary CTA
 - [x] **User approved Phase 4** (with refinement pass)
 
-### Phase 5 — Interaction Ladder `(in progress)`
-- [x] 5-tier severity row (severityTiers tokens drive colors)
-- [x] Featured example card with accent halo
-- [x] Hover lift on tier cards
-- [ ] **User approves Phase 5** ← gating
+### Phase 5 — Interaction Ladder
+- [x] 5-tier interactive ladder (hover/tap to switch active tier)
+- [x] Connected detail panel with cross-fade content swap
+- [x] Per-tier shapes (triangle/circle/diamond/ring/square)
+- [x] Per-tier mechanism + evidence grade + study count
+- [x] **User approved Phase 5** (with interactive rebuild)
 
-### Phase 6 — Real-Life Moments
-- [ ] Horizontal scroll carousel (Oura-style)
-- [ ] 4 cards with shared-layout expand
-- [ ] Placeholder lifestyle images (swappable)
+### Phase 6 — Real-Life Moments `(in progress)`
+- [x] 4 expand-on-tap scenario cards (2x2 grid, 1 col mobile)
+- [x] Per-card subtle gradients + ambient capsule decorations
+- [x] Inline height accordion + Read more / Close affordances
+- [x] Severity-color "Example flag" chips reinforce the tier system
+- [ ] **User approves Phase 6** ← gating
 
 ### Phase 7 — FitScore
 - [ ] Circular UI with count-up animation

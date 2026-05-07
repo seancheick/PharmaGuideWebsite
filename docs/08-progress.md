@@ -272,4 +272,71 @@ docs/03-content-spec.md updated to match.
 
 ---
 
+## 2026-05-07 — Phase 5 (Ladder) interactive rebuild
+
+**Triggered by review feedback.** Static 5-card ladder felt "designed" but
+not "alive." Rebuilt with hover/focus/tap interaction on each tier that
+re-keys the detail panel.
+
+**Changes:**
+- Tier row + detail panel are now ONE bordered unit (rounded-2xl)
+- Active tier: bg-surface-raised + 2px tier-color accent bar at bottom edge
+  (visual link to detail panel below)
+- Detail panel uses AnimatePresence mode="wait" + cross-fade for swaps
+- Per-tier geometric shapes (triangle/circle/diamond/ring/square) — adds
+  character without adding colors
+- New three-column detail layout (label·pair / mechanism / evidence)
+- New "Mechanism" field per tier (pharmacist intelligence energy)
+- New "Studies" count per tier (mono tabular-nums)
+- Evidence grade pill (A–D) on the right
+- Headline rewritten: "Not just warnings. *Reasoning.*" (italic Newsreader
+  on the punchline — typographic emphasis without color shift)
+- 01–05 numbering removed (no dashboard energy)
+- Honesty note below: "When evidence is incomplete, we say so directly."
+- All severity classes literalized in code (no runtime .replace) so
+  Tailwind's content scanner picks them up
+
+---
+
+## 2026-05-07 — Phase 6 (Real-Life Moments) shipped
+
+**What shipped:**
+- `src/components/sections/RealLifeMoments.tsx`
+- 2x2 grid on tablet+, single column on mobile (4 cards total)
+- Card order: chronic / pregnancy / SSRI / stack — chronic first because
+  it's the highest-LTV early adopter persona
+- Each card has:
+  • Subtle per-card linear gradient (no two cards alike)
+  • Ambient capsule decoration (alternating positions per card index)
+  • Eyebrow + title visible at all times
+  • "Read more →" hint when collapsed
+  • Inline height-accordion expand on click
+  • Body context paragraph (body-lg muted)
+  • "What we check" bulleted list with accent-color bullets
+  • "Example flag" with severity-color chip + tier label + detail
+  • "Close ↑" button to collapse
+- Severity colors finally land in this section through per-card flags:
+  Monitor (chronic, stack), Caution (pregnancy), Avoid (SSRI)
+- aria-expanded, aria-controls wired correctly per card
+- One card open at a time (parent state activeId | null) — clicking
+  another card switches; clicking the active card collapses
+
+**Decisions made:**
+- 2x2 grid > horizontal carousel (originally specced) for better desktop
+  UX. Carousels work on mobile but feel awkward on wide displays without
+  scroll-jacking. Cards-with-inline-expand is cleaner.
+- No stock photography in V1. Subtle gradient + ambient capsule + strong
+  typography does the editorial work without "wellness influencer" risk.
+  Real photography can be swapped in later by replacing the gradient with
+  a Next/Image background; structure stays the same.
+- Height accordion (motion height: 0 → auto) over shared-layout `layoutId`
+  morph. Simpler, cleaner inline UX, no loss of context. Other cards stay
+  in place when one expands.
+- "Tap any moment" interaction hint matches the Ladder's "Hover or tap"
+  language — consistent affordance vocabulary across sections.
+- Headline punchline ("they need this.") in italic Newsreader continues
+  the rhythm established in the Ladder.
+
+---
+
 <!-- Append new entries above this line as phases complete -->

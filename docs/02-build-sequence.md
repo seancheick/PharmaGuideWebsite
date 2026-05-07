@@ -147,17 +147,29 @@
 
 ---
 
-## 🔜 Phase 6 — Real-Life Moments
+## 🔜 Phase 6 — Real-Life Moments `(in progress)`
 
-- [ ] Create `src/components/sections/RealLifeMoments.tsx`
-- [ ] Section label, headline, subhead
-- [ ] Horizontal scroll carousel (snap-scroll)
-- [ ] 4 cards: chronic, pregnancy, SSRI, optimizer
-- [ ] Each card: background image + title + expanded state
-- [ ] Shared layout transition for expand (Framer Motion `layoutId`)
-- [ ] Placeholder images from Unsplash (note: swap with editorial photography later)
-- [ ] Touch-swipe on mobile
-- [ ] Approve
+- [x] Create `src/components/sections/RealLifeMoments.tsx`
+- [x] Eyebrow: "Built for real life"
+- [x] Headline: "The moments people don't realize / *they need this.*"
+  (line 2 italic Newsreader, ink — punchline emphasis)
+- [x] Subhead with "Tap any moment" interaction hint
+- [x] 4 cards in 2x2 grid (1 col mobile, 2 cols tablet+) — chosen over
+  carousel for desktop UX clarity
+- [x] Order: chronic → pregnancy → SSRI → stack (highest LTV first)
+- [x] Each card: subtle per-card linear gradient + ambient capsule shape +
+  alternating capsule positions (varied per index)
+- [x] Click expands inline via height accordion (motion.div height: 0 → auto)
+- [x] Read more → hint when collapsed; Close ↑ button when expanded
+- [x] Card body: long-form context paragraph
+- [x] "What we check" bulleted list with accent bullets
+- [x] "Example flag" with severity-color chip (uses existing severity tokens)
+- [x] Per-card severity tier: Monitor / Caution / Avoid / Monitor
+- [x] aria-expanded, aria-controls wired correctly
+- [x] No stock photos (V1 uses gradient + capsule + typography). Easy to
+  swap in real editorial photography later by replacing the gradient
+  with a Next/Image background.
+- [ ] **User approves Phase 6** ← gating
 
 ---
 

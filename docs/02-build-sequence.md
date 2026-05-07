@@ -31,19 +31,24 @@
 
 **Goal:** Floating glass pill header with smart scroll behavior.
 
-- [ ] Create `src/components/layout/Header.tsx`
-- [ ] Pill shape (`rounded-pill`) floating from top
-- [ ] Glass effect (`backdrop-blur-md` + 72% bg opacity)
-- [ ] Logo (typographic placeholder for V1)
-- [ ] Nav links (How It Works, Methodology, Blog, About)
-- [ ] Primary CTA pill button (Join Beta)
-- [ ] Smart scroll behavior: hide on scroll-down, show on scroll-up
-- [ ] Mobile: hamburger trigger + full-screen overlay menu
-- [ ] Keyboard accessible (focus trap when mobile menu open)
-- [ ] `aria-label` on nav, hamburger
-- [ ] Skip-to-content already in layout
-- [ ] Test on mobile + desktop
-- [ ] Approve
+- [x] Create `src/components/layout/Header.tsx`
+- [x] Pill shape (`rounded-pill`) floating from top
+- [x] Glass effect (`backdrop-blur-md` + 72% bg opacity)
+- [x] Logo (typographic placeholder for V1, with tiny accent dot mark)
+- [x] Nav links (How It Works, Methodology, Blog, About)
+- [x] Primary CTA pill button — **Request Access**
+- [x] Smart scroll behavior: hide on scroll-down past 200px, show on scroll-up
+- [x] Glass effect activates after scrolling past 24px
+- [x] Mobile: hamburger trigger + full-screen overlay menu
+- [x] `prefers-reduced-motion` respected (no slide animation)
+- [x] Esc key closes mobile menu
+- [x] Click backdrop closes mobile menu
+- [x] Body scroll-lock when mobile menu is open
+- [x] Focus returns to hamburger on close
+- [x] `aria-label` on nav + hamburger + close + dialog
+- [x] Skip-to-content already in layout
+- [x] Mounted in `page.tsx` for review
+- [ ] **User approves Phase 1** ← gating
 
 ---
 

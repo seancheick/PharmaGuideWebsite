@@ -28,12 +28,14 @@ and tracks one concern. Don't lose track — this file is the entry point.
 - [x] Site constants (`src/lib/site.ts`)
 - [x] SEO infrastructure (sitemap, robots, manifest, metadata)
 - [x] Token preview page (`/`)
-- [ ] **User approval of design system** ← gating
+- [x] **User approved design system** (with refinements: accent → #183B3F, surface-subtle → #F4F2EE, severity-safe → #3F6250)
 
-### Phase 1 — Header
-- [ ] Floating glass pill header with smart show/hide on scroll
-- [ ] Mobile hamburger overlay
-- [ ] Skip-to-content link
+### Phase 1 — Header `(in progress)`
+- [x] Floating glass pill header with smart show/hide on scroll
+- [x] Mobile hamburger overlay (Esc + backdrop close, scroll-lock, focus return)
+- [x] Skip-to-content link (already in layout)
+- [x] CTA: "Request Access"
+- [ ] **User approves Phase 1** ← gating
 
 ### Phase 2 — Hero
 - [ ] Two-column layout (copy left, animated phone right)

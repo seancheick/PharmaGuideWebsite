@@ -1,15 +1,19 @@
+import { Header } from "@/components/layout/Header";
 import { TokenPreview } from "@/components/preview/TokenPreview";
 
 /**
- * V1 placeholder: the token preview lives here so you can see and approve
- * every design decision before we build sections.
- *
- * This will be replaced by the real homepage once the design system is signed off.
+ * Phase 1 preview: Header floats above the TokenPreview so the scroll behavior
+ * (glass appears > 24px, hides on scroll-down past 200px, returns on scroll-up)
+ * can be verified against real content. TokenPreview will be removed once
+ * sections start landing.
  */
 export default function Home() {
   return (
-    <main id="main">
-      <TokenPreview />
-    </main>
+    <>
+      <Header />
+      <main id="main">
+        <TokenPreview />
+      </main>
+    </>
   );
 }

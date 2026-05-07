@@ -118,8 +118,14 @@
     --section-y: clamp(4rem, 8vw, 8rem);          /* 64 → 128 */
     --section-y-sm: clamp(3rem, 5vw, 5rem);       /* 48 → 80  */
 
-    /* Container */
-    --container-max: 1280px;
+    /* Container
+       Reduced from 1280 → 1180 so visible margin appears at typical laptop
+       viewports. Tailwind's container plugin generates a single media query
+       at min-width: var(--container-max) — at exactly that viewport width
+       the container fills the screen with zero margin. By setting it to
+       1180, even 1280-width laptops now show ~50px margin each side, and
+       1440 laptops show ~130px. Editorial-tight content width. */
+    --container-max: 1180px;
     --container-padding: 1.25rem;       /* 20 — mobile  */
     --container-padding-sm: 1.5rem;     /* 24 — tablet  */
     --container-padding-lg: 2rem;       /* 32 — desktop */

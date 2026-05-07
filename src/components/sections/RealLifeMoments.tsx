@@ -155,11 +155,12 @@ export function RealLifeMoments() {
         role="list"
         aria-label="Real-life moments"
         className={cn(
-          // Rail extends slightly past the container's 1280px max so 3.5 cards
-          // (3 fully visible + half peek of 4th) fit on wide viewports. The
-          // padding formula caps rail content at ~1440px wide; below that, it
-          // hugs the viewport with a 20px (mobile) / 32px (desktop) gutter.
-          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden px-[max(20px,calc((100vw-1440px)/2))] pb-6 pt-2 sm:gap-4 sm:px-[max(32px,calc((100vw-1440px)/2))] md:mt-16",
+          // Rail extends slightly past the page container so cards bleed
+          // past the section header — premium carousel feel. Caps at ~1400
+          // wide on huge displays so we never show more than 3 cards + peek
+          // of the 4th. Below the cap, rail hugs the viewport with a small
+          // gutter (20–40px).
+          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden px-[max(20px,calc((100vw-1400px)/2))] pb-6 pt-2 sm:gap-4 sm:px-[max(32px,calc((100vw-1400px)/2))] md:mt-16 md:px-[max(40px,calc((100vw-1400px)/2))]",
           "snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         )}
       >

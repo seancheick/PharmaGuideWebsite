@@ -76,10 +76,11 @@ A label tells you what's in the bottle.
 Not what happens with your other bottles.
 ```
 
-**Three statements:**
-1. `Googling "X with Y" gives you conflicting answers.`
-2. `Most apps check one product. You take a stack.`
-3. `Timing can change how something works.`
+**Three statements** (each split lead/tail — lead in ink, tail in muted):
+
+1. **Googling "X with Y"** · usually gives you three different answers.
+2. **Most products are checked one at a time.** · That's not how people take them.
+3. **Sometimes it's not the ingredient.** · It's the timing.
 
 **Closing thesis (italic serif, large):**
 ```

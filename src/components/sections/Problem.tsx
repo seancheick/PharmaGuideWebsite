@@ -6,25 +6,37 @@ import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 /**
  * Problem — first big copy moment after the hero.
  *
- * Pure typography. No cards, no icons, no decoration. The structure is:
- *   1. eyebrow ("The problem")
- *   2. headline — two lines, second line muted (matches the hero's rhythm)
- *   3. three short statements — text-only, three columns on desktop, stacked
- *      on mobile, staggered entrance left-to-right
- *   4. closing italic-serif thesis — the conceptual hinge for the whole site
+ * Pure typography with one ambient interrupt: three faint capsule shapes
+ * floating in the background, deeply blurred, providing texture without
+ * decoration. Otherwise: typography and whitespace doing all the work.
  *
- * The section uses three independent scroll-triggered groups so each block
- * lands deliberately as the reader scrolls past it.
+ * Structure:
+ *   1. eyebrow ("The problem")
+ *   2. headline — two lines, second muted (mirrors the hero rhythm)
+ *   3. three short statements — two-tone (lead in ink, tail in muted),
+ *      narrow blocks for editorial reading rhythm, staggered left-to-right
+ *   4. closing italic-serif thesis — the conceptual hinge for the whole site
  */
 
+// Each statement is split into a darker "lead" + a muted "tail" — gives each
+// block its own internal hierarchy and prevents the section from going flat.
 const STATEMENTS = [
-  "Googling “X with Y” gives you conflicting answers.",
-  "Most apps check one product. You take a stack.",
-  "Timing can change how something works.",
+  {
+    lead: "Googling “X with Y”",
+    tail: "usually gives you three different answers.",
+  },
+  {
+    lead: "Most products are checked one at a time.",
+    tail: "That’s not how people take them.",
+  },
+  {
+    lead: "Sometimes it’s not the ingredient.",
+    tail: "It’s the timing.",
+  },
 ] as const;
 
-// Slightly wider stagger between the three statements (vs default 80ms)
-// so the eye reads each one before the next arrives.
+// Slower stagger (120ms vs default 80ms) so each statement is read before
+// the next arrives. Reading rhythm > animation efficiency.
 const statementsContainer = {
   hidden: {},
   visible: {
@@ -40,20 +52,38 @@ export function Problem() {
     <section
       id="problem"
       aria-label="The problem"
-      className="relative section-y"
+      className="relative section-y overflow-hidden"
     >
-      <div className="container mx-auto">
+      {/* Ambient depth — three faint capsule shapes drift behind the content.
+          Heavy blur turns them into atmospheric warmth rather than decoration.
+          pointer-events-none so they never interfere with selection / hover. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute h-[120px] w-[460px] rounded-pill bg-accent/[0.07] blur-3xl"
+          style={{ top: "-32px", right: "-140px", transform: "rotate(-12deg)" }}
+        />
+        <div
+          className="absolute h-[100px] w-[340px] rounded-pill bg-foreground/[0.04] blur-3xl"
+          style={{ top: "42%", left: "-120px", transform: "rotate(18deg)" }}
+        />
+        <div
+          className="absolute h-[110px] w-[400px] rounded-pill bg-accent/[0.05] blur-3xl"
+          style={{ bottom: "8%", right: "8%", transform: "rotate(-6deg)" }}
+        />
+      </div>
+
+      <div className="container relative mx-auto">
         {/* Block 1 — eyebrow + headline */}
         <motion.div
           variants={fadeUpContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
-          className="mx-auto flex max-w-4xl flex-col items-center gap-7 text-center md:gap-9"
+          className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center md:gap-12"
         >
           <motion.p
             variants={fadeUpItem}
-            className="font-mono text-eyebrow font-medium uppercase tracking-[var(--ls-eyebrow)] text-muted"
+            className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
           >
             The problem
           </motion.p>
@@ -67,32 +97,33 @@ export function Problem() {
           </motion.h2>
         </motion.div>
 
-        {/* Block 2 — three statements */}
+        {/* Block 2 — three statements with two-tone hierarchy */}
         <motion.div
           variants={statementsContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-12%" }}
-          className="mx-auto mt-16 grid max-w-5xl gap-10 md:mt-20 md:grid-cols-3 md:gap-10 lg:gap-14"
+          className="mx-auto mt-20 grid max-w-5xl gap-12 md:mt-24 md:grid-cols-3 md:gap-10 lg:gap-14"
         >
-          {STATEMENTS.map((statement, i) => (
+          {STATEMENTS.map((s, i) => (
             <motion.p
               key={i}
               variants={fadeUpItem}
-              className="text-balance text-h3 leading-snug text-muted"
+              className="mx-auto max-w-[260px] text-balance text-h3 leading-snug md:mx-0"
             >
-              {statement}
+              <span className="text-ink">{s.lead}</span>{" "}
+              <span className="text-muted">{s.tail}</span>
             </motion.p>
           ))}
         </motion.div>
 
-        {/* Block 3 — closing thesis */}
+        {/* Block 3 — closing thesis (smaller, tighter, subtler scale-up) */}
         <motion.p
-          initial={{ opacity: 0, y: 12, scale: 0.97 }}
+          initial={{ opacity: 0, y: 12, scale: 0.985 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-20%" }}
           transition={transitions.reveal}
-          className="mx-auto mt-20 max-w-3xl text-balance text-center font-serif text-display-md italic text-ink md:mt-24"
+          className="mx-auto mt-24 max-w-2xl text-balance text-center font-serif text-display-sm italic leading-[1.12] text-ink md:mt-28"
         >
           Because interactions happen between products
           <br className="hidden sm:inline" />{" "}

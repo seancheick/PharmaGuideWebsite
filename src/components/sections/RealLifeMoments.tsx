@@ -144,8 +144,7 @@ export function RealLifeMoments() {
             variants={fadeUpItem}
             className="mt-6 max-w-prose text-body-lg leading-relaxed text-muted"
           >
-            PharmaGuide helps you catch risks, avoid conflicts, and make smarter
-            decisions before you take your next dose.
+            Most people never check the combination.
           </motion.p>
         </motion.div>
       </div>

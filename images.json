@@ -188,6 +188,40 @@
         "imagen": "Editorial photograph: a Black woman in her late thirties at a wooden home desk, layered merino sweater. She is writing in a small open notebook with a fountain pen, mid-stroke. Four supplement bottles in a deliberate row sit in front of her on the desk. A glass of water is nearby. A closed laptop recedes into soft background blur. Soft daylight from a window behind her, warm small desk lamp from the front, available light only. Shot on Sony A7IV, 35mm f/1.8, Fuji Pro 400H. Visible skin texture, no makeup. Candid, focused, NOT looking at camera, looking down at notebook. Documentary editorial style, shallow depth of field.",
         "midjourney": "Late-thirties woman at wooden home desk, layered merino sweater, writing in small open notebook with fountain pen, four supplement bottles in deliberate row on desk in front, closed laptop in soft background blur, soft daylight window behind, warm desk lamp front, Sony A7IV 35mm f/1.8 Fuji Pro 400H, candid focused workday morning, looking down at notebook NOT camera --style raw --ar 3:4 --s 150 --no fitness influencer, gym, posed, eye contact, glossy, instagram, supplement-bottle-close-up-cliche"
       }
+    },
+    {
+      "id": "parents",
+      "matchesIn": "src/lib/moments.ts → MOMENTS[4]",
+      "filename": "moment-parents.jpg",
+      "altText": "Older person's hands organizing four supplement bottles next to a coffee maker on a kitchen counter.",
+      "scene": "Quiet morning kitchen. An older parent's hand reaching toward a tidy row of four supplement bottles arranged next to a drip coffee maker. Steam rising from the coffee. The image is intergenerational and quietly observed — caring, intimate.",
+      "demographic": "70-78 year old parent. Hand visible (with age spots, slight veins) reaching out. Face softly out of focus or partially out of frame — the SCENE is the bottles + the gesture, NOT a portrait.",
+      "objects": ["four to five supplement bottles in a tidy row by a coffee maker", "drip coffee maker mid-brew with subtle steam", "weekly pill organizer (closed) beside them", "small plant on the windowsill", "morning newspaper folded on the counter"],
+      "light": "Soft east-facing window light through gauze curtains, gentle warmth, available light only, mid-morning weekday.",
+      "mood": "Caring, intimate, intergenerational. The image suggests 'someone has been doing this for years, alone'. NO smiles, NO eye contact.",
+      "composition": "Three-quarter shot from across the counter, focus on the row of bottles in the foreground, the older hand in mid-reach, face softly out of focus behind. Rule of thirds.",
+      "promptVariants": {
+        "flux": "An older 75-year-old person's hand with visible age spots reaching toward a tidy row of four supplement bottles arranged next to a drip coffee maker on a kitchen counter, mid-morning weekday, soft east-facing window light through gauze curtains, available light only, weekly pill organizer beside, shot on Mamiya 7 with 80mm at f/2.8, Kodak Portra 400, visible skin texture, age spots and fine lines on the hand, candid quiet morning, intimate intergenerational documentary editorial, shallow depth of field, slight film grain",
+        "imagen": "Editorial photograph: a 75-year-old parent's hand with visible age spots reaching for one of four supplement bottles arranged in a tidy row beside a drip coffee maker on a wooden kitchen counter. A weekly pill organizer sits next to the bottles. Steam rising from the coffee. Soft east-facing window light, available light only, mid-morning weekday. Shot on Mamiya 7, 80mm, f/2.8, Kodak Portra 400. Visible skin texture, age-spotted hand. Caring, intimate, intergenerational. NOT looking at camera, face softly out of focus.",
+        "midjourney": "Older 75-year-old person hand with age spots reaching toward row of four supplement bottles next to drip coffee maker, kitchen counter morning, weekly pill organizer beside, gauze curtain soft window light, Mamiya 7 80mm Portra 400, intergenerational documentary intimate --style raw --ar 3:4 --s 150 --no posed, eye contact, glossy, stock, pharmacy display"
+      }
+    },
+    {
+      "id": "healthy-overload",
+      "matchesIn": "src/lib/moments.ts → MOMENTS[5]",
+      "filename": "moment-healthy-overload.jpg",
+      "altText": "Editorial photo of an organized row of varied supplement bottles on a wooden shelf, soft daylight.",
+      "scene": "Editorial eye-level shot of 8-12 supplement bottles of varied sizes/colors arranged in a deliberate row on a wooden shelf or counter. The QUANTITY is the point — the viewer should COUNT the bottles before they read the headline.",
+      "demographic": "No person OR a 30-something hand softly out of focus reaching for one bottle. NOT a fitness influencer.",
+      "objects": ["8-12 supplement bottles, varied sizes (small to medium), varied colors (amber/white/clear), plain unbranded labels", "wooden shelf or counter", "small succulent or houseplant softly out of focus in the back"],
+      "light": "Soft daylight from a window to the left, available light only, late morning. Slight shadow play across the bottles.",
+      "mood": "Realization. 'Wait, is this too many?' The composition makes the viewer count.",
+      "composition": "Eye-level shot of the row, slight perspective. Foreground bottles in focus, background bottles softening. Rule of thirds — bottles occupy lower 2/3. NOT a top-down flat-lay.",
+      "promptVariants": {
+        "flux": "Editorial eye-level shot of ten varied supplement bottles arranged in a deliberate row on a wooden shelf, varied sizes and amber/white/clear colors, plain unbranded labels, soft daylight from the left window, available light only, small succulent softly out of focus in the background, shot on Sony A7IV with 35mm f/1.8, Fuji Pro 400H slight cool tones, sharp foreground bottles softening into background, late morning, documentary editorial style, NOT a flat lay from above, eye level, slight grain",
+        "imagen": "Editorial photograph: ten varied supplement bottles arranged in a deliberate row on a wooden shelf at eye level. Varied sizes (small to medium) and varied colors (amber, white, clear). Plain unbranded labels. A small succulent softly out of focus behind. Soft daylight from a window to the left, available light only, late morning. Shot on Sony A7IV, 35mm f/1.8, Fuji Pro 400H. Sharp foreground bottles softening into background. Eye level, NOT a flat lay. Documentary editorial style.",
+        "midjourney": "Editorial eye-level shot of ten varied supplement bottles in a deliberate row on wooden shelf, varied sizes and amber/white/clear colors, plain unbranded labels, soft daylight from left, small succulent in soft background, Sony A7IV 35mm f/1.8 Fuji Pro 400H, documentary editorial late morning --style raw --ar 3:4 --s 150 --no flat lay, top-down, fitness influencer, gym, ring light, glossy, stock"
+      }
     }
   ],
 
@@ -223,8 +257,24 @@
         "id": "devon-p",
         "matchesIn": "src/lib/moments.ts → MOMENTS[3].member.avatar",
         "filename": "avatar-devon-p.jpg",
-        "subjectGuidance": "35-40 year old woman (matches stack-optimizer card). Layered merino sweater. Hair tied back. Quiet focused look slightly off-camera.",
+        "subjectGuidance": "35-40 year old woman (matches gym-stack card). Layered merino sweater. Hair tied back. Quiet focused look slightly off-camera.",
         "promptCore": "Headshot of a 38-year-old Black woman, hair tied back, layered grey merino sweater, looking softly off-camera right, available daylight, shot on Sony A7IV 35mm f/1.8, Fuji Pro 400H, visible skin texture, no makeup, candid, documentary editorial, shallow depth of field",
+        "ar": "1:1"
+      },
+      {
+        "id": "sarah-k",
+        "matchesIn": "src/lib/moments.ts → MOMENTS[4].member.avatar",
+        "filename": "avatar-sarah-k.jpg",
+        "subjectGuidance": "42-48 year old woman, the adult child voice in the parents card. Casual layered sweater, hair softly tied back. Slight off-camera glance with a thoughtful expression — looks like someone who's been paying attention to her parents' health.",
+        "promptCore": "Headshot of a 45-year-old woman, hair softly tied back, layered taupe sweater, looking softly off-camera right with a thoughtful expression, available natural light from a window, shot on Mamiya 7 80mm at f/2.8, Kodak Portra 400, visible skin texture, fine lines, no makeup, candid, documentary editorial, shallow depth of field, neutral interior background blurred",
+        "ar": "1:1"
+      },
+      {
+        "id": "tasha-k",
+        "matchesIn": "src/lib/moments.ts → MOMENTS[5].member.avatar",
+        "filename": "avatar-tasha-k.jpg",
+        "subjectGuidance": "32-38 year old woman (matches healthy-overload card). Modern wellness-aware but NOT influencer. Hair down or in a loose bun. Casual layered linen or cotton top. Slight contemplative off-camera glance.",
+        "promptCore": "Headshot of a 35-year-old woman, hair in a loose bun, soft layered cream linen top, looking softly off-camera left with a contemplative expression, available natural light from a window, shot on Sony A7IV 35mm f/1.8, Fuji Pro 400H, visible skin texture, no makeup, candid, documentary editorial, shallow depth of field",
         "ar": "1:1"
       }
     ]

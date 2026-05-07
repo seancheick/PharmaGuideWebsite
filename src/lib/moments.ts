@@ -5,6 +5,9 @@
  * with your Cloudinary URLs once the AI-generated photos are uploaded.
  * The shape stays the same — just replace the URL strings.
  *
+ * Title is split into `lead` + `em` so we can render the Oura-style
+ * "punchy line with italic emphasis" without HTML markup in strings.
+ *
  * Severity tokens reference the design system; chip styling is derived
  * in the carousel via SEV_STYLES.
  */
@@ -19,7 +22,12 @@ export type SeverityTier =
 export interface Moment {
   id: string;
   category: string;
-  title: string;
+
+  // Punchy short title (Oura-style). Rendered as: {lead} <em>{em}</em>
+  // Keep total ≤ 7 words so the title fits the closed card cleanly.
+  title: { lead: string; em: string };
+
+  // Long-form description revealed only when the card is open.
   description: string;
   learnMore: string;
 
@@ -27,7 +35,7 @@ export interface Moment {
   image: string;
   imageAlt: string;
 
-  // Member spotlight (revealed on expand)
+  // Member spotlight (revealed on expand, md+ only)
   member: {
     name: string;
     role: string;
@@ -35,7 +43,7 @@ export interface Moment {
   };
   quote: string;
 
-  // PharmaGuide flag (revealed on expand)
+  // PharmaGuide flag (revealed on expand, md+ only)
   flag: {
     name: string;
     severity: SeverityTier;
@@ -50,7 +58,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "chronic",
     category: "Daily routine",
-    title: "You take five things every morning. You don't remember why.",
+    title: { lead: "Make sense of", em: "your morning stack" },
     description:
       "Stacks grow over years. We help you audit what's still pulling its weight — and what's silently arguing with your meds.",
     learnMore: "Learn about stack audits",
@@ -79,7 +87,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "pregnancy",
     category: "Women's health",
-    title: "You're pregnant — and still taking your usual supplements.",
+    title: { lead: "Pregnancy and", em: "your usual supplements" },
     description:
       "Pregnancy changes which ingredients are safe and which aren't. PharmaGuide flags the ones that matter — with the trimester they matter in.",
     learnMore: "Learn about pregnancy safety",
@@ -108,7 +116,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "ssri",
     category: "Medication safety",
-    title: "You take an SSRI and add something “natural” for mood.",
+    title: { lead: "SSRIs meet", em: "natural mood support" },
     description:
       "Some herbal supplements interact with antidepressants. We surface the conflict before the bottle joins the routine.",
     learnMore: "Learn about SSRI interactions",
@@ -137,7 +145,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "stack",
     category: "Performance",
-    title: "You built the “perfect” supplement stack.",
+    title: { lead: "Build the", em: "right stack" },
     description:
       "More products can mean more overlap, timing conflicts, and diminishing returns. We help you see the stack as a system, not a list.",
     learnMore: "Learn about stack optimization",

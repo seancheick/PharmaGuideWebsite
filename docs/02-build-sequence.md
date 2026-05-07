@@ -231,14 +231,32 @@ The section teaches that duality.
 
 ---
 
-## 🔜 Phase 8 — Trust Block
+## 🔜 Phase 8 — Trust Block `(in progress)`
 
-- [ ] Create `src/components/sections/TrustBlock.tsx`
-- [ ] Headline: "Built to explain uncertainty — not hide it."
-- [ ] Subheadline
-- [ ] Three trust cards: Evidence-graded · AI-assisted Human-reviewed · Privacy-first
-- [ ] "What we don't do" — 4 restraint cards with ✕ symbol
-- [ ] Tiny freshness signal at bottom: "Catalog updated weekly · Interaction reviews added regularly"
+- [x] Create `src/components/sections/TrustBlock.tsx`
+- [x] Eyebrow: "How we think"
+- [x] Headline: "Built to explain uncertainty — / *not hide it.*"
+      (italic-serif punchline matches site rhythm)
+- [x] Subhead: "If evidence is weak, conflicting, or incomplete, we say so directly."
+- [x] Three trust cards (centered, 3 cols on md+):
+  - [x] "Evidence-graded." — strength of supporting evidence noted, even when missing
+  - [x] "AI-assisted. Human-reviewed." — clinician review for accuracy + safety
+  - [x] "Privacy is part of the architecture." — never sold, licensed, or shared
+  - [x] Card style: rounded-2xl + border + shadow-sm with serif italic title + body-sm body
+  - [x] Hover: shadow-sm → shadow-md (subtle)
+- [x] "What we don't do" restraint group:
+  - [x] Eyebrow: "What we don't do" (centered)
+  - [x] 4 restraint items in 2x2 (sm) → 1x4 (lg) grid
+  - [x] Custom ✕ SVG (not the unicode glyph) in muted color
+  - [x] bg-surface/40 + backdrop-blur-sm — visually lighter than trust cards
+  - [x] Statements: don't diagnose / don't replace clinician /
+        don't tell to stop meds / don't sell health data
+- [x] Freshness signal at bottom:
+  - [x] Pulsing severity-safe dot (animate-ping)
+  - [x] Mono caption: "Catalog updated weekly · Interaction reviews added regularly"
+- [x] No ambient decoration — restraint is the message
+- [x] All animation triggered via whileInView with staggered children
+- [ ] **User approves Phase 8** ← gating
 - [ ] Approve
 
 ---

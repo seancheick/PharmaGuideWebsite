@@ -82,9 +82,12 @@ and tracks one concern. Don't lose track — this file is the entry point.
 - [x] Count-up animation (0→89) + bar fill + reveal choreography
 - [ ] **User approves Phase 7** ← gating
 
-### Phase 8 — Trust Block
-- [ ] 3 trust cards + 4 restraint cards
-- [ ] Tiny freshness signal at bottom
+### Phase 8 — Trust Block `(in progress)`
+- [x] 3 trust cards (italic-serif titles, body-sm descriptions)
+- [x] 4 restraint cards ("What we don't do") with custom ✕ SVG
+- [x] Pulsing severity-safe freshness signal at bottom
+- [x] No ambient decoration — restraint is the message
+- [ ] **User approves Phase 8** ← gating
 
 ### Phase 9 — Final CTA
 - [ ] Email + optional supplements input form

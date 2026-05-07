@@ -155,7 +155,11 @@ export function RealLifeMoments() {
         role="list"
         aria-label="Real-life moments"
         className={cn(
-          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden px-[max(20px,calc((100vw-var(--container-max))/2+24px))] pb-6 pt-2 sm:gap-4 md:mt-16",
+          // Rail extends slightly past the container's 1280px max so 3.5 cards
+          // (3 fully visible + half peek of 4th) fit on wide viewports. The
+          // padding formula caps rail content at ~1440px wide; below that, it
+          // hugs the viewport with a 20px (mobile) / 32px (desktop) gutter.
+          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden px-[max(20px,calc((100vw-1440px)/2))] pb-6 pt-2 sm:gap-4 sm:px-[max(32px,calc((100vw-1440px)/2))] md:mt-16",
           "snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         )}
       >
@@ -260,13 +264,15 @@ const MomentCard = ({
       data-open={isOpen}
       className={cn(
         "group relative shrink-0 cursor-pointer snap-start overflow-hidden rounded-3xl bg-ink shadow-md",
-        // Compact widths — sized so 3 cards + peek of 4th fit on lg+ desktops:
-        //   78vw mobile (1 visible + peek), 340 sm, 320 md, 360 lg, 380 xl
-        "h-[440px] w-[78vw] sm:h-[480px] sm:w-[340px] md:h-[500px] md:w-[320px] lg:w-[360px] xl:w-[380px]",
+        // Compact widths/heights — slightly wider + taller per user feedback.
+        // Sized so ~3.5 cards (3 + half peek) fit at xl viewports thanks to
+        // the rail extending up to max-w-[1480px] (see rail wrapper below).
+        //   80vw × 480 mobile · 360 × 520 sm · 360 × 540 md · 380 × 560 lg · 400 × 580 xl
+        "h-[480px] w-[80vw] sm:h-[520px] sm:w-[360px] md:h-[540px] md:w-[360px] lg:h-[560px] lg:w-[380px] xl:h-[580px] xl:w-[400px]",
         "transition-[width,transform,box-shadow] duration-[700ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
-        // Open widths — 88vw mobile, then progressively wider on bigger screens
+        // Open widths — proportionally wider, height stays the same
         isOpen
-          ? "w-[88vw] cursor-default shadow-2xl sm:w-[560px] md:w-[640px] lg:w-[780px] xl:w-[820px]"
+          ? "w-[90vw] cursor-default shadow-2xl sm:w-[600px] md:w-[700px] lg:w-[860px] xl:w-[920px]"
           : "hover:-translate-y-1 hover:shadow-xl"
       )}
     >

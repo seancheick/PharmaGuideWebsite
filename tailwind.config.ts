@@ -18,8 +18,16 @@ const config: Config = {
         sm: "var(--container-padding-sm)",
         lg: "var(--container-padding-lg)",
       },
+      // Tailwind's container plugin requires each Tailwind breakpoint name
+      // declared explicitly — otherwise no max-width applies between them.
+      // We cap at --container-max (1280px) at every breakpoint, so the
+      // container is consistently 1280px wide centered with proper margins
+      // on any viewport ≥ sm.
       screens: {
-        DEFAULT: "var(--container-max)",
+        sm: "var(--container-max)",
+        md: "var(--container-max)",
+        lg: "var(--container-max)",
+        xl: "var(--container-max)",
         "2xl": "var(--container-max)",
       },
     },

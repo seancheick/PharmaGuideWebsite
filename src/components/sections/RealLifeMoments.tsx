@@ -156,7 +156,7 @@ export function RealLifeMoments() {
         role="list"
         aria-label="Real-life moments"
         className={cn(
-          "mt-12 flex gap-4 overflow-x-auto overflow-y-hidden px-[max(20px,calc((100vw-var(--container-max))/2+24px))] pb-6 pt-2 sm:gap-5 md:mt-16",
+          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden px-[max(20px,calc((100vw-var(--container-max))/2+24px))] pb-6 pt-2 sm:gap-4 md:mt-16",
           "snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         )}
       >
@@ -260,13 +260,14 @@ const MomentCard = ({
       onClick={handleCardClick}
       data-open={isOpen}
       className={cn(
-        "group relative shrink-0 cursor-pointer snap-start overflow-hidden rounded-3xl bg-ink shadow-lg",
-        // Compact widths: 78vw mobile → 320 tablet+
-        "h-[420px] w-[78vw] sm:h-[460px] sm:w-[340px]",
-        "transition-[width,height,transform,box-shadow] duration-[700ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
-        // Open widths: 90vw mobile → 92vw < 980 → 880 desktop
+        "group relative shrink-0 cursor-pointer snap-start overflow-hidden rounded-3xl bg-ink shadow-md",
+        // Compact widths — sized so 3 cards + peek of 4th fit on lg+ desktops:
+        //   78vw mobile (1 visible + peek), 340 sm, 320 md, 360 lg, 380 xl
+        "h-[440px] w-[78vw] sm:h-[480px] sm:w-[340px] md:h-[500px] md:w-[320px] lg:w-[360px] xl:w-[380px]",
+        "transition-[width,transform,box-shadow] duration-[700ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
+        // Open widths — 88vw mobile, then progressively wider on bigger screens
         isOpen
-          ? "w-[90vw] cursor-default shadow-2xl sm:w-[92vw] md:w-[min(880px,88vw)]"
+          ? "w-[88vw] cursor-default shadow-2xl sm:w-[560px] md:w-[640px] lg:w-[780px] xl:w-[820px]"
           : "hover:-translate-y-1 hover:shadow-xl"
       )}
     >
@@ -331,63 +332,37 @@ const MomentCard = ({
         </svg>
       </button>
 
-      {/* Title block — anchored at bottom-left.
-          On open, the WHOLE block translates up via Framer Motion `y` —
-          no font-size or scale change mid-animation, so the title stays
-          continuously readable. Description + Learn-more fade in below
-          with a delay after the title settles. */}
-      <motion.div
-        animate={{ y: isOpen ? "var(--moment-open-y)" : 0 }}
-        transition={{
-          duration: 0.7,
-          ease: [0.32, 0.72, 0.24, 1],
-        }}
-        style={
-          {
-            // Pixel offset where the title group sits when open — tuned per
-            // breakpoint via CSS var so the math stays in one place.
-            "--moment-open-y": "min(-30%, -160px)",
-          } as React.CSSProperties
-        }
-        className="absolute bottom-7 left-7 right-7 z-10 sm:bottom-8 sm:left-9 sm:right-9"
-      >
-        {/* Title — Oura-style: lead in regular serif + italic emphasis tail.
-            Stays the same size in closed and open states. */}
-        <h3
-          className={cn(
-            "max-w-[16ch] font-serif font-normal leading-[1.12] tracking-[-0.014em] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]",
-            // Single fluid size — clamped so it stays readable across cards
-            "text-[clamp(1.6rem,2.4vw,2.25rem)]",
-            // When open, allow more horizontal room
-            isOpen && "sm:max-w-[22ch]"
-          )}
-        >
-          {moment.title.lead}{" "}
-          <span className="italic">{moment.title.em}</span>
-        </h3>
-
-        {/* Description + Learn-more — fade in after title settles */}
+      {/* Bottom-left content stack — anchored at bottom, grows UPWARD when open.
+          The container is positioned at bottom-7 with flex-column. Description +
+          Learn-more (when present) appear FIRST in DOM, so they sit ABOVE the
+          title in the flex column. Title (last in DOM) is the bottom-most
+          element and stays exactly where the closed-state title was — no
+          translation, no size change. */}
+      <div className="absolute bottom-7 left-7 right-7 z-10 flex flex-col gap-5 sm:bottom-8 sm:left-9 sm:right-9">
+        {/* Description + Learn-more — appears above title when open.
+            Wide enough to show 2-3 lines but capped so it doesn't bleed past
+            the insights aside on desktop. */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
               key="detail"
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
+              exit={{ opacity: 0, y: 12 }}
               transition={{
                 duration: 0.42,
                 ease: [0.32, 0.72, 0.24, 1],
-                delay: 0.32,
+                delay: 0.18,
               }}
-              className="mt-5 max-w-[44ch]"
+              className="flex max-w-[36ch] flex-col gap-5"
             >
-              <p className="text-body-sm leading-relaxed text-white/85 drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
+              <p className="text-body-sm leading-relaxed text-white/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
                 {moment.description}
               </p>
               <a
                 href="#"
                 onClick={(e) => e.stopPropagation()}
-                className="mt-5 inline-flex items-center gap-2 rounded-pill bg-white/95 px-5 py-2.5 text-body-sm font-medium text-ink shadow-md transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-white"
+                className="inline-flex w-fit items-center gap-2 rounded-pill bg-white/95 px-5 py-2.5 text-body-sm font-medium text-ink shadow-md transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-white"
               >
                 {moment.learnMore}
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
@@ -403,7 +378,20 @@ const MomentCard = ({
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+
+        {/* Title — ALWAYS at bottom-left, identical position in closed AND
+            open states. No translate, no scale, no font-size change. */}
+        <h3
+          className={cn(
+            "max-w-[15ch] font-serif font-normal leading-[1.12] tracking-[-0.014em] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]",
+            "text-[clamp(1.5rem,2.2vw,2rem)]",
+            isOpen && "sm:max-w-[20ch]"
+          )}
+        >
+          {moment.title.lead}{" "}
+          <span className="italic">{moment.title.em}</span>
+        </h3>
+      </div>
 
       {/* Insights aside — slides in from right when open. md+ only.
           Two glass cards: member quote + PharmaGuide flag. */}
@@ -419,7 +407,7 @@ const MomentCard = ({
               ease: [0.32, 0.72, 0.24, 1],
               delay: 0.4,
             }}
-            className="absolute right-7 top-1/2 z-10 hidden w-[300px] -translate-y-1/2 flex-col gap-3 md:flex lg:w-[320px]"
+            className="absolute right-7 top-7 z-10 hidden w-[260px] flex-col gap-3 md:flex lg:w-[280px]"
           >
             {/* Member quote */}
             <div className="rounded-2xl border border-white/15 bg-ink/55 p-4 text-white shadow-md backdrop-blur-md sm:p-5">

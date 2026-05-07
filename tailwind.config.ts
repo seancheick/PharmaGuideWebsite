@@ -149,11 +149,16 @@ const config: Config = {
           "0%": { opacity: "0", transform: "scale(0.96)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
+        "cursor-blink": {
+          "0%, 50%": { opacity: "1" },
+          "50.01%, 100%": { opacity: "0" },
+        },
       },
       animation: {
         "fade-up": "fade-up var(--duration-slower) var(--ease-emphasized) both",
         "fade-in": "fade-in var(--duration-slow) var(--ease-smooth) both",
         "scale-in": "scale-in var(--duration-slower) var(--ease-emphasized) both",
+        "cursor-blink": "cursor-blink 1s infinite step-end",
       },
     },
   },

@@ -76,9 +76,66 @@
   is enough; full trap deferred to Phase 11 a11y audit)
 
 **Open:**
-- Awaiting Phase 1 approval
 - Anchor `#waitlist` not yet present — currently links to nothing. Will resolve
   once Final CTA section ships in Phase 9.
+
+---
+
+## 2026-05-07 — Phase 2 (Hero) shipped
+
+**What shipped:**
+- `src/components/sections/Hero.tsx` — server-rendered hero
+  - Two-column 1.05fr/1fr (copy slightly wider) on `md:`, stacked on mobile
+  - Halo gradient backdrop via `halo-hero` utility
+  - Padding-top 8rem mobile / 10rem desktop (clears the floating header)
+  - Eyebrow + headline + subhead + trust row + dual CTA stack
+  - Headline: line 1 in `text-ink`, line 2 in `text-muted` for visual rhythm
+  - Trust row: tabular nums on "180,000+" with token-driven separators
+  - Primary CTA: pill button with `hover:shadow-glow` (uses new accent token)
+  - Secondary CTA: text link with arrow that translates down on hover
+  - CSS-driven entrance: `animate-fade-up` with arbitrary `[animation-delay:Xms]`
+    for stagger (eyebrow → headline → subhead → trust → CTAs → phone)
+- `src/components/hero/PhoneMockup.tsx` — client component
+  - rounded-[3rem] ink bezel, 9:19 aspect ratio
+  - Bezel highlight gradient + inner ring for depth
+  - Dynamic-island-style notch
+  - 6s `easeInOut` Y oscillation (motion)
+  - Tilt `2.5deg` desktop only — wrapped to avoid transform conflict with motion
+  - Width responsive: 280 → 300 → 320px
+- `src/components/hero/AppUILoop.tsx` — client component
+  - Status bar (9:41 in mono, signal dots, battery svg)
+  - App header (back arrow + "Add to stack")
+  - Search bar with state-driven typewriter (`setSearchText` per char)
+  - Cursor (vertical bar, blinking via new `animate-cursor-blink` keyframe)
+  - Search result card slides in (AnimatePresence + transitions.reveal)
+  - Stack section: outer AnimatePresence for section, inner for items
+  - Items use `layout` prop for smooth re-flow when added
+  - Interaction card: springs up from bottom (y: "110%" → 0, transitions.spring)
+    with severity-monitor pill, recommendation, evidence
+  - Loop cycle: ~9s, restarts cleanly via `cancelled` flag pattern
+  - `useReducedMotion` → snapshot of final state, no timers
+- `tailwind.config.ts`:
+  - Added `cursor-blink` keyframe (50/50 step-end, 1s infinite)
+- `src/app/page.tsx`:
+  - Hero mounted above TokenPreview
+  - `#problem` anchor stub keeps secondary CTA functional pre-Phase-4
+
+**Decisions made:**
+- Server-rendered Hero copy + client-rendered PhoneMockup separation —
+  optimal LCP without sacrificing animation polish
+- Loop cycle ~9s (not the 6-8s originally specced) — needed time for typing
+  to feel deliberate without rushing. Premium > efficient.
+- Headline line 2 muted (`text-muted`) for editorial rhythm, not solid weight
+- Stack items show name + dose to feel like a real app, not a mockup
+- No FaceID/camera detail in the notch — Dynamic Island pill is sufficient
+- All in-phone text uses fixed `text-[Xpx]` arbitrary sizes — these are
+  app-screen sizes, not site typography, so they shouldn't grow with the
+  fluid scale
+
+**Open:**
+- Awaiting Phase 2 approval
+- Phone tilt `2.5deg` could be tuned to taste
+- Loop timing could be faster/slower based on user preference
 
 ---
 

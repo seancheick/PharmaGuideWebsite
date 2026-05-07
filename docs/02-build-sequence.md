@@ -56,31 +56,37 @@
 
 **Goal:** Two-column layout with animated app UI loop (no video — live React).
 
-- [ ] Create `src/components/sections/Hero.tsx`
-- [ ] Two-column layout (50/50 desktop, stacked mobile)
-- [ ] Eyebrow: "The interaction layer for your stack"
-- [ ] Headline: "Your supplements don't work in isolation. / Neither should your check."
-- [ ] Subheadline: "See how your supplements, medications, and timing work together — not one bottle at a time."
-- [ ] Trust row: "180,000+ products · Evidence-graded · On-device"
-- [ ] Primary CTA: "Join Beta →"
-- [ ] Secondary CTA: "Why interactions matter ↓" (anchors to Problem)
-- [ ] Phone mockup component (`src/components/hero/PhoneMockup.tsx`)
-  - [ ] Realistic device frame
-  - [ ] Slight tilt (~3°)
-  - [ ] Shadow-lg
-  - [ ] Floating animation (4s loop, 6px vertical)
-- [ ] Animated app UI loop (`src/components/hero/AppUILoop.tsx`)
-  - [ ] Search bar with typing animation: "magnesium"
-  - [ ] Result card appears
-  - [ ] Second search: "levothyroxine"
-  - [ ] Interaction card slides up with spring animation
-  - [ ] Verdict pill: Monitor
-  - [ ] Recommendation: Separate by 4 hours
-  - [ ] Evidence: Moderate
-  - [ ] Loop seamlessly (8s cycle)
-  - [ ] Respect `prefers-reduced-motion`
-- [ ] Hero halo gradient backdrop
-- [ ] Approve
+- [x] Create `src/components/sections/Hero.tsx`
+- [x] Two-column layout (1.05fr/1fr desktop, stacked mobile)
+- [x] Eyebrow: "The interaction layer for your stack"
+- [x] Headline: "Your supplements don't work in isolation. / Neither should your check."
+- [x] Subheadline: "See how your supplements, medications, and timing work together — not one bottle at a time."
+- [x] Trust row: "180,000+ · Evidence-graded · On-device"
+- [x] Primary CTA: "Request Access →"
+- [x] Secondary CTA: "Why interactions matter ↓" (anchors to #problem)
+- [x] CSS-driven fade-up stagger (eyebrow → headline → subhead → trust → CTAs → phone)
+- [x] Phone mockup component (`src/components/hero/PhoneMockup.tsx`)
+  - [x] Realistic device frame (rounded-[3rem] bezel, dynamic island)
+  - [x] Slight tilt (`md:rotate-[2.5deg]`) — desktop only
+  - [x] Shadow-2xl
+  - [x] Floating animation (6s loop, 8px Y oscillation, easeInOut)
+- [x] Animated app UI loop (`src/components/hero/AppUILoop.tsx`)
+  - [x] Status bar (9:41, signal dots, battery)
+  - [x] App header (back arrow + "Add to stack")
+  - [x] Search bar with typewriter animation: "magnesium" (75ms/char)
+  - [x] Cursor-blink keyframe added to tailwind config
+  - [x] Result card slides in with `transitions.reveal`
+  - [x] Stack section appears with stagger; items use `layout` for smooth re-flow
+  - [x] Second search: "levothyroxine" (60ms/char)
+  - [x] Interaction card springs up from bottom (transitions.spring)
+  - [x] Verdict pill: Monitor (severity-monitor token)
+  - [x] Recommendation: Separate by 4 hours
+  - [x] Evidence: Moderate
+  - [x] Loop restarts cleanly (~9s cycle)
+  - [x] Respects `prefers-reduced-motion` (snapshot of final state, no timers)
+- [x] Hero halo gradient backdrop (`halo-hero` utility)
+- [x] Anchor stub for `#problem` mounted in page.tsx until Phase 4 ships
+- [ ] **User approves Phase 2** ← gating
 
 ---
 

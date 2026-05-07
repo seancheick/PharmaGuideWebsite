@@ -30,17 +30,20 @@ and tracks one concern. Don't lose track — this file is the entry point.
 - [x] Token preview page (`/`)
 - [x] **User approved design system** (with refinements: accent → #183B3F, surface-subtle → #F4F2EE, severity-safe → #3F6250)
 
-### Phase 1 — Header `(in progress)`
+### Phase 1 — Header
 - [x] Floating glass pill header with smart show/hide on scroll
 - [x] Mobile hamburger overlay (Esc + backdrop close, scroll-lock, focus return)
 - [x] Skip-to-content link (already in layout)
 - [x] CTA: "Request Access"
-- [ ] **User approves Phase 1** ← gating
+- [x] **User approved Phase 1**
 
-### Phase 2 — Hero
-- [ ] Two-column layout (copy left, animated phone right)
-- [ ] Animated app UI loop (Framer Motion, infinite, no video)
-- [ ] CTA buttons + trust row
+### Phase 2 — Hero `(in progress)`
+- [x] Two-column layout (copy left, animated phone right)
+- [x] Animated app UI loop (Framer Motion, ~9s cycle, no video)
+- [x] CTA buttons + trust row + secondary "Why interactions matter ↓"
+- [x] Phone mockup with subtle tilt + 6s float
+- [x] Cursor-blink keyframe added to Tailwind config
+- [ ] **User approves Phase 2** ← gating
 
 ### Phase 3 — Infrastructure Strip
 - [ ] Single-line dot-separated row under hero

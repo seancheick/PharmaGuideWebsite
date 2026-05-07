@@ -30,11 +30,11 @@ export function InfrastructureStrip() {
         className="container mx-auto py-6 sm:py-7"
       >
         <p className="flex flex-col items-center gap-2 text-center font-mono text-eyebrow font-medium uppercase tracking-[var(--ls-eyebrow)] text-muted sm:flex-row sm:justify-center sm:gap-0">
-          <span>Cross-referenced catalog</span>
+          <span>Evidence-graded interactions</span>
           <span aria-hidden="true" className="hidden text-border-strong sm:mx-4 sm:inline">
             ·
           </span>
-          <span>Evidence-graded</span>
+          <span>Clinician-informed review</span>
           <span aria-hidden="true" className="hidden text-border-strong sm:mx-4 sm:inline">
             ·
           </span>

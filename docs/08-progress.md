@@ -181,6 +181,46 @@ branded the mockup, surfaced personalization, added depth.
 - whileInView once-only — strip enters viewport ~1 scroll-tick after hero,
   so it should feel like a quiet reveal, not a re-trigger
 
+**Note:** User revised the strip copy after approval to:
+"Evidence-graded interactions · Clinician-informed review · Privacy-first architecture"
+(was: "Cross-referenced catalog · Evidence-graded · Privacy-first architecture").
+docs/03-content-spec.md updated to match.
+
+---
+
+## 2026-05-07 — Phase 4 (Problem) shipped
+
+**What shipped:**
+- `src/components/sections/Problem.tsx`
+- Pure-typography section, no cards / icons / decoration
+- Eyebrow: "The problem" (mono uppercase, muted)
+- Headline: "A label tells you what's in the bottle. / Not what happens with
+  your other bottles." (display-lg, line 2 in muted — same rhythm as hero)
+- Three statements, text-only, `text-h3` size, `text-muted` color:
+  - Googling "X with Y" gives you conflicting answers.
+  - Most apps check one product. You take a stack.
+  - Timing can change how something works.
+- 3-column grid on desktop (gap-10/14), stacked on mobile
+- `text-balance` on statements + thesis for editorial line breaks
+- Closing thesis (font-serif italic, display-md, ink, centered):
+  "Because interactions happen between products — not in isolation."
+- Three independent scroll-triggered groups for natural pacing:
+  - Block 1 (eyebrow + headline): viewport `-15%`, fadeUpContainer stagger
+  - Block 2 (statements): viewport `-12%`, custom 120ms staggerChildren
+  - Block 3 (thesis): viewport `-20%`, opacity + y + scale 0.97 → 1
+- Section uses `id="problem"` so the Hero secondary CTA scrolls here
+- Anchor stub removed from page.tsx
+
+**Decisions made:**
+- Three separate scroll triggers (not one big container) so each block lands
+  deliberately as the reader scrolls past it. Single container caused thesis
+  to appear before statements finished staggering.
+- Custom 120ms stagger for the statements (vs default 80ms) so each one is
+  read before the next arrives. Pacing trumps efficiency here.
+- Thesis gets a slight scale-up (0.97 → 1) on top of opacity+y to signal
+  importance without being showy. Italic serif carries the weight.
+- "Smart quotes" used in copy ("X with Y") for editorial polish.
+
 ---
 
 <!-- Append new entries above this line as phases complete -->

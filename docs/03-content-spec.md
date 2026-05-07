@@ -63,7 +63,7 @@ Step 4: Hold for 1.5s, fade, restart.
 ## Infrastructure Strip
 
 ```
-Cross-referenced catalog · Evidence-graded · Privacy-first architecture
+Evidence-graded interactions · Clinician-informed review · Privacy-first architecture
 ```
 
 ---

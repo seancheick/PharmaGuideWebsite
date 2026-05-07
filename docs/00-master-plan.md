@@ -52,10 +52,13 @@ and tracks one concern. Don't lose track — this file is the entry point.
 - [x] Subtle divider band with three platform claims
 - [x] Mono uppercase eyebrow type, dot separators on tablet+
 - [x] `whileInView` opacity fade
-- [ ] **User approves Phase 3** ← gating
+- [x] **User approved Phase 3** (with copy revision)
 
-### Phase 4 — Problem
-- [ ] Headline + 3 supporting statements + closing thesis
+### Phase 4 — Problem `(in progress)`
+- [x] Headline + 3 supporting statements + italic-serif closing thesis
+- [x] Three independent scroll-triggered groups
+- [x] `id="problem"` wired to Hero secondary CTA
+- [ ] **User approves Phase 4** ← gating
 
 ### Phase 5 — Interaction Ladder
 - [ ] 5-tier severity row + featured example card

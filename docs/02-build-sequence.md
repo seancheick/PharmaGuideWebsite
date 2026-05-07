@@ -107,15 +107,23 @@
 
 ## 🔜 Phase 4 — Problem
 
-- [ ] Create `src/components/sections/Problem.tsx`
-- [ ] Headline: "A label tells you what's in the bottle. Not what happens with your other bottles."
-- [ ] Three statements (text-only, not cards):
-  1. "Googling 'X with Y' gives you conflicting answers."
-  2. "Most apps check one product. You take a stack."
-  3. "Timing can change how something works."
-- [ ] Closing thesis (italic serif): "Because interactions happen between products — not in isolation."
-- [ ] Stagger entrance on scroll
-- [ ] Approve
+- [x] Create `src/components/sections/Problem.tsx`
+- [x] Eyebrow: "The problem"
+- [x] Headline: "A label tells you what's in the bottle. / Not what happens with your other bottles."
+- [x] Headline line 2 muted (matches hero rhythm)
+- [x] Three statements (text-only, NOT cards), `text-h3` size, `text-muted`:
+  - "Googling 'X with Y' gives you conflicting answers."
+  - "Most apps check one product. You take a stack."
+  - "Timing can change how something works."
+- [x] 3-column grid on desktop, stacked on mobile, `text-balance`
+- [x] Three independent scroll-triggered groups:
+  - Block 1 (eyebrow + headline): viewport `-15%`, `fadeUpContainer` stagger
+  - Block 2 (statements): viewport `-12%`, custom 120ms stagger left-to-right
+  - Block 3 (thesis): viewport `-20%`, slight scale-up entrance
+- [x] Closing thesis: `font-serif italic`, `text-display-md`, ink color, centered
+- [x] Section uses `id="problem"` so the Hero secondary CTA scrolls here
+- [x] Anchor stub removed from page.tsx
+- [ ] **User approves Phase 4** ← gating
 
 ---
 

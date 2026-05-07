@@ -1,169 +1,143 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
-import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { fadeUpContainer, fadeUpItem } from "@/lib/tokens";
+import { MOMENTS, type Moment, type SeverityTier } from "@/lib/moments";
 import { cn } from "@/lib/utils";
 
 /**
- * Real-Life Moments — four scenarios where supplement decisions get harder.
+ * Real-Life Moments — Oura-style horizontal carousel.
  *
- * 2x2 grid on desktop, single column on mobile. Each card has a subtle
- * tinted gradient + ambient capsule decoration for character (no stock
- * photography in V1 — typography and gradient field do the work).
+ * Each card is a 300×440 portrait scene with a full-bleed image, frosted
+ * glass category pill, plus button (top-right, rotates 45° to close), and
+ * a serif title at the bottom. Click anywhere on a compact card to open it
+ * — the card expands inline (~880px wide) and reveals two insight panels
+ * on the right: a member spotlight quote, and a PharmaGuide flag detail
+ * with severity color, mechanism, and meta row.
  *
- * Tap any card → it expands inline with a height accordion, revealing:
- *   • Body context
- *   • "What we check" — bulleted list of analyses
- *   • "Example flag" — chip showing the severity tier in PharmaGuide voice
+ * Controls: prev/next arrows, scroll progress bar, ESC to close.
  *
- * Severity colors land here through the example flags (different tier per
- * card), reinforcing the system established in the Ladder.
- *
- * Card order is intentional: chronic-conditions (highest LTV early adopter)
- * leads, then pregnancy, then SSRI, then stack optimizer.
+ * Image strategy: Unsplash placeholder URLs in V1. Swap to Cloudinary URLs
+ * by editing src/lib/moments.ts. See `images.json` at repo root for the AI
+ * generation prompts.
  */
-
-type SeverityTier = "monitor" | "caution" | "avoid" | "safe" | "contraindicated";
-
-interface Moment {
-  id: string;
-  category: string;
-  title: string;
-  body: string;
-  checks: readonly string[];
-  flag: { text: string; tier: SeverityTier; detail?: string };
-  bgGradient: string;
-}
-
-const MOMENTS: readonly Moment[] = [
-  {
-    id: "chronic",
-    category: "Chronic / daily routine",
-    title: "You manage medications and take supplements every day.",
-    body: "If you take metformin, statins, thyroid medication, blood pressure medication, or blood thinners, your supplement routine may need extra context.",
-    checks: [
-      "Drug-supplement interactions",
-      "Timing conflicts across the day",
-      "Dosage concerns and overlap",
-    ],
-    flag: {
-      text: "Magnesium ↔ Levothyroxine",
-      tier: "monitor",
-      detail: "Separate by 4 hours.",
-    },
-    bgGradient:
-      "linear-gradient(135deg, rgb(248 246 240) 0%, rgb(230 234 234) 100%)",
-  },
-  {
-    id: "pregnancy",
-    category: "Pregnancy",
-    title: "You're pregnant — and still taking your usual supplements.",
-    body: "Some ingredients that are normally safe may need review during pregnancy, including high-dose vitamin A and certain herbal extracts.",
-    checks: [
-      "Pregnancy-related ingredient risks",
-      "Dosage thresholds",
-      "Trimester-specific guidance",
-    ],
-    flag: {
-      text: "High-dose Vitamin A",
-      tier: "caution",
-      detail: "Above 10,000 IU may need review.",
-    },
-    bgGradient:
-      "linear-gradient(135deg, rgb(250 246 240) 0%, rgb(240 232 224) 100%)",
-  },
-  {
-    id: "ssri",
-    category: "Mood / SSRI",
-    title: "You take an SSRI and add something “natural” for mood.",
-    body: "Some herbal supplements — like St. John's Wort — can interact with antidepressants and increase safety concerns.",
-    checks: [
-      "Drug-herb interactions",
-      "Serotonin-related risks",
-      "Mechanism context for each pair",
-    ],
-    flag: {
-      text: "St. John's Wort + SSRI",
-      tier: "avoid",
-      detail: "Strong reason to separate.",
-    },
-    bgGradient:
-      "linear-gradient(135deg, rgb(244 244 248) 0%, rgb(228 232 240) 100%)",
-  },
-  {
-    id: "stack",
-    category: "Stack optimizer",
-    title: "You built the “perfect” supplement stack.",
-    body: "More products can mean more overlap, timing conflicts, and diminishing returns. We help you see the stack as a system, not as a list.",
-    checks: [
-      "Ingredient overlap and redundancy",
-      "Timing conflicts within the stack",
-      "Stack-level FitScore insights",
-    ],
-    flag: {
-      text: "Multiple magnesium sources detected",
-      tier: "monitor",
-      detail: "Redundancy review suggested.",
-    },
-    bgGradient:
-      "linear-gradient(135deg, rgb(246 244 240) 0%, rgb(232 234 230) 100%)",
-  },
-];
 
 const SEV_STYLES: Record<
   SeverityTier,
-  { dot: string; text: string; chipBg: string; label: string }
+  { dot: string; text: string; chipBg: string }
 > = {
   monitor: {
     dot: "bg-severity-monitor",
     text: "text-severity-monitor",
-    chipBg: "bg-severity-monitor/10",
-    label: "Monitor",
+    chipBg: "bg-severity-monitor/15",
   },
   caution: {
     dot: "bg-severity-caution",
     text: "text-severity-caution",
-    chipBg: "bg-severity-caution/10",
-    label: "Caution",
+    chipBg: "bg-severity-caution/15",
   },
   avoid: {
     dot: "bg-severity-avoid",
     text: "text-severity-avoid",
-    chipBg: "bg-severity-avoid/10",
-    label: "Avoid",
+    chipBg: "bg-severity-avoid/15",
   },
   safe: {
     dot: "bg-severity-safe",
     text: "text-severity-safe",
-    chipBg: "bg-severity-safe/10",
-    label: "Safe",
+    chipBg: "bg-severity-safe/15",
   },
   contraindicated: {
     dot: "bg-severity-contraindicated",
     text: "text-severity-contraindicated",
-    chipBg: "bg-severity-contraindicated/10",
-    label: "Contraindicated",
+    chipBg: "bg-severity-contraindicated/15",
   },
 };
 
 export function RealLifeMoments() {
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [openIdx, setOpenIdx] = useState<number>(-1);
+  const [progress, setProgress] = useState({ width: 30, left: 0 });
+  const railRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Array<HTMLElement | null>>([]);
+
+  const updateProgress = useCallback(() => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const max = rail.scrollWidth - rail.clientWidth;
+    const pct = max > 0 ? rail.scrollLeft / max : 0;
+    const w = Math.max(15, (rail.clientWidth / rail.scrollWidth) * 100);
+    setProgress({ width: w, left: pct * (100 - w) });
+  }, []);
+
+  // Esc closes
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && openIdx >= 0) setOpenIdx(-1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [openIdx]);
+
+  // When a card opens, scroll it gently into view
+  useEffect(() => {
+    if (openIdx < 0) return;
+    const card = cardRefs.current[openIdx];
+    const rail = railRef.current;
+    if (!card || !rail) return;
+    requestAnimationFrame(() => {
+      const rect = card.getBoundingClientRect();
+      const railRect = rail.getBoundingClientRect();
+      if (rect.right > railRect.right - 24) {
+        rail.scrollBy({
+          left: rect.right - railRect.right + 40,
+          behavior: "smooth",
+        });
+      } else if (rect.left < railRect.left + 24) {
+        rail.scrollBy({
+          left: rect.left - railRect.left - 40,
+          behavior: "smooth",
+        });
+      }
+      updateProgress();
+    });
+  }, [openIdx, updateProgress]);
+
+  // Update progress on scroll/resize/mount
+  useEffect(() => {
+    updateProgress();
+    const rail = railRef.current;
+    if (!rail) return;
+    rail.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+    return () => {
+      rail.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
+    };
+  }, [updateProgress]);
+
+  const scrollByPage = (dir: 1 | -1) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    if (openIdx >= 0) setOpenIdx(-1);
+    const step = Math.round(rail.clientWidth * 0.7);
+    rail.scrollBy({ left: dir * step, behavior: "smooth" });
+  };
 
   return (
     <section
       id="real-life-moments"
       aria-labelledby="moments-heading"
-      className="relative section-y"
+      className="relative bg-surface-subtle py-section-y"
     >
-      <div className="container relative mx-auto">
-        {/* Header */}
+      {/* Header */}
+      <div className="container mx-auto">
         <motion.div
           variants={fadeUpContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
-          className="mx-auto flex max-w-3xl flex-col items-center gap-7 text-center md:gap-9"
+          className="max-w-3xl"
         >
           <motion.p
             variants={fadeUpItem}
@@ -175,7 +149,7 @@ export function RealLifeMoments() {
           <motion.h2
             id="moments-heading"
             variants={fadeUpItem}
-            className="text-display-lg text-ink"
+            className="mt-5 text-balance text-display-lg text-ink"
           >
             The moments people don&apos;t realize
             <br />
@@ -184,226 +158,322 @@ export function RealLifeMoments() {
 
           <motion.p
             variants={fadeUpItem}
-            className="max-w-prose text-body-xl text-muted"
+            className="mt-6 max-w-prose text-body-lg leading-relaxed text-muted"
           >
-            Many risks come from combinations, timing, or situations people
-            assume are harmless.{" "}
-            <span className="text-foreground/70">
-              Tap any moment to see what we check.
-            </span>
+            PharmaGuide helps you catch risks, avoid conflicts, and make smarter
+            decisions before you take your next dose.
           </motion.p>
         </motion.div>
+      </div>
 
-        {/* Moments grid */}
-        <div className="mx-auto mt-16 grid max-w-6xl items-start gap-5 md:mt-20 md:grid-cols-2 md:gap-6">
-          {MOMENTS.map((moment, i) => (
-            <MomentCard
-              key={moment.id}
-              moment={moment}
-              isActive={activeId === moment.id}
-              index={i}
-              onToggle={() =>
-                setActiveId(activeId === moment.id ? null : moment.id)
-              }
+      {/* Carousel rail */}
+      <div
+        ref={railRef}
+        role="list"
+        aria-label="Real-life moments"
+        className={cn(
+          "mt-12 flex gap-4 overflow-x-auto overflow-y-hidden px-[max(20px,calc((100vw-var(--container-max))/2+24px))] pb-6 pt-2 sm:gap-5 md:mt-16",
+          "snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        )}
+      >
+        {MOMENTS.map((moment, i) => (
+          <MomentCard
+            key={moment.id}
+            ref={(el) => {
+              cardRefs.current[i] = el;
+            }}
+            moment={moment}
+            isOpen={openIdx === i}
+            onOpen={() => setOpenIdx(i)}
+            onClose={() => setOpenIdx(-1)}
+          />
+        ))}
+      </div>
+
+      {/* Controls — prev/next + progress bar */}
+      <div className="container mx-auto mt-6">
+        <div className="flex items-center gap-4">
+          {/* Progress track */}
+          <div
+            className="relative h-[3px] flex-1 overflow-hidden rounded-full bg-border"
+            aria-hidden="true"
+          >
+            <div
+              className="absolute top-0 h-full rounded-full bg-foreground/60 transition-[left,width] duration-slow ease-smooth"
+              style={{
+                width: `${progress.width}%`,
+                left: `${progress.left}%`,
+              }}
             />
-          ))}
+          </div>
+
+          {/* Arrows */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => scrollByPage(-1)}
+              aria-label="Previous moments"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-ink shadow-xs transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-surface-raised hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M10 3l-5 5 5 5"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollByPage(1)}
+              aria-label="Next moments"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-ink shadow-xs transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-surface-raised hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M6 3l5 5-5 5"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function MomentCard({
-  moment,
-  isActive,
-  index,
-  onToggle,
-}: {
+interface CardProps {
   moment: Moment;
-  isActive: boolean;
-  index: number;
-  onToggle: () => void;
-}) {
-  const sev = SEV_STYLES[moment.flag.tier];
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+}
+
+const MomentCard = ({
+  ref,
+  moment,
+  isOpen,
+  onOpen,
+  onClose,
+}: CardProps & { ref: React.Ref<HTMLElement> }) => {
+  const sev = SEV_STYLES[moment.flag.severity];
+
+  const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
+    if (isOpen) {
+      // Only the plus/close button closes the open card
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-close]")) {
+        onClose();
+      }
+      return;
+    }
+    onOpen();
+  };
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
-      transition={{
-        ...transitions.reveal,
-        delay: 0.05 + index * 0.08,
-      }}
+    <article
+      ref={ref}
+      role="listitem"
+      onClick={handleClick}
+      data-open={isOpen}
       className={cn(
-        "relative overflow-hidden rounded-2xl border transition-[border-color,box-shadow,transform] duration-fast ease-smooth",
-        isActive
-          ? "border-border-strong shadow-lg"
-          : "border-border shadow-sm hover:-translate-y-0.5 hover:border-border-strong/70 hover:shadow-md"
+        "group relative shrink-0 cursor-pointer snap-start overflow-hidden rounded-3xl bg-ink shadow-lg",
+        // Compact widths: 78vw mobile → 300/320 tablet+
+        "h-[380px] w-[78vw] sm:h-[440px] sm:w-[320px]",
+        "transition-[width,transform,box-shadow] duration-[700ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
+        // Open widths: 90vw mobile, 92vw < 980, 880px desktop
+        isOpen
+          ? "w-[90vw] cursor-default shadow-2xl sm:w-[92vw] md:w-[min(880px,88vw)]"
+          : "hover:-translate-y-1 hover:shadow-xl"
       )}
-      style={{ background: moment.bgGradient }}
     >
-      {/* Ambient capsule decoration — character without stock photography */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute"
-        style={{
-          top: index % 2 === 0 ? "-30px" : "auto",
-          bottom: index % 2 === 1 ? "-30px" : "auto",
-          right: index < 2 ? "-100px" : "auto",
-          left: index >= 2 ? "-80px" : "auto",
-          width: "260px",
-          height: "70px",
-          borderRadius: "9999px",
-          background: "rgb(24 59 63 / 0.05)",
-          filter: "blur(40px)",
-          transform: index % 2 === 0 ? "rotate(-10deg)" : "rotate(8deg)",
-        }}
-      />
+      {/* Background image */}
+      <div className="absolute inset-0 overflow-hidden">
+        <Image
+          src={moment.image}
+          alt={moment.imageAlt}
+          fill
+          sizes="(max-width: 640px) 90vw, (max-width: 980px) 92vw, 880px"
+          priority={moment.id === "chronic"}
+          className={cn(
+            "object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]",
+            isOpen ? "scale-[1.12]" : "scale-100 group-hover:scale-105"
+          )}
+        />
+        {/* Dark gradient overlay (bottom-heavy, like Oura) */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, transparent 32%, transparent 50%, rgba(8,12,14,0.55) 82%, rgba(8,12,14,0.85) 100%)",
+          }}
+        />
+      </div>
 
-      {/* Header — clickable to toggle */}
+      {/* Frosted-glass category pill */}
+      <span className="pointer-events-none absolute left-5 top-5 z-10 inline-flex items-center gap-2 rounded-pill border border-white/25 bg-white/15 px-3.5 py-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-white shadow-sm backdrop-blur-md">
+        <span className="block h-1 w-1 rounded-full bg-white/70" />
+        {moment.category}
+      </span>
+
+      {/* Plus / close button */}
       <button
         type="button"
-        onClick={onToggle}
-        aria-expanded={isActive}
-        aria-controls={`moment-detail-${moment.id}`}
-        className="group relative block w-full p-7 text-left focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-accent sm:p-8 md:p-10"
+        data-close
+        aria-label={isOpen ? "Close moment" : "Open moment"}
+        aria-expanded={isOpen}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (isOpen) onClose();
+          else onOpen();
+        }}
+        className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-ink shadow-md transition-transform duration-[500ms] ease-[cubic-bezier(0.32,0.72,0.24,1)] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
       >
-        <p
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 16 16"
+          fill="none"
           className={cn(
-            "font-mono text-eyebrow font-medium uppercase tracking-[0.12em]",
-            isActive ? "text-foreground/80" : "text-foreground/65"
+            "transition-transform duration-[500ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
+            isOpen && "rotate-45"
           )}
         >
-          {moment.category}
-        </p>
+          <path
+            d="M8 3v10M3 8h10"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
 
-        <h3 className="mt-3 text-h2 font-medium leading-tight text-ink">
+      {/* Title block — bottom-left compact, slides up + grows on open */}
+      <div
+        className={cn(
+          "absolute z-10 transition-all duration-[700ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
+          isOpen
+            ? "bottom-11 left-11 right-auto max-w-[26ch]"
+            : "bottom-6 left-6 right-6 max-w-[16ch]"
+        )}
+      >
+        <h3
+          className={cn(
+            "text-balance font-serif font-normal leading-[1.18] tracking-[-0.014em] text-white transition-all duration-[700ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
+            isOpen ? "text-display-sm" : "text-h3"
+          )}
+        >
           {moment.title}
         </h3>
 
-        {/* Read-more hint when collapsed */}
-        <AnimatePresence initial={false}>
-          {!isActive && (
-            <motion.div
-              key="hint"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="mt-5 flex items-center gap-1.5 text-body-sm text-muted"
-            >
-              <span>Read more</span>
-              <span
-                aria-hidden="true"
-                className="transition-transform duration-fast ease-smooth group-hover:translate-x-0.5"
-              >
-                →
-              </span>
-            </motion.div>
+        {/* Sub-copy + Learn CTA — only visible when open */}
+        <div
+          className={cn(
+            "mt-4 max-w-[44ch] transition-all delay-200 duration-[540ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
+            isOpen
+              ? "translate-y-0 opacity-100"
+              : "pointer-events-none translate-y-2 opacity-0"
           )}
-        </AnimatePresence>
-      </button>
-
-      {/* Expanded content — height accordion */}
-      <AnimatePresence initial={false}>
-        {isActive && (
-          <motion.div
-            key="detail"
-            id={`moment-detail-${moment.id}`}
-            initial="collapsed"
-            animate="open"
-            exit="collapsed"
-            variants={{
-              open: { opacity: 1, height: "auto" },
-              collapsed: { opacity: 0, height: 0 },
-            }}
-            transition={{ duration: 0.42, ease: [0.32, 0.72, 0, 1] }}
-            style={{ overflow: "hidden" }}
-            className="relative"
+        >
+          <p className="text-body-sm leading-relaxed text-white/85">
+            {moment.description}
+          </p>
+          <a
+            href="#"
+            className="mt-5 inline-flex items-center gap-2 rounded-pill bg-white/95 px-5 py-2.5 text-body-sm font-medium text-ink shadow-md transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-white"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="space-y-5 px-7 pb-7 sm:px-8 sm:pb-8 md:px-10 md:pb-10">
-              <p className="text-body-lg leading-relaxed text-muted">
-                {moment.body}
-              </p>
+            {moment.learnMore}
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M3 8h10M9 4l4 4-4 4"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
 
-              {/* What we check */}
-              <div className="rounded-xl border border-border/70 bg-surface/70 p-4 backdrop-blur-sm sm:p-5">
-                <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.1em] text-subtle">
-                  What we check
-                </p>
-                <ul className="mt-3 space-y-2">
-                  {moment.checks.map((check) => (
-                    <li
-                      key={check}
-                      className="flex items-start gap-2.5 text-body-sm leading-snug text-ink"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="mt-[7px] block h-1 w-1 shrink-0 rounded-full bg-accent"
-                      />
-                      <span>{check}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Example flag */}
-              <div className="rounded-xl border border-border/70 bg-surface/70 p-4 backdrop-blur-sm sm:p-5">
-                <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.1em] text-subtle">
-                  Example flag
-                </p>
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                  <p className="font-serif text-body-lg italic leading-tight text-ink">
-                    {moment.flag.text}
-                  </p>
-                  <span
-                    className={cn(
-                      "inline-flex shrink-0 items-center gap-1.5 rounded-pill px-2.5 py-0.5",
-                      sev.chipBg
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "block h-1.5 w-1.5 rounded-full",
-                        sev.dot
-                      )}
-                    />
-                    <span
-                      className={cn(
-                        "font-mono text-eyebrow font-medium uppercase tracking-[0.06em]",
-                        sev.text
-                      )}
-                    >
-                      {sev.label}
-                    </span>
-                  </span>
-                </div>
-                {moment.flag.detail && (
-                  <p className="mt-2 text-body-sm text-muted">
-                    {moment.flag.detail}
-                  </p>
-                )}
-              </div>
-
-              {/* Close affordance */}
-              <button
-                type="button"
-                onClick={onToggle}
-                className="group inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
-              >
-                <span>Close</span>
-                <span
-                  aria-hidden="true"
-                  className="transition-transform duration-fast ease-smooth group-hover:-translate-y-0.5"
-                >
-                  ↑
-                </span>
-              </button>
-            </div>
-          </motion.div>
+      {/* Insights aside — quote card + flag card, revealed when open.
+          Hidden below md (cards are too narrow to fit alongside the title). */}
+      <aside
+        aria-hidden={!isOpen}
+        className={cn(
+          "absolute right-7 top-1/2 z-10 hidden w-[300px] -translate-y-1/2 flex-col gap-3 transition-all duration-[540ms] ease-[cubic-bezier(0.32,0.72,0.24,1)] md:flex lg:w-[320px]",
+          isOpen
+            ? "translate-x-0 opacity-100 delay-300"
+            : "pointer-events-none translate-x-6 opacity-0"
         )}
-      </AnimatePresence>
-    </motion.article>
+      >
+        {/* Member quote */}
+        <div className="rounded-2xl border border-white/15 bg-ink/55 p-4 text-white shadow-md backdrop-blur-md sm:p-5">
+          <div className="flex items-start gap-3">
+            <span
+              aria-hidden="true"
+              className="block h-9 w-9 shrink-0 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/20"
+              style={{
+                backgroundImage: `url(${moment.member.avatar})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+            <div className="min-w-0">
+              <p className="text-[12.5px] font-medium leading-tight text-white">
+                {moment.member.name}
+                <span className="ml-2 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/55">
+                  {moment.member.role}
+                </span>
+              </p>
+              <p className="mt-2 text-[12px] leading-relaxed text-white/80">
+                “{moment.quote}”
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* PharmaGuide flag card */}
+        <div className="rounded-2xl border border-white/15 bg-ink/55 p-4 text-white shadow-md backdrop-blur-md sm:p-5">
+          <div className="flex items-center gap-2">
+            <span
+              aria-hidden="true"
+              className={cn("block h-1.5 w-1.5 rounded-full", sev.dot)}
+            />
+            <span
+              className={cn(
+                "font-mono text-[9.5px] font-medium uppercase tracking-[0.12em]",
+                sev.text
+              )}
+            >
+              PharmaGuide flag · {moment.flag.severityLabel}
+            </span>
+          </div>
+          <h4 className="mt-2 font-serif text-[18px] italic leading-tight text-white">
+            {moment.flag.name}
+          </h4>
+          <p className="mt-2 text-[12px] leading-relaxed text-white/75">
+            {moment.flag.description}
+          </p>
+          <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-2.5">
+            <span className="font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/55">
+              {moment.flag.metaLeft}
+            </span>
+            <span className="font-mono text-[11px] font-semibold tabular-nums text-white">
+              {moment.flag.metaRight}
+            </span>
+          </div>
+        </div>
+      </aside>
+    </article>
   );
-}
+};
+MomentCard.displayName = "MomentCard";

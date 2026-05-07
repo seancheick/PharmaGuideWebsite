@@ -149,26 +149,49 @@
 
 ## 🔜 Phase 6 — Real-Life Moments `(in progress)`
 
+**Rebuilt to match the Oura-style horizontal carousel reference (see
+`/Users/seancheick/Downloads/PharmaGuide.html` for the design intent).**
+
 - [x] Create `src/components/sections/RealLifeMoments.tsx`
+- [x] Data extracted to `src/lib/moments.ts` (image URLs swappable to Cloudinary)
+- [x] Section bg: `bg-surface-subtle` (warm tinted band — distinct register)
 - [x] Eyebrow: "Built for real life"
 - [x] Headline: "The moments people don't realize / *they need this.*"
-  (line 2 italic Newsreader, ink — punchline emphasis)
-- [x] Subhead with "Tap any moment" interaction hint
-- [x] 4 cards in 2x2 grid (1 col mobile, 2 cols tablet+) — chosen over
-  carousel for desktop UX clarity
-- [x] Order: chronic → pregnancy → SSRI → stack (highest LTV first)
-- [x] Each card: subtle per-card linear gradient + ambient capsule shape +
-  alternating capsule positions (varied per index)
-- [x] Click expands inline via height accordion (motion.div height: 0 → auto)
-- [x] Read more → hint when collapsed; Close ↑ button when expanded
-- [x] Card body: long-form context paragraph
-- [x] "What we check" bulleted list with accent bullets
-- [x] "Example flag" with severity-color chip (uses existing severity tokens)
-- [x] Per-card severity tier: Monitor / Caution / Avoid / Monitor
-- [x] aria-expanded, aria-controls wired correctly
-- [x] No stock photos (V1 uses gradient + capsule + typography). Easy to
-  swap in real editorial photography later by replacing the gradient
-  with a Next/Image background.
+- [x] Subhead: "PharmaGuide helps you catch risks, avoid conflicts, and make
+  smarter decisions before you take your next dose."
+- [x] **Horizontal scrolling carousel** (snap-x, mandatory)
+  - [x] Compact card 320×440 (78vw × 380 mobile)
+  - [x] Open card width: 880px (88vw md / 92vw < 980 / 90vw mobile)
+  - [x] CSS transition on width (700ms cubic-bezier(0.32,0.72,0.24,1))
+- [x] Per-card composition:
+  - [x] Full-bleed background image (next/image fill + scale-on-hover)
+  - [x] Dark gradient overlay (transparent top → dark bottom)
+  - [x] Frosted-glass category pill (top-left, backdrop-blur-md)
+  - [x] Plus button (top-right, white, rotates 45° to close on open)
+  - [x] Serif title at bottom-left (slides up + grows on open)
+  - [x] Description + Learn-more pill button revealed on open
+- [x] Insights aside (revealed on open, md+ only):
+  - [x] Member spotlight quote card (avatar + name + role + quote)
+  - [x] PharmaGuide flag card (severity dot + label + name + description + meta row)
+  - [x] Both glass-style: bg-ink/55 + backdrop-blur-md + white text
+- [x] Carousel controls:
+  - [x] Prev/Next arrow buttons (round, bordered, hover lift)
+  - [x] Scroll progress bar (auto-updates on scroll/resize)
+- [x] Keyboard / a11y:
+  - [x] Esc closes the open card
+  - [x] aria-label on rail, prev/next, plus button
+  - [x] aria-expanded on plus button
+  - [x] Cards have role="listitem"
+- [x] Smooth scroll-into-view when card opens (rAF + scrollBy)
+- [x] Click anywhere on compact card to open
+- [x] Click only the plus (now ×) on open card to close (prevents
+  accidental close when clicking insights)
+- [x] Stop propagation on Learn-more link click
+- [x] Unsplash placeholder URLs in V1 (clearly labeled, swap to Cloudinary)
+- [x] **`images.json` at repo root** — comprehensive AI image generation
+  prompts per card (Flux 2 Pro, Imagen 4 Ultra, Midjourney v7 raw),
+  plus avatar prompts, universal negatives, 2026 techniques, and ethical
+  disclosure guidance (NY Synthetic Performer Disclosure Law, FTC, ELVIS Act)
 - [ ] **User approves Phase 6** ← gating
 
 ---

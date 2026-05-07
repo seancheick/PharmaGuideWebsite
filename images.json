@@ -1,0 +1,265 @@
+{
+  "$comment": "AI image generation prompts for PharmaGuide RealLifeMoments. Synthesized from 2026 community techniques (r/midjourney, r/StableDiffusion, X AI-art accounts, official model docs). Edit per-card prompts as needed; keep the global direction in sync if you change the visual register.",
+
+  "meta": {
+    "version": "1.0.0",
+    "purpose": "Generate ultra-realistic editorial photographs for the Real-Life Moments carousel section. Style target: NYT Magazine / Joel Sternfeld / Annie Leibovitz documentary editorial — calm, candid, intimate, NEVER stock-photo or wellness-influencer.",
+    "lastUpdated": "2026-05-07",
+    "deliveryFlow": "Generate → upload to Cloudinary → paste URL into src/lib/moments.ts → swap Unsplash placeholder."
+  },
+
+  "modelRecommendations": {
+    "primary": {
+      "name": "Flux 2 Pro (or Flux 1.1 Pro Ultra)",
+      "via": "Replicate, fal.ai, Together AI, BFL Playground",
+      "why": "Strongest blind-test photorealism in 2026. Visible skin pores, micro-imperfections, realistic subsurface scattering. Rewards 12-25 word concrete prompts; punish long adjective stacks.",
+      "bestFor": "Hero images, faces, intimate domestic scenes, hands"
+    },
+    "alternative1": {
+      "name": "Google Imagen 4 Ultra",
+      "via": "Vertex AI, Gemini app, ImageFX",
+      "why": "Tied with Flux for realism. Stronger on environmental light, fabric folds, reflective surfaces. Better text rendering than Flux if any signage appears.",
+      "bestFor": "Wider interiors, scenes with secondary signage/labels, fabric"
+    },
+    "alternative2": {
+      "name": "Midjourney v7 with `--style raw`",
+      "via": "Midjourney Discord / web UI",
+      "why": "Best EDITORIAL MOOD in 2026. Less literal than Flux. Raw mode strips house style. Use for documentary feel, then re-roll the same scene in Flux for final realism.",
+      "bestFor": "Mood drafts, color/composition explorations, --sref style locking",
+      "criticalFlags": "--style raw --ar 3:4 --s 100 to --s 250 (NEVER default 750 for editorial)"
+    },
+    "avoid": [
+      "Stable Diffusion 3.5 base — weaker hands than Flux/Imagen at same effort",
+      "Default Midjourney --s 750 — too stylized for editorial",
+      "Any model output containing 'lifestyle', 'wellness', or stock-shutterstock training distribution tells"
+    ],
+    "production_pipeline": "Recommended 2026 workflow: draft mood in Midjourney v7 raw → lock --sref code → generate finals in Flux 2 Pro using same scene description → upscale via Magnific or Topaz Photo AI → manual cleanup (hands/skin) in Photoshop generative fill if needed."
+  },
+
+  "imageSpecs": {
+    "heroAspectRatio": "3:4 (portrait) — matches the carousel card 300×440 / 320×440",
+    "minResolution": "1200×1600",
+    "preferredResolution": "1500×2000 (or 1800×2400 for headroom)",
+    "format": "JPEG at 85% quality (smaller file, looks more photographic than PNG)",
+    "colorSpace": "sRGB",
+    "avatarAspectRatio": "1:1 (square)",
+    "avatarResolution": "320×320 minimum, 480×480 preferred",
+    "naming": "Use kebab-case: moment-chronic.jpg, moment-pregnancy.jpg, avatar-hannah-l.jpg, etc."
+  },
+
+  "globalStyleDirection": {
+    "mustFeel": [
+      "candid, unposed, mid-action",
+      "intimate, weekday, domestic",
+      "muted earth tones (warm beige, soft slate, dusty olive)",
+      "available natural light, mostly window-side",
+      "lived-in, slightly imperfect interiors",
+      "tactile and human"
+    ],
+    "neverFeel": [
+      "stock photo / Shutterstock / Getty",
+      "wellness influencer / Instagram",
+      "white minimalist studio",
+      "model agency / fashion shoot",
+      "Pinterest aspirational",
+      "telemedicine ad",
+      "AI-glossy"
+    ],
+    "subjectGuidance": "Subjects rarely look at camera. They are mid-action: reading, stirring coffee, looking at a bottle, looking out a window. Eye contact with camera = stock photo tell.",
+    "diversityNote": "Across the four cards, vary age, ethnicity, and gender so the section reads as 'real life' rather than one demographic. Suggested allocation: chronic = 65yo South Asian or Black man; pregnancy = late-20s Latina or East Asian woman; SSRI = late-30s white or Middle-Eastern man; stack = late-30s Black or biracial woman. Adjust to your audience."
+  },
+
+  "promptFormula": {
+    "structure": "[shot type & subject mid-action] + [environment with 2-3 specific imperfect objects] + [light direction & quality] + [camera body + lens + aperture] + [film stock simulation] + [mood/composition cues] + [aspect ratio & raw/quality flags]",
+    "wordCount": {
+      "flux": "12-25 concrete words. Avoid adjective stacks.",
+      "imagen": "20-40 words. Tolerates more environment description.",
+      "midjourney_v7": "15-30 words + technical flags at end."
+    },
+    "criticalIngredients": [
+      "Specific film stock (Kodak Portra 400 / Fuji Pro 400H / Cinestill 800T)",
+      "Specific camera body (Leica M11 / Mamiya 7 / Sony A7IV / Canon EOS R5)",
+      "Specific lens + aperture (50mm Summicron at f/2, 35mm at f/1.8)",
+      "'available light only' or 'natural window light'",
+      "'visible skin texture' / 'fine lines' / 'no makeup'",
+      "'NOT looking at camera' (or describe what they ARE looking at)",
+      "'shallow depth of field' or 'slight bokeh'",
+      "Aspect-ratio explicit (3:4 portrait) for MJ; usually inferred for Flux/Imagen"
+    ]
+  },
+
+  "universalNegativePrompt": [
+    "plastic skin, waxy skin, poreless, airbrushed, doll-like, mannequin",
+    "oversaturated, HDR, ultra contrast, burned highlights, crushed shadows",
+    "instagram filter, beauty filter, smooth, glossy, deep fried",
+    "posed, looking at camera, model pose, fashion shoot, eye contact",
+    "stock photo, shutterstock, getty, vector, illustration, 3d render, CGI",
+    "wellness influencer, lifestyle blogger, perfect teeth, perfect symmetry",
+    "oversharpened, halo artifacts, hdr glow, vignette",
+    "extra fingers, fused fingers, distorted hands, six fingers, malformed hand",
+    "text, watermark, logo, signature",
+    "studio backdrop, ring light reflection, softbox catchlights, professional lighting"
+  ],
+
+  "techniques": {
+    "rawMode": "Midjourney's --style raw flag. Disables auto-beautification. MANDATORY for editorial.",
+    "portra400Simulation": "Naming the film stock pulls warm muted tones, photojournalism color science, slight grain. Cleanest one-word skin upgrade.",
+    "leicaTrick": "Specifying a real prestige rangefinder body (Leica M11) biases the model toward documentary/street/editorial training data instead of fashion-shoot slickness. Same for Mamiya 7 (medium format documentary) and Canon EOS R5 + 50mm (editorial photojournalism).",
+    "frontLoadHands": "Put hand description at the START of the prompt — early tokens carry more weight. Specify finger count, wrap geometry, and contact points.",
+    "microImperfection": "Explicitly request 'visible pores, fine lines, asymmetric features, slight redness, natural skin texture, no makeup'. The model needs permission to be imperfect.",
+    "stylizeLowering": "For Midjourney, drop --s (stylize) to 100-250 instead of default 750. Reduces AI sheen significantly.",
+    "availableLight": "The phrase 'available light only' suppresses studio catchlights, softbox reflections, and ring-light tells.",
+    "srefAnchoring": "Build a reference library: generate 5-10 image variants you like, then use --sref <url1> <url2> in Midjourney to lock visual consistency across the four card images. Critical for cohesion."
+  },
+
+  "ethicalFlags": {
+    "newYorkSyntheticDisclosure2026": "NY's Synthetic Performer Disclosure Law (effective June 9, 2026) requires conspicuous disclosure when AI-generated humans appear in advertising. PharmaGuide marketing imagery is in scope. Add a small visible 'Image generated with AI' caption near these hero images, NOT buried in fine print or tooltips.",
+    "ftcGuidance": "Undisclosed AI endorsements draw up to ~$51K per violation. Editorial/illustrative use (these scenarios) is lower-risk than testimonial-shaped use. Keep the 'member quote' sections clearly different from photos — never imply the photographed person SAID the quote.",
+    "publicityRights": "Never prompt by name of a living person ('looks like X'). Safe phrasing: 'in the photographic style of [photographer]' for STYLE references. Never for likeness.",
+    "modelReference": "If you use --cref or img-to-img with a real person's photo without permission, you re-enter publicity-rights territory. Use only your own photos or licensed/public-domain references.",
+    "recommendation": "Place a small 'Imagery: AI-generated, illustrative' line in the section's footer caption or as a hover-revealed credit on each card. Conspicuous, in-viewport, no scroll-required to discover."
+  },
+
+  "cards": [
+    {
+      "id": "chronic",
+      "matchesIn": "src/lib/moments.ts → MOMENTS[0]",
+      "filename": "moment-chronic.jpg",
+      "altText": "Older person at a kitchen counter with a coffee mug and a small organizer of pills, soft morning light.",
+      "scene": "Quiet weekday morning kitchen — 60-65 year old reaching for a small pill organizer next to a coffee mug, half-finished newspaper crossword on the counter.",
+      "demographic": "65-year-old (vary ethnicity per direction), silver hair at temples, reading glasses pushed up on forehead, casual button-down or soft sweater. NOT 'elderly' — describe specifics.",
+      "objects": ["chipped ceramic mug, half-full coffee", "small weekly pill organizer (open or closed)", "one prescription bottle (label blurred)", "folded newspaper or open crossword", "small house plant on windowsill"],
+      "light": "Soft east-facing window light through gauze curtains, gentle falloff, available light only, slight morning haze.",
+      "mood": "Quiet weekday morning. Contemplative. Looking at the pill organizer or out the window. NOT looking at camera. Hands in frame, naturally aged.",
+      "composition": "Medium shot from across the counter, rule of thirds, subject slightly off-center to the right, mug + organizer in foreground, kitchen continuing softly out of focus behind.",
+      "promptVariants": {
+        "flux": "A 65-year-old man with silver hair at the temples and reading glasses pushed up on his forehead, his hand wrapped around a chipped ceramic coffee mug, looking down at a small weekly pill organizer on the counter, morning kitchen with a half-finished newspaper crossword and gauze curtains diffusing east-facing window light, available light only, shot on Mamiya 7 with 80mm at f/2.8, Kodak Portra 400, visible skin texture and age spots on the hands, fine lines around the eyes, no makeup, candid quiet weekday morning, intimate documentary photojournalism style, shallow depth of field, slight film grain",
+        "imagen": "Editorial photograph: a 65-year-old South Asian man at a quiet weekday kitchen counter, silver hair at temples, reading glasses pushed up on his forehead. He is looking down at a small open pill organizer beside a chipped ceramic coffee mug. A folded newspaper with a half-finished crossword sits to the right. Soft east-facing window light through gauze curtains, available light only. Shot on Mamiya 7, 80mm, f/2.8, Kodak Portra 400. Visible skin texture, age-spotted hands, no makeup, no airbrushing. Candid, contemplative, NOT looking at camera. Documentary editorial style, shallow depth of field, slight grain.",
+        "midjourney": "65-year-old man in quiet morning kitchen, silver hair at temples, reading glasses on forehead, hand on chipped coffee mug, looking down at small pill organizer, gauze-curtained window light behind, half-finished newspaper crossword, Mamiya 7 80mm Portra 400, candid weekday morning, documentary intimate --style raw --ar 3:4 --s 150 --no plastic, posed, eye contact, glossy, stock"
+      }
+    },
+    {
+      "id": "pregnancy",
+      "matchesIn": "src/lib/moments.ts → MOMENTS[1]",
+      "filename": "moment-pregnancy.jpg",
+      "altText": "Soft natural-light photograph of a pregnant person standing by a window, hand resting near the bump.",
+      "scene": "Late-morning kitchen table. Late-20s woman in third trimester, oversized cream wool sweater, sitting with an open book and a mug of tea, hand resting on the side of her belly absentmindedly.",
+      "demographic": "28-32 year old (vary ethnicity per direction). NOT a maternity photoshoot pose. NOT lace, NOT beach, NOT husband-hand-on-belly. Just her, alone, reading.",
+      "objects": ["open book or notebook on table", "ceramic mug of tea", "prenatal vitamin bottle (out of focus, on the table)", "soft cream wool oversized sweater", "small bowl of fruit on the table"],
+      "light": "Large soft window light from the left, slight cool cast, available light only, late morning.",
+      "mood": "Contemplative, private. Reading. Hand resting on the side of the belly, not staged on it. NOT looking at camera. Slight fatigue okay, real okay.",
+      "composition": "Three-quarter shot from across the table, slightly above eye level, subject reading book held in her lap, belly visible in profile but not centered.",
+      "promptVariants": {
+        "flux": "A 28-year-old woman in her third trimester wearing an oversized cream wool sweater, sitting at a wooden kitchen table reading an open book in her lap, hand resting on the side of her belly absentmindedly, NOT looking at camera, ceramic mug of tea and a small prenatal vitamin bottle on the table, soft natural window light from the left, available light only, shot on Leica M11 with 35mm Summicron at f/2, Kodak Portra 400, visible skin texture, no makeup, no airbrushing, candid quiet late morning, intimate New York Times Magazine editorial, shallow depth of field, slight film grain",
+        "imagen": "Editorial photograph: a Latina woman in her late twenties, third trimester, wearing an oversized cream wool sweater, sitting at a wooden kitchen table. She is reading a paperback book held in her lap. Her free hand rests on the side of her belly, absentmindedly. A ceramic mug of tea and a small prenatal vitamin bottle sit on the table. Soft natural window light from the left, available light only. Shot on Leica M11, 35mm Summicron, f/2, Kodak Portra 400. Visible skin texture, no makeup. Contemplative, candid, NOT looking at camera. Documentary editorial style.",
+        "midjourney": "Late-twenties woman third trimester, oversized cream wool sweater, sitting at wooden kitchen table reading book in lap, hand resting on side of belly absentmindedly, soft window light from left, ceramic mug of tea, prenatal vitamin bottle, Leica M11 35mm Portra 400, contemplative quiet late morning, NYT Magazine editorial --style raw --ar 3:4 --s 150 --no maternity shoot, lace, beach, posed, eye contact, glossy, stock"
+      }
+    },
+    {
+      "id": "ssri",
+      "matchesIn": "src/lib/moments.ts → MOMENTS[2]",
+      "filename": "moment-ssri.jpg",
+      "altText": "Soft evening kitchen scene — a glass of water and a single supplement bottle on a wooden counter.",
+      "scene": "Evening kitchen, warm tungsten lamp light. A man in his late 30s standing at the counter, reading the back of a small herbal supplement bottle. Glass of water beside him.",
+      "demographic": "35-42 year old (vary ethnicity per direction). Casual sweater, slightly tired, real. Glasses optional.",
+      "objects": ["small herbal supplement bottle in his hand (label readable but blurred — no real brand)", "tall glass of water on the counter", "a single warm pendant lamp above (visible or implied)", "kitchen counter in warm wood or muted soapstone"],
+      "light": "Warm tungsten kitchen lamp from above-front, evening, low light, soft falloff. Available light only.",
+      "mood": "Contemplative evening routine. Considering the bottle. NOT looking at camera. Reading the back of the bottle.",
+      "composition": "Three-quarter shot, subject at center holding bottle close enough to read, glass of water in foreground, kitchen receding softly out of focus.",
+      "promptVariants": {
+        "flux": "A 38-year-old man in a casual charcoal sweater, standing at a kitchen counter under a single warm pendant lamp, holding a small herbal supplement bottle close to read the back label, NOT looking at camera, tall glass of water beside him on the counter, evening, warm tungsten light only, available light, shot on Canon EOS R5 with 50mm f/1.4 wide open, Cinestill 800T tungsten film, visible skin texture, fine lines, no makeup, candid quiet evening, contemplative documentary editorial, shallow depth of field, soft bokeh background",
+        "imagen": "Editorial photograph: a Middle-Eastern man in his late thirties, charcoal cable-knit sweater, standing at a wooden kitchen counter under a single warm pendant lamp. He is holding a small herbal supplement bottle close, reading the back label. A tall glass of water sits beside him on the counter. Evening, warm tungsten light only, available light. Shot on Canon EOS R5, 50mm f/1.4 wide open, Cinestill 800T tungsten film. Visible skin texture, fine lines, no makeup. Candid, contemplative, NOT looking at camera. Documentary editorial style, shallow depth of field, soft bokeh.",
+        "midjourney": "Late-thirties man in casual charcoal sweater, standing at kitchen counter under warm pendant lamp, holding small herbal supplement bottle close, reading back label, tall glass of water beside him, warm tungsten evening light, Canon EOS R5 50mm f/1.4 Cinestill 800T, candid contemplative evening --style raw --ar 3:4 --s 150 --no posed, eye contact, glossy, instagram, supplement-bottle-in-front-of-window cliche"
+      }
+    },
+    {
+      "id": "stack",
+      "matchesIn": "src/lib/moments.ts → MOMENTS[3]",
+      "filename": "moment-stack.jpg",
+      "altText": "Organized desk with a small row of supplement bottles, a notebook, and a glass of water — a thirty-something at home in soft daylight.",
+      "scene": "Home wooden desk, mid-morning daylight. A woman in her late 30s writing in a small notebook with a fountain pen. Four to five supplement bottles arranged in a deliberate row on the desk. Closed laptop in soft background blur.",
+      "demographic": "35-40 year old (vary ethnicity per direction). Focused. Casual layered shirt or merino sweater. NOT fitness influencer. NOT gym. Just an organized person.",
+      "objects": ["four-five supplement bottles in a deliberate row, varying heights, plain labels (no brand)", "small open notebook with handwritten notes", "fountain pen in hand mid-stroke", "small glass of water", "closed laptop receding into background blur", "desk lamp warm tone"],
+      "light": "Soft daylight from a window behind the subject, slight cool cast on the back, warm fill from a small desk lamp on the front. Available light only.",
+      "mood": "Focused, organized, mid-task. Writing. Looking at the notebook NOT camera. Quiet workday morning.",
+      "composition": "Slightly above eye level looking down at the desk, subject's hands and notebook in frame, supplement bottles in a horizontal row in the foreground, face partially visible (or just hands and torso — face out of frame is acceptable here for the abstract 'system' feel).",
+      "promptVariants": {
+        "flux": "A 38-year-old woman at a wooden home desk, layered merino sweater, writing in a small open notebook with a fountain pen, four supplement bottles in a deliberate row in front of her on the desk, closed laptop receding into soft background blur, glass of water nearby, soft daylight from window behind her, warm small desk lamp from the front, available light only, shot on Sony A7IV with 35mm f/1.8, Fuji Pro 400H slight cool tones, visible skin texture, no makeup, candid focused workday morning, looking down at notebook NOT at camera, shallow depth of field, documentary editorial style",
+        "imagen": "Editorial photograph: a Black woman in her late thirties at a wooden home desk, layered merino sweater. She is writing in a small open notebook with a fountain pen, mid-stroke. Four supplement bottles in a deliberate row sit in front of her on the desk. A glass of water is nearby. A closed laptop recedes into soft background blur. Soft daylight from a window behind her, warm small desk lamp from the front, available light only. Shot on Sony A7IV, 35mm f/1.8, Fuji Pro 400H. Visible skin texture, no makeup. Candid, focused, NOT looking at camera, looking down at notebook. Documentary editorial style, shallow depth of field.",
+        "midjourney": "Late-thirties woman at wooden home desk, layered merino sweater, writing in small open notebook with fountain pen, four supplement bottles in deliberate row on desk in front, closed laptop in soft background blur, soft daylight window behind, warm desk lamp front, Sony A7IV 35mm f/1.8 Fuji Pro 400H, candid focused workday morning, looking down at notebook NOT camera --style raw --ar 3:4 --s 150 --no fitness influencer, gym, posed, eye contact, glossy, instagram, supplement-bottle-close-up-cliche"
+      }
+    }
+  ],
+
+  "avatars": {
+    "$comment": "Square 1:1, 320×320 minimum. Tighter framing than the hero cards — chest-up. Same documentary editorial register.",
+    "globalDirection": "Headshot from chest-up, candid, not posed, slight off-camera glance. Available light. Same Portra 400 / Mamiya 7 register as the hero cards. NOT corporate headshot. NOT LinkedIn. NOT influencer.",
+    "items": [
+      {
+        "id": "hannah-l",
+        "matchesIn": "src/lib/moments.ts → MOMENTS[0].member.avatar",
+        "filename": "avatar-hannah-l.jpg",
+        "subjectGuidance": "60-65 year old (matches chronic card persona). Silver hair pulled back. Soft cardigan. Slight smile, not posed. Looking slightly off-camera left.",
+        "promptCore": "Headshot of a 62-year-old woman, silver hair softly pulled back, soft taupe cardigan, looking slightly off-camera left, available natural light from a window, shot on Mamiya 7 80mm at f/2.8, Kodak Portra 400, visible skin texture, fine lines, no makeup, candid, documentary editorial, shallow depth of field, neutral interior background blurred",
+        "ar": "1:1"
+      },
+      {
+        "id": "maya-r",
+        "matchesIn": "src/lib/moments.ts → MOMENTS[1].member.avatar",
+        "filename": "avatar-maya-r.jpg",
+        "subjectGuidance": "28-32 year old woman (matches pregnancy card). Hair down. Cream sweater similar to hero card. Soft glance off-camera. NOT belly visible.",
+        "promptCore": "Headshot of a 30-year-old Latina woman, hair down, cream wool sweater, looking softly off-camera right, available natural light from a window, shot on Leica M11 35mm at f/2, Kodak Portra 400, visible skin texture, no makeup, candid, documentary editorial, shallow depth of field",
+        "ar": "1:1"
+      },
+      {
+        "id": "jordan-t",
+        "matchesIn": "src/lib/moments.ts → MOMENTS[2].member.avatar",
+        "filename": "avatar-jordan-t.jpg",
+        "subjectGuidance": "38-42 year old man (matches SSRI card). Casual sweater. Light stubble. Slight slight off-camera glance.",
+        "promptCore": "Headshot of a 40-year-old Middle-Eastern man, light stubble, charcoal cable-knit sweater, looking slightly off-camera left, available warm interior light, shot on Canon EOS R5 50mm f/1.4, Kodak Portra 400, visible skin texture, fine lines, no makeup, candid, documentary editorial, shallow depth of field",
+        "ar": "1:1"
+      },
+      {
+        "id": "devon-p",
+        "matchesIn": "src/lib/moments.ts → MOMENTS[3].member.avatar",
+        "filename": "avatar-devon-p.jpg",
+        "subjectGuidance": "35-40 year old woman (matches stack-optimizer card). Layered merino sweater. Hair tied back. Quiet focused look slightly off-camera.",
+        "promptCore": "Headshot of a 38-year-old Black woman, hair tied back, layered grey merino sweater, looking softly off-camera right, available daylight, shot on Sony A7IV 35mm f/1.8, Fuji Pro 400H, visible skin texture, no makeup, candid, documentary editorial, shallow depth of field",
+        "ar": "1:1"
+      }
+    ]
+  },
+
+  "consistencyTips": [
+    "After your first successful card image, save the Midjourney --sref code (or upload that image to Flux as a style reference). Reuse it across the remaining cards. Without this, each card's color science will drift and the section will look mismatched.",
+    "Generate 8-12 variants per card. Pick the one with: (a) no eye contact, (b) clean hands, (c) no AI-glossy skin, (d) consistent color register with siblings.",
+    "Run finals through Topaz Photo AI 'Standard' or Magnific 'Realism' upscaler before uploading to Cloudinary — boosts perceived realism dramatically.",
+    "Store the chosen --sref / reference image as `references/` alongside images.json so you can re-generate consistent versions later.",
+    "When uploading to Cloudinary, generate multiple sizes via Cloudinary's auto-format / auto-quality (e.g., w_1500,q_auto,f_auto) and use Next.js `<Image>` with the appropriate sizes prop.",
+    "Lazy-load all four hero images except the first card (`priority` flag in next/image, already set on the chronic card)."
+  ],
+
+  "commonPitfalls": [
+    "Long adjective stacks ('beautiful, stunning, gorgeous, hyperrealistic, 8k, masterpiece') — these increase AI sheen on Flux/Imagen. Keep prompts tight and concrete.",
+    "Default Midjourney --s 750 — too stylized for editorial. Lower to 100-250.",
+    "Eye contact with camera — instant stock-photo tell.",
+    "'Wellness', 'wellbeing', 'lifestyle' keywords — pull influencer training distribution.",
+    "Studio lighting language ('softbox', 'ring light', 'professional lighting') — kills documentary feel.",
+    "Re-rolling bad hands — wastes credits. Use targeted inpainting (OpenArt Fingers Fixer or Photoshop generative fill).",
+    "Using one model for everything — 2026 best practice is Flux/Imagen for realism, MJ raw for mood, then refine.",
+    "Skipping AI disclosure — NY law (June 2026) and FTC enforcement make this required, not optional. Add a small caption."
+  ],
+
+  "afterGeneration": {
+    "filenamePattern": "moment-{id}.jpg, avatar-{slug}.jpg",
+    "uploadTo": "Cloudinary (or any CDN with on-the-fly resizing)",
+    "swapInstructions": "Once uploaded, edit src/lib/moments.ts → replace the Unsplash URLs in `image` and `member.avatar` fields with your Cloudinary URLs (e.g., https://res.cloudinary.com/<cloud>/image/upload/q_auto,f_auto,w_1500/<filename>). Component will pick up the change on next render.",
+    "verifyChecklist": [
+      "Each image renders without distortion at 320×440 (compact) and 880×440 (open)",
+      "next/image correctly loads with `fill` and `sizes` props",
+      "AI-disclosure caption is present somewhere in the section",
+      "Lighthouse performance unchanged (LCP <2.5s)",
+      "All 4 cards visually consistent in color register"
+    ]
+  }
+}

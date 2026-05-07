@@ -23,8 +23,8 @@ export function Hero() {
         <div className="grid items-center gap-14 md:grid-cols-[1.05fr_1fr] md:gap-12 lg:gap-20">
           {/* Copy column */}
           <div className="space-y-7 md:space-y-8">
-            <p className="animate-fade-up font-mono text-eyebrow font-medium uppercase tracking-[var(--ls-eyebrow)] text-muted">
-              The interaction layer for your stack
+            <p className="animate-fade-up font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
+              On-device supplement safety
             </p>
 
             <h1 className="animate-fade-up text-display-xl text-ink [animation-delay:80ms]">
@@ -43,7 +43,7 @@ export function Hero() {
               <span className="mx-1.5 text-border-strong">·</span>
               Evidence-graded
               <span className="mx-1.5 text-border-strong">·</span>
-              On-device
+              Clinician-informed
             </p>
 
             <div className="animate-fade-up flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:gap-6 [animation-delay:320ms]">

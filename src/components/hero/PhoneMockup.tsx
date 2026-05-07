@@ -1,56 +1,276 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { AppUILoop } from "./AppUILoop";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { transitions } from "@/lib/tokens";
+import { AppUILoop, ITEMS, type StackItem, type ItemKey } from "./AppUILoop";
 
 /**
- * Phone mockup — modern iPhone-style device frame with a soft float animation.
+ * PhoneMockup — modern iPhone-style device frame with floating signature card.
  *
- * Composition (outer → inner):
- *   1. Tilt wrapper (rotated via Tailwind, doesn't fight motion's transform)
- *   2. Float wrapper (motion: gentle Y oscillation)
- *   3. Bezel    (dark ink frame, rounded-[3rem])
- *   4. Bezel highlight (subtle gradient)
- *   5. Screen   (rounded-[2.4rem], holds AppUILoop)
- *   6. Notch    (Dynamic-Island style pill at the top)
+ * Owns all the loop state. AppUILoop is now a pure presentational child that
+ * receives `searchText`, `resultFor`, and `stack` as props. The interaction
+ * card and personalization chip live OUTSIDE the screen container so the
+ * interaction card can overhang the bezel — the signature "important info
+ * emerging" moment.
  *
- * No raw pixel literals for color or radius. Aspect ratio 9:19 keeps the screen
- * tall enough to hold a search bar, two stack items, and the interaction card.
+ * Composition (outermost → innermost):
+ *   1. Glow wrapper (relative, holds radial accent glow + tilt wrapper)
+ *   2. Tilt wrapper (md:rotate; doesn't fight motion's transform)
+ *   3. Float wrapper (motion: gentle Y oscillation)
+ *   4. Phone+cards container (relative; holds bezel + overhanging cards)
+ *   5. Bezel + screen with AppUILoop (overflow-hidden — clips internal UI)
+ *   6. Floating interaction card (absolute; overhangs right by 12px)
+ *   7. Floating fit-tag chip (absolute; sits below interaction, no overhang)
+ *
+ * 7-second loop, all timings in tokens, prefers-reduced-motion respected.
  */
 export function PhoneMockup() {
+  const reducedMotion = useReducedMotion();
+  const [searchText, setSearchText] = useState("");
+  const [resultFor, setResultFor] = useState<ItemKey | null>(null);
+  const [stack, setStack] = useState<StackItem[]>([]);
+  const [showInteraction, setShowInteraction] = useState(false);
+  const [showFitTag, setShowFitTag] = useState(false);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setSearchText("");
+      setResultFor(null);
+      setStack([ITEMS.magnesium, ITEMS.levothyroxine]);
+      setShowInteraction(true);
+      setShowFitTag(true);
+      return;
+    }
+
+    let cancelled = false;
+    const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+    const typewriter = async (target: string, perCharMs: number) => {
+      for (let i = 0; i <= target.length; i++) {
+        if (cancelled) return;
+        setSearchText(target.slice(0, i));
+        if (i < target.length) await wait(perCharMs);
+      }
+    };
+
+    async function runLoop() {
+      while (!cancelled) {
+        // Reset
+        setSearchText("");
+        setResultFor(null);
+        setStack([]);
+        setShowInteraction(false);
+        setShowFitTag(false);
+        await wait(400);
+        if (cancelled) return;
+
+        await typewriter("magnesium", 60);
+        if (cancelled) return;
+        await wait(120);
+        setResultFor("magnesium");
+        await wait(420);
+        if (cancelled) return;
+
+        setStack([ITEMS.magnesium]);
+        setResultFor(null);
+        setSearchText("");
+        await wait(280);
+        if (cancelled) return;
+
+        await typewriter("levothyroxine", 50);
+        if (cancelled) return;
+        await wait(120);
+        setResultFor("levothyroxine");
+        await wait(420);
+        if (cancelled) return;
+
+        setStack([ITEMS.magnesium, ITEMS.levothyroxine]);
+        setResultFor(null);
+        setSearchText("");
+        await wait(550);
+        if (cancelled) return;
+
+        setShowInteraction(true);
+        await wait(1000);
+        if (cancelled) return;
+
+        setShowFitTag(true);
+        await wait(2200);
+      }
+    }
+
+    void runLoop();
+    return () => {
+      cancelled = true;
+    };
+  }, [reducedMotion]);
+
   return (
-    <div className="flex justify-center md:justify-end">
-      {/* Tilt — only on desktop where there's room. Inner motion handles the float. */}
-      <div className="md:rotate-[2.5deg] md:translate-y-[-8px]">
+    <div className="relative flex justify-center md:justify-end">
+      {/* Ambient radial glow — soft accent halo extending beyond the phone.
+          Felt, not seen. Anchors the device into the page environment. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute"
+        style={{
+          inset: "-12% -10%",
+          background:
+            "radial-gradient(50% 55% at 55% 50%, rgb(24 59 63 / 0.09), transparent 70%)",
+        }}
+      />
+
+      {/* Tilt wrapper — desktop only */}
+      <div className="relative md:translate-y-[-8px] md:rotate-[2.5deg]">
+        {/* Float wrapper — gentle continuous Y oscillation */}
         <motion.div
-          aria-hidden="true"
           initial={{ y: 0 }}
           animate={{ y: [-4, 4, -4] }}
           transition={{
             duration: 6,
             repeat: Infinity,
             ease: "easeInOut",
-            // start at a non-zero point so two phones on a page wouldn't sync
             delay: 0.3,
           }}
-          className="relative w-[280px] sm:w-[300px] md:w-[300px] lg:w-[320px]"
+          className="relative w-[300px] sm:w-[320px] md:w-[340px] lg:w-[360px]"
         >
-          {/* Outer bezel */}
-          <div className="relative aspect-[9/19] rounded-[3rem] bg-ink p-[3px] shadow-2xl">
-            {/* Bezel highlight — soft top-left → transparent */}
-            <div className="pointer-events-none absolute inset-0 rounded-[3rem] bg-gradient-to-br from-white/10 via-white/0 to-white/0" />
+          {/* Phone+cards container — anchors the floating cards' positioning */}
+          <div className="relative aspect-[9/19]">
+            {/* Outer bezel */}
+            <div className="relative h-full w-full rounded-[3rem] bg-ink p-[3px] shadow-2xl">
+              {/* Bezel highlight — soft top-left → transparent */}
+              <div className="pointer-events-none absolute inset-0 rounded-[3rem] bg-gradient-to-br from-white/10 via-white/0 to-white/0" />
 
-            {/* Inner edge — subtle ring for depth */}
-            <div className="pointer-events-none absolute inset-[3px] rounded-[2.85rem] ring-1 ring-inset ring-white/5" />
+              {/* Inner edge — subtle ring for depth */}
+              <div className="pointer-events-none absolute inset-[3px] rounded-[2.85rem] ring-1 ring-inset ring-white/5" />
 
-            {/* Screen */}
-            <div className="relative h-full w-full overflow-hidden rounded-[2.85rem] bg-background">
-              {/* Dynamic Island */}
-              <div className="absolute left-1/2 top-2 z-20 h-[22px] w-[88px] -translate-x-1/2 rounded-pill bg-ink" />
+              {/* Screen — overflow-hidden, contains AppUILoop only */}
+              <div className="relative h-full w-full overflow-hidden rounded-[2.85rem] bg-background">
+                {/* Dynamic Island */}
+                <div
+                  aria-hidden="true"
+                  className="absolute left-1/2 top-2 z-20 h-[22px] w-[88px] -translate-x-1/2 rounded-pill bg-ink"
+                />
 
-              {/* App UI runs inside */}
-              <AppUILoop />
+                {/* In-screen UI flow (no interaction card here anymore) */}
+                <AppUILoop searchText={searchText} resultFor={resultFor} stack={stack} />
+              </div>
             </div>
+
+            {/* Soft halo behind the floating interaction card — appears with it */}
+            <AnimatePresence>
+              {showInteraction && (
+                <motion.div
+                  key="halo"
+                  aria-hidden="true"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={transitions.ambient}
+                  className="pointer-events-none absolute rounded-3xl bg-accent/15 blur-2xl"
+                  style={{
+                    bottom: "10%",
+                    left: "0",
+                    right: "-22px",
+                    height: "44%",
+                  }}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Floating interaction card — overhangs right bezel by 12px.
+                The signature "important info emerging" moment. */}
+            <AnimatePresence>
+              {showInteraction && (
+                <motion.div
+                  key="interaction"
+                  initial={{ y: 24, opacity: 0, scale: 0.96 }}
+                  animate={{ y: 0, opacity: 1, scale: 1 }}
+                  exit={{ y: 16, opacity: 0 }}
+                  transition={transitions.spring}
+                  className="absolute z-10 rounded-2xl border border-border bg-surface p-3.5 shadow-xl"
+                  role="presentation"
+                  style={{ bottom: "16%", left: "8px", right: "-12px" }}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-subtle">
+                        Interaction detected
+                      </p>
+                      <p className="mt-1 text-[13px] font-medium leading-tight text-ink">
+                        Magnesium <span className="text-muted">+</span> Levothyroxine
+                      </p>
+                    </div>
+                    <span className="inline-flex shrink-0 items-center gap-1 rounded-pill bg-severity-monitor/10 px-2 py-0.5">
+                      <span className="block h-1 w-1 rounded-full bg-severity-monitor" />
+                      <span className="font-mono text-[9.5px] font-medium uppercase tracking-[0.06em] text-severity-monitor">
+                        Monitor
+                      </span>
+                    </span>
+                  </div>
+
+                  <p className="mt-2.5 text-[11.5px] leading-snug text-muted">
+                    Magnesium may reduce levothyroxine absorption when taken too closely
+                    together.
+                  </p>
+
+                  <div className="mt-3 border-t border-border-strong/60 pt-2">
+                    <p className="font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-subtle">
+                      Recommendation
+                    </p>
+                    <p className="mt-0.5 text-[11.5px] leading-snug text-ink">
+                      Separate by at least 4 hours.
+                    </p>
+                  </div>
+
+                  <div className="mt-2.5 flex items-center justify-between">
+                    <span className="font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-subtle">
+                      Evidence
+                    </span>
+                    <span className="text-[10.5px] font-medium text-muted">Moderate</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Floating fit-tag chip — quieter, fully inside phone bounds */}
+            <AnimatePresence>
+              {showFitTag && (
+                <motion.div
+                  key="fit"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -2 }}
+                  transition={{ ...transitions.reveal, duration: 0.36 }}
+                  className="absolute z-10 flex items-center justify-between rounded-xl border border-border/80 bg-surface/85 px-3 py-1.5 shadow-sm backdrop-blur-sm"
+                  style={{ bottom: "5%", left: "16px", right: "16px" }}
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span
+                      aria-hidden="true"
+                      className="flex h-3 w-3 items-center justify-center rounded-full bg-severity-safe/15"
+                    >
+                      <svg width="6" height="6" viewBox="0 0 6 6" fill="none">
+                        <path
+                          d="M1 3L2.5 4.5L5 1.5"
+                          stroke="currentColor"
+                          strokeWidth="1"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="text-severity-safe"
+                        />
+                      </svg>
+                    </span>
+                    <span className="text-[10.5px] font-medium text-ink">
+                      Good fit with timing adjustment
+                    </span>
+                  </span>
+                  <span className="font-mono text-[8.5px] font-medium uppercase tracking-[0.1em] text-subtle">
+                    For You
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       </div>

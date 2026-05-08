@@ -160,7 +160,7 @@ export function RealLifeMoments() {
           // wide on huge displays so we never show more than 3 cards + peek
           // of the 4th. Below the cap, rail hugs the viewport with a small
           // gutter (20–40px).
-          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden px-[max(20px,calc((100vw-1400px)/2))] pb-6 pt-2 sm:gap-4 sm:px-[max(32px,calc((100vw-1400px)/2))] md:mt-16 md:px-[max(40px,calc((100vw-1400px)/2))]",
+          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden px-[max(40px,calc((100vw-1400px)/2))] pb-6 pt-2 sm:gap-4 sm:px-[max(48px,calc((100vw-1400px)/2))] md:mt-16 md:px-[max(60px,calc((100vw-1400px)/2))]",
           "snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         )}
       >

@@ -161,7 +161,7 @@ export function Footer() {
 
       {/* ━━━━━━━━━━━━━━━━━━ RAIL 1: MAIN GRID ━━━━━━━━━━━━━━━━━━ */}
       <div className="container relative mx-auto py-10 md:py-12">
-        <div className="grid gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr] lg:gap-8 xl:gap-10">
+        <div className="grid gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1.2fr] lg:gap-6 xl:gap-8">
           {/* ─── Brand column ─────────────────────────── */}
           <div className="flex flex-col gap-3.5 lg:col-span-1 md:col-span-2 lg:col-auto">
             {/* Logo — wordmark + accent dot. Kept text-based so the footer

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { MDXComponents } from "mdx/types";
 import { cn } from "@/lib/utils";
@@ -116,6 +117,27 @@ export const mdxComponents: MDXComponents = {
   },
 
   // ─── Quotes + code + dividers ──────────────────────────────────────
+  // ─── Markdown-syntax images ────────────────────────────────────────
+  // Plain ![alt](src) in MDX becomes an <img>, which doesn't get
+  // next/image optimization. Map img → an unoptimized but properly
+  // styled wrapper. For meaningful in-post imagery, writers should
+  // use <PostImage> below — it gets full next/image optimization +
+  // optional captions.
+  img: ({ src, alt }) =>
+    typeof src === "string" ? (
+      <figure className="my-10 md:my-12">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-surface-subtle">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt={alt ?? ""} className="h-auto w-full" />
+        </div>
+        {alt && (
+          <figcaption className="mt-3 text-balance text-center text-body-sm italic leading-relaxed text-subtle">
+            {alt}
+          </figcaption>
+        )}
+      </figure>
+    ) : null,
+
   blockquote: ({ children, ...props }) => (
     <blockquote
       className="my-8 border-l-2 border-accent/50 pl-5 font-serif text-h3 italic leading-snug text-ink"
@@ -178,5 +200,64 @@ export const mdxComponents: MDXComponents = {
       <span aria-hidden="true" className="block h-1 w-1 rounded-full bg-accent" />
       {level}
     </span>
+  ),
+
+  /**
+   * In-post image with optional caption.
+   *
+   * Usage in MDX:
+   *   <PostImage
+   *     src="/blog/medication-depletion-guide/pills-on-counter.jpg"
+   *     alt="Three orange prescription bottles on a kitchen counter"
+   *     caption="Long-term prescription users often don't realize what's depleting"
+   *     width={1600}
+   *     height={1000}
+   *   />
+   *
+   * Pass `priority` for above-the-fold images (e.g. the very first
+   * image in a long post). Otherwise next/image lazy-loads.
+   *
+   * Aspect ratio is locked by the caller via width/height (next/image
+   * requirement). Use 16:10 (1600×1000) or 16:9 (1600×900) for hero-
+   * style; 4:3 (1600×1200) for documentary; square (1600×1600) for
+   * subject-focused.
+   *
+   * The full markdown ![alt](src) syntax also still works (handled
+   * separately above), but loses the caption + next/image optimization.
+   * Use this component for meaningful in-post imagery.
+   */
+  PostImage: ({
+    src,
+    alt,
+    caption,
+    width = 1600,
+    height = 1000,
+    priority = false,
+  }: {
+    src: string;
+    alt: string;
+    caption?: string;
+    width?: number;
+    height?: number;
+    priority?: boolean;
+  }) => (
+    <figure className="my-10 md:my-12">
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-surface-subtle">
+        <Image
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          priority={priority}
+          sizes="(max-width: 768px) 100vw, (max-width: 1080px) 720px, 720px"
+          className="h-auto w-full"
+        />
+      </div>
+      {caption && (
+        <figcaption className="mt-3 text-balance text-center text-body-sm italic leading-relaxed text-subtle">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
   ),
 };

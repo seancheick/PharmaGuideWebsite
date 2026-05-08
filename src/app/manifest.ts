@@ -15,12 +15,14 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#FAF9F6",
     orientation: "portrait",
     categories: ["health", "medical", "lifestyle"],
-    // Icons emitted by Next.js App Router conventions:
-    //   src/app/icon.tsx        → /icon.png (32×32, favicon)
-    //   src/app/icon1.tsx       → /icon1.png (192×192, PWA)
-    //   src/app/apple-icon.tsx  → /apple-icon.png (180×180, iOS home)
+    // Static PNGs in src/app/ (App Router convention):
+    //   icon.png        → 32×32   browser tab favicon
+    //   apple-icon.png  → 180×180 iOS "Add to Home Screen"
+    //   icon1.png       → 192×192 Android PWA install
+    //   icon2.png       → 512×512 Android PWA splash + high-DPI
     icons: [
-      { src: "/icon1.png", sizes: "192x192", type: "image/png" },
+      { src: "/icon1.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icon2.png", sizes: "512x512", type: "image/png", purpose: "any" },
       { src: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
   };

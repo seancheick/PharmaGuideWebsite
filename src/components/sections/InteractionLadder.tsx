@@ -131,8 +131,8 @@ const TIERS: readonly TierData[] = [
   },
   {
     id: "safe",
-    label: "No known issue",
-    brief: "Evidence shows no concern.",
+    label: "Informational",
+    brief: "FYI — no action needed.",
     pair: "Vitamin D3 + Atorvastatin",
     headline: "No clinically relevant interaction",
     mechanism:

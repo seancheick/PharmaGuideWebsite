@@ -165,16 +165,19 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1.2fr] lg:gap-6 xl:gap-8">
           {/* ─── Brand column ─────────────────────────── */}
           <div className="flex flex-col gap-3.5 lg:col-span-1 md:col-span-2 lg:col-auto">
-            {/* Logo — wordmark + accent dot. Kept text-based so the footer
-                stays in the design system; if/when the bitmap logo is
-                wired up via next/image it slots in here. */}
+            {/* Logo — bitmap (next/image), shown in its native colors.
+                The previous `brightness-0 invert` filter was stripping
+                the logo to a flat white silhouette. Removed. The logo
+                file is light-foreground-on-transparent so it reads
+                naturally on the deep teal footer surface.            */}
             <Link href="/" aria-label={`${site.name} home`} className="inline-block">
               <Image
                 src="https://pharmaguide.io/wp-content/uploads/2025/12/polotno-1-scaled-e1766096991540.webp"
                 alt={site.name}
                 width={160}
                 height={40}
-                className="h-8 w-auto brightness-0 invert opacity-90"
+                unoptimized
+                className="h-9 w-auto"
               />
             </Link>
 
@@ -301,8 +304,13 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar — same bg, thin separator */}
-        <div className="border-t border-white/6">
+        {/* Bottom bar — same bg, hairline separator. Was border-t
+            border-white/6 (read as "thick white"); now an explicit
+            sub-pixel hairline at 4% alpha so it's barely there. On
+            retina screens this renders as 1 device pixel; on standard
+            DPI it rounds to 1 CSS px but the low alpha keeps it
+            whisper-thin. */}
+        <div className="border-t-[0.5px] border-white/[0.04]">
           <div className="container mx-auto py-5">
             <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/45">

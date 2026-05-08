@@ -23,22 +23,22 @@ export function Hero() {
         <div className="grid items-center gap-14 md:grid-cols-[1.05fr_1fr] md:gap-12 lg:gap-20">
           {/* Copy column */}
           <div className="space-y-8 md:space-y-10">
-            <p className="animate-fade-up font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
+            <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
               On-device supplement safety
             </p>
 
-            <h1 className="animate-fade-up text-display-xl text-ink [animation-delay:80ms]">
+            <h1 className="text-display-xl text-ink">
               Your supplements don&apos;t work in isolation.
               <br />
               <span className="text-accent">Neither should your check.</span>
             </h1>
 
-            <p className="animate-fade-up max-w-prose text-body-xl text-muted [animation-delay:160ms]">
+            <p className="animate-fade-up max-w-prose text-body-xl text-muted">
               See how your supplements, medications, and timing work together —
               not one bottle at a time.
             </p>
 
-            <div className="animate-fade-up flex flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:240ms]">
+            <div className="animate-fade-up flex flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:80ms]">
               <span className="inline-flex items-center gap-1.5">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-accent" aria-hidden="true">
                   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
@@ -63,7 +63,7 @@ export function Hero() {
               </span>
             </div>
 
-            <div className="animate-fade-up flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:gap-6 [animation-delay:320ms]">
+            <div className="animate-fade-up flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:gap-6 [animation-delay:160ms]">
               <Link
                 href="#waitlist"
                 className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-accent px-5 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"

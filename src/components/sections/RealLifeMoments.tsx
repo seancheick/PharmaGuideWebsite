@@ -260,7 +260,7 @@ const MomentCard = ({
   };
 
   return (
-    <motion.article
+    <motion.div
       ref={ref}
       layout
       transition={{ duration: 0.7, ease: [0.32, 0.72, 0.24, 1] }}
@@ -489,7 +489,7 @@ const MomentCard = ({
           </motion.aside>
         )}
       </AnimatePresence>
-    </motion.article>
+    </motion.div>
   );
 };
 MomentCard.displayName = "MomentCard";

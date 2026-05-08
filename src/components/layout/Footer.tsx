@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import {
   footerBadges,
@@ -165,20 +164,13 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1.2fr] lg:gap-6 xl:gap-8">
           {/* ─── Brand column ─────────────────────────── */}
           <div className="flex flex-col gap-3.5 lg:col-span-1 md:col-span-2 lg:col-auto">
-            {/* Logo — bitmap (next/image), shown in its native colors.
-                The previous `brightness-0 invert` filter was stripping
-                the logo to a flat white silhouette. Removed. The logo
-                file is light-foreground-on-transparent so it reads
-                naturally on the deep teal footer surface.            */}
-            <Link href="/" aria-label={`${site.name} home`} className="inline-block">
-              <Image
-                src="https://pharmaguide.io/wp-content/uploads/2025/12/polotno-1-scaled-e1766096991540.webp"
-                alt={site.name}
-                width={160}
-                height={40}
-                unoptimized
-                className="h-9 w-auto"
-              />
+            {/* Logo — text wordmark + accent dot. Replace with SVG/image
+                when final logo asset is ready. */}
+            <Link href="/" aria-label={`${site.name} home`} className="inline-flex items-center gap-2.5">
+              <span aria-hidden="true" className="block h-2.5 w-2.5 rounded-full bg-background/70" />
+              <span className="font-sans text-[1.5rem] font-semibold tracking-[-0.02em] text-background">
+                {site.name}
+              </span>
             </Link>
 
             <p className="max-w-xs text-body-sm leading-relaxed text-background/65">
@@ -187,14 +179,14 @@ export function Footer() {
 
             <address className="not-italic flex flex-col gap-2 text-body-sm text-background/65">
               <span className="inline-flex items-center gap-2">
-                <span className="text-background/45"><IconLocation /></span>
+                <span className="text-background/60"><IconLocation /></span>
                 {site.city}
               </span>
               <a
                 href={`mailto:${site.email}`}
                 className="inline-flex items-center gap-2 transition-colors duration-fast ease-smooth hover:text-background"
               >
-                <span className="text-background/45"><IconMail /></span>
+                <span className="text-background/60"><IconMail /></span>
                 {site.email}
               </a>
             </address>
@@ -268,7 +260,7 @@ export function Footer() {
             {/* Compact value-claim row on the right at md+. On mobile it
                 wraps below the trust badges. Kept tiny so it doesn't
                 steal weight from the main badges. */}
-            <li className="hidden lg:inline-flex items-center gap-3 text-background/45">
+            <li className="hidden lg:inline-flex items-center gap-3 text-background/60">
               {footerBadges.map((b, i) => (
                 <span key={b} className="font-mono text-[10px] uppercase tracking-[0.14em]">
                   {b}
@@ -313,7 +305,7 @@ export function Footer() {
         <div className="border-t-[0.5px] border-white/[0.04]">
           <div className="container mx-auto py-5">
             <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/45">
+              <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/60">
                 Last reviewed{" "}
                 <time dateTime={lastReviewed} className="text-background/70">
                   {lastReviewed}
@@ -321,7 +313,7 @@ export function Footer() {
                 <span className="mx-1 text-white/15">·</span> by Dr. Pham L., PharmD
               </p>
               <div className="flex items-center gap-4">
-                <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/45">
+                <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/60">
                   © {year} {site.name} Inc.
                 </p>
                 <span className="text-white/15">·</span>
@@ -411,14 +403,14 @@ function AppStoreBadge({
     <div
       aria-label={ariaLabel}
       role="img"
-      className="inline-flex w-[170px] items-center gap-2.5 rounded-xl border border-white/5 bg-white/[0.02] px-3.5 py-2 text-background/40 opacity-50 cursor-default"
+      className="inline-flex w-[170px] items-center gap-2.5 rounded-xl border border-white/5 bg-white/[0.02] px-3.5 py-2 text-background/60 opacity-60 cursor-default"
     >
       <span className="shrink-0"><Icon /></span>
       <span className="flex flex-col leading-none">
-        <span className="font-sans text-[9.5px] uppercase tracking-[0.06em] text-background/55">
+        <span className="font-sans text-[9.5px] uppercase tracking-[0.06em] text-background/70">
           {small}
         </span>
-        <span className="mt-0.5 font-sans text-[14px] font-medium tracking-[-0.01em] text-background">
+        <span className="mt-0.5 font-sans text-[14px] font-medium tracking-[-0.01em] text-background/90">
           {large}
         </span>
       </span>

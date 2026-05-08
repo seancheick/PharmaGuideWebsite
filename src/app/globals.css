@@ -26,7 +26,7 @@
     --color-foreground: 24 26 27;           /* near-black warm #181A1B */
     --color-ink: 17 19 20;                  /* deepest text    #111314 */
     --color-muted: 99 102 106;              /* secondary       #63666A */
-    --color-subtle: 142 145 150;            /* tertiary        #8E9196 */
+    --color-subtle: 110 113 118;            /* tertiary        #6E7176 — 4.5:1 on bg */
 
     /* Borders / dividers */
     --color-border: 229 226 219;            /* warm hairline   #E5E2DB */

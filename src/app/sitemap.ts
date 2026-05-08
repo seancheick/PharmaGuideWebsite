@@ -44,6 +44,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.5,
     },
+    {
+      url: `${site.url}/hipaa`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+    {
+      url: `${site.url}/accessibility`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
     // Future routes will be added here:
     // { url: `${site.url}/how-it-works`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     // { url: `${site.url}/methodology`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },

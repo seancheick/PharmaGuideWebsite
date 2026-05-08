@@ -24,7 +24,7 @@ export function Hero() {
           {/* Copy column */}
           <div className="space-y-8 md:space-y-10">
             <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
-              On-device supplement safety
+              The supplement &amp; medication co-pilot
             </p>
 
             <h1 className="text-display-xl text-ink">
@@ -33,9 +33,19 @@ export function Hero() {
               <span className="text-accent">Neither should your check.</span>
             </h1>
 
+            {/* Subhead broadened: covers the full product surface
+                (interactions, depletions, recalls, quality, fit) so the
+                homepage stops framing PharmaGuide as a narrow checker.
+                Capabilities link to the deep-dive at /features.       */}
             <p className="animate-fade-up max-w-prose text-body-xl text-muted">
-              See how your supplements, medications, and timing work together —
-              not one bottle at a time.
+              Interactions, medication-nutrient depletions, dose
+              accumulation, FDA recalls, ingredient quality —{" "}
+              <Link
+                href="/features"
+                className="text-foreground/85 underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-ink hover:decoration-accent"
+              >
+                across your full stack.
+              </Link>
             </p>
 
             <div className="animate-fade-up flex flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:80ms]">

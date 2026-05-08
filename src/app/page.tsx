@@ -5,6 +5,7 @@ import { InfrastructureStrip } from "@/components/sections/InfrastructureStrip";
 import { Problem } from "@/components/sections/Problem";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { InteractionLadder } from "@/components/sections/InteractionLadder";
+import { BeyondInteractions } from "@/components/sections/BeyondInteractions";
 import { RealLifeMoments } from "@/components/sections/RealLifeMoments";
 import { YourFit } from "@/components/sections/YourFit";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -39,6 +40,7 @@ export default function Home() {
         {/* Warm fade into the darker surface-subtle ladder section */}
         <div aria-hidden="true" className="fade-warm h-16 md:h-24" />
         <InteractionLadder />
+        <BeyondInteractions />
         <RealLifeMoments />
         <YourFit />
         <FinalCTA />

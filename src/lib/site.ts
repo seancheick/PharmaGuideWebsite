@@ -16,8 +16,22 @@ export const site = {
   twitter: "@pharmaguide",
 } as const;
 
+/**
+ * Top-level header nav. Order is by visit intent:
+ *   Features        — what the product actually does (most-clicked)
+ *   How It Works    — anchors to homepage section (no separate page;
+ *                     /features + /methodology cover that content)
+ *   Methodology     — credibility signal for a YMYL health product
+ *   Blog            — content depth + SEO
+ *   About           — story page, lowest-priority click
+ *
+ * 5 items reads cleanly at desktop widths. Mobile stacks in the
+ * full-screen overlay. If a 6th tab gets added later, drop Methodology
+ * to the footer-only and keep Features/How/Blog/About visible.
+ */
 export const nav = [
-  { label: "How It Works", href: "/how-it-works" },
+  { label: "Features", href: "/features" },
+  { label: "How It Works", href: "/#how-it-works" },
   { label: "Methodology", href: "/methodology" },
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },

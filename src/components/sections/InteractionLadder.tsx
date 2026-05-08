@@ -188,7 +188,7 @@ export function InteractionLadder() {
     <section
       id="interaction-ladder"
       aria-labelledby="ladder-heading"
-      className="relative section-y bg-surface-subtle/30"
+      className="relative section-y bg-surface-subtle"
     >
       <div className="container relative mx-auto">
         {/* Header */}

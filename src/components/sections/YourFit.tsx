@@ -118,10 +118,10 @@ export function YourFit() {
               {/* Soft accent halo behind card */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -inset-x-4 -inset-y-2 rounded-[2rem] bg-accent/[0.05] blur-2xl"
+                className="pointer-events-none absolute -inset-x-6 -inset-y-4 rounded-[2rem] bg-severity-safe/[0.08] blur-2xl"
               />
 
-              <div className="relative rounded-2xl border border-border bg-surface p-6 shadow-lg sm:p-7">
+              <div className="relative rounded-2xl border border-severity-safe/15 bg-severity-safe/[0.03] p-6 shadow-lg sm:p-7">
                 {/* Tiny product label — gives context to what we're scoring */}
                 <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-subtle">
                   Magnesium Glycinate · 200 mg
@@ -145,7 +145,7 @@ export function YourFit() {
                       severity-safe green. (At low scores this would shift to
                       monitor/caution/avoid; for now we hard-code the demo
                       product, which is genuinely high quality.)             */}
-                  <div className="mt-3 h-[5px] overflow-hidden rounded-full bg-border">
+                  <div className="mt-3 h-[6px] overflow-hidden rounded-full bg-border">
                     <motion.div
                       className="h-full rounded-full bg-severity-safe"
                       initial={{ width: "0%" }}
@@ -184,7 +184,7 @@ export function YourFit() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.5, delay: 1.6, ease: [0.32, 0.72, 0, 1] }}
-                    className="mt-3 inline-flex items-center gap-2 rounded-pill bg-severity-safe/12 px-3.5 py-1.5"
+                    className="mt-3 inline-flex items-center gap-2.5 rounded-pill bg-severity-safe/18 px-4 py-2"
                   >
                     <span
                       aria-hidden="true"

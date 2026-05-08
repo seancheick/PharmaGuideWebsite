@@ -33,7 +33,11 @@ export default function Home() {
         <Hero />
         <InfrastructureStrip />
         <Problem />
+        {/* Warm fade into HowItWorks — subtle depth between pure-type sections */}
+        <div aria-hidden="true" className="fade-warm h-16 md:h-24" />
         <HowItWorks />
+        {/* Warm fade into the darker surface-subtle ladder section */}
+        <div aria-hidden="true" className="fade-warm h-16 md:h-24" />
         <InteractionLadder />
         <RealLifeMoments />
         <YourFit />

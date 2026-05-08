@@ -20,7 +20,7 @@
     --color-background: 250 249 246;        /* warm off-white  #FAF9F6 */
     --color-surface: 255 255 255;           /* card white      #FFFFFF */
     --color-surface-raised: 252 251 248;    /* slight warmth   #FCFBF8 */
-    --color-surface-subtle: 244 242 238;    /* cooler neutral  #F4F2EE */
+    --color-surface-subtle: 238 235 229;    /* cooler neutral  #EAEBE5 — widened gap from bg for visible section alternation */
 
     /* Foreground / text */
     --color-foreground: 24 26 27;           /* near-black warm #181A1B */
@@ -162,7 +162,7 @@
     --shadow-lg: 0 12px 28px -8px rgb(17 19 20 / 0.08), 0 4px 12px -4px rgb(17 19 20 / 0.05);
     --shadow-xl: 0 24px 48px -12px rgb(17 19 20 / 0.12), 0 10px 20px -8px rgb(17 19 20 / 0.06);
     --shadow-2xl: 0 32px 64px -16px rgb(17 19 20 / 0.16), 0 16px 32px -12px rgb(17 19 20 / 0.08);
-    --shadow-glow: 0 0 0 1px rgb(24 59 63 / 0.06), 0 8px 24px -4px rgb(24 59 63 / 0.12);
+    --shadow-glow: 0 0 0 1px rgb(24 59 63 / 0.08), 0 8px 28px -4px rgb(24 59 63 / 0.18), 0 2px 8px -2px rgb(24 59 63 / 0.08);
 
     /* ────────────── MOTION ──────────────
        Premium = slow + emphasized + restrained.
@@ -211,7 +211,7 @@
        Reusable gradient tokens for hero halo, CTA backgrounds, section transitions.
     */
     --gradient-warm-fade: linear-gradient(180deg, rgb(250 249 246 / 0) 0%, rgb(244 242 238 / 1) 100%);
-    --gradient-hero-halo: radial-gradient(80% 60% at 50% 0%, rgb(230 236 236 / 0.6) 0%, rgb(250 249 246 / 0) 70%);
+    --gradient-hero-halo: radial-gradient(90% 70% at 50% 0%, rgb(230 236 236 / 0.75) 0%, rgb(250 249 246 / 0) 72%);
     --gradient-cta-glow: radial-gradient(50% 80% at 50% 50%, rgb(24 59 63 / 0.04) 0%, rgb(24 59 63 / 0) 100%);
   }
 

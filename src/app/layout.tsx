@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import { Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ClarityProvider } from "@/components/analytics/ClarityProvider";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import "./globals.css";
@@ -136,6 +137,7 @@ export default function RootLayout({
         {children}
         <Analytics />
         <SpeedInsights />
+        <ClarityProvider />
       </body>
     </html>
   );

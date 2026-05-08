@@ -107,7 +107,7 @@ export function PhoneMockup() {
   }, [reducedMotion]);
 
   return (
-    <div className="relative flex justify-center overflow-x-clip md:justify-end">
+    <div className="relative flex justify-center md:justify-end">
       {/* Ambient radial glow — soft accent halo extending beyond the phone.
           Felt, not seen. Anchors the device into the page environment. */}
       <div

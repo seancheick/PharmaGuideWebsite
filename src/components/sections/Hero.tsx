@@ -16,7 +16,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative halo-hero pb-section-y pt-24 sm:pt-28 md:pt-32"
+      className="relative overflow-x-clip halo-hero pb-section-y pt-24 sm:pt-28 md:pt-32"
       aria-label="Hero"
     >
       <div className="container mx-auto">

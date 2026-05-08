@@ -144,29 +144,23 @@ export function BlogHubClient({
               />
             </div>
 
-            {/* Category chips + view toggle row */}
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-              {/* Chips — flex-1 so they fill the row, wrap as needed */}
-              <div className="flex flex-1 flex-wrap gap-2">
+            {/* Category chips — full row. The grid/list view toggle
+                sits with the grid section header below the featured
+                card (closer to what it actually controls). */}
+            <div className="mt-5 flex flex-wrap gap-2">
+              <CategoryChip
+                label="All posts"
+                active={activeCategory === "all"}
+                onClick={() => setActiveCategory("all")}
+              />
+              {categories.map((c) => (
                 <CategoryChip
-                  label="All posts"
-                  active={activeCategory === "all"}
-                  onClick={() => setActiveCategory("all")}
+                  key={c.id}
+                  label={c.label}
+                  active={activeCategory === c.id}
+                  onClick={() => setActiveCategory(c.id)}
                 />
-                {categories.map((c) => (
-                  <CategoryChip
-                    key={c.id}
-                    label={c.label}
-                    active={activeCategory === c.id}
-                    onClick={() => setActiveCategory(c.id)}
-                  />
-                ))}
-              </div>
-
-              {/* View toggle — sits at the end of the row */}
-              <div className="shrink-0 self-start sm:self-center">
-                <BlogViewToggle view={view} onChange={handleViewChange} />
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -199,20 +193,26 @@ export function BlogHubClient({
       >
         <div className="container relative mx-auto">
           <div className="mx-auto max-w-6xl">
-            {/* Section header — only when there are posts */}
+            {/* Section header — only when there are posts.
+                Grid/list toggle sits here on the right because this
+                is what it controls (filters + featured already up top). */}
             {filtered.length > 0 && (
-              <div className="mb-8 flex items-baseline justify-between md:mb-10">
-                <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/65">
-                  {isUnfiltered
-                    ? "Latest"
-                    : query.trim()
-                      ? `Results · "${query.trim()}"`
-                      : categories.find((c) => c.id === activeCategory)?.label ?? "Latest"}
-                </p>
-                <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
-                  {filtered.length}{" "}
-                  {filtered.length === 1 ? "article" : "articles"}
-                </p>
+              <div className="mb-8 flex flex-wrap items-center justify-between gap-3 md:mb-10">
+                <div className="flex items-baseline gap-3">
+                  <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/65">
+                    {isUnfiltered
+                      ? "Latest"
+                      : query.trim()
+                        ? `Results · "${query.trim()}"`
+                        : categories.find((c) => c.id === activeCategory)?.label ?? "Latest"}
+                  </p>
+                  <span aria-hidden="true" className="text-border-strong">·</span>
+                  <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
+                    {filtered.length}{" "}
+                    {filtered.length === 1 ? "article" : "articles"}
+                  </p>
+                </div>
+                <BlogViewToggle view={view} onChange={handleViewChange} />
               </div>
             )}
 

@@ -160,7 +160,22 @@ export function RealLifeMoments() {
         style={{ marginLeft: "var(--carousel-inset)" }}
         className={cn(
           "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden pr-5 pb-6 pt-2 sm:gap-4 sm:pr-8 md:mt-16 md:pr-10",
-          "[--carousel-inset:1.25rem] sm:[--carousel-inset:1.5rem] lg:[--carousel-inset:calc((100vw_-_1200px)/2_+_2rem)]",
+          // Carousel left-inset by viewport tier:
+          //   mobile  20px     · sm 24px    · lg+  scales with viewport
+          //
+          // lg+ formula: max(24px, (viewport - 1340) / 2 + 24px)
+          // - At 1280 viewport → 24px  (clamps to min)
+          // - At 1440 viewport → 74px  (was 152px before this tweak)
+          // - At 1920 viewport → 314px (centers nicely on large monitors)
+          //
+          // Effect: on desktop the carousel rail sits ~78px further to
+          // the left than it did before — the cards no longer align to
+          // the section header's container; they bleed toward the
+          // viewport's left edge for a cinematic feel. Section header
+          // (title + subhead) keeps its container alignment so the
+          // contrast between the title's anchored position and the
+          // rail's leftward bleed is intentional.
+          "[--carousel-inset:1.25rem] sm:[--carousel-inset:1.5rem] lg:[--carousel-inset:max(1.5rem,calc((100vw_-_1340px)/2_+_1.5rem))]",
           "snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         )}
       >

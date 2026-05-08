@@ -84,7 +84,10 @@ export function Header() {
       >
         <div
           className={cn(
-            "flex w-full max-w-3xl items-center justify-between gap-6 rounded-pill border px-3 py-2 transition-[background-color,box-shadow,backdrop-filter,border-color] duration-slow ease-smooth sm:px-4",
+            // Bumped from max-w-3xl (768) → max-w-4xl (896) and py-2 → py-2.5
+            // because 5 nav items at gap-7 was cramped. Pill still feels
+            // tight and floating; just less squeezed.
+            "flex w-full max-w-4xl items-center justify-between gap-6 rounded-pill border px-3 py-2.5 transition-[background-color,box-shadow,backdrop-filter,border-color] duration-slow ease-smooth sm:px-4",
             scrolled
               ? "glass border-border/70 shadow-md"
               : "border-transparent bg-background/30 backdrop-blur-xs"
@@ -100,8 +103,9 @@ export function Header() {
             {site.name}
           </Link>
 
-          {/* Desktop nav */}
-          <nav aria-label="Main" className="hidden items-center gap-7 md:flex">
+          {/* Desktop nav — gap-8 between items reads cleaner with 5 items
+              than the previous gap-7. Pairs with the wider max-w-4xl pill. */}
+          <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
             {nav.map((item) => (
               <Link
                 key={item.href}

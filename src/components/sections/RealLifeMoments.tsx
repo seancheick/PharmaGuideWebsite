@@ -43,7 +43,7 @@ export function RealLifeMoments() {
   const [openIdx, setOpenIdx] = useState<number>(-1);
   const [progress, setProgress] = useState({ width: 30, left: 0 });
   const railRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<Array<HTMLElement | null>>([]);
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   const updateProgress = useCallback(() => {
     const rail = railRef.current;
@@ -249,7 +249,7 @@ const MomentCard = ({
   isOpen,
   onOpen,
   onClose,
-}: CardProps & { ref: React.Ref<HTMLElement> }) => {
+}: CardProps & { ref: React.Ref<HTMLDivElement> }) => {
   const sev = SEV_STYLES[moment.flag.severity];
 
   // Click anywhere on the compact card opens it.

@@ -10,8 +10,12 @@ import { cn } from "@/lib/utils";
  *
  * Hover, focus, or tap any of the five tiers to update the detail panel
  * below with that tier's representative pair, mechanism, recommendation,
- * evidence grade, and study basis. The two halves form a single bordered
+ * evidence level, and study basis. The two halves form a single bordered
  * unit so the relationship is visible: "these tiers produce these verdicts."
+ *
+ * Evidence levels match the in-app schema (Established / Probable /
+ * Moderate / Limited / Theoretical) — NOT the A/B/C/D letter grades
+ * that an earlier marketing pass invented but never shipped.
  *
  * Each tier has a unique geometric shape (triangle / circle / diamond /
  * ring / square) — character without color. Headline punchline is set in
@@ -23,7 +27,26 @@ import { cn } from "@/lib/utils";
 
 type TierId = "contraindicated" | "avoid" | "caution" | "monitor" | "safe";
 type Shape = "triangle" | "circle" | "diamond" | "ring" | "square";
-type Grade = "A" | "B" | "C" | "D";
+
+/**
+ * Evidence levels — matches the in-app `ingredient_interaction_rules`
+ * schema (5-level system, 592 rules). Source-of-truth labels:
+ *
+ *   established  Strong clinical evidence (RCTs, meta-analyses)
+ *   probable     Good evidence, likely clinically relevant
+ *   moderate     Mixed or moderate-quality evidence
+ *   limited      Sparse or preliminary human data
+ *   theoretical  Mechanistic plausibility, no/minimal human data
+ *
+ * The previous iteration used fictional A/B/C/D letter grades that
+ * don't exist anywhere in the actual product — fixed.
+ */
+type EvidenceLevel =
+  | "Established"
+  | "Probable"
+  | "Moderate"
+  | "Limited"
+  | "Theoretical";
 
 interface TierData {
   id: TierId;
@@ -33,13 +56,18 @@ interface TierData {
   headline: string;
   mechanism: string;
   recommendation: string;
-  grade: Grade;
+  evidence: EvidenceLevel;
   studies: string;
   shape: Shape;
   textClass: string;
   barClass: string;
 }
 
+// Evidence-level assignments below match the cited `studies` for each
+// pair (in-app source-of-truth):
+//   • Meta-analysis + multiple RCTs  → Established
+//   • Multiple cohort studies        → Probable
+//   • PK studies / mixed quality     → Moderate or Limited
 const TIERS: readonly TierData[] = [
   {
     id: "contraindicated",
@@ -50,7 +78,7 @@ const TIERS: readonly TierData[] = [
     mechanism:
       "St. John's Wort enhances serotonin reuptake, becoming dangerously additive to SSRI activity.",
     recommendation: "Avoid combining unless supervised by a clinician.",
-    grade: "A",
+    evidence: "Established",
     studies: "Meta-analysis · 17 RCTs",
     shape: "triangle",
     textClass: "text-severity-contraindicated",
@@ -65,7 +93,7 @@ const TIERS: readonly TierData[] = [
     mechanism:
       "Ginkgo's antiplatelet activity is additive to warfarin's anticoagulation effect.",
     recommendation: "Avoid the combination, or monitor INR closely with clinician oversight.",
-    grade: "B",
+    evidence: "Probable",
     studies: "6 cohort studies",
     shape: "circle",
     textClass: "text-severity-avoid",
@@ -80,7 +108,7 @@ const TIERS: readonly TierData[] = [
     mechanism:
       "Calcium binds levothyroxine in the gut, decreasing bioavailability up to 30% within 4 hours.",
     recommendation: "Separate doses by at least 4 hours.",
-    grade: "A",
+    evidence: "Established",
     studies: "4 RCTs · 1 meta-analysis",
     shape: "diamond",
     textClass: "text-severity-caution",
@@ -95,7 +123,7 @@ const TIERS: readonly TierData[] = [
     mechanism:
       "Magnesium may reduce levothyroxine absorption when taken too closely together.",
     recommendation: "Separate by at least 4 hours.",
-    grade: "B",
+    evidence: "Moderate",
     studies: "2 pharmacokinetic studies",
     shape: "ring",
     textClass: "text-severity-monitor",
@@ -110,7 +138,7 @@ const TIERS: readonly TierData[] = [
     mechanism:
       "No shared metabolism pathway of concern. Statin efficacy may even be modestly improved.",
     recommendation: "Take as directed — no timing adjustment needed.",
-    grade: "A",
+    evidence: "Established",
     studies: "Meta-analysis · 12 RCTs",
     shape: "square",
     textClass: "text-severity-safe",
@@ -220,7 +248,7 @@ export function InteractionLadder() {
             variants={fadeUpItem}
             className="max-w-prose text-body-xl text-muted"
           >
-            Five severity tiers, each with the mechanism, evidence grade, and study
+            Five severity tiers, each with the mechanism, evidence level, and study
             basis behind the verdict.{" "}
             <span className="text-foreground/70">
               <span className="hidden md:inline">Hover or tap a tier.</span>
@@ -361,17 +389,23 @@ export function InteractionLadder() {
                   </div>
                 </div>
 
-                {/* Right: evidence column */}
+                {/* Right: evidence column.
+                    Pill renders the in-app evidence level (Established /
+                    Probable / Moderate / Limited / Theoretical) — the
+                    actual labels from `ingredient_interaction_rules`.
+                    No more A/B/C/D letter grades (those were marketing
+                    fiction; never existed in the product).             */}
                 <div className="border-t border-border pt-4 md:border-l md:border-t-0 md:pl-6 md:pt-0">
                   <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-subtle">
-                    Evidence
+                    Evidence level
                   </p>
-                  <span className="mt-2 inline-flex items-center gap-2 rounded-pill bg-accent-soft px-3 py-1">
-                    <span className="font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] text-accent-strong">
-                      Grade
-                    </span>
+                  <span className="mt-2 inline-flex items-center gap-2 rounded-pill bg-accent-soft px-3.5 py-1.5">
+                    <span
+                      aria-hidden="true"
+                      className="block h-1.5 w-1.5 rounded-full bg-accent-strong"
+                    />
                     <span className="font-serif text-h3 italic leading-none text-accent-strong">
-                      {active.grade}
+                      {active.evidence}
                     </span>
                   </span>
 

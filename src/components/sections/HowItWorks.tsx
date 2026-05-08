@@ -45,7 +45,7 @@ const STEPS = [
   {
     num: "03",
     title: "You get Your Fit — with every study behind it.",
-    body: "Personalized compatibility, computed fresh each time. Tap any note to read the mechanism, evidence grade, and clinical trial.",
+    body: "Personalized compatibility, computed fresh each time. Tap any note to read the mechanism, evidence level, and clinical trial.",
     visual: "yourfit" as const,
   },
 ] as const;

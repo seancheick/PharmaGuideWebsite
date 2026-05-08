@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FAQClient } from "@/components/faq/FAQClient";
+import { NewsletterCTA } from "@/components/faq/NewsletterCTA";
 import { FAQ_ITEMS } from "@/lib/faq";
 import { site } from "@/lib/site";
 
@@ -52,9 +52,9 @@ export const metadata: Metadata = {
 };
 
 export default function FAQPage() {
-  // FAQPage JSON-LD — gives Google the structured data it needs to
-  // render the page as expandable rich results in search.
-  const jsonLd = {
+  // FAQPage JSON-LD — Google rich-result eligibility for expandable
+  // Q&A snippets in search.
+  const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: FAQ_ITEMS.map((item) => ({
@@ -65,6 +65,51 @@ export default function FAQPage() {
         text: item.a,
       },
     })),
+  };
+
+  // Breadcrumb JSON-LD — helps Google show breadcrumb trails in
+  // search results AND signals page hierarchy to AI crawlers.
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: site.url,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "FAQ",
+        item: `${site.url}/faq`,
+      },
+    ],
+  };
+
+  // WebPage schema — gives crawlers a clean structured anchor for
+  // the page itself (separate from the embedded FAQPage entity).
+  const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${site.url}/faq#webpage`,
+    url: `${site.url}/faq`,
+    name: "FAQ — PharmaGuide",
+    description:
+      "Frequently asked questions about PharmaGuide — what it is, how it works, privacy, evidence, and when it ships.",
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${site.url}#website`,
+      name: site.name,
+      url: site.url,
+    },
+    inLanguage: site.locale,
+    breadcrumb: { "@id": `${site.url}/faq#breadcrumb` },
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: `${site.url}/opengraph-image`,
+    },
   };
 
   return (
@@ -124,44 +169,39 @@ export default function FAQPage() {
           </div>
         </section>
 
-        {/* ━━━━━━━━━━━━━━━━━━ BOTTOM CTA STRIP ━━━━━━━━━━━━━━━━━━ */}
-        <section
-          aria-label="Still have questions"
-          className="relative section-y-sm border-t border-border bg-surface-subtle/40"
-        >
-          <div className="container relative mx-auto">
-            <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center md:gap-5">
-              <p className="font-serif text-h2 italic leading-tight text-ink">
-                Can&apos;t find your answer?
-              </p>
-
-              <div className="flex flex-wrap items-center justify-center gap-3 text-body-sm text-muted sm:gap-5">
-                <a
-                  href={`mailto:${site.email}`}
-                  className="inline-flex items-center gap-2 text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
-                >
-                  {site.email}
-                </a>
-                <span aria-hidden="true" className="text-border-strong">·</span>
-                <Link
-                  href="/#waitlist"
-                  className="inline-flex items-center gap-1.5 text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
-                >
-                  Join the beta
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* ━━━━━━━━━━━━━━━━━━ NEWSLETTER CTA ━━━━━━━━━━━━━━━━━━
+            Replaced the old "Can't find your answer?" strip.
+            Newsletter is a lower-commitment on-ramp than the
+            homepage's beta CTA — captures readers who aren't ready
+            to commit but want to stay informed. The inline email
+            link inside NewsletterCTA preserves the "still have a
+            specific question" escape hatch.                       */}
+        <NewsletterCTA />
       </main>
       <Footer />
 
-      {/* FAQPage structured data — emitted as a script tag so Google
-          can parse it for rich-result eligibility. */}
+      {/* Structured data for Google + AI crawlers.
+          - FAQPage: rich-result eligibility for expandable Q&A
+          - BreadcrumbList: search-result breadcrumb trail
+          - WebPage: clean page-level entity
+          Emitted as separate <script> tags (Google's preference). */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        id="breadcrumb-schema"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            ...breadcrumbJsonLd,
+            "@id": `${site.url}/faq#breadcrumb`,
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
       />
     </>
   );

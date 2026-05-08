@@ -56,6 +56,10 @@ export function FAQClient() {
         const buttonId = `faq-q-${i}`;
         const panelId = `faq-a-${i}`;
 
+        // Q01, Q02, … Q11 — mono-caps numbering above each question.
+        // Adds Linear/Vercel-style structure without category-tag noise.
+        const qNum = `Q${String(i + 1).padStart(2, "0")}`;
+
         return (
           <motion.li key={item.q} variants={fadeUpItem} className="group">
             <h3>
@@ -66,14 +70,24 @@ export function FAQClient() {
                 aria-controls={panelId}
                 onClick={() => toggle(i)}
                 className={cn(
-                  "flex w-full items-center justify-between gap-6 py-6 text-left transition-colors duration-fast ease-smooth",
+                  "flex w-full items-start justify-between gap-6 py-6 text-left transition-colors duration-fast ease-smooth",
                   "hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent",
                   isOpen ? "text-ink" : "text-foreground/85"
                 )}
               >
-                <span className="font-serif text-h3 italic leading-snug">
-                  {item.q}
-                </span>
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <span
+                    className={cn(
+                      "font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] tabular-nums transition-colors duration-fast ease-smooth",
+                      isOpen ? "text-accent" : "text-subtle"
+                    )}
+                  >
+                    {qNum}
+                  </span>
+                  <span className="font-serif text-h3 italic leading-snug">
+                    {item.q}
+                  </span>
+                </div>
                 <PlusIcon isOpen={isOpen} />
               </button>
             </h3>
@@ -96,7 +110,11 @@ export function FAQClient() {
                   }}
                   className="overflow-hidden"
                 >
-                  <div className="max-w-prose pb-7 pr-10 text-body leading-relaxed text-muted">
+                  {/* Answer body — pb-7 to match the question's py-6
+                      breathing room. Right-pad so it never bumps into
+                      the +/× icon. Slightly larger leading for
+                      readability since these can be 3-4 lines. */}
+                  <div className="max-w-prose pb-7 pr-10 text-body leading-[1.65] text-muted">
                     {renderInline(item.body)}
                   </div>
                 </motion.section>

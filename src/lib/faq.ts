@@ -73,8 +73,13 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
     body: "**No.** PharmaGuide is an educational tool that surfaces research-backed interaction data and helps you prepare for conversations with your healthcare provider. It does not diagnose, does not tell you to stop medications, and does not replace clinical care. **Always consult your doctor or pharmacist** before making changes to your stack.",
   },
   {
-    q: "When does it launch?",
-    a: "Opening in waves through 2026. Join the beta to be among the first invited.",
-    body: "Opening in waves through **2026**. [Join the beta](/#waitlist) to be among the first invited.",
+    q: "What about pregnancy, breastfeeding, or special populations?",
+    a: "PharmaGuide flags ingredients that need extra context during pregnancy, breastfeeding, and other special situations — including high-dose vitamin A, certain herbal extracts, and stimulants. Set your conditions in your profile and the personal Fit recalculates accordingly. For high-stakes decisions, your OB-GYN or pharmacist remains the source of truth.",
+    body: "PharmaGuide flags ingredients that need extra context during **pregnancy, breastfeeding, and other special situations** — including high-dose vitamin A, certain herbal extracts, and stimulants. Set your conditions in your profile and the personal Fit recalculates accordingly. For high-stakes decisions, your OB-GYN or pharmacist remains the source of truth.",
+  },
+  {
+    q: "When does it launch — and what changes when it does?",
+    a: "Opening in waves through 2026. The core interaction checker stays free at launch — scanning, search, your stack, and every interaction warning with full reasoning. Optional premium features (deep clinical research, advanced personalization, the AI pharmacist conversation layer) become available through a subscription. Founding beta members get extended free access.",
+    body: "Opening in waves through **2026**. The core interaction checker stays **free at launch** — scanning, search, your stack, and every interaction warning with full reasoning. Optional premium features (deep clinical research, advanced personalization, the AI pharmacist conversation layer) become available through a subscription. **Founding beta members get extended free access.** [Join the beta](/#waitlist).",
   },
 ] as const;

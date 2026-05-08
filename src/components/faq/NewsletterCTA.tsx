@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { subscribeToNewsletter } from "@/app/actions/subscribe";
 import { cn } from "@/lib/utils";
 
 /**
@@ -26,14 +27,31 @@ const SHOW_PROOF = false;
 export function NewsletterCTA() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email.");
       return;
     }
-    // TODO: wire to email provider
-    setSubmitted(true);
+
+    setSubmitting(true);
+    setError("");
+
+    try {
+      const result = await subscribeToNewsletter(email);
+      if (result.ok) {
+        setSubmitted(true);
+      } else {
+        setError(result.message);
+      }
+    } catch {
+      setError("Something went wrong. Try again in a moment?");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -97,31 +115,45 @@ export function NewsletterCTA() {
             {submitted ? (
               <SuccessState />
             ) : (
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col gap-3 sm:flex-row sm:gap-2"
-              >
-                <label className="sr-only" htmlFor="newsletter-email">
-                  Email address
-                </label>
-                <input
-                  id="newsletter-email"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  required
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 rounded-pill border border-border bg-surface px-5 py-3.5 text-body text-ink shadow-xs outline-none transition-[border-color,box-shadow] duration-fast ease-smooth placeholder:text-subtle focus:border-accent focus:shadow-glow"
-                />
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
-                >
-                  Subscribe
-                  <span aria-hidden="true">→</span>
-                </button>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
+                  <label className="sr-only" htmlFor="newsletter-email">
+                    Email address
+                  </label>
+                  <input
+                    id="newsletter-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    required
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={submitting}
+                    className="flex-1 rounded-pill border border-border bg-surface px-5 py-3.5 text-body text-ink shadow-xs outline-none transition-[border-color,box-shadow] duration-fast ease-smooth placeholder:text-subtle focus:border-accent focus:shadow-glow disabled:opacity-60"
+                  />
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className={cn(
+                      "inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent",
+                      submitting
+                        ? "cursor-wait opacity-80"
+                        : "hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow"
+                    )}
+                  >
+                    {submitting ? "Sending…" : "Subscribe"}
+                    {!submitting && <span aria-hidden="true">→</span>}
+                  </button>
+                </div>
+                {error && (
+                  <p
+                    role="alert"
+                    className="text-body-sm text-severity-avoid"
+                  >
+                    {error}
+                  </p>
+                )}
               </form>
             )}
 

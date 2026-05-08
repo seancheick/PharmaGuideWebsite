@@ -106,13 +106,13 @@ export function HowItWorks() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-10%" }}
-          className="mx-auto mt-14 grid max-w-6xl gap-8 md:mt-20 md:grid-cols-3 md:gap-10 lg:gap-14"
+          className="mt-14 grid gap-8 md:mt-20 md:grid-cols-3 md:gap-6 lg:gap-8"
         >
           {STEPS.map((step) => (
             <motion.li
               key={step.num}
               variants={fadeUpItem}
-              className="group flex min-h-[560px] flex-col rounded-2xl border border-border bg-surface p-7 shadow-md transition-[transform,box-shadow] duration-slow ease-emphasized hover:-translate-y-1 hover:shadow-xl md:p-8"
+              className="group flex min-h-[480px] flex-col rounded-2xl border border-border bg-surface p-7 shadow-md transition-[transform,box-shadow] duration-slow ease-emphasized hover:-translate-y-1 hover:shadow-xl md:p-8"
             >
               <span className="font-mono text-[11px] font-medium tabular-nums uppercase tracking-[0.22em] text-accent">
                 {step.num}

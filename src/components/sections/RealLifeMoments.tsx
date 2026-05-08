@@ -137,7 +137,7 @@ export function RealLifeMoments() {
           >
             The moments people don&apos;t realize
             <br />
-            <span className="font-serif italic">they need this.</span>
+            <span className="font-serif italic text-accent">they need this.</span>
           </motion.h2>
 
           <motion.p

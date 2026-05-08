@@ -76,7 +76,7 @@ export function HowItWorks() {
             variants={fadeUpItem}
             className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
           >
-            02 · How it works
+            How it works
           </motion.p>
 
           <motion.h2
@@ -85,7 +85,7 @@ export function HowItWorks() {
             className="text-balance text-display-lg text-ink"
           >
             Three beats.{" "}
-            <span className="font-serif italic">No guesswork.</span>
+            <span className="font-serif italic text-accent">No guesswork.</span>
           </motion.h2>
 
           <motion.p

@@ -120,7 +120,7 @@ export function Problem() {
           <motion.h2 variants={fadeUpItem} className="text-display-lg text-ink">
             A label tells you what&apos;s in the bottle.
             <br />
-            <span className="text-muted">
+            <span className="text-accent">
               Not what happens with your other bottles.
             </span>
           </motion.h2>

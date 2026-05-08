@@ -241,7 +241,7 @@ export function InteractionLadder() {
           >
             Not just warnings.
             <br />
-            <span className="font-serif italic">Reasoning.</span>
+            <span className="font-serif italic text-accent">Reasoning.</span>
           </motion.h2>
 
           <motion.p

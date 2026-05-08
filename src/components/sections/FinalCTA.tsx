@@ -93,7 +93,7 @@ export function FinalCTA() {
           >
             Opening
             <br />
-            <span className="font-serif italic">in waves.</span>
+            <span className="font-serif italic text-accent">in waves.</span>
           </motion.h2>
 
           <motion.p

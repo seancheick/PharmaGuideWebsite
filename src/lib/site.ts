@@ -37,7 +37,13 @@ export const nav = [
 export const footerNav = {
   product: [
     { label: "Features", href: "/features" },
-    { label: "How It Works", href: "/how-it-works" },
+    // "How It Works" is the homepage section anchor — we don't build a
+    // separate /how-it-works page because /features (6 pillars) and
+    // /methodology (5-step verification process) already cover that
+    // content. Pointing the link at the homepage section is the right
+    // call: visitors who click here get the 3-card overview, then the
+    // homepage's natural flow into Ladder + Real-Life Moments + the rest.
+    { label: "How It Works", href: "/#how-it-works" },
     { label: "Methodology", href: "/methodology" },
     { label: "FAQ", href: "/faq" },
     {

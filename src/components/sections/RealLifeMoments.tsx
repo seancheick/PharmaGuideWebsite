@@ -149,31 +149,22 @@ export function RealLifeMoments() {
         </motion.div>
       </div>
 
-      {/* Carousel rail
-          ─────────────────────────────────────────────────────────────
-          PADDING RULE (do NOT match container padding here — that bug
-          has been fixed and reverted multiple times):
-
-          Rail must inset MORE than the section header on every
-          breakpoint so cards visually FLOAT deeper than the title
-          sits. ~8px deeper at every step:
-
-            Breakpoint   Container px   Rail px   Δ
-            ─────────────────────────────────────────
-            mobile       20             28        +8   ← was 20, kissed edge
-            sm           24             32        +8   ← was 24, also tight
-            md           24             32+       +8   (already correct)
-            lg+          32             scales        (already correct)
-
-          "Premium float" pattern: title sits at container edge, cards
-          start one indent deeper. At md+ the existing centered-rail
-          formula already does this; mobile + sm needed to catch up. */}
+      {/* Carousel rail — left padding matches the container's content
+          edge so the first card aligns with the section header above.
+          Right side uses less padding so cards peek off-screen (scroll
+          affordance). The inline style uses CSS vars directly — these
+          resolve at runtime, unlike Tailwind arbitrary values which
+          broke repeatedly with calc() + CSS vars. */}
       <div
         ref={railRef}
         role="list"
         aria-label="Real-life moments"
+        style={{
+          paddingLeft: "var(--carousel-inset)",
+        }}
         className={cn(
-          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden px-7 pb-6 pt-2 sm:gap-4 sm:px-8 md:mt-16 md:px-[max(2rem,calc((100vw-1200px)/2+2rem))]",
+          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden pr-5 pb-6 pt-2 sm:gap-4 sm:pr-8 md:mt-16 md:pr-10",
+          "[--carousel-inset:1.25rem] sm:[--carousel-inset:1.5rem] lg:[--carousel-inset:calc((100vw_-_1200px)/2_+_2rem)]",
           "snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         )}
       >

@@ -5,6 +5,7 @@ import { Newsreader } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClarityProvider } from "@/components/analytics/ClarityProvider";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import "./globals.css";
@@ -138,6 +139,7 @@ export default function RootLayout({
         <Analytics />
         <SpeedInsights />
         <ClarityProvider />
+        <GoogleAnalytics />
       </body>
     </html>
   );

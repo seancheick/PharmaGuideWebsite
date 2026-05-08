@@ -119,6 +119,46 @@ export function Problem() {
           ))}
         </motion.div>
 
+        {/* Block 2.5 — CDC stat callout. Quantifies the abstract problem
+            with a real, sourced number. Sans tabular-nums for the figure
+            (clinical "data" feel — distinct from the editorial italic-serif
+            moments elsewhere in this section). The empowerment line is
+            kept sans (not italic) so we don't stack three italic moments
+            in one section. */}
+        <motion.figure
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-12%" }}
+          transition={transitions.reveal}
+          className="mx-auto mt-20 flex max-w-[520px] flex-col items-center gap-3 text-center md:mt-24"
+        >
+          <p className="font-sans text-display-md font-medium leading-none tabular-nums tracking-[-0.02em] text-ink">
+            4,100<span className="text-accent">+</span>
+          </p>
+          <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.14em] text-foreground/65">
+            ER visits per day · U.S.
+          </p>
+          <p className="mt-3 max-w-prose text-body leading-relaxed text-muted">
+            Every day, thousands of people visit the ER from adverse drug
+            events, including known drug interactions.
+          </p>
+          <p className="mt-4 text-body-xl leading-snug text-ink">
+            Information is your first line of defense.
+          </p>
+          <figcaption className="mt-4 font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
+            <a
+              href="https://www.cdc.gov/medication-safety/data-research/facts-stats/index.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline-offset-[3px] transition-colors duration-fast ease-smooth hover:text-foreground/80 hover:underline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            >
+              Source: CDC ↗
+            </a>
+            <span className="mx-2 text-border-strong">·</span>
+            Not all interactions require emergency care
+          </figcaption>
+        </motion.figure>
+
         {/* Block 3 — closing thesis (smaller, tighter, subtler scale-up).
             Wider on desktop so the first half fits on one line; mobile lets
             it wrap naturally. The forced break sits between the two clauses

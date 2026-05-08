@@ -82,6 +82,26 @@ Not what happens with your other bottles.
 2. **Most products are checked one at a time.** · That's not how people take them.
 3. **Sometimes it's not the ingredient.** · It's the timing.
 
+**CDC stat callout** (between statements and thesis — quantifies the problem):
+
+```
+4,100+
+ER visits per day · U.S.
+
+Every day, thousands of people visit the ER from
+adverse drug events, including known drug interactions.
+
+Information is your first line of defense.
+
+Source: CDC ↗  ·  Not all interactions require emergency care
+```
+
+Big number in sans tabular-nums (clinical "data" feel — distinct from
+the section's italic-serif moments). The "+" suffix in accent color.
+Empowerment line in regular sans (not italic — preserves italic for
+the closing thesis below). Source links to:
+https://www.cdc.gov/medication-safety/data-research/facts-stats/index.html
+
 **Closing thesis (italic serif, large):**
 ```
 Because interactions happen between products — not in isolation.

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 
 /**
@@ -47,7 +48,35 @@ const statementsContainer = {
   },
 } as const;
 
+// Count-up hook — eases from 0 → target with cubic-out, triggered by inView.
+// Same pattern as YourFit. Format with comma thousands separator.
+function useCountUp(target: number, durationMs = 1800) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    const start = performance.now();
+    let frame = 0;
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const t = Math.min(elapsed / durationMs, 1);
+      // easeOutCubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      setValue(Math.round(eased * target));
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [inView, target, durationMs]);
+
+  return { ref, value };
+}
+
 export function Problem() {
+  const { ref: countRef, value: erVisits } = useCountUp(4100, 1800);
+
   return (
     <section
       id="problem"
@@ -130,11 +159,22 @@ export function Problem() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-12%" }}
           transition={transitions.reveal}
-          className="mx-auto mt-20 flex max-w-[520px] flex-col items-center gap-3 text-center md:mt-24"
+          className="mx-auto mt-20 flex max-w-[560px] flex-col items-center gap-3 text-center md:mt-24"
         >
-          <p className="font-sans text-display-md font-medium leading-none tabular-nums tracking-[-0.02em] text-ink">
-            4,100<span className="text-accent">+</span>
-          </p>
+          {/* Stat number — animated count-up with subtle accent halo behind it.
+              Halo gives the figure visual weight without making the section
+              feel decorated. tabular-nums keeps digit width stable as it
+              counts so layout doesn't jiggle. */}
+          <div className="relative">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -z-10 mx-auto block h-full w-full rounded-full bg-accent/[0.06] blur-2xl"
+            />
+            <p className="font-sans text-display-md font-medium leading-none tabular-nums tracking-[-0.02em] text-ink">
+              <span ref={countRef}>{erVisits.toLocaleString("en-US")}</span>
+              <span className="text-accent">+</span>
+            </p>
+          </div>
           <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.14em] text-foreground/65">
             ER visits per day · U.S.
           </p>
@@ -145,12 +185,15 @@ export function Problem() {
           <p className="mt-4 text-body-xl leading-snug text-ink">
             Information is your first line of defense.
           </p>
-          <figcaption className="mt-4 font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
+          {/* Source line — link styled with accent so it reads as a link.
+              Tracking eased back, size bumped slightly so it stops looking
+              like a watermark and starts looking like sourced data.       */}
+          <figcaption className="mt-4 font-mono text-[11px] uppercase tracking-[0.1em] text-subtle">
             <a
               href="https://www.cdc.gov/medication-safety/data-research/facts-stats/index.html"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline-offset-[3px] transition-colors duration-fast ease-smooth hover:text-foreground/80 hover:underline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="font-medium text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
             >
               Source: CDC ↗
             </a>
@@ -160,15 +203,14 @@ export function Problem() {
         </motion.figure>
 
         {/* Block 3 — closing thesis (smaller, tighter, subtler scale-up).
-            Wider on desktop so the first half fits on one line; mobile lets
-            it wrap naturally. The forced break sits between the two clauses
-            on tablet/desktop where the line otherwise overflows the eye. */}
+            Margin tightened from mt-24/28 → mt-16/20 so the thesis reads as
+            the natural conclusion of the stat block, not a separate beat.  */}
         <motion.p
           initial={{ opacity: 0, y: 12, scale: 0.985 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-20%" }}
           transition={transitions.reveal}
-          className="mx-auto mt-24 max-w-2xl text-balance text-center font-serif text-display-sm italic leading-[1.12] text-ink md:mt-28 md:max-w-4xl"
+          className="mx-auto mt-16 max-w-2xl text-balance text-center font-serif text-display-sm italic leading-[1.12] text-ink md:mt-20 md:max-w-4xl"
         >
           Because interactions happen between products
           <br className="hidden md:inline" />{" "}

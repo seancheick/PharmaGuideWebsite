@@ -11,22 +11,17 @@ import { cn } from "@/lib/utils";
  * Conversion moment. Restrained — no urgency tactics, no countdown timers,
  * no "limited spots." Tone is "opening in waves" — by invitation, calm.
  *
- * Includes the four post-launch trust items the user requested:
- *   • Free during beta · No credit card · We never sell health data
- *   • App Store + Google Play coming soon
- *   • "Inside the beta" — concrete capability list (5 short bullets)
- *   • Disclaimer line that closes the conceptual frame
+ * Compressed: this section now does ONE job — capture the email. Everything
+ * else (capability list, app stores, disclaimer, FAQ link) moved to the
+ * footer so we don't have a "double footer" feel.
+ *
+ * Surface: bg-surface (not surface-subtle) + soft accent halo above so the
+ * conversion moment reads brighter than the sections around it. Footer
+ * (dark) provides the visual anchor below — together they give the page
+ * a real ending.
  *
  * Social proof slot is designed but hidden until it has real numbers.
  */
-
-const BETA_FEATURES = [
-  "Scan supplement labels",
-  "Check medication conflicts",
-  "Understand timing interactions",
-  "Save and review your stack",
-  "Export reports for appointments",
-] as const;
 
 // Toggle to true once you have a real waitlist count or named advisor to feature.
 const SHOW_SOCIAL_PROOF = false;
@@ -49,15 +44,28 @@ export function FinalCTA() {
     <section
       id="waitlist"
       aria-labelledby="cta-heading"
-      className="relative section-y bg-surface-subtle/40"
+      className="relative section-y bg-background"
     >
-      {/* Soft accent halo behind the form */}
+      {/* Layered accent halo — radial bloom from upper-center.
+          Stronger than the previous version (0.08 vs 0.05) and positioned
+          higher so the eye reads "this section is brighter, this is the
+          moment." Kept sub-1.0 alpha so it never goes neon. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[60%]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[70%]"
         style={{
           background:
-            "radial-gradient(60% 80% at 50% 30%, rgb(24 59 63 / 0.05), transparent 70%)",
+            "radial-gradient(55% 75% at 50% 25%, rgb(24 59 63 / 0.08), transparent 70%)",
+        }}
+      />
+      {/* Subtle warm under-glow at the bottom — helps the transition into
+          the dark footer feel like a deliberate handoff, not a hard cut. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[35%]"
+        style={{
+          background:
+            "linear-gradient(180deg, transparent 0%, rgb(244 242 238 / 0.5) 100%)",
         }}
       />
 
@@ -140,7 +148,10 @@ export function FinalCTA() {
               </form>
             )}
 
-            {/* Trust note — three pieces, all on one line on desktop */}
+            {/* Trust note — three pieces, all on one line on desktop.
+                This is the only post-form line. Disclaimer + app stores
+                + FAQ live in the footer now so this section has one job
+                and one job only: capture the email.                    */}
             <p className="mt-4 text-body-sm text-muted">
               Free during beta
               <span className="mx-2 text-border-strong">·</span>
@@ -149,63 +160,6 @@ export function FinalCTA() {
               We never sell your health data
             </p>
           </motion.div>
-
-          {/* Inside the beta — concrete capability preview, restrained */}
-          <motion.div
-            variants={fadeUpItem}
-            className="mt-6 w-full max-w-lg border-t border-border/70 pt-8 text-left"
-          >
-            <p className="text-center font-mono text-eyebrow font-medium uppercase tracking-[0.14em] text-foreground/65">
-              Inside the beta
-            </p>
-            <ul className="mx-auto mt-5 grid max-w-md gap-2.5 text-body-sm text-ink sm:grid-cols-1">
-              {BETA_FEATURES.map((feature) => (
-                <li key={feature} className="flex items-start gap-3">
-                  <span
-                    aria-hidden="true"
-                    className="mt-[8px] block h-1 w-1 shrink-0 rounded-full bg-accent"
-                  />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* App stores — coming soon */}
-          <motion.p
-            variants={fadeUpItem}
-            className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-subtle"
-          >
-            iOS + Android
-            <span className="mx-2 text-border-strong">·</span>
-            App Store + Google Play
-            <span className="mx-2 text-border-strong">·</span>
-            Coming soon
-          </motion.p>
-
-          {/* Disclaimer — closes the conceptual frame */}
-          <motion.p
-            variants={fadeUpItem}
-            className="max-w-prose text-balance pt-2 text-body-sm leading-relaxed text-muted"
-          >
-            PharmaGuide is not a replacement for medical care. It&apos;s a
-            clearer way to understand what may deserve a second look.
-          </motion.p>
-
-          {/* Tiny FAQ link — escape hatch for objections we didn't address */}
-          <motion.a
-            variants={fadeUpItem}
-            href="/faq"
-            className="group inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
-          >
-            More questions? Read the FAQ
-            <span
-              aria-hidden="true"
-              className="transition-transform duration-fast ease-smooth group-hover:translate-x-0.5"
-            >
-              →
-            </span>
-          </motion.a>
         </motion.div>
       </div>
     </section>

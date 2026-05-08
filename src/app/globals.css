@@ -119,17 +119,22 @@
     --section-y-sm: clamp(3rem, 5vw, 5rem);       /* 48 → 80  */
 
     /* Container
-       Reduced from 1280 → 1180 so visible margin appears at typical laptop
-       viewports. Tailwind's container plugin generates a single media query
-       at min-width: var(--container-max) — at exactly that viewport width
-       the container fills the screen with zero margin. By setting it to
-       1180, even 1280-width laptops now show ~50px margin each side, and
-       1440 laptops show ~130px. Editorial-tight content width. */
-    --container-max: 1180px;
-    --container-padding: 1.25rem;       /* 20 — mobile  */
-    --container-padding-sm: 1.5rem;     /* 24 — tablet  */
-    --container-padding-lg: 2rem;       /* 32 — desktop */
-    --gutter: 1.5rem;                   /* 24 — between cards */
+       Tightened to 1080 so visible margin appears at every common laptop
+       viewport. Tailwind's container plugin uses a single media query at
+       min-width: var(--container-max) — at that viewport width the
+       container fills the screen with zero margin. With 1080:
+         · 1280 laptop → 100px margin each side
+         · 1366 laptop → 143px margin each side
+         · 1440 laptop → 180px margin each side
+         · 1920 desktop → 420px margin each side
+       Editorial-tight content width — the website looks "designed," not
+       stretched. lg-padding bumped to 3rem so viewports just under the
+       container max (1024–1079) get 48px inset, not 32px.            */
+    --container-max: 1080px;
+    --container-padding: 1.25rem;       /* 20 — mobile           */
+    --container-padding-sm: 1.75rem;    /* 28 — tablet           */
+    --container-padding-lg: 3rem;       /* 48 — desktop pre-cap  */
+    --gutter: 1.5rem;                   /* 24 — between cards    */
 
     /* Prose */
     --prose-max: 65ch;

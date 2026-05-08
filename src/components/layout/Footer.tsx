@@ -1,27 +1,38 @@
 import Link from "next/link";
-import { footerBadges, footerNav, site } from "@/lib/site";
+import {
+  footerBadges,
+  footerNav,
+  footerTrustBadges,
+  site,
+} from "@/lib/site";
+import { BackToTop } from "./BackToTop";
 
 /**
- * Footer — minimal, four-column on desktop, stacked on mobile.
+ * Footer — DARK, layered, matches the legacy pharmaguide.io footer.
  *
- * Includes:
- *   - Brand column (wordmark + tagline + city + email + social links)
- *   - Product / Company / Legal nav
- *   - "Coming soon" line for App Store + Google Play
- *   - Tiny badges row (Evidence-graded · Clinician-informed · etc.)
- *   - Last-reviewed date that auto-rolls to the most recent 5-day boundary
- *     (so the page always reads as "reviewed in the last 5 days")
- *   - Copyright
+ * Layered structure (top to bottom):
+ *   1. Main grid     — Brand · Product · Company · Legal · App-store column
+ *   2. Trust bar     — HIPAA / AES-256 / Offline-First / No Data Selling
+ *   3. Disclaimer    — warning icon + medical-disclaimer line
+ *   4. Bottom bar    — Last reviewed · © · Sitemap
+ *   + Floating back-to-top button (client island)
  *
- * The last-reviewed date is computed at server-render time. The page uses
- * Next.js ISR (revalidate 5 days) at the route level so the date stays
- * fresh in production without rebuilding. Client never re-computes — no
+ * The legacy site used 5 stacked rails on the dark surface — each rail
+ * with its own background tint to add depth. We replicate that with
+ * white/[0.02-0.05] tints and white/10 hairlines between them.
+ *
+ * Why so much detail: the user explicitly wants the footer to feel
+ * "anchored" — the page above is light cream + accent teal; without
+ * a substantive footer the page reads as "just stops." This is the
+ * page's structural foundation.
+ *
+ * Last-reviewed date: rounded to most recent 5-day boundary, server-
+ * rendered at ISR boundary (revalidate 5d). No client recompute = no
  * hydration mismatch.
  */
 
 function formatLastReviewedDate(): string {
   const now = new Date();
-  // Round to most recent 5-day boundary so the date "ticks" every 5 days.
   const epochDays = Math.floor(now.getTime() / (1000 * 60 * 60 * 24));
   const fiveDayBoundary = Math.floor(epochDays / 5) * 5;
   const date = new Date(fiveDayBoundary * 1000 * 60 * 60 * 24);
@@ -33,162 +44,381 @@ function formatLastReviewedDate(): string {
   });
 }
 
+// ─── Inline SVG icons ─────────────────────────────────────────────────
+// Kept as JSX so we don't pay for an icon library. All 16×16 / 14×14.
+
+const IconLocation = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+    <circle cx="12" cy="10" r="3" />
+  </svg>
+);
+
+const IconMail = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+    <polyline points="22,6 12,13 2,6" />
+  </svg>
+);
+
+const IconX = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
+const IconLinkedIn = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+  </svg>
+);
+
+const IconInstagram = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+const IconApple = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+  </svg>
+);
+
+const IconGooglePlay = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z" />
+  </svg>
+);
+
+const IconShieldCheck = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="M9 12l2 2 4-4" />
+  </svg>
+);
+
+const IconLock = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+);
+
+const IconClock = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+);
+
+const IconGlobe = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
+const IconAlertTriangle = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+    <line x1="12" y1="9" x2="12" y2="13" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+);
+
+const TRUST_ICON_MAP = {
+  "shield-check": IconShieldCheck,
+  lock: IconLock,
+  clock: IconClock,
+  globe: IconGlobe,
+} as const;
+
 const SOCIAL_LINKS = [
-  {
-    label: "Twitter",
-    href: "https://twitter.com/pharmaguide",
-    icon: (
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-        <path d="M9.4 1.5h2.1L8 5.5l4.1 5.5H9.1L6.6 7.6 3.7 11h-2L5.5 6.6 1.5 1.5h3.2l2.3 3.1L9.4 1.5zm-.5 8.4h1.1L4.4 2.5H3.2l5.7 7.4z" />
-      </svg>
-    ),
-  },
-  {
-    label: "LinkedIn",
-    href: "https://linkedin.com/company/pharmaguide",
-    icon: (
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-        <path d="M11.5 11.5h-1.7V8.7c0-.7 0-1.5-.9-1.5s-1.1.7-1.1 1.5v2.8H6.1V5.6h1.6v.8h0c.2-.4.8-.9 1.6-.9 1.7 0 2.1 1.1 2.1 2.6v3.4zM4.3 4.8c-.5 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm.9 6.7H3.5V5.6h1.7v5.9z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Instagram",
-    href: "https://instagram.com/pharmaguide",
-    icon: (
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true">
-        <rect x="2" y="2" width="10" height="10" rx="2.5" />
-        <circle cx="7" cy="7" r="2.3" />
-        <circle cx="10.2" cy="3.8" r="0.5" fill="currentColor" />
-      </svg>
-    ),
-  },
+  { label: "X (Twitter)", href: "https://twitter.com/pharmaguideai", Icon: IconX },
+  { label: "LinkedIn", href: "https://linkedin.com/company/pharmaguide", Icon: IconLinkedIn },
+  { label: "Instagram", href: "https://instagram.com/pharmaguide.io", Icon: IconInstagram },
 ] as const;
 
 export function Footer() {
   const lastReviewed = formatLastReviewedDate();
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-surface-subtle">
-      <div className="container mx-auto py-section-y-sm">
-        {/* Top: 4-column grid */}
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-12 lg:gap-16">
-          {/* Brand column */}
-          <div className="flex flex-col gap-5">
-            <div className="flex items-center gap-2">
-              <span aria-hidden="true" className="block h-1.5 w-1.5 rounded-full bg-accent" />
-              <span className="font-sans text-body font-medium tracking-[-0.012em] text-ink">
+    // Deep slate teal — the brand accent (#183B3F) used as the footer
+    // surface so the page resolves into the same color the CTA buttons
+    // and accent dots have been hinting at all the way down. Reads as
+    // brand-anchored, not generic-dark. text-background/80 over teal
+    // gives ~10:1 contrast — well above WCAG AA.
+    <footer className="relative bg-accent text-background/85" id="contact" role="contentinfo">
+      {/* Top-center halo — light teal at 8% alpha so it lifts the
+          surface slightly under the wordmark and ties the rail visually
+          to the warm cream above. Bumped from 6% → 8% because the teal
+          base eats the highlight more than near-black did. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[55%]"
+        style={{
+          background:
+            "radial-gradient(60% 70% at 50% 0%, rgb(212 224 226 / 0.08), transparent 70%)",
+        }}
+      />
+
+      {/* ━━━━━━━━━━━━━━━━━━ RAIL 1: MAIN GRID ━━━━━━━━━━━━━━━━━━ */}
+      <div className="container relative mx-auto py-section-y-sm">
+        <div className="grid gap-10 md:grid-cols-2 md:gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr] lg:gap-12 xl:gap-14">
+          {/* ─── Brand column ─────────────────────────── */}
+          <div className="flex flex-col gap-5 lg:col-span-1 md:col-span-2 lg:col-auto">
+            {/* Logo — wordmark + accent dot. Kept text-based so the footer
+                stays in the design system; if/when the bitmap logo is
+                wired up via next/image it slots in here. */}
+            <Link href="/" aria-label={`${site.name} home`} className="inline-flex items-center gap-2">
+              <span aria-hidden="true" className="block h-2 w-2 rounded-full bg-accent" />
+              <span className="font-sans text-h3 font-medium tracking-[-0.012em] text-background">
                 {site.name}
               </span>
-            </div>
+            </Link>
 
-            <p className="font-serif text-h3 italic leading-tight text-ink">
-              Supplement intelligence.
+            <p className="max-w-xs text-body-sm leading-relaxed text-background/65">
+              Your supplement and medication safety companion. Evidence-graded,
+              clinician-informed, privacy-first.
             </p>
 
-            <div className="flex flex-col gap-1 text-body-sm text-muted">
-              <span>{site.city}</span>
+            <address className="not-italic flex flex-col gap-2 text-body-sm text-background/65">
+              <span className="inline-flex items-center gap-2">
+                <span className="text-background/45"><IconLocation /></span>
+                {site.city}
+              </span>
               <a
                 href={`mailto:${site.email}`}
-                className="transition-colors duration-fast ease-smooth hover:text-ink"
+                className="inline-flex items-center gap-2 transition-colors duration-fast ease-smooth hover:text-background"
               >
+                <span className="text-background/45"><IconMail /></span>
                 {site.email}
               </a>
-            </div>
+            </address>
 
-            {/* Social links */}
-            <ul className="mt-2 flex items-center gap-2.5">
-              {SOCIAL_LINKS.map((social) => (
-                <li key={social.label}>
+            {/* Social — circle buttons, white-on-dark with subtle border */}
+            <ul className="mt-1 flex items-center gap-2.5">
+              {SOCIAL_LINKS.map(({ label, href, Icon }) => (
+                <li key={label}>
                   <a
-                    href={social.href}
+                    href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={social.label}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-muted transition-[background-color,color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-surface-raised hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                    aria-label={label}
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/12 bg-white/[0.03] text-background/70 transition-[background-color,color,transform,border-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/[0.08] hover:text-background focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
                   >
-                    {social.icon}
+                    <Icon />
                   </a>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Product nav */}
+          {/* ─── Nav columns ─────────────────────────── */}
           <FooterColumn title="Product" links={footerNav.product} />
-
-          {/* Company nav */}
           <FooterColumn title="Company" links={footerNav.company} />
-
-          {/* Legal nav */}
           <FooterColumn title="Legal" links={footerNav.legal} />
-        </div>
 
-        {/* Middle: app stores coming soon */}
-        <div className="mt-10 flex flex-col items-start gap-3 border-t border-border pt-7 sm:flex-row sm:items-center sm:justify-between md:mt-14">
-          <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-subtle">
-            iOS + Android
-            <span className="mx-2 text-border-strong">·</span>
-            App Store + Google Play
-            <span className="mx-2 text-border-strong">·</span>
-            Coming soon
-          </p>
-
-          {/* Badges row */}
-          <ul className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            {footerBadges.map((badge) => (
-              <li
-                key={badge}
-                className="font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-subtle"
-              >
-                {badge}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Bottom: last-reviewed + copyright */}
-        <div className="mt-8 flex flex-col items-start gap-2 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
-            Last reviewed{" "}
-            <time dateTime={lastReviewed} className="text-foreground/65">
-              {lastReviewed}
-            </time>{" "}
-            <span className="mx-1 text-border-strong">·</span> by Dr. Pham L., PharmD
-          </p>
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
-            © {new Date().getFullYear()} {site.name}
-          </p>
+          {/* ─── App-store badges column ──────────────── */}
+          <div className="flex flex-col gap-4 md:col-span-2 lg:col-span-1">
+            <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-background/55">
+              Get the app
+            </h3>
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent">
+              Coming May 2026
+            </p>
+            <div className="flex flex-wrap gap-2.5">
+              <AppStoreBadge
+                Icon={IconApple}
+                small="Download on the"
+                large="App Store"
+                ariaLabel="Coming soon to App Store"
+              />
+              <AppStoreBadge
+                Icon={IconGooglePlay}
+                small="Get it on"
+                large="Google Play"
+                ariaLabel="Coming soon to Google Play"
+              />
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* ━━━━━━━━━━━━━━━━━━ RAIL 2: TRUST BAR ━━━━━━━━━━━━━━━━━━ */}
+      <div className="relative border-t border-white/8 bg-white/[0.02]">
+        <div className="container mx-auto py-5">
+          <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3 md:justify-between md:gap-x-4">
+            {footerTrustBadges.map((badge) => {
+              const Icon = TRUST_ICON_MAP[badge.icon];
+              return (
+                <li
+                  key={badge.label}
+                  className="inline-flex items-center gap-2 text-background/75"
+                >
+                  <span className="text-accent/70" style={{ color: "rgb(175 198 200 / 0.85)" }}>
+                    <Icon />
+                  </span>
+                  <span className="font-mono text-[11px] font-medium uppercase tracking-[0.12em]">
+                    {badge.label}
+                  </span>
+                </li>
+              );
+            })}
+            {/* Compact value-claim row on the right at md+. On mobile it
+                wraps below the trust badges. Kept tiny so it doesn't
+                steal weight from the main badges. */}
+            <li className="hidden lg:inline-flex items-center gap-3 text-background/45">
+              {footerBadges.map((b, i) => (
+                <span key={b} className="font-mono text-[10px] uppercase tracking-[0.14em]">
+                  {b}
+                  {i < footerBadges.length - 1 && (
+                    <span className="ml-3 text-white/15">·</span>
+                  )}
+                </span>
+              ))}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* ━━━━━━━━━━━━━━━━━━ RAIL 3: DISCLAIMER ━━━━━━━━━━━━━━━━━━ */}
+      <div className="relative border-t border-white/8 bg-white/[0.025]">
+        <div className="container mx-auto py-5">
+          <div className="flex items-start gap-3 md:items-center">
+            <span
+              aria-hidden="true"
+              className="mt-[2px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-severity-caution/15 text-severity-caution md:mt-0"
+            >
+              <IconAlertTriangle />
+            </span>
+            <p className="text-body-sm leading-relaxed text-background/70">
+              <span className="font-medium text-background">Medical Disclaimer:</span>{" "}
+              PharmaGuide provides educational information only and is not a
+              substitute for professional medical advice, diagnosis, or
+              treatment. Always consult your healthcare provider before making
+              changes to your medication or supplement regimen.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ━━━━━━━━━━━━━━━━━━ RAIL 4: BOTTOM BAR ━━━━━━━━━━━━━━━━━━ */}
+      <div className="relative border-t border-white/8 bg-black/20">
+        <div className="container mx-auto py-5">
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/45">
+              Last reviewed{" "}
+              <time dateTime={lastReviewed} className="text-background/70">
+                {lastReviewed}
+              </time>{" "}
+              <span className="mx-1 text-white/15">·</span> by Dr. Pham L., PharmD
+            </p>
+            <div className="flex items-center gap-4">
+              <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/45">
+                © {year} {site.name} Inc.
+              </p>
+              <span className="text-white/15">·</span>
+              <Link
+                href="/sitemap.xml"
+                className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/55 transition-colors duration-fast ease-smooth hover:text-background"
+              >
+                Sitemap
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating back-to-top button (client island) */}
+      <BackToTop />
     </footer>
   );
 }
+
+// ─── Footer column ──────────────────────────────────────────────────
+// Supports comingSoon items rendered as span+pill instead of <Link>.
+
+type FooterLink = {
+  label: string;
+  href: string;
+  comingSoon?: boolean;
+  badge?: string;
+};
 
 function FooterColumn({
   title,
   links,
 }: {
   title: string;
-  links: ReadonlyArray<{ label: string; href: string }>;
+  links: ReadonlyArray<FooterLink>;
 }) {
   return (
     <div>
-      <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-foreground/65">
+      <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-background/55">
         {title}
       </h3>
       <ul className="mt-4 flex flex-col gap-2.5">
         {links.map((link) => (
           <li key={link.href}>
-            <Link
-              href={link.href}
-              className="text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink"
-            >
-              {link.label}
-            </Link>
+            {link.comingSoon ? (
+              <span className="inline-flex items-center gap-2 text-body-sm text-background/55">
+                {link.label}
+                <span className="rounded-pill bg-accent/15 px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-accent" style={{ color: "rgb(175 198 200)" }}>
+                  {link.badge ?? "Soon"}
+                </span>
+              </span>
+            ) : (
+              <Link
+                href={link.href}
+                className="text-body-sm text-background/70 transition-colors duration-fast ease-smooth hover:text-background"
+              >
+                {link.label}
+              </Link>
+            )}
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+// ─── App-store badge ────────────────────────────────────────────────
+// Visual replica of Apple/Google's official badge — non-interactive
+// during the coming-soon phase. When the apps ship these become <a>
+// tags pointing at the real store URLs.
+
+function AppStoreBadge({
+  Icon,
+  small,
+  large,
+  ariaLabel,
+}: {
+  Icon: () => React.ReactElement;
+  small: string;
+  large: string;
+  ariaLabel: string;
+}) {
+  return (
+    <div
+      aria-label={ariaLabel}
+      role="img"
+      className="inline-flex items-center gap-2.5 rounded-xl border border-white/12 bg-white/[0.04] px-3.5 py-2 text-background/85 transition-[background-color,border-color] duration-fast ease-smooth hover:border-white/25 hover:bg-white/[0.08]"
+    >
+      <span className="shrink-0"><Icon /></span>
+      <span className="flex flex-col leading-none">
+        <span className="font-sans text-[9.5px] uppercase tracking-[0.06em] text-background/55">
+          {small}
+        </span>
+        <span className="mt-0.5 font-sans text-[14px] font-medium tracking-[-0.01em] text-background">
+          {large}
+        </span>
+      </span>
     </div>
   );
 }

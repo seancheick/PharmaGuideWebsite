@@ -7,17 +7,21 @@ import { HowItWorks } from "@/components/sections/HowItWorks";
 import { InteractionLadder } from "@/components/sections/InteractionLadder";
 import { RealLifeMoments } from "@/components/sections/RealLifeMoments";
 import { YourFit } from "@/components/sections/YourFit";
-import { TrustBlock } from "@/components/sections/TrustBlock";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 
 /**
- * Phases 9 + 10 shipped — Final CTA + Footer complete the homepage.
+ * Homepage — 9 sections after dropping TrustBlock.
+ *
+ * TrustBlock ("How we think — Built to explain uncertainty…") was removed
+ * because its content overlapped the Infrastructure Strip and the new
+ * footer's trust-badges + disclaimer bars. The credentials line
+ * (Cross-referenced with FDA · NIH · PubMed · DSLD + Dr. Pham L.) was
+ * folded into HowItWorks as a single statement line. The "we don't"
+ * restraint promises live in the footer's trust-badges bar now.
  *
  * Page is statically generated. ISR revalidates every 5 days so the
  * footer's "Last reviewed" date stays fresh in production without
  * needing a manual rebuild.
- *
- * TokenPreview removed now that all 10 sections are live.
  */
 export const revalidate = 432000; // 5 days, in seconds
 
@@ -33,7 +37,6 @@ export default function Home() {
         <InteractionLadder />
         <RealLifeMoments />
         <YourFit />
-        <TrustBlock />
         <FinalCTA />
       </main>
       <Footer />

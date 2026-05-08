@@ -132,15 +132,21 @@ export function YourFit() {
                     <span className="font-mono text-eyebrow font-medium uppercase tracking-[0.14em] text-subtle">
                       Quality
                     </span>
-                    <span className="font-serif text-display-md italic leading-none tabular-nums text-ink">
+                    {/* Score colored to match the bar. Severity-safe at 89
+                        keeps the visual story coherent: number, bar, and
+                        verdict pill all read the same green. */}
+                    <span className="font-serif text-display-md italic leading-none tabular-nums text-severity-safe">
                       {score}
                     </span>
                   </div>
 
-                  {/* Progress bar */}
+                  {/* Progress bar — colored by severity. 89 = excellent, so
+                      severity-safe green. (At low scores this would shift to
+                      monitor/caution/avoid; for now we hard-code the demo
+                      product, which is genuinely high quality.)             */}
                   <div className="mt-3 h-[5px] overflow-hidden rounded-full bg-border">
                     <motion.div
-                      className="h-full rounded-full bg-accent"
+                      className="h-full rounded-full bg-severity-safe"
                       initial={{ width: "0%" }}
                       animate={inView ? { width: `${TARGET_SCORE}%` } : {}}
                       transition={{ duration: SCORE_DURATION_MS / 1000, ease: [0.32, 0.72, 0, 1] }}

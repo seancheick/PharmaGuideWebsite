@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import {
@@ -270,6 +271,40 @@ export function FeaturesClient() {
                         </span>
                       ))}
                     </motion.p>
+                  )}
+
+                  {/* "From the blog" — appears only when relatedPosts
+                      exist on the pillar. Lists 1-3 deep-dive articles
+                      that belong to this pillar's topic cluster. As more
+                      cluster posts ship, add them via relatedPosts in
+                      src/lib/features.ts. See docs/10-blog-system-guide.md
+                      "Cross-link maintenance" for the full strategy. */}
+                  {pillar.relatedPosts && pillar.relatedPosts.length > 0 && (
+                    <motion.div variants={fadeUpItem} className="mt-2 flex flex-col gap-2.5">
+                      <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-accent">
+                        From the blog
+                      </p>
+                      <ul className="flex flex-col gap-2">
+                        {pillar.relatedPosts.map((post) => (
+                          <li key={post.slug}>
+                            <Link
+                              href={`/blog/${post.slug}`}
+                              className="group inline-flex items-center gap-2 rounded-pill border border-border bg-surface px-4 py-2 text-body-sm leading-snug text-ink shadow-xs transition-[transform,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                            >
+                              <span className="font-serif italic">
+                                {post.title}
+                              </span>
+                              <span
+                                aria-hidden="true"
+                                className="text-accent transition-transform duration-fast ease-smooth group-hover:translate-x-0.5"
+                              >
+                                →
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </motion.div>
                   )}
                 </motion.div>
 

@@ -49,6 +49,14 @@ export interface FeaturePillar {
   examples: readonly FeatureExample[];
   /** External authority sources (linked in section footer) */
   sources: ReadonlyArray<{ name: string; url: string }>;
+  /**
+   * Optional: deep-dive blog posts that belong to this pillar's
+   * topic cluster. Render as a "From the blog" row when 1+ posts
+   * exist. Add as more cluster posts ship — see
+   * docs/10-blog-system-guide.md "Cross-link maintenance" for the
+   * topic-cluster strategy mapping.
+   */
+  relatedPosts?: ReadonlyArray<{ title: string; slug: string }>;
 }
 
 // ─── External authority URL constants (used across pillars) ──────────
@@ -107,6 +115,16 @@ export const PILLARS: readonly FeaturePillar[] = [
       { name: "NIH Office of Dietary Supplements", url: NIH_ODS },
       { name: "DailyMed drug labeling", url: DAILYMED },
       { name: "PubMed clinical pharmacology", url: PUBMED },
+    ],
+    relatedPosts: [
+      {
+        title: "What your medication might be quietly depleting",
+        slug: "medication-depletion-guide",
+      },
+      {
+        title: "Statins and CoQ10: what the research actually shows",
+        slug: "statins-and-coq10",
+      },
     ],
   },
 

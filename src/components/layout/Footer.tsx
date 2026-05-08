@@ -168,10 +168,10 @@ export function Footer() {
       />
 
       {/* ━━━━━━━━━━━━━━━━━━ RAIL 1: MAIN GRID ━━━━━━━━━━━━━━━━━━ */}
-      <div className="container relative mx-auto py-section-y-sm">
-        <div className="grid gap-10 md:grid-cols-2 md:gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr] lg:gap-12 xl:gap-14">
+      <div className="container relative mx-auto py-12 md:py-14 lg:py-16">
+        <div className="grid gap-8 md:grid-cols-2 md:gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr] lg:gap-10 xl:gap-12">
           {/* ─── Brand column ─────────────────────────── */}
-          <div className="flex flex-col gap-5 lg:col-span-1 md:col-span-2 lg:col-auto">
+          <div className="flex flex-col gap-4 lg:col-span-1 md:col-span-2 lg:col-auto">
             {/* Logo — wordmark + accent dot. Kept text-based so the footer
                 stays in the design system; if/when the bitmap logo is
                 wired up via next/image it slots in here. */}
@@ -412,7 +412,7 @@ function AppStoreBadge({
     <div
       aria-label={ariaLabel}
       role="img"
-      className="inline-flex items-center gap-2.5 rounded-xl border border-white/12 bg-white/[0.04] px-3.5 py-2 text-background/85 transition-[background-color,border-color] duration-fast ease-smooth hover:border-white/25 hover:bg-white/[0.08]"
+      className="inline-flex w-[156px] items-center gap-2.5 rounded-xl border border-white/12 bg-white/[0.04] px-3.5 py-2 text-background/85 transition-[background-color,border-color] duration-fast ease-smooth hover:border-white/25 hover:bg-white/[0.08]"
     >
       <span className="shrink-0"><Icon /></span>
       <span className="flex flex-col leading-none">

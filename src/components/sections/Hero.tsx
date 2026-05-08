@@ -22,7 +22,7 @@ export function Hero() {
       <div className="container mx-auto">
         <div className="grid items-center gap-14 md:grid-cols-[1.05fr_1fr] md:gap-12 lg:gap-20">
           {/* Copy column */}
-          <div className="space-y-7 md:space-y-8">
+          <div className="space-y-8 md:space-y-10">
             <p className="animate-fade-up font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
               On-device supplement safety
             </p>

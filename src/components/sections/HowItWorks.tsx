@@ -106,7 +106,7 @@ export function HowItWorks() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-10%" }}
-          className="mx-auto mt-14 grid max-w-6xl gap-5 md:mt-20 md:grid-cols-3 md:gap-6"
+          className="mx-auto mt-14 grid max-w-6xl gap-8 md:mt-20 md:grid-cols-3 md:gap-10 lg:gap-14"
         >
           {STEPS.map((step) => (
             <motion.li

@@ -388,3 +388,114 @@ Push to `main`:
 
 To force an immediate refresh of a published post: Vercel dashboard → project
 → Deployments → Redeploy.
+
+---
+
+## Cross-link maintenance — keep the site interconnected as content grows
+
+The site is already cross-linked at the page level (every major page hands
+off to /features, /methodology, /blog via `<RelatedLinks>` strips at the
+bottom). As the blog grows, the next layer of cross-linking is **post-level
+hand-offs**: each /features pillar should link to the matching deep-dive
+blog posts when they exist.
+
+### The pattern
+
+When you publish a blog post, ask: **"Which /features pillar is this post
+the deep-dive for?"** Then link both directions.
+
+| /features pillar | Posts that should link here | Where pillar should link to |
+|---|---|---|
+| `/features#medication-depletion` | "What your medication might be quietly depleting" ✅ shipped · Statins+CoQ10 · Metformin+B12 · PPIs+magnesium · OCs+B-complex · Loop diuretics+potassium | The single highest-converting post per topic |
+| `/features#stack-intelligence` | Multi-supplement risks · Caffeine ceiling · Iron-thyroid timing · Calcium-thyroid timing | Same |
+| `/features#ingredient-transparency` | How to read a proprietary blend · Active vs inactive ingredients · Third-party testing certifications · USP/NSF/Informed Sport explained | Same |
+| `/features#personal-fit` | Pregnancy-safe supplements · SSRI + supplement guide · Hypertension + supplements · Anticoagulant interactions | Same |
+| `/features#nutrient-accumulation` | Vitamin D upper limit · Iron toxicity · Zinc-copper depletion · Vitamin A teratogenic risk | Same |
+| `/features#recall-safety` | 5 recalls of [year] · How to spot a sketchy supplement · FDA warning letter explainer · FAERS reporting guide | Same |
+
+### How to add a "From the blog" cross-link to a /features pillar
+
+When the second post in any cluster is published (so there's a real
+recommendation to make), add a link inside that pillar's deep-dive section.
+
+**Where**: `src/components/features/FeaturesClient.tsx` — inside each
+pillar's content block, after the capabilities/examples list but before
+the closing div.
+
+**What to add** (example for medication-depletion):
+
+```tsx
+{/* Featured post — shown only when a relevant deep-dive exists */}
+<motion.div variants={fadeUpItem} className="mt-6">
+  <Link
+    href="/blog/medication-depletion-guide"
+    className="group inline-flex items-center gap-2 rounded-pill border border-border bg-surface px-4 py-2 text-body-sm transition-[background-color,border-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised"
+  >
+    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent">
+      From the blog
+    </span>
+    <span className="text-ink">
+      What your medication might be quietly depleting
+    </span>
+    <span aria-hidden="true" className="text-accent transition-transform duration-fast ease-smooth group-hover:translate-x-0.5">→</span>
+  </Link>
+</motion.div>
+```
+
+Or a simpler approach — drop a `<RelatedLinks>` strip at the bottom of
+specific pillar sections that have multiple deep-dives.
+
+### Why this matters
+
+**Topic-cluster SEO**: Google's "topic authority" signal rewards sites
+where the cluster anchor (the /features pillar) is reciprocally linked
+to multiple deep-dive supporting articles. Each new post in a cluster
+boosts the rank of every other piece in the cluster (and the pillar
+itself).
+
+**AI crawl**: Perplexity, ChatGPT, Claude, Google AI Overviews follow
+internal link graphs to build their citation paths. A pillar with 5+
+linked deep-dives is much more likely to be cited than one with 0.
+
+**UX**: visitors who land on a /features pillar deep-dive want concrete
+reading. A "From the blog" link gives them the next click without
+having to navigate to /blog and search.
+
+### Maintenance checklist when publishing a new post
+
+After committing a new MDX post:
+
+- [ ] Tag the post with the right `category` (matches one of the 5 slugs)
+- [ ] Confirm `featured: false` unless this is meant to be the new
+      Editor's Pick (in which case unset `featured` on the previous
+      featured post)
+- [ ] Add the post to the "From the blog" link in the matching
+      `/features` pillar (if this is the first or strongest post for
+      that pillar)
+- [ ] If the post mentions another existing post inline, link it via
+      `[anchor text](/blog/other-slug)` in the MDX
+- [ ] If the post references a /features pillar conceptually, link
+      to `/features#pillar-slug` from inside the post body
+- [ ] Sitemap auto-includes — no manual step
+- [ ] llms.txt auto-includes — no manual step
+
+### Other cross-link patterns already wired
+
+These are maintained automatically; just be aware of them:
+
+| Page | Cross-links to | Component |
+|---|---|---|
+| `/about` | /methodology · /features · /careers | `<RelatedLinks>` |
+| `/methodology` | /features · /blog · /faq | `<RelatedLinks>` |
+| `/faq` | /features · /methodology · /blog | `<RelatedLinks>` |
+| `/press` | /about · /methodology · /features | `<RelatedLinks>` |
+| `/careers` | /about · /methodology · /features | `<RelatedLinks>` |
+| `/blog/[slug]` | 3 related posts (same category) | Built into post layout |
+| Homepage `HowItWorks` credentials | /methodology | Inline `<Link>` |
+| Homepage `BeyondInteractions` footer | /features (pill) + /blog (secondary) | Inline links |
+| Homepage `YourFit` callback | /features#ingredient-transparency | Inline mono link |
+
+If you want to add another cross-link strip somewhere, drop in
+`<RelatedLinks>` from `src/components/shared/RelatedLinks.tsx` — it's
+fully reusable.
+

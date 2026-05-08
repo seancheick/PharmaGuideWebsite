@@ -30,7 +30,7 @@ export function Hero() {
             <h1 className="animate-fade-up text-display-xl text-ink [animation-delay:80ms]">
               Your supplements don&apos;t work in isolation.
               <br />
-              <span className="text-muted">Neither should your check.</span>
+              <span className="text-accent">Neither should your check.</span>
             </h1>
 
             <p className="animate-fade-up max-w-prose text-body-xl text-muted [animation-delay:160ms]">

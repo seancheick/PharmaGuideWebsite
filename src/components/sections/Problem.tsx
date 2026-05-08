@@ -170,9 +170,9 @@ export function Problem() {
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 -z-10 mx-auto block h-full w-full rounded-full bg-accent/[0.06] blur-2xl"
             />
-            <p className="font-sans text-display-md font-medium leading-none tabular-nums tracking-[-0.02em] text-ink">
+            <p className="font-sans text-display-md font-medium leading-none tabular-nums tracking-[-0.02em] text-accent">
               <span ref={countRef}>0</span>
-              <span className="text-accent">+</span>
+              <span>+</span>
             </p>
           </div>
           <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.14em] text-foreground/65">

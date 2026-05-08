@@ -159,13 +159,16 @@ export function BeyondInteractions() {
           ))}
         </motion.ul>
 
-        {/* Footer link to /features */}
+        {/* Footer links — primary pill to /features (depth) +
+            secondary link to /blog (long-form reading). Two separate
+            paths for two different appetites: skim deep-dives vs.
+            read evidence-graded guides. */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={transitions.ambient}
-          className="mt-12 flex justify-center md:mt-14"
+          className="mt-12 flex flex-col items-center gap-4 md:mt-14 md:flex-row md:justify-center md:gap-6"
         >
           <Link
             href="/features"
@@ -173,6 +176,18 @@ export function BeyondInteractions() {
           >
             See all six capabilities in depth
             <span aria-hidden="true">→</span>
+          </Link>
+          <Link
+            href="/blog"
+            className="group inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+          >
+            Or read our evidence-graded guides
+            <span
+              aria-hidden="true"
+              className="transition-transform duration-fast ease-smooth group-hover:translate-x-0.5"
+            >
+              →
+            </span>
           </Link>
         </motion.div>
       </div>

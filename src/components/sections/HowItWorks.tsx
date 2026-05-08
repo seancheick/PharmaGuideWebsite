@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
@@ -44,8 +45,8 @@ const STEPS = [
   },
   {
     num: "03",
-    title: "You get Your Fit — with every study behind it.",
-    body: "Personalized compatibility, computed fresh each time. Tap any note to read the mechanism, evidence level, and clinical trial.",
+    title: "Quality score + your personal fit.",
+    body: "Two reads on every product — an objective quality score (0-100) AND a personalized fit assessment based on your stack, conditions, and goals. Tap any note to read the mechanism, evidence level, and clinical trial.",
     visual: "yourfit" as const,
   },
 ] as const;
@@ -139,30 +140,47 @@ export function HowItWorks() {
           ))}
         </motion.ol>
 
-        {/* Credentials line — kept from prior pass. */}
+        {/* Credentials block — now a clickable hand-off to /methodology
+            where the full sourcing + verification process lives. The
+            block stays a quiet trust signal visually; the hover state
+            cues that there's more depth one click away.              */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ ...transitions.reveal, delay: 0.2 }}
-          className="mx-auto mt-14 flex max-w-3xl flex-col items-center gap-2 border-t border-border/70 pt-7 text-center md:mt-16 md:gap-2.5"
+          className="mx-auto mt-14 max-w-3xl border-t border-border/70 pt-7 md:mt-16"
         >
-          <p className="text-balance text-body leading-relaxed text-ink">
-            Cross-referenced with{" "}
-            <span className="font-medium">FDA</span>
-            <span className="mx-1.5 text-border-strong">·</span>
-            <span className="font-medium">NIH</span>
-            <span className="mx-1.5 text-border-strong">·</span>
-            <span className="font-medium">PubMed</span>
-            <span className="mx-1.5 text-border-strong">·</span>
-            <span className="font-medium">DSLD</span>
-          </p>
-          <p className="text-body-sm leading-relaxed text-muted">
-            Reviewed by{" "}
-            <span className="text-ink">Dr. Pham L., PharmD</span>
-            <span className="mx-2 text-border-strong">·</span>
-            Catalog updated weekly
-          </p>
+          <Link
+            href="/methodology"
+            className="group flex flex-col items-center gap-2 text-center md:gap-2.5"
+          >
+            <p className="text-balance text-body leading-relaxed text-ink transition-colors duration-fast ease-smooth group-hover:text-accent">
+              Cross-referenced with{" "}
+              <span className="font-medium">FDA</span>
+              <span className="mx-1.5 text-border-strong">·</span>
+              <span className="font-medium">NIH</span>
+              <span className="mx-1.5 text-border-strong">·</span>
+              <span className="font-medium">PubMed</span>
+              <span className="mx-1.5 text-border-strong">·</span>
+              <span className="font-medium">DSLD</span>
+            </p>
+            <p className="text-body-sm leading-relaxed text-muted">
+              Reviewed by{" "}
+              <span className="text-ink">Dr. Pham L., PharmD</span>
+              <span className="mx-2 text-border-strong">·</span>
+              Catalog updated weekly
+            </p>
+            <p className="mt-1 inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent">
+              Read the full methodology
+              <span
+                aria-hidden="true"
+                className="transition-transform duration-fast ease-smooth group-hover:translate-x-0.5"
+              >
+                →
+              </span>
+            </p>
+          </Link>
         </motion.div>
       </div>
     </section>
@@ -304,59 +322,88 @@ function CrossRefVisual() {
   );
 }
 
-// ─── Step 3 — Your Fit card ─────────────────────────────────────────
-// Mirrors the YourFit section's qualitative output. NO numeric score,
-// NO progress bar — those framings were retired in favor of a
-// qualitative verdict (Excellent / Good / Limited / Concerning / Not
-// recommended) backed by supporting notes + actionable detail.
+// ─── Step 3 — Quality score + Your Fit (DUAL output) ─────────────────
+// Compressed mirror of the YourFit section's full dual-assessment card.
+// Shows BOTH halves of what PharmaGuide produces for every product:
+//   1. Quality (objective, 0-100) — animated count-up + bar
+//   2. Your Fit (qualitative) — verdict pill in severity color
 //
-// Layout:
-//   • "Your Fit" eyebrow (mono uppercase)
-//   • Severity-colored verdict pill ("● Good fit" in italic serif)
-//   • Supporting notes line ("2 timing notes · 1 interaction to review")
-//   • One concrete actionable detail row
-//
-// Verdict pill animates in from y=8 once the card is in view, mirroring
-// the YourFit card so the two sections feel like the same system.
+// The earlier version of this visual only showed the qualitative half,
+// which under-told the story. Real product output is the dual read,
+// so the homepage card teases the dual read.
 
 function YourFitVisual() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-15%" });
 
   return (
-    <div ref={ref} className="flex h-[280px] flex-col justify-center gap-5 p-6">
-      <p className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-subtle">
-        Your Fit
+    <div ref={ref} className="flex h-[280px] flex-col justify-center gap-3.5 p-5">
+      {/* Product label — sets the context for what's being scored */}
+      <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.16em] text-subtle">
+        Magnesium glycinate · 200 mg
       </p>
 
-      {/* Verdict pill — same shape + color as the YourFit section */}
+      {/* QUALITY half — score + bar */}
+      <div>
+        <div className="flex items-baseline justify-between gap-3">
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-subtle">
+            Quality
+          </span>
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.32, 0.72, 0, 1] }}
+            className="font-serif text-h2 italic leading-none tabular-nums text-severity-safe"
+          >
+            89
+          </motion.span>
+        </div>
+        <div className="mt-2 h-[4px] overflow-hidden rounded-full bg-border">
+          <motion.div
+            className="h-full rounded-full bg-severity-safe"
+            initial={{ width: "0%" }}
+            animate={inView ? { width: "89%" } : {}}
+            transition={{ duration: 1.1, delay: 0.3, ease: [0.32, 0.72, 0, 1] }}
+          />
+        </div>
+        <p className="mt-1.5 text-[11px] leading-snug text-muted">
+          <span className="font-medium text-ink">Excellent</span> · 3rd-party tested
+        </p>
+      </div>
+
+      {/* Hairline divider — same rhythm as the YourFit homepage card */}
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
-        className="inline-flex w-fit items-center gap-2 rounded-pill bg-severity-safe/12 px-3.5 py-1.5"
-      >
-        <span
-          aria-hidden="true"
-          className="block h-1.5 w-1.5 rounded-full bg-severity-safe"
-        />
-        <span className="font-serif text-h3 italic leading-none text-severity-safe">
-          Good fit
+        initial={{ scaleX: 0 }}
+        animate={inView ? { scaleX: 1 } : {}}
+        transition={{ duration: 0.5, delay: 0.9, ease: [0.32, 0.72, 0, 1] }}
+        style={{ transformOrigin: "left" }}
+        className="h-px bg-border"
+      />
+
+      {/* YOUR FIT half — pill + supporting note */}
+      <div>
+        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-subtle">
+          Your Fit
         </span>
-      </motion.div>
-
-      {/* Supporting notes — calm summary of what's beneath the verdict */}
-      <p className="text-body-sm leading-relaxed text-muted">
-        2 timing notes
-        <span className="mx-1.5 text-border-strong">·</span>
-        1 interaction to review
-      </p>
-
-      {/* Single concrete actionable detail */}
-      <div className="rounded-md border border-border/80 bg-surface px-3 py-2 text-[12px] text-muted">
-        <span aria-hidden="true" className="mr-1.5 text-severity-monitor">↘</span>
-        magnesium + metformin{" "}
-        <span className="text-subtle">(space 2h)</span>
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 1.1, ease: [0.32, 0.72, 0, 1] }}
+          className="mt-1.5 inline-flex w-fit items-center gap-2 rounded-pill bg-severity-safe/12 px-3 py-1"
+        >
+          <span
+            aria-hidden="true"
+            className="block h-1.5 w-1.5 rounded-full bg-severity-safe"
+          />
+          <span className="font-serif text-[15px] italic leading-none text-severity-safe">
+            Good fit
+          </span>
+        </motion.div>
+        <p className="mt-2 text-[11px] leading-snug text-muted">
+          2 timing notes
+          <span className="mx-1 text-border-strong">·</span>
+          1 to review
+        </p>
       </div>
     </div>
   );

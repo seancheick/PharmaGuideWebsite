@@ -107,13 +107,41 @@ export function TrustBlock() {
           ))}
         </motion.ul>
 
+        {/* Credentials block — named advisor + data sources back up the
+            "evidence-graded" and "clinician-informed" claims. Restrained:
+            mono uppercase, two short lines, centered. */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-15%" }}
+          transition={{ ...transitions.ambient, delay: 0.3 }}
+          className="mt-12 flex flex-col items-center gap-2 text-center md:mt-14"
+        >
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-foreground/65">
+            Reviewed by Dr. Pham L., PharmD
+            <span className="mx-2 text-border-strong">·</span>
+            Clinical Pharmacist
+            <span className="mx-2 text-border-strong">·</span>
+            15+ years
+          </p>
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
+            Cross-referenced with FDA
+            <span className="mx-1.5 text-border-strong">·</span>
+            NIH
+            <span className="mx-1.5 text-border-strong">·</span>
+            PubMed
+            <span className="mx-1.5 text-border-strong">·</span>
+            DSLD
+          </p>
+        </motion.div>
+
         {/* Freshness signal — pulsing dot + tiny mono caption */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-15%" }}
-          transition={{ ...transitions.ambient, delay: 0.4 }}
-          className="mt-10 flex items-center justify-center md:mt-12"
+          transition={{ ...transitions.ambient, delay: 0.5 }}
+          className="mt-7 flex items-center justify-center"
         >
           <span className="inline-flex items-center gap-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-subtle">
             <span className="relative flex h-1.5 w-1.5">

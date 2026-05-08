@@ -11,32 +11,55 @@ import { cn } from "@/lib/utils";
  * Conversion moment. Restrained — no urgency tactics, no countdown timers,
  * no "limited spots." Tone is "opening in waves" — by invitation, calm.
  *
- * Compressed: this section now does ONE job — capture the email. Everything
- * else (capability list, app stores, disclaimer, FAQ link) moved to the
- * footer so we don't have a "double footer" feel.
- *
- * Surface: bg-surface (not surface-subtle) + soft accent halo above so the
- * conversion moment reads brighter than the sections around it. Footer
- * (dark) provides the visual anchor below — together they give the page
- * a real ending.
- *
- * Social proof slot is designed but hidden until it has real numbers.
+ * MailerLite integration: submits to the MailerLite form API directly
+ * using the embedded form endpoint. No API key needed — uses the public
+ * form ID from env. Falls back gracefully if the request fails.
  */
 
 // Toggle to true once you have a real waitlist count or named advisor to feature.
 const SHOW_SOCIAL_PROOF = false;
 
+const MAILERLITE_FORM_ID = process.env.NEXT_PUBLIC_MAILERLITE_FORM_ID ?? "1993122";
+
 export function FinalCTA() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return;
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+
+    setSubmitting(true);
+    setError("");
+
+    try {
+      const res = await fetch(
+        `https://assets.mailerlite.com/jsonp/911564/forms/${MAILERLITE_FORM_ID}/ta498a`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fields: { email },
+            ml_submit: "1",
+            anticsrf: "true",
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Request failed");
+      setSubmitted(true);
+    } catch {
+      // Fallback: open MailerLite hosted form in new tab
+      window.open(
+        `https://preview.mailerlite.io/forms/${MAILERLITE_FORM_ID}/174245015781902326/share`,
+        "_blank"
+      );
+      setSubmitted(true);
+    } finally {
+      setSubmitting(false);
     }
-    // TODO: wire to MailerLite or similar
-    setSubmitted(true);
   };
 
   return (
@@ -127,11 +150,20 @@ export function FinalCTA() {
 
                 <button
                   type="submit"
-                  className="mt-1 inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                  disabled={submitting}
+                  className={cn(
+                    "mt-1 inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent",
+                    submitting
+                      ? "cursor-wait opacity-80"
+                      : "hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow"
+                  )}
                 >
-                  Request early access
-                  <span aria-hidden="true">→</span>
+                  {submitting ? "Submitting..." : "Request early access"}
+                  {!submitting && <span aria-hidden="true">→</span>}
                 </button>
+                {error && (
+                  <p className="mt-2 text-body-sm text-severity-avoid">{error}</p>
+                )}
               </form>
             )}
 

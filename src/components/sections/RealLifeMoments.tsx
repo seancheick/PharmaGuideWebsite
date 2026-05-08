@@ -149,18 +149,31 @@ export function RealLifeMoments() {
         </motion.div>
       </div>
 
-      {/* Carousel rail */}
+      {/* Carousel rail
+          ─────────────────────────────────────────────────────────────
+          PADDING RULE (do NOT match container padding here — that bug
+          has been fixed and reverted multiple times):
+
+          Rail must inset MORE than the section header on every
+          breakpoint so cards visually FLOAT deeper than the title
+          sits. ~8px deeper at every step:
+
+            Breakpoint   Container px   Rail px   Δ
+            ─────────────────────────────────────────
+            mobile       20             28        +8   ← was 20, kissed edge
+            sm           24             32        +8   ← was 24, also tight
+            md           24             32+       +8   (already correct)
+            lg+          32             scales        (already correct)
+
+          "Premium float" pattern: title sits at container edge, cards
+          start one indent deeper. At md+ the existing centered-rail
+          formula already does this; mobile + sm needed to catch up. */}
       <div
         ref={railRef}
         role="list"
         aria-label="Real-life moments"
         className={cn(
-          // Rail extends slightly past the page container so cards bleed
-          // past the section header — premium carousel feel. Caps at ~1400
-          // wide on huge displays so we never show more than 3 cards + peek
-          // of the 4th. Below the cap, rail hugs the viewport with a small
-          // gutter (20–40px).
-          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden px-5 pb-6 pt-2 sm:gap-4 sm:px-6 md:mt-16 md:px-[max(2rem,calc((100vw-1200px)/2+2rem))]",
+          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden px-7 pb-6 pt-2 sm:gap-4 sm:px-8 md:mt-16 md:px-[max(2rem,calc((100vw-1200px)/2+2rem))]",
           "snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         )}
       >
@@ -276,13 +289,16 @@ const MomentCard = ({
       data-open={isOpen}
       className={cn(
         "group relative shrink-0 cursor-pointer snap-start overflow-hidden rounded-3xl bg-ink shadow-md",
-        // Compact widths/heights — Framer Motion layout prop handles the
-        // width transition via FLIP (transform-only, no layout thrash).
-        "h-[480px] w-[80vw] sm:h-[520px] sm:w-[360px] md:h-[540px] md:w-[360px] lg:h-[560px] lg:w-[380px] xl:h-[580px] xl:w-[400px]",
+        // Closed widths/heights. Mobile pulled in from 80vw → 76vw so the
+        // next card peeks more clearly (carousel affordance).
+        "h-[480px] w-[76vw] sm:h-[520px] sm:w-[360px] md:h-[540px] md:w-[360px] lg:h-[560px] lg:w-[380px] xl:h-[580px] xl:w-[400px]",
         "transition-[transform,box-shadow] duration-[700ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
-        // Open widths — Framer layout animates the size change via transform
+        // Open widths/heights — bumped on mobile and sm so the expand is
+        // actually felt. Mobile: 76vw→94vw + 480px→620px. sm: 360px→
+        // 600px + 520px→640px. Desktop sizes unchanged (already worked).
+        // Framer Motion layout prop handles the size transition via FLIP.
         isOpen
-          ? "w-[90vw] cursor-default shadow-2xl sm:w-[600px] md:w-[700px] lg:w-[860px] xl:w-[920px]"
+          ? "h-[620px] w-[94vw] cursor-default shadow-2xl sm:h-[640px] sm:w-[600px] md:h-[540px] md:w-[700px] lg:h-[560px] lg:w-[860px] xl:h-[580px] xl:w-[920px]"
           : "hover:-translate-y-1 hover:shadow-xl"
       )}
     >
@@ -394,13 +410,15 @@ const MomentCard = ({
           )}
         </AnimatePresence>
 
-        {/* Title — ALWAYS at bottom-left, identical position in closed AND
-            open states. No translate, no scale, no font-size change. */}
+        {/* Title — anchored bottom-left. On mobile open, the card's
+            extra room lets the title widen to 18ch instead of 15ch.
+            On sm+ open, widens further to 20ch as before. Font size
+            stays the same so layout doesn't jiggle mid-animation.   */}
         <h3
           className={cn(
-            "max-w-[15ch] font-serif font-normal leading-[1.12] tracking-[-0.014em] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]",
+            "font-serif font-normal leading-[1.12] tracking-[-0.014em] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]",
             "text-[clamp(1.5rem,2.2vw,2rem)]",
-            isOpen && "sm:max-w-[20ch]"
+            isOpen ? "max-w-[18ch] sm:max-w-[20ch]" : "max-w-[15ch]"
           )}
         >
           {moment.title.lead}{" "}

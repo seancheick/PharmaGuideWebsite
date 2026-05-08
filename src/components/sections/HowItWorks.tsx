@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 
 /**
@@ -9,9 +9,11 @@ import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
  *
  * Each card pairs the verbal claim with a working visual that proves it:
  *   01  Local catalog with sub-10ms lookup timings — proves "offline-first"
- *   02  Cross-reference rows with tier + evidence-grade — proves "every
- *       supplement checked against every other item, on-device"
- *   03  FitScore card — proves "personalized, computed fresh, never sold"
+ *   02  Cross-reference rows with the 5-tier verdict labels — proves
+ *       "every supplement checked against every other item, on-device"
+ *   03  Your Fit card — qualitative verdict + supporting notes; mirrors
+ *       the YourFit section's pattern (no numerical FitScore — that
+ *       framing was retired in favor of qualitative + dual-read).
  *
  * The visuals are NOT decoration — they're miniature versions of the actual
  * app output. Concrete > abstract. The reference for this rebuild was the
@@ -31,20 +33,20 @@ const STEPS = [
   {
     num: "01",
     title: "Scan or search.",
-    body: "180,000-product catalog, pre-loaded on the device. Works in pharmacies, on flights, in the supplement aisle with one bar of signal. No cloud lookup for what's on the label.",
+    body: "180,000-product catalog, pre-loaded on your device. Works in pharmacies, on flights, or in the supplement aisle with one bar of signal. No cloud lookup required.",
     visual: "catalog" as const,
   },
   {
     num: "02",
-    title: "We cross-reference your stack, meds, and conditions.",
-    body: "Every supplement is checked against every other item you take, every prescription you've entered, and the conditions you've set. Computed on-device. Nothing about your body is sent anywhere.",
+    title: "We cross-reference your full stack.",
+    body: "Every supplement is checked against your medications, timing, and personal health context. All computation happens on-device. Nothing about your body is ever sent anywhere.",
     visual: "crossref" as const,
   },
   {
     num: "03",
-    title: "You get a FitScore — and every study behind it.",
-    body: "Personalized to your conditions, medications, and goals. Computed fresh each time, never cached and never sold. Tap any warning to read the mechanism, the evidence grade, and the trial behind it.",
-    visual: "fitscore" as const,
+    title: "You get Your Fit — with every study behind it.",
+    body: "Personalized compatibility, computed fresh each time. Tap any note to read the mechanism, evidence grade, and clinical trial.",
+    visual: "yourfit" as const,
   },
 ] as const;
 
@@ -131,7 +133,7 @@ export function HowItWorks() {
               <div className="mt-7 overflow-hidden rounded-xl border border-border/80 bg-surface-subtle">
                 {step.visual === "catalog" && <CatalogVisual />}
                 {step.visual === "crossref" && <CrossRefVisual />}
-                {step.visual === "fitscore" && <FitScoreVisual />}
+                {step.visual === "yourfit" && <YourFitVisual />}
               </div>
             </motion.li>
           ))}
@@ -226,29 +228,27 @@ function CatalogVisual() {
   );
 }
 
-// ─── Step 2 — Cross-reference rows with tier + evidence grade ────────
-// Each row shows: interaction name, tier label (verdict), and an evidence
-// grade letter (A/B/C). The tier label is colored by severity to anchor
-// the verdict. The evidence grade pill is neutral — letter only — so the
-// visual hierarchy reads name → verdict color → evidence weight.
+// ─── Step 2 — Cross-reference rows with the 5-tier verdict labels ────
+// Each row shows: severity dot, interaction name, and the colored
+// verdict label. We deliberately dropped the "Tier N · " prefix and
+// the A/B/C evidence-grade pill — both add visual noise and the
+// section's promise is clinical clarity, not gamified scoring. The
+// evidence grade lives one tap away in the real app.
 
 const CROSS_REFS = [
   {
     name: "St. John's Wort ↔ sertraline",
-    tier: "Tier 1 · contraindicated",
-    grade: "A",
+    label: "Contraindicated",
     severity: "contraindicated" as const,
   },
   {
     name: "Ginkgo ↔ warfarin",
-    tier: "Tier 2 · avoid",
-    grade: "B",
+    label: "Avoid",
     severity: "avoid" as const,
   },
   {
     name: "Magnesium ↔ metformin",
-    tier: "Tier 4 · monitor, space 2h",
-    grade: "C",
+    label: "Monitor · space 2h",
     severity: "monitor" as const,
   },
 ];
@@ -283,7 +283,7 @@ function CrossRefVisual() {
           key={r.name}
           className="flex items-start gap-3 rounded-xl border border-border bg-surface px-3.5 py-3 shadow-xs"
         >
-          {/* Severity dot + content stack */}
+          {/* Severity dot — vertically aligned with the interaction name */}
           <span
             aria-hidden="true"
             className={`mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full ${SEVERITY_DOT_MAP[r.severity]}`}
@@ -293,83 +293,63 @@ function CrossRefVisual() {
               {r.name}
             </p>
             <p
-              className={`mt-1 font-mono text-[10px] uppercase tracking-[0.12em] ${SEVERITY_TEXT_MAP[r.severity]}`}
+              className={`mt-1 font-mono text-[10px] uppercase tracking-[0.14em] ${SEVERITY_TEXT_MAP[r.severity]}`}
             >
-              {r.tier}
+              {r.label}
             </p>
           </div>
-          {/* Evidence grade pill — neutral, single letter */}
-          <span
-            aria-label={`Evidence grade ${r.grade}`}
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-border bg-surface-subtle font-mono text-[11px] font-medium text-ink"
-          >
-            {r.grade}
-          </span>
         </div>
       ))}
     </div>
   );
 }
 
-// ─── Step 3 — FitScore card ─────────────────────────────────────────
-// A miniature version of the actual FitScore output. Shows: eyebrow
-// label, animated count-up to 76, severity-colored progress bar,
-// italic-serif assessment line ("Good — 2 items to review"), and a
-// single concrete actionable detail row beneath.
+// ─── Step 3 — Your Fit card ─────────────────────────────────────────
+// Mirrors the YourFit section's qualitative output. NO numeric score,
+// NO progress bar — those framings were retired in favor of a
+// qualitative verdict (Excellent / Good / Limited / Concerning / Not
+// recommended) backed by supporting notes + actionable detail.
 //
-// 76 falls in the "Good" range (75-89), which we color severity-safe
-// (green) — keeps the visual story coherent across YourFit and here.
+// Layout:
+//   • "Your Fit" eyebrow (mono uppercase)
+//   • Severity-colored verdict pill ("● Good fit" in italic serif)
+//   • Supporting notes line ("2 timing notes · 1 interaction to review")
+//   • One concrete actionable detail row
+//
+// Verdict pill animates in from y=8 once the card is in view, mirroring
+// the YourFit card so the two sections feel like the same system.
 
-function FitScoreVisual() {
+function YourFitVisual() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-15%" });
-  const [score, setScore] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    const start = performance.now();
-    let raf = 0;
-    const target = 76;
-    const dur = 1400;
-    const tick = (now: number) => {
-      const t = Math.min((now - start) / dur, 1);
-      const eased = 1 - Math.pow(1 - t, 3);
-      setScore(Math.round(target * eased));
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inView]);
 
   return (
-    <div ref={ref} className="flex h-[280px] flex-col justify-center gap-4 p-6">
+    <div ref={ref} className="flex h-[280px] flex-col justify-center gap-5 p-6">
       <p className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-subtle">
-        FitScore · your stack
+        Your Fit
       </p>
 
-      {/* Big score — sans tabular-nums for clinical-data feel */}
-      <div className="flex items-baseline gap-2">
-        <span className="font-sans text-display-md font-medium leading-none tabular-nums tracking-[-0.02em] text-severity-safe">
-          {score}
-        </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
-          / 100
-        </span>
-      </div>
-
-      {/* Progress bar — fills to 76% in step with the count-up */}
-      <div className="h-[5px] overflow-hidden rounded-full bg-border">
-        <motion.div
-          className="h-full rounded-full bg-severity-safe"
-          initial={{ width: "0%" }}
-          animate={inView ? { width: "76%" } : {}}
-          transition={{ duration: 1.4, ease: [0.32, 0.72, 0, 1] }}
+      {/* Verdict pill — same shape + color as the YourFit section */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
+        className="inline-flex w-fit items-center gap-2 rounded-pill bg-severity-safe/12 px-3.5 py-1.5"
+      >
+        <span
+          aria-hidden="true"
+          className="block h-1.5 w-1.5 rounded-full bg-severity-safe"
         />
-      </div>
+        <span className="font-serif text-h3 italic leading-none text-severity-safe">
+          Good fit
+        </span>
+      </motion.div>
 
-      {/* Italic-serif assessment line */}
-      <p className="font-serif text-h3 italic leading-snug text-ink">
-        Good — 2 items to review
+      {/* Supporting notes — calm summary of what's beneath the verdict */}
+      <p className="text-body-sm leading-relaxed text-muted">
+        2 timing notes
+        <span className="mx-1.5 text-border-strong">·</span>
+        1 interaction to review
       </p>
 
       {/* Single concrete actionable detail */}

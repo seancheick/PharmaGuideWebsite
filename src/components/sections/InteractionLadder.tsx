@@ -222,7 +222,10 @@ export function InteractionLadder() {
           >
             Five severity tiers, each with the mechanism, evidence grade, and study
             basis behind the verdict.{" "}
-            <span className="text-foreground/70">Hover or tap a tier.</span>
+            <span className="text-foreground/70">
+              <span className="hidden md:inline">Hover or tap a tier.</span>
+              <span className="md:hidden">Swipe through the tiers →</span>
+            </span>
           </motion.p>
         </motion.div>
 
@@ -236,11 +239,16 @@ export function InteractionLadder() {
         >
           {/* Tier row — horizontal scroll pills on mobile, 5-col grid on desktop.
               Mobile pills show shape + label only (no brief) to stay compact.
-              Desktop shows the full card with brief description. */}
+              Desktop shows the full card with brief description.
+
+              Mobile scroll affordance: a right-edge mask-image fade tells
+              the eye "there's more here, scroll right." Without it, the
+              5 tier pills look like they end at viewport edge. The mask
+              is removed at md+ where the grid is fully visible.        */}
           <div
             role="tablist"
             aria-label="Severity tiers"
-            className="flex gap-2 overflow-x-auto px-4 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-5 md:gap-0 md:overflow-visible md:p-0"
+            className="flex gap-2 overflow-x-auto px-4 py-4 [mask-image:linear-gradient(to_right,black_82%,transparent_100%)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-5 md:gap-0 md:overflow-visible md:p-0 md:[mask-image:none]"
           >
             {TIERS.map((tier, i) => {
               const isActive = tier.id === activeId;

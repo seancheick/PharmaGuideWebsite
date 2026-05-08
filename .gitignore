@@ -48,3 +48,4 @@ yarn-error.log*
 # local
 .tmp/
 .cache/
+.vercel

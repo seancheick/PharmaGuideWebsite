@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
       // Allow editorial placeholder hosts; tighten for production
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "cdn.pharmaguide.io" },
+      { protocol: "https", hostname: "pharmaguide.io" },
     ],
   },
 

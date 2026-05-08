@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   footerBadges,
@@ -167,16 +168,18 @@ export function Footer() {
             {/* Logo — wordmark + accent dot. Kept text-based so the footer
                 stays in the design system; if/when the bitmap logo is
                 wired up via next/image it slots in here. */}
-            <Link href="/" aria-label={`${site.name} home`} className="inline-flex items-center gap-2">
-              <span aria-hidden="true" className="block h-2 w-2 rounded-full bg-background/70" />
-              <span className="font-sans text-h3 font-medium tracking-[-0.012em] text-background">
-                {site.name}
-              </span>
+            <Link href="/" aria-label={`${site.name} home`} className="inline-block">
+              <Image
+                src="https://pharmaguide.io/wp-content/uploads/2025/12/polotno-1-scaled-e1766096991540.webp"
+                alt={site.name}
+                width={160}
+                height={40}
+                className="h-8 w-auto brightness-0 invert opacity-90"
+              />
             </Link>
 
             <p className="max-w-xs text-body-sm leading-relaxed text-background/65">
-              Your supplement and medication safety companion. Evidence-graded,
-              clinician-informed, privacy-first.
+              {site.tagline}
             </p>
 
             <address className="not-italic flex flex-col gap-2 text-body-sm text-background/65">
@@ -218,12 +221,9 @@ export function Footer() {
 
           {/* ─── App-store badges column ──────────────── */}
           <div className="flex flex-col gap-4 md:col-span-2 lg:col-span-1">
-            <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-background/55">
-              Get the app
+            <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-background">
+              Coming Soon
             </h3>
-            <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent">
-              Coming May 2026
-            </p>
             <div className="flex flex-wrap gap-2.5">
               <AppStoreBadge
                 Icon={IconApple}
@@ -243,7 +243,7 @@ export function Footer() {
       </div>
 
       {/* ━━━━━━━━━━━━━━━━━━ RAIL 2: TRUST BAR ━━━━━━━━━━━━━━━━━━ */}
-      <div className="relative border-t border-white/8 bg-white/[0.02]">
+      <div className="relative border-t border-white/5 bg-white/[0.02]">
         <div className="container mx-auto py-5">
           <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3 md:justify-between md:gap-x-4">
             {footerTrustBadges.map((badge) => {
@@ -280,7 +280,7 @@ export function Footer() {
       </div>
 
       {/* ━━━━━━━━━━━━━━━━━━ RAIL 3: DISCLAIMER + BOTTOM BAR ━━━━━━━━━━━━━━━━━━ */}
-      <div className="relative border-t border-white/8 bg-black/20">
+      <div className="relative border-t border-white/5 bg-black/20">
         {/* Disclaimer — centered, compact */}
         <div className="container mx-auto py-4">
           <div className="flex items-center justify-center gap-2.5 text-center">
@@ -354,7 +354,7 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-background/55">
+      <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-background">
         {title}
       </h3>
       <ul className="mt-3 flex flex-col gap-2">
@@ -370,11 +370,9 @@ function FooterColumn({
             ) : (
               <Link
                 href={link.href}
-                className="group/link relative inline-flex items-center gap-0 text-body-sm text-background/70 transition-colors duration-fast ease-smooth hover:text-background"
+                className="group/link relative text-body-sm text-background/70 transition-colors duration-fast ease-smooth hover:text-background"
               >
-                <span className="inline-block w-0 overflow-hidden transition-[width,opacity] duration-300 ease-smooth group-hover/link:w-4 group-hover/link:opacity-100 opacity-0">
-                  <span className="inline-block h-[3px] w-[3px] rounded-full bg-background/70 translate-x-0.5" />
-                </span>
+                <span className="absolute -left-3 top-1/2 h-[3px] w-[3px] -translate-y-1/2 scale-0 rounded-full bg-background/70 transition-transform duration-200 ease-smooth group-hover/link:scale-100" />
                 {link.label}
               </Link>
             )}
@@ -405,7 +403,7 @@ function AppStoreBadge({
     <div
       aria-label={ariaLabel}
       role="img"
-      className="inline-flex w-[156px] items-center gap-2.5 rounded-xl border border-white/12 bg-white/[0.04] px-3.5 py-2 text-background/85 transition-[background-color,border-color] duration-fast ease-smooth hover:border-white/25 hover:bg-white/[0.08]"
+      className="inline-flex w-[170px] items-center gap-2.5 rounded-xl border border-white/5 bg-white/[0.02] px-3.5 py-2 text-background/40 opacity-50 cursor-default"
     >
       <span className="shrink-0"><Icon /></span>
       <span className="flex flex-col leading-none">

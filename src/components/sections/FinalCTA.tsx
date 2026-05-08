@@ -28,7 +28,6 @@ const SHOW_SOCIAL_PROOF = false;
 
 export function FinalCTA() {
   const [email, setEmail] = useState("");
-  const [stack, setStack] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -120,22 +119,10 @@ export function FinalCTA() {
                   inputMode="email"
                   autoComplete="email"
                   required
-                  placeholder="your@email.com"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full rounded-pill border border-border bg-surface px-5 py-3.5 text-body text-ink shadow-xs outline-none transition-[border-color,box-shadow] duration-fast ease-smooth placeholder:text-subtle focus:border-accent focus:shadow-glow"
-                />
-
-                <label className="sr-only" htmlFor="cta-stack">
-                  Optional: what supplements or medications do you currently take?
-                </label>
-                <textarea
-                  id="cta-stack"
-                  rows={2}
-                  placeholder="Optional — what do you take? e.g. magnesium glycinate, vitamin D, metformin"
-                  value={stack}
-                  onChange={(e) => setStack(e.target.value)}
-                  className="w-full resize-none rounded-2xl border border-border bg-surface px-5 py-3.5 text-body-sm leading-relaxed text-ink shadow-xs outline-none transition-[border-color,box-shadow] duration-fast ease-smooth placeholder:text-subtle focus:border-accent focus:shadow-glow"
                 />
 
                 <button

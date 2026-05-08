@@ -38,13 +38,30 @@ export function Hero() {
               not one bottle at a time.
             </p>
 
-            <p className="animate-fade-up text-body-sm text-muted [animation-delay:240ms]">
-              <span className="font-medium text-ink tnum">180,000+</span> products
-              <span className="mx-1.5 text-border-strong">·</span>
-              Evidence-graded
-              <span className="mx-1.5 text-border-strong">·</span>
-              Clinician-informed
-            </p>
+            <div className="animate-fade-up flex flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:240ms]">
+              <span className="inline-flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-accent" aria-hidden="true">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                  <line x1="12" y1="22.08" x2="12" y2="12" />
+                </svg>
+                <span className="font-medium text-ink tnum">180,000+</span> products
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-accent" aria-hidden="true">
+                  <path d="M9 3h6v2H9zM12 5v3" />
+                  <path d="M15.5 11h-7l-1 9h9l-1-9z" />
+                  <circle cx="12" cy="15" r="1.5" />
+                </svg>
+                Evidence-graded
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-accent" aria-hidden="true">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+                Clinician-informed
+              </span>
+            </div>
 
             <div className="animate-fade-up flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:gap-6 [animation-delay:320ms]">
               <Link

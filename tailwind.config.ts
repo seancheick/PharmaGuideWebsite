@@ -142,6 +142,9 @@ const config: Config = {
         lg: "var(--blur-lg)",
         xl: "var(--blur-xl)",
       },
+      outlineColor: {
+        accent: "rgb(var(--color-accent))",
+      },
       maxWidth: {
         prose: "var(--prose-max)",
         container: "var(--container-max)",

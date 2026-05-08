@@ -171,7 +171,7 @@ export function Problem() {
               className="pointer-events-none absolute inset-0 -z-10 mx-auto block h-full w-full rounded-full bg-accent/[0.06] blur-2xl"
             />
             <p className="font-sans text-display-md font-medium leading-none tabular-nums tracking-[-0.02em] text-accent">
-              <span ref={countRef}>0</span>
+              <span ref={countRef}>4,100</span>
               <span>+</span>
             </p>
           </div>

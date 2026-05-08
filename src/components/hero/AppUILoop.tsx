@@ -41,8 +41,8 @@ export function AppUILoop({ searchText, resultFor, stack }: Props) {
           "linear-gradient(180deg, rgb(var(--color-surface)) 0%, rgb(var(--color-background)) 55%, rgb(var(--color-surface-subtle)) 100%)",
       }}
     >
-      {/* Status bar */}
-      <div className="flex items-end justify-between px-6 pt-2 pb-1 leading-none">
+      {/* Status bar — decorative, hidden from screen readers */}
+      <div aria-hidden="true" className="flex items-end justify-between px-6 pt-2 pb-1 leading-none">
         <span className="font-sans text-[10px] font-semibold tabular-nums text-ink">
           9:41
         </span>

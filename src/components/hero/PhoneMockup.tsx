@@ -116,7 +116,7 @@ export function PhoneMockup() {
         style={{
           inset: "-12% -10%",
           background:
-            "radial-gradient(50% 55% at 55% 50%, rgb(24 59 63 / 0.09), transparent 70%)",
+            "radial-gradient(50% 55% at 55% 50%, rgb(var(--color-accent) / 0.09), transparent 70%)",
         }}
       />
 
@@ -125,7 +125,7 @@ export function PhoneMockup() {
         {/* Float wrapper — gentle continuous Y oscillation */}
         <motion.div
           initial={{ y: 0 }}
-          animate={{ y: [-4, 4, -4] }}
+          animate={reducedMotion ? {} : { y: [-4, 4, -4] }}
           transition={{
             duration: 6,
             repeat: Infinity,

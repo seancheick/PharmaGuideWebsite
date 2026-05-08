@@ -107,7 +107,7 @@
     --ls-tight: -0.012em;
     --ls-normal: 0;
     --ls-wide: 0.02em;
-    --ls-eyebrow: 0.08em;     /* eyebrow tracking */
+    --ls-eyebrow: 0.12em;     /* eyebrow tracking */
 
     /* ────────────── SPACING ──────────────
        4px base; geometric for vertical rhythm.
@@ -118,18 +118,14 @@
     --section-y: clamp(4rem, 8vw, 8rem);          /* 64 → 128 */
     --section-y-sm: clamp(3rem, 5vw, 5rem);       /* 48 → 80  */
 
-    /* Container
-       Tightened to 1080 so visible margin appears at every common laptop
-       viewport. Tailwind's container plugin uses a single media query at
-       min-width: var(--container-max) — at that viewport width the
-       container fills the screen with zero margin. With 1080:
-         · 1280 laptop → 100px margin each side
-         · 1366 laptop → 143px margin each side
-         · 1440 laptop → 180px margin each side
-         · 1920 desktop → 420px margin each side
-       Editorial-tight content width — the website looks "designed," not
-       stretched. lg-padding bumped to 3rem so viewports just under the
-       container max (1024–1079) get 48px inset, not 32px.            */
+    /* Container — 1200px max, centered.
+         · 1280 laptop → 40px margin each side
+         · 1366 laptop → 83px margin each side
+         · 1440 laptop → 120px margin each side
+         · 1920 desktop → 360px margin each side
+       Hardcoded in tailwind.config.ts screens (CSS vars don't resolve
+       at Tailwind build time). Inner padding kept light (32px desktop)
+       so content fills the container without double-spacing.          */
     --container-max: 1200px;
     --container-padding: 1.25rem;       /* 20 — mobile           */
     --container-padding-sm: 1.5rem;     /* 24 — tablet           */

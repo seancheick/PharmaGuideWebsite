@@ -32,6 +32,7 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { scrollY } = useScroll();
   const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const menuWasOpen = useRef(false);
   const reducedMotion = useReducedMotion();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -62,8 +63,13 @@ export function Header() {
   }, [menuOpen]);
 
   // Return focus to hamburger when menu closes (a11y)
+  // Guarded so it doesn't steal focus on initial mount.
   useEffect(() => {
-    if (!menuOpen) hamburgerRef.current?.focus();
+    if (menuOpen) {
+      menuWasOpen.current = true;
+    } else if (menuWasOpen.current) {
+      hamburgerRef.current?.focus();
+    }
   }, [menuOpen]);
 
   const slideY = reducedMotion ? 0 : hidden ? -120 : 0;

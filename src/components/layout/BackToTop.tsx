@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 /**
  * BackToTop — floating button anchored bottom-right.
@@ -58,9 +59,10 @@ export function BackToTop() {
       title="Back to top"
       aria-hidden={!visible}
       tabIndex={visible ? 0 : -1}
-      className={`fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-accent-strong/95 text-background shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent ${
+      className={cn(
+        "fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-accent-strong/95 text-background shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent",
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"
-      }`}
+      )}
     >
       <svg
         width="18"

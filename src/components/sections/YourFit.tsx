@@ -227,7 +227,7 @@ export function YourFit() {
                   transition={{ duration: 0.4, delay: 2.5 }}
                   className="mt-6 border-t border-border pt-4 font-mono text-[10px] uppercase tracking-[0.12em] text-subtle"
                 >
-                  Personalised to your stack · updated continuously
+                  Personalized to your stack · updated continuously
                 </motion.p>
               </div>
             </motion.div>

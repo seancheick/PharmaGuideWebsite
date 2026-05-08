@@ -3,6 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NewsletterCTA } from "@/components/faq/NewsletterCTA";
 import { BlogHubClient } from "@/components/blog/BlogHubClient";
+import { EditorialStandards } from "@/components/blog/EditorialStandards";
 import { CATEGORIES, getAllPosts, getFeaturedPost } from "@/lib/blog";
 import { site } from "@/lib/site";
 
@@ -162,98 +163,10 @@ export default function BlogHubPage() {
           categories={CATEGORIES}
         />
 
-        {/* ━━━━━━━━━━━━━━━━━━ EDITORIAL TRUST ━━━━━━━━━━━━━━━━━━ */}
-        <section
-          aria-labelledby="editorial-heading"
-          className="relative section-y-sm bg-surface-raised/40"
-        >
-          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
-          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
-
-          <div className="container relative mx-auto">
-            <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
-              <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
-                Editorial standards
-              </p>
-              <h2
-                id="editorial-heading"
-                className="mt-5 text-balance text-display-md text-ink md:mt-6"
-              >
-                How we ensure accuracy{" "}
-                <span className="font-serif italic">in every article.</span>
-              </h2>
-
-              <ul className="mt-12 grid gap-5 sm:grid-cols-2 md:mt-14 md:gap-6 lg:grid-cols-4">
-                {[
-                  {
-                    title: "Evidence-based",
-                    body: "Every claim is sourced — PubMed, NIH, FDA, peer-reviewed clinical literature.",
-                  },
-                  {
-                    title: "Expert reviewed",
-                    body: "Clinical pharmacist + nurse practitioner sign off on every post before it ships.",
-                  },
-                  {
-                    title: "Regularly updated",
-                    body: "Content revisited when new research emerges. Updates are dated and visible.",
-                  },
-                  {
-                    title: "Editorially independent",
-                    body: "Content is never influenced by sponsors, affiliates, or advertisers. We don't accept either.",
-                  },
-                ].map((item) => (
-                  <li
-                    key={item.title}
-                    className="flex flex-col gap-2.5 rounded-2xl border border-border bg-surface p-6 text-left shadow-sm"
-                  >
-                    <p className="font-serif text-h3 italic leading-tight text-ink">
-                      {item.title}
-                    </p>
-                    <p className="text-body-sm leading-relaxed text-muted">
-                      {item.body}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Reviewer credits */}
-              <div className="mt-12 grid gap-5 sm:grid-cols-2 md:mt-14 md:gap-6">
-                {[
-                  {
-                    initials: "PL",
-                    name: "Dr. Pham L.",
-                    title: "Clinical Pharmacist · PharmD",
-                  },
-                  {
-                    initials: "MD",
-                    name: "Miriam D.",
-                    title: "Nurse Practitioner · MSN",
-                  },
-                ].map((m) => (
-                  <div
-                    key={m.name}
-                    className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-5 text-left shadow-sm md:p-6"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-background"
-                    >
-                      <span className="font-serif text-h3 italic">{m.initials}</span>
-                    </span>
-                    <div>
-                      <p className="font-serif text-h3 italic leading-tight text-ink">
-                        {m.name}
-                      </p>
-                      <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
-                        {m.title}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Compact editorial-standards strip — replaces the heavy
+            decorated section that lived here previously. Per direction:
+            "should be at the bottom, compact, not over-decorated." */}
+        <EditorialStandards />
 
         {/* Newsletter — reuse from /faq for cross-promotion */}
         <NewsletterCTA />

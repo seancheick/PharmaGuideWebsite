@@ -1,69 +1,66 @@
 import Link from "next/link";
 import type { BlogPost } from "@/lib/blog-types";
 import { formatBlogDate, getCategory } from "@/lib/blog-types";
-import { cn } from "@/lib/utils";
+import { BlogCardCover } from "./BlogCardCover";
 
 /**
- * BlogCard — used in the hub's recent-posts grid AND in the related-posts
- * section at the bottom of a post page.
+ * BlogCard — image-top, content-below editorial card.
  *
- * Two variants:
- *   default  — standard card sized for a 3-col grid
- *   featured — larger Editor's Pick card for the hub hero. Currently
- *              the same chrome, just sized larger by parent grid.
+ * Layout (Vercel/Stripe pattern):
+ *   16:10 cover image at top (rounded with the card's outer radius)
+ *   Category eyebrow + date
+ *   Italic-serif title
+ *   1-2 line excerpt
+ *   Hairline divider + author + read time
+ *
+ * Hover: card lifts, shadow deepens, image scales gently. The cover
+ * component handles its own image-zoom animation; we drive the lift +
+ * shadow on the card wrapper.
+ *
+ * Used in the hub's recent-posts grid AND in the related-posts section
+ * at the bottom of a post page.
  */
 
-export function BlogCard({
-  post,
-  variant = "default",
-}: {
-  post: BlogPost;
-  variant?: "default" | "featured";
-}) {
+export function BlogCard({ post }: { post: BlogPost }) {
   const cat = getCategory(post.category);
 
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className={cn(
-        "group flex h-full flex-col gap-4 rounded-2xl border border-border bg-surface p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-1 hover:border-border-strong hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent md:p-7",
-        variant === "featured" && "md:p-8 lg:p-10"
-      )}
+      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-sm transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-1 hover:border-border-strong hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
     >
-      {/* Category eyebrow + date */}
-      <div className="flex items-center gap-3 text-xs">
+      {/* Cover (16:10) — fills the top of the card flush with corners */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden">
+        <BlogCardCover post={post} />
+        {/* Category badge — overlay top-left */}
         {cat && (
-          <span className="font-mono text-[10.5px] font-medium uppercase tracking-[0.16em] text-accent">
+          <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-pill bg-surface/95 px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-ink shadow-xs backdrop-blur-sm">
             {cat.shortLabel}
           </span>
         )}
-        <span className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
-          {formatBlogDate(post.date)}
-        </span>
       </div>
 
-      {/* Title */}
-      <h3
-        className={cn(
-          "font-serif italic leading-snug text-ink",
-          variant === "featured" ? "text-h1" : "text-h2"
-        )}
-      >
-        {post.title}
-      </h3>
+      {/* Content */}
+      <div className="flex flex-1 flex-col gap-3 p-6 md:p-7">
+        <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
+          {formatBlogDate(post.date)}
+        </p>
 
-      {/* Excerpt */}
-      <p className="text-body-sm leading-relaxed text-muted">
-        {post.description}
-      </p>
+        <h3 className="font-serif text-h2 italic leading-snug text-ink">
+          {post.title}
+        </h3>
 
-      {/* Meta strip — author + read time */}
-      <div className="mt-auto flex items-center gap-3 border-t border-border/70 pt-4 text-body-sm text-muted">
-        <span className="text-foreground/85">{post.author}</span>
-        <span aria-hidden="true" className="text-border-strong">·</span>
-        <span className="font-mono text-[10.5px] uppercase tracking-[0.12em]">
-          {post.readTime}
-        </span>
+        <p className="line-clamp-3 text-body-sm leading-relaxed text-muted">
+          {post.description}
+        </p>
+
+        <div className="mt-auto flex items-center gap-3 border-t border-border pt-4 text-body-sm text-muted">
+          <span className="text-foreground/85">{post.author}</span>
+          <span aria-hidden="true" className="text-border-strong">·</span>
+          <span className="font-mono text-[10.5px] uppercase tracking-[0.12em]">
+            {post.readTime}
+          </span>
+        </div>
       </div>
     </Link>
   );

@@ -122,14 +122,6 @@ const IconGlobe = () => (
   </svg>
 );
 
-const IconAlertTriangle = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-    <line x1="12" y1="9" x2="12" y2="13" />
-    <line x1="12" y1="17" x2="12.01" y2="17" />
-  </svg>
-);
-
 const TRUST_ICON_MAP = {
   "shield-check": IconShieldCheck,
   lock: IconLock,
@@ -168,10 +160,10 @@ export function Footer() {
       />
 
       {/* ━━━━━━━━━━━━━━━━━━ RAIL 1: MAIN GRID ━━━━━━━━━━━━━━━━━━ */}
-      <div className="container relative mx-auto py-12 md:py-14 lg:py-16">
-        <div className="grid gap-8 md:grid-cols-2 md:gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr] lg:gap-10 xl:gap-12">
+      <div className="container relative mx-auto py-10 md:py-12">
+        <div className="grid gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr] lg:gap-8 xl:gap-10">
           {/* ─── Brand column ─────────────────────────── */}
-          <div className="flex flex-col gap-4 lg:col-span-1 md:col-span-2 lg:col-auto">
+          <div className="flex flex-col gap-3.5 lg:col-span-1 md:col-span-2 lg:col-auto">
             {/* Logo — wordmark + accent dot. Kept text-based so the footer
                 stays in the design system; if/when the bitmap logo is
                 wired up via next/image it slots in here. */}
@@ -289,21 +281,22 @@ export function Footer() {
 
       {/* ━━━━━━━━━━━━━━━━━━ RAIL 3: DISCLAIMER + BOTTOM BAR ━━━━━━━━━━━━━━━━━━ */}
       <div className="relative border-t border-white/8 bg-black/20">
-        {/* Disclaimer — centered */}
-        <div className="container mx-auto py-5">
-          <div className="flex flex-col items-center gap-2 text-center">
+        {/* Disclaimer — centered, compact */}
+        <div className="container mx-auto py-4">
+          <div className="flex items-center justify-center gap-2.5 text-center">
             <span
               aria-hidden="true"
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-severity-caution/15 text-severity-caution"
+              className="flex h-5 w-5 shrink-0 items-center justify-center text-severity-caution"
             >
-              <IconAlertTriangle />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
             </span>
-            <p className="max-w-2xl text-body-sm leading-relaxed text-background/70">
-              <span className="font-medium text-background">Medical Disclaimer:</span>{" "}
-              PharmaGuide provides educational information only and is not a
-              substitute for professional medical advice, diagnosis, or
-              treatment. Always consult your healthcare provider before making
-              changes to your medication or supplement regimen.
+            <p className="text-micro leading-snug text-background/60">
+              <span className="font-medium text-background/80">Disclaimer:</span>{" "}
+              PharmaGuide provides educational information only — not a substitute for professional medical advice. Always consult your healthcare provider before making changes.
             </p>
           </div>
         </div>
@@ -364,7 +357,7 @@ function FooterColumn({
       <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-background/55">
         {title}
       </h3>
-      <ul className="mt-4 flex flex-col gap-2.5">
+      <ul className="mt-3 flex flex-col gap-2">
         {links.map((link) => (
           <li key={link.href}>
             {link.comingSoon ? (

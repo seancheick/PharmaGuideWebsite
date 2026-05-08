@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { cn } from "@/lib/utils";
 
@@ -32,19 +32,20 @@ const SCORE_DURATION_MS = 1200;
 
 export function YourFit() {
   const cardRef = useRef<HTMLDivElement>(null);
+  const scoreRef = useRef<HTMLSpanElement>(null);
   const inView = useInView(cardRef, { once: true, margin: "-15%" });
-  const [score, setScore] = useState(0);
 
+  // Count-up via direct DOM mutation — zero re-renders during animation
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || !scoreRef.current) return;
+    const el = scoreRef.current;
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
       const elapsed = now - start;
       const progress = Math.min(elapsed / SCORE_DURATION_MS, 1);
-      // easeOutCubic — fast start, slow finish, feels natural for counters
       const eased = 1 - Math.pow(1 - progress, 3);
-      setScore(Math.round(TARGET_SCORE * eased));
+      el.textContent = String(Math.round(TARGET_SCORE * eased));
       if (progress < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -135,8 +136,8 @@ export function YourFit() {
                     {/* Score colored to match the bar. Severity-safe at 89
                         keeps the visual story coherent: number, bar, and
                         verdict pill all read the same green. */}
-                    <span className="font-serif text-display-md italic leading-none tabular-nums text-severity-safe">
-                      {score}
+                    <span ref={scoreRef} className="font-serif text-display-md italic leading-none tabular-nums text-severity-safe">
+                      0
                     </span>
                   </div>
 

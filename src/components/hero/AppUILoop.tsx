@@ -38,7 +38,7 @@ export function AppUILoop({ searchText, resultFor, stack }: Props) {
       className="absolute inset-0 flex flex-col"
       style={{
         background:
-          "linear-gradient(180deg, rgb(255 255 255) 0%, rgb(250 249 246) 55%, rgb(244 242 238) 100%)",
+          "linear-gradient(180deg, rgb(var(--color-surface)) 0%, rgb(var(--color-background)) 55%, rgb(var(--color-surface-subtle)) 100%)",
       }}
     >
       {/* Status bar */}

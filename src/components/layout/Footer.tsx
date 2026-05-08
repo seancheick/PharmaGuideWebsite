@@ -176,7 +176,7 @@ export function Footer() {
                 stays in the design system; if/when the bitmap logo is
                 wired up via next/image it slots in here. */}
             <Link href="/" aria-label={`${site.name} home`} className="inline-flex items-center gap-2">
-              <span aria-hidden="true" className="block h-2 w-2 rounded-full bg-accent" />
+              <span aria-hidden="true" className="block h-2 w-2 rounded-full bg-background/70" />
               <span className="font-sans text-h3 font-medium tracking-[-0.012em] text-background">
                 {site.name}
               </span>
@@ -210,7 +210,7 @@ export function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/12 bg-white/[0.03] text-background/70 transition-[background-color,color,transform,border-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/[0.08] hover:text-background focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.03] text-background/70 transition-[background-color,color,transform,border-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/[0.08] hover:text-background focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
                   >
                     <Icon />
                   </a>
@@ -261,7 +261,7 @@ export function Footer() {
                   key={badge.label}
                   className="inline-flex items-center gap-2 text-background/75"
                 >
-                  <span className="text-accent/70" style={{ color: "rgb(175 198 200 / 0.85)" }}>
+                  <span className="text-background/70">
                     <Icon />
                   </span>
                   <span className="font-mono text-[11px] font-medium uppercase tracking-[0.12em]">
@@ -369,7 +369,7 @@ function FooterColumn({
             {link.comingSoon ? (
               <span className="inline-flex items-center gap-2 text-body-sm text-background/55">
                 {link.label}
-                <span className="rounded-pill bg-accent/15 px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-accent" style={{ color: "rgb(175 198 200)" }}>
+                <span className="rounded-pill bg-white/10 px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-background/75">
                   {link.badge ?? "Soon"}
                 </span>
               </span>

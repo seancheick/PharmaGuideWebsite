@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 
 /**
@@ -49,33 +49,33 @@ const statementsContainer = {
 } as const;
 
 // Count-up hook — eases from 0 → target with cubic-out, triggered by inView.
-// Same pattern as YourFit. Format with comma thousands separator.
+// Uses direct DOM mutation (ref.textContent) instead of setState to avoid
+// ~60 React re-renders per second during the animation.
 function useCountUp(target: number, durationMs = 1800) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-15%" });
-  const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || !ref.current) return;
+    const el = ref.current;
     const start = performance.now();
     let frame = 0;
     const tick = (now: number) => {
       const elapsed = now - start;
       const t = Math.min(elapsed / durationMs, 1);
-      // easeOutCubic
       const eased = 1 - Math.pow(1 - t, 3);
-      setValue(Math.round(eased * target));
+      el.textContent = Math.round(eased * target).toLocaleString("en-US");
       if (t < 1) frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [inView, target, durationMs]);
 
-  return { ref, value };
+  return { ref };
 }
 
 export function Problem() {
-  const { ref: countRef, value: erVisits } = useCountUp(4100, 1800);
+  const { ref: countRef } = useCountUp(4100, 1800);
 
   return (
     <section
@@ -171,7 +171,7 @@ export function Problem() {
               className="pointer-events-none absolute inset-0 -z-10 mx-auto block h-full w-full rounded-full bg-accent/[0.06] blur-2xl"
             />
             <p className="font-sans text-display-md font-medium leading-none tabular-nums tracking-[-0.02em] text-ink">
-              <span ref={countRef}>{erVisits.toLocaleString("en-US")}</span>
+              <span ref={countRef}>0</span>
               <span className="text-accent">+</span>
             </p>
           </div>

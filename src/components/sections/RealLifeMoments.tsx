@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { fadeUpContainer, fadeUpItem } from "@/lib/tokens";
@@ -164,18 +164,20 @@ export function RealLifeMoments() {
           "snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         )}
       >
-        {MOMENTS.map((moment, i) => (
-          <MomentCard
-            key={moment.id}
-            ref={(el) => {
-              cardRefs.current[i] = el;
-            }}
-            moment={moment}
-            isOpen={openIdx === i}
-            onOpen={() => setOpenIdx(i)}
-            onClose={() => setOpenIdx(-1)}
-          />
-        ))}
+        <LayoutGroup>
+          {MOMENTS.map((moment, i) => (
+            <MomentCard
+              key={moment.id}
+              ref={(el) => {
+                cardRefs.current[i] = el;
+              }}
+              moment={moment}
+              isOpen={openIdx === i}
+              onOpen={() => setOpenIdx(i)}
+              onClose={() => setOpenIdx(-1)}
+            />
+          ))}
+        </LayoutGroup>
       </div>
 
       {/* Controls */}
@@ -199,7 +201,7 @@ export function RealLifeMoments() {
               type="button"
               onClick={() => scrollByPage(-1)}
               aria-label="Previous moments"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-ink shadow-xs transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-surface-raised hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-ink shadow-xs transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-surface-raised hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                 <path
@@ -215,7 +217,7 @@ export function RealLifeMoments() {
               type="button"
               onClick={() => scrollByPage(1)}
               aria-label="Next moments"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-ink text-white shadow-xs transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-ink text-white shadow-xs transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                 <path
@@ -258,20 +260,27 @@ const MomentCard = ({
   };
 
   return (
-    <article
+    <motion.article
       ref={ref}
+      layout
+      transition={{ duration: 0.7, ease: [0.32, 0.72, 0.24, 1] }}
       role="listitem"
       onClick={handleCardClick}
+      onKeyDown={(e) => {
+        if ((e.key === "Enter" || e.key === " ") && !isOpen) {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
+      tabIndex={0}
       data-open={isOpen}
       className={cn(
         "group relative shrink-0 cursor-pointer snap-start overflow-hidden rounded-3xl bg-ink shadow-md",
-        // Compact widths/heights — slightly wider + taller per user feedback.
-        // Sized so ~3.5 cards (3 + half peek) fit at xl viewports thanks to
-        // the rail extending up to max-w-[1480px] (see rail wrapper below).
-        //   80vw × 480 mobile · 360 × 520 sm · 360 × 540 md · 380 × 560 lg · 400 × 580 xl
+        // Compact widths/heights — Framer Motion layout prop handles the
+        // width transition via FLIP (transform-only, no layout thrash).
         "h-[480px] w-[80vw] sm:h-[520px] sm:w-[360px] md:h-[540px] md:w-[360px] lg:h-[560px] lg:w-[380px] xl:h-[580px] xl:w-[400px]",
-        "transition-[width,transform,box-shadow] duration-[700ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
-        // Open widths — proportionally wider, height stays the same
+        "transition-[transform,box-shadow] duration-[700ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
+        // Open widths — Framer layout animates the size change via transform
         isOpen
           ? "w-[90vw] cursor-default shadow-2xl sm:w-[600px] md:w-[700px] lg:w-[860px] xl:w-[920px]"
           : "hover:-translate-y-1 hover:shadow-xl"
@@ -317,7 +326,7 @@ const MomentCard = ({
           if (isOpen) onClose();
           else onOpen();
         }}
-        className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-ink shadow-md transition-transform duration-[500ms] ease-[cubic-bezier(0.32,0.72,0.24,1)] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
+        className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-ink shadow-md transition-transform duration-[500ms] ease-[cubic-bezier(0.32,0.72,0.24,1)] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
       >
         <svg
           width="14"
@@ -366,7 +375,7 @@ const MomentCard = ({
                 {moment.description}
               </p>
               <a
-                href="#"
+                href="#waitlist"
                 onClick={(e) => e.stopPropagation()}
                 className="inline-flex w-fit items-center gap-2 rounded-pill bg-white/95 px-5 py-2.5 text-body-sm font-medium text-ink shadow-md transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-white"
               >
@@ -475,7 +484,7 @@ const MomentCard = ({
           </motion.aside>
         )}
       </AnimatePresence>
-    </article>
+    </motion.article>
   );
 };
 MomentCard.displayName = "MomentCard";

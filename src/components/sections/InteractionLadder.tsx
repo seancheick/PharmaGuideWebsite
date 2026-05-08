@@ -160,6 +160,30 @@ export function InteractionLadder() {
   const [activeId, setActiveId] = useState<TierId>("monitor");
   const active = TIERS.find((t) => t.id === activeId) ?? TIERS[3]!;
 
+  // WAI-ARIA Tabs: arrow keys move between tabs, wrapping at edges
+  const handleTabKeyDown = (e: React.KeyboardEvent, idx: number) => {
+    let next = idx;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      next = (idx + 1) % TIERS.length;
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      next = (idx - 1 + TIERS.length) % TIERS.length;
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      next = 0;
+    } else if (e.key === "End") {
+      e.preventDefault();
+      next = TIERS.length - 1;
+    } else {
+      return;
+    }
+    setActiveId(TIERS[next]!.id);
+    // Focus the newly active tab
+    const tabEl = document.getElementById(`tier-tab-${TIERS[next]!.id}`);
+    tabEl?.focus();
+  };
+
   return (
     <section
       id="interaction-ladder"
@@ -210,13 +234,20 @@ export function InteractionLadder() {
           transition={transitions.reveal}
           className="mx-auto mt-16 max-w-6xl overflow-hidden rounded-2xl border border-border bg-surface shadow-sm md:mt-20"
         >
-          {/* Tier row */}
-          <div role="tablist" aria-label="Severity tiers" className="grid md:grid-cols-5">
+          {/* Tier row — horizontal scroll pills on mobile, 5-col grid on desktop.
+              Mobile pills show shape + label only (no brief) to stay compact.
+              Desktop shows the full card with brief description. */}
+          <div
+            role="tablist"
+            aria-label="Severity tiers"
+            className="flex gap-2 overflow-x-auto px-4 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-5 md:gap-0 md:overflow-visible md:p-0"
+          >
             {TIERS.map((tier, i) => {
               const isActive = tier.id === activeId;
               return (
                 <button
                   key={tier.id}
+                  id={`tier-tab-${tier.id}`}
                   role="tab"
                   aria-selected={isActive}
                   aria-controls="tier-detail"
@@ -224,24 +255,26 @@ export function InteractionLadder() {
                   onMouseEnter={() => setActiveId(tier.id)}
                   onFocus={() => setActiveId(tier.id)}
                   onClick={() => setActiveId(tier.id)}
+                  onKeyDown={(e) => handleTabKeyDown(e, i)}
                   className={cn(
-                    "group relative flex flex-col gap-3 px-5 py-5 text-left transition-colors duration-fast ease-smooth md:px-6 md:py-7",
-                    // Hairline dividers — bottom on mobile (last item no divider),
-                    // right on desktop (last item no divider)
-                    i < TIERS.length - 1 && "border-b border-border md:border-b-0 md:border-r",
-                    // Active state: brighter bg + soft ring
+                    "group relative transition-colors duration-fast ease-smooth",
+                    // Mobile: compact pill with shape + label
+                    "flex shrink-0 items-center gap-2 rounded-pill border px-3.5 py-2.5 text-left",
+                    // Desktop: full card layout
+                    "md:flex-col md:items-start md:gap-3 md:rounded-none md:border-0 md:px-6 md:py-7",
+                    // Desktop hairline dividers (right, except last)
+                    i < TIERS.length - 1 && "md:border-r md:border-border",
+                    // Active state
                     isActive
-                      ? "bg-surface-raised"
-                      : "bg-surface hover:bg-surface-raised/60 focus-visible:bg-surface-raised/60"
+                      ? "border-border-strong bg-surface-raised md:border-transparent md:bg-surface-raised"
+                      : "border-border bg-surface hover:bg-surface-raised/60 focus-visible:bg-surface-raised/60 md:border-transparent"
                   )}
                 >
-                  {/* Active accent bar — runs along the bottom edge in the
-                      tier's color when selected. Subtle visual link to the
-                      detail panel below. */}
+                  {/* Active accent bar — desktop only, bottom edge */}
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "absolute inset-x-0 bottom-0 h-[2px] transition-opacity duration-fast ease-smooth",
+                      "absolute inset-x-0 bottom-0 hidden h-[2px] transition-opacity duration-fast ease-smooth md:block",
                       tier.barClass,
                       isActive ? "opacity-100" : "opacity-0"
                     )}
@@ -258,7 +291,8 @@ export function InteractionLadder() {
                       {tier.label}
                     </span>
                   </div>
-                  <p className="text-body-sm leading-snug text-muted">{tier.brief}</p>
+                  {/* Brief — hidden on mobile pills, shown on desktop */}
+                  <p className="hidden text-body-sm leading-snug text-muted md:block">{tier.brief}</p>
                 </button>
               );
             })}
@@ -267,6 +301,8 @@ export function InteractionLadder() {
           {/* Detail panel — re-keys on tier change, cross-fades content */}
           <div
             id="tier-detail"
+            role="tabpanel"
+            aria-labelledby={`tier-tab-${activeId}`}
             aria-live="polite"
             className="border-t border-border bg-surface-raised p-6 sm:p-8 md:p-10"
           >

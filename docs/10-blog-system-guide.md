@@ -3,6 +3,78 @@
 > Everything you need to know to write, publish, and rank PharmaGuide blog
 > posts. Read this once.
 
+---
+
+## Changing the featured post (Editor's Pick)
+
+The big card at the top of `/blog` is whichever post has `featured: true`
+in its frontmatter. **Only ONE post should be featured at a time.**
+
+Two commands handle this safely:
+
+```bash
+# See every post and which one is currently featured
+pnpm blog:list
+
+# Set a new featured post (auto-unsets the previous one)
+pnpm blog:feature statins-and-coq10
+```
+
+That's it. The script reads every `.mdx` file, sets `featured: true` on
+the slug you name, sets `featured: false` on everything else, and tells
+you exactly what changed. After running, commit + push:
+
+```bash
+git add content/blog
+git commit -m "feature: set <slug> as Editor's Pick"
+git push
+```
+
+Vercel ISR rolls the change to production within the 5-day revalidation
+window. To make it live immediately, redeploy from the Vercel dashboard.
+
+### Example session
+
+```
+$ pnpm blog:list
+
+PharmaGuide blog — 2 posts
+
+  status   date         category               slug
+  ──────   ──────────   ─────────────────────  ────────────────
+    draft     2026-05-09   ingredient-spotlights  statins-and-coq10
+             Statins and CoQ10: what the research actually shows
+
+  ● FEATURED   2026-05-08   health-education       medication-depletion-guide
+             What your medication might be quietly depleting
+
+✓ Editor's Pick is set correctly.
+
+$ pnpm blog:feature statins-and-coq10
+
++ featured  statins-and-coq10
+  Statins and CoQ10: what the research actually shows
+- unfeatured medication-depletion-guide
+
+✓ Done. 2 files updated.
+
+Next:
+  1. Verify with pnpm blog:list
+  2. Commit + push:
+       git add content/blog
+       git commit -m "feature: set statins-and-coq10 as Editor's Pick"
+       git push
+```
+
+### Why a script instead of editing files by hand
+
+- Manual edits are error-prone — you can forget to unset the previous
+  featured post and end up with two, which means the wrong one wins on
+  the hub.
+- The script makes the change atomically across every file.
+- One command to remember. No file paths, no line numbers, no "wait,
+  which one was featured?" — just `pnpm blog:list`.
+
 ## TL;DR — Publishing a new post
 
 ```bash

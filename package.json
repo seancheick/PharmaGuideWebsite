@@ -10,7 +10,9 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,md,css}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,md,css}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,css}\"",
+    "blog:list": "node scripts/blog.mjs list",
+    "blog:feature": "node scripts/blog.mjs feature"
   },
   "dependencies": {
     "@microsoft/clarity": "^1.0.2",

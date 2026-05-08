@@ -130,7 +130,7 @@
        Editorial-tight content width — the website looks "designed," not
        stretched. lg-padding bumped to 3rem so viewports just under the
        container max (1024–1079) get 48px inset, not 32px.            */
-    --container-max: 1080px;
+    --container-max: 1200px;
     --container-padding: 1.25rem;       /* 20 — mobile           */
     --container-padding-sm: 1.75rem;    /* 28 — tablet           */
     --container-padding-lg: 3rem;       /* 48 — desktop pre-cap  */

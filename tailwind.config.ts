@@ -26,11 +26,11 @@ const config: Config = {
       // Hard px values — CSS variables don't resolve at Tailwind build time.
       // 1080px matches --container-max in globals.css.
       screens: {
-        sm: "1080px",
-        md: "1080px",
-        lg: "1080px",
-        xl: "1080px",
-        "2xl": "1080px",
+        sm: "1200px",
+        md: "1200px",
+        lg: "1200px",
+        xl: "1200px",
+        "2xl": "1200px",
       },
     },
     extend: {

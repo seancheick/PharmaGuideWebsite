@@ -23,12 +23,14 @@ const config: Config = {
       // We cap at --container-max (1280px) at every breakpoint, so the
       // container is consistently 1280px wide centered with proper margins
       // on any viewport ≥ sm.
+      // Hard px values — CSS variables don't resolve at Tailwind build time.
+      // 1080px matches --container-max in globals.css.
       screens: {
-        sm: "var(--container-max)",
-        md: "var(--container-max)",
-        lg: "var(--container-max)",
-        xl: "var(--container-max)",
-        "2xl": "var(--container-max)",
+        sm: "1080px",
+        md: "1080px",
+        lg: "1080px",
+        xl: "1080px",
+        "2xl": "1080px",
       },
     },
     extend: {

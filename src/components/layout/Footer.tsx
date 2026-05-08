@@ -287,17 +287,18 @@ export function Footer() {
         </div>
       </div>
 
-      {/* ━━━━━━━━━━━━━━━━━━ RAIL 3: DISCLAIMER ━━━━━━━━━━━━━━━━━━ */}
-      <div className="relative border-t border-white/8 bg-white/[0.025]">
+      {/* ━━━━━━━━━━━━━━━━━━ RAIL 3: DISCLAIMER + BOTTOM BAR ━━━━━━━━━━━━━━━━━━ */}
+      <div className="relative border-t border-white/8 bg-black/20">
+        {/* Disclaimer — centered */}
         <div className="container mx-auto py-5">
-          <div className="flex items-start gap-3 md:items-center">
+          <div className="flex flex-col items-center gap-2 text-center">
             <span
               aria-hidden="true"
-              className="mt-[2px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-severity-caution/15 text-severity-caution md:mt-0"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-severity-caution/15 text-severity-caution"
             >
               <IconAlertTriangle />
             </span>
-            <p className="text-body-sm leading-relaxed text-background/70">
+            <p className="max-w-2xl text-body-sm leading-relaxed text-background/70">
               <span className="font-medium text-background">Medical Disclaimer:</span>{" "}
               PharmaGuide provides educational information only and is not a
               substitute for professional medical advice, diagnosis, or
@@ -306,30 +307,30 @@ export function Footer() {
             </p>
           </div>
         </div>
-      </div>
 
-      {/* ━━━━━━━━━━━━━━━━━━ RAIL 4: BOTTOM BAR ━━━━━━━━━━━━━━━━━━ */}
-      <div className="relative border-t border-white/8 bg-black/20">
-        <div className="container mx-auto py-5">
-          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/45">
-              Last reviewed{" "}
-              <time dateTime={lastReviewed} className="text-background/70">
-                {lastReviewed}
-              </time>{" "}
-              <span className="mx-1 text-white/15">·</span> by Dr. Pham L., PharmD
-            </p>
-            <div className="flex items-center gap-4">
+        {/* Bottom bar — same bg, thin separator */}
+        <div className="border-t border-white/6">
+          <div className="container mx-auto py-5">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/45">
-                © {year} {site.name} Inc.
+                Last reviewed{" "}
+                <time dateTime={lastReviewed} className="text-background/70">
+                  {lastReviewed}
+                </time>{" "}
+                <span className="mx-1 text-white/15">·</span> by Dr. Pham L., PharmD
               </p>
-              <span className="text-white/15">·</span>
-              <Link
-                href="/sitemap.xml"
-                className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/55 transition-colors duration-fast ease-smooth hover:text-background"
-              >
-                Sitemap
-              </Link>
+              <div className="flex items-center gap-4">
+                <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/45">
+                  © {year} {site.name} Inc.
+                </p>
+                <span className="text-white/15">·</span>
+                <Link
+                  href="/sitemap.xml"
+                  className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/55 transition-colors duration-fast ease-smooth hover:text-background"
+                >
+                  Sitemap
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -376,8 +377,11 @@ function FooterColumn({
             ) : (
               <Link
                 href={link.href}
-                className="text-body-sm text-background/70 transition-colors duration-fast ease-smooth hover:text-background"
+                className="group/link relative inline-flex items-center gap-0 text-body-sm text-background/70 transition-colors duration-fast ease-smooth hover:text-background"
               >
+                <span className="inline-block w-0 overflow-hidden transition-[width,opacity] duration-300 ease-smooth group-hover/link:w-4 group-hover/link:opacity-100 opacity-0">
+                  <span className="inline-block h-[3px] w-[3px] rounded-full bg-background/70 translate-x-0.5" />
+                </span>
                 {link.label}
               </Link>
             )}

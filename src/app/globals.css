@@ -314,9 +314,9 @@
 
   /* Glass effect for floating header */
   .glass {
-    background-color: rgb(var(--color-background) / 0.72);
-    backdrop-filter: blur(var(--blur-md)) saturate(1.4);
-    -webkit-backdrop-filter: blur(var(--blur-md)) saturate(1.4);
+    background-color: rgb(var(--color-background) / 0.82);
+    backdrop-filter: blur(var(--blur-lg)) saturate(1.6);
+    -webkit-backdrop-filter: blur(var(--blur-lg)) saturate(1.6);
   }
 
   /* Smooth gradient fade — used between sections */

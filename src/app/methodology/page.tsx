@@ -31,13 +31,13 @@ export const revalidate = 432000; // 5 days
 const description = `How PharmaGuide collects, verifies, and ships interaction data — the four primary sources, the five-step verification process, the medical advisory team, and where AI ends and human judgment begins. Last updated ${formatLegalDate(METHODOLOGY_LAST_UPDATED)}.`;
 
 export const metadata: Metadata = {
-  title: "Methodology — PharmaGuide",
+  title: "Methodology",
   description,
   alternates: {
     canonical: `${site.url}/methodology`,
   },
   openGraph: {
-    title: "Methodology — PharmaGuide",
+    title: "Methodology",
     description,
     url: `${site.url}/methodology`,
     siteName: site.name,
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Methodology — PharmaGuide",
+    title: "Methodology",
     description,
   },
 };

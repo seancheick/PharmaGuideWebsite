@@ -195,9 +195,12 @@ export function FinalCTA() {
           </div>
 
           {/* ─── RIGHT COLUMN: Inside the beta preview ─── */}
-          <motion.aside
+          {/* Was <motion.aside> — switched to <motion.div> because axe
+              flags <aside> inside <main> as a nested complementary
+              landmark. The h3 + ul inside still gives screen readers
+              a labeled list, no semantic loss.                      */}
+          <motion.div
             variants={fadeUpItem}
-            aria-label="What's inside the beta"
             className="relative w-full"
           >
             {/* Soft accent halo behind the preview block */}
@@ -233,7 +236,7 @@ export function FinalCTA() {
                 + everything that ships at launch
               </p>
             </div>
-          </motion.aside>
+          </motion.div>
         </motion.div>
       </div>
     </section>

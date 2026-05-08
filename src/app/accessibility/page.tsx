@@ -16,11 +16,11 @@ export const revalidate = 432000; // 5 days
 const description = `PharmaGuide accessibility statement — WCAG 2.2 AA target, what's already in place across the website and mobile apps, what's in progress, and how to report something that doesn't work for you. Last updated ${formatLegalDate(ACCESSIBILITY_DOC.lastUpdated)}.`;
 
 export const metadata: Metadata = {
-  title: "Accessibility — PharmaGuide",
+  title: "Accessibility",
   description,
   alternates: { canonical: `${site.url}/accessibility` },
   openGraph: {
-    title: "Accessibility — PharmaGuide",
+    title: "Accessibility",
     description,
     url: `${site.url}/accessibility`,
     siteName: site.name,
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Accessibility — PharmaGuide",
+    title: "Accessibility",
     description,
   },
 };

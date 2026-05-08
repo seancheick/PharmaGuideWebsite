@@ -62,7 +62,10 @@ export function FAQClient() {
 
         return (
           <motion.li key={item.q} variants={fadeUpItem} className="group">
-            <h3>
+            {/* h2 (not h3) — page hero is h1, so questions need to be
+                h2 to keep heading order proper for screen readers and
+                axe-core. Visual size unchanged.                       */}
+            <h2>
               <button
                 id={buttonId}
                 type="button"
@@ -90,7 +93,7 @@ export function FAQClient() {
                 </div>
                 <PlusIcon isOpen={isOpen} />
               </button>
-            </h3>
+            </h2>
 
             {/* Animated panel — height 0 → auto + opacity for cross-fade.
                 AnimatePresence so the exit animation runs on close.    */}

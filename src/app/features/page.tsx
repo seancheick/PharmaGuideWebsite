@@ -23,11 +23,11 @@ const description =
   "Every PharmaGuide capability — medication depletion detection, full-stack interaction analysis, ingredient & quality transparency, personal fit, nutrient accumulation tracking, and live FDA recall monitoring. Built on a 180,000-product on-device catalog reviewed by clinicians.";
 
 export const metadata: Metadata = {
-  title: "Features — PharmaGuide",
+  title: "Features",
   description,
   alternates: { canonical: `${site.url}/features` },
   openGraph: {
-    title: "Features — PharmaGuide",
+    title: "Features",
     description,
     url: `${site.url}/features`,
     siteName: site.name,
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Features — PharmaGuide",
+    title: "Features",
     description,
   },
 };

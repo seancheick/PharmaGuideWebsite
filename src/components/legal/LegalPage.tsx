@@ -168,8 +168,12 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
       >
         <div className="container relative mx-auto">
           <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[260px_1fr] lg:gap-16">
-            {/* Sticky TOC — desktop. Mobile: collapsible <details> */}
-            <aside aria-label="Table of contents">
+            {/* Sticky TOC — desktop. Mobile: collapsible <details>.
+                <nav> is more semantic for a TOC than <aside>, and
+                avoids axe's "complementary landmark inside main"
+                best-practice flag. Screen readers announce <nav>
+                with its aria-label as a navigation region.        */}
+            <nav aria-label="Table of contents">
               <details
                 className="group lg:hidden"
                 open={false}
@@ -202,7 +206,7 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
                 </p>
                 <TOCList sections={doc.sections} activeId={activeId} />
               </div>
-            </aside>
+            </nav>
 
             {/* Content column */}
             <div className="min-w-0">

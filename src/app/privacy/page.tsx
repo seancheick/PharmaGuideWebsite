@@ -22,13 +22,13 @@ export const revalidate = 432000; // 5 days
 const description = `PharmaGuide privacy policy — what we collect, why, and how to control it. Your supplement stack and conditions stay on your device. Last updated ${formatLegalDate(PRIVACY_DOC.lastUpdated)}.`;
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — PharmaGuide",
+  title: "Privacy Policy",
   description,
   alternates: {
     canonical: `${site.url}/privacy`,
   },
   openGraph: {
-    title: "Privacy Policy — PharmaGuide",
+    title: "Privacy Policy",
     description,
     url: `${site.url}/privacy`,
     siteName: site.name,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Privacy Policy — PharmaGuide",
+    title: "Privacy Policy",
     description,
   },
 };

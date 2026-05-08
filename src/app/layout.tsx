@@ -84,15 +84,35 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  // Search-engine ownership verification.
+  // Drop the codes from each platform into env vars (no code change
+  // needed when switching tokens). Next.js emits the appropriate
+  // <meta> tags only when the env var is set.
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    other: {
+      "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION ?? "",
+      "yandex-verification":
+        process.env.NEXT_PUBLIC_YANDEX_SITE_VERIFICATION ?? "",
+    },
+  },
   category: "health",
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": `${site.url}#organization`,
   name: site.name,
   url: site.url,
-  logo: `${site.url}/logo.png`,
+  // /icon2.png is the 512×512 PNG emitted by src/app/icon2.png
+  // (was `/logo.png` which 404'd — fixed).
+  logo: {
+    "@type": "ImageObject",
+    url: `${site.url}/icon2.png`,
+    width: 512,
+    height: 512,
+  },
   description: site.description,
   email: site.email,
   address: {
@@ -101,7 +121,11 @@ const jsonLd = {
     addressRegion: "MA",
     addressCountry: site.country,
   },
-  sameAs: [`https://twitter.com/${site.twitter.replace("@", "")}`],
+  sameAs: [
+    `https://twitter.com/${site.twitter.replace("@", "")}`,
+    "https://linkedin.com/company/pharmaguide",
+    "https://instagram.com/pharmaguide.io",
+  ],
 };
 
 export default function RootLayout({

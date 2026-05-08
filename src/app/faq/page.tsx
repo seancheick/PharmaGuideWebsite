@@ -28,14 +28,14 @@ import { site } from "@/lib/site";
 export const revalidate = 432000; // 5 days
 
 export const metadata: Metadata = {
-  title: "FAQ — PharmaGuide",
+  title: "FAQ",
   description:
     "Frequently asked questions about PharmaGuide — what it is, how it works, privacy, evidence, and when it ships.",
   alternates: {
     canonical: `${site.url}/faq`,
   },
   openGraph: {
-    title: "FAQ — PharmaGuide",
+    title: "FAQ",
     description:
       "Frequently asked questions about PharmaGuide — what it is, how it works, privacy, evidence, and when it ships.",
     url: `${site.url}/faq`,
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FAQ — PharmaGuide",
+    title: "FAQ",
     description:
       "Frequently asked questions about PharmaGuide — what it is, how it works, privacy, evidence, and when it ships.",
   },
@@ -95,7 +95,7 @@ export default function FAQPage() {
     "@type": "WebPage",
     "@id": `${site.url}/faq#webpage`,
     url: `${site.url}/faq`,
-    name: "FAQ — PharmaGuide",
+    name: "FAQ",
     description:
       "Frequently asked questions about PharmaGuide — what it is, how it works, privacy, evidence, and when it ships.",
     isPartOf: {

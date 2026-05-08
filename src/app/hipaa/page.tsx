@@ -20,11 +20,11 @@ export const revalidate = 432000; // 5 days
 const description = `PharmaGuide's HIPAA statement — what HIPAA actually covers, why we treat the Security Rule as a design baseline, and how on-device data architecture changes the equation. Last updated ${formatLegalDate(HIPAA_DOC.lastUpdated)}.`;
 
 export const metadata: Metadata = {
-  title: "HIPAA Statement — PharmaGuide",
+  title: "HIPAA Statement",
   description,
   alternates: { canonical: `${site.url}/hipaa` },
   openGraph: {
-    title: "HIPAA Statement — PharmaGuide",
+    title: "HIPAA Statement",
     description,
     url: `${site.url}/hipaa`,
     siteName: site.name,
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "HIPAA Statement — PharmaGuide",
+    title: "HIPAA Statement",
     description,
   },
 };

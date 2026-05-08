@@ -61,6 +61,13 @@ interface TierData {
   shape: Shape;
   textClass: string;
   barClass: string;
+  // Active-state styles for the mobile pill — tinted bg + ring in the
+  // tier's severity color so it's unmistakably "this is selected." On
+  // desktop the active state is the bottom accent bar (barClass); on
+  // mobile (where the bar isn't visible) we need the bg + border to
+  // do the work. Static strings so Tailwind's JIT compiles them.
+  bgActiveClass: string;
+  borderActiveClass: string;
 }
 
 // Evidence-level assignments below match the cited `studies` for each
@@ -83,6 +90,8 @@ const TIERS: readonly TierData[] = [
     shape: "triangle",
     textClass: "text-severity-contraindicated",
     barClass: "bg-severity-contraindicated",
+    bgActiveClass: "bg-severity-contraindicated/[0.10]",
+    borderActiveClass: "border-severity-contraindicated/40",
   },
   {
     id: "avoid",
@@ -98,6 +107,8 @@ const TIERS: readonly TierData[] = [
     shape: "circle",
     textClass: "text-severity-avoid",
     barClass: "bg-severity-avoid",
+    bgActiveClass: "bg-severity-avoid/[0.10]",
+    borderActiveClass: "border-severity-avoid/40",
   },
   {
     id: "caution",
@@ -113,6 +124,8 @@ const TIERS: readonly TierData[] = [
     shape: "diamond",
     textClass: "text-severity-caution",
     barClass: "bg-severity-caution",
+    bgActiveClass: "bg-severity-caution/[0.12]",
+    borderActiveClass: "border-severity-caution/40",
   },
   {
     id: "monitor",
@@ -128,6 +141,8 @@ const TIERS: readonly TierData[] = [
     shape: "ring",
     textClass: "text-severity-monitor",
     barClass: "bg-severity-monitor",
+    bgActiveClass: "bg-severity-monitor/[0.12]",
+    borderActiveClass: "border-severity-monitor/40",
   },
   {
     id: "safe",
@@ -143,6 +158,8 @@ const TIERS: readonly TierData[] = [
     shape: "square",
     textClass: "text-severity-safe",
     barClass: "bg-severity-safe",
+    bgActiveClass: "bg-severity-safe/[0.12]",
+    borderActiveClass: "border-severity-safe/40",
   },
 ];
 
@@ -293,16 +310,24 @@ export function InteractionLadder() {
                   onClick={() => setActiveId(tier.id)}
                   onKeyDown={(e) => handleTabKeyDown(e, i)}
                   className={cn(
-                    "group relative transition-colors duration-fast ease-smooth",
+                    "group relative transition-[background-color,border-color,box-shadow] duration-fast ease-smooth",
                     // Mobile: compact pill with shape + label
                     "flex shrink-0 items-center gap-2 rounded-pill border px-3.5 py-2.5 text-left",
                     // Desktop: full card layout
                     "lg:flex-col lg:items-start lg:gap-3 lg:rounded-none lg:border-0 lg:px-6 lg:py-7",
                     // Desktop hairline dividers (right, except last)
                     i < TIERS.length - 1 && "lg:border-r lg:border-border",
-                    // Active state
+                    // Active state — on mobile the pill takes on the
+                    // tier's severity color (tinted bg + border) so
+                    // it's unmistakably "selected." On desktop the
+                    // active state is the bottom accent bar (below)
+                    // plus the surface-raised background.
                     isActive
-                      ? "border-border-strong bg-surface-raised lg:border-transparent lg:bg-surface-raised"
+                      ? cn(
+                          tier.bgActiveClass,
+                          tier.borderActiveClass,
+                          "lg:border-transparent lg:bg-surface-raised"
+                        )
                       : "border-border bg-surface hover:bg-surface-raised/60 focus-visible:bg-surface-raised/60 lg:border-transparent"
                   )}
                 >

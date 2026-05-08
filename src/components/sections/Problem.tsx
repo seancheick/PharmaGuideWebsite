@@ -117,9 +117,15 @@ export function Problem() {
             The problem
           </motion.p>
 
-          <motion.h2 variants={fadeUpItem} className="text-display-lg text-ink">
-            A label tells you what&apos;s in the bottle.
-            <br />
+          {/* Headline — text-balance + soft md-only break so mobile wraps
+              naturally (3 tight lines instead of 4 forced by a <br />).
+              Two-tone treatment: first clause in ink, second in accent
+              flows as one paragraph instead of two stacked sentences.   */}
+          <motion.h2
+            variants={fadeUpItem}
+            className="text-balance text-display-lg leading-[1.08] text-ink"
+          >
+            A label tells you what&apos;s in the bottle.{" "}
             <span className="text-accent">
               Not what happens with your other bottles.
             </span>

@@ -119,8 +119,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        {/* Icons emitted automatically by Next.js from
+            src/app/icon.tsx (32×32 favicon)
+            src/app/apple-icon.tsx (180×180 iOS home)
+            src/app/icon1.tsx (192×192 PWA)
+            — no manual <link> tags needed.                          */}
         <link rel="manifest" href="/manifest.webmanifest" />
         <script
           type="application/ld+json"

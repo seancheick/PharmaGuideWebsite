@@ -3,6 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FAQClient } from "@/components/faq/FAQClient";
 import { NewsletterCTA } from "@/components/faq/NewsletterCTA";
+import { RelatedLinks } from "@/components/shared/RelatedLinks";
 import { FAQ_ITEMS } from "@/lib/faq";
 import { site } from "@/lib/site";
 
@@ -168,6 +169,37 @@ export default function FAQPage() {
             <FAQClient />
           </div>
         </section>
+
+        {/* Cross-links — give visitors who got an answer here a
+            natural next step into deeper content. */}
+        <RelatedLinks
+          eyebrow="Beyond the FAQ"
+          headline="More to dig into"
+          accent="if any of this stuck."
+          links={[
+            {
+              label: "Features",
+              title: "The 6 product pillars",
+              description:
+                "Including the unique ones: medication depletion, ingredient transparency, nutrient accumulation, recall monitoring.",
+              href: "/features",
+            },
+            {
+              label: "Methodology",
+              title: "Where evidence comes from",
+              description:
+                "FDA, NIH, PubMed, Cochrane sources + the 5-step verification process behind every interaction.",
+              href: "/methodology",
+            },
+            {
+              label: "Blog",
+              title: "Long-form guides",
+              description:
+                "Every claim cited. Every post reviewed by a clinical pharmacist before it ships.",
+              href: "/blog",
+            },
+          ]}
+        />
 
         {/* ━━━━━━━━━━━━━━━━━━ NEWSLETTER CTA ━━━━━━━━━━━━━━━━━━
             Replaced the old "Can't find your answer?" strip.

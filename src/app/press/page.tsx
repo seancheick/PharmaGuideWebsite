@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PressClient } from "@/components/press/PressClient";
+import { RelatedLinks } from "@/components/shared/RelatedLinks";
 import { site } from "@/lib/site";
 
 /**
@@ -103,6 +104,34 @@ export default function PressPage() {
     <>
       <Header />
       <PressClient />
+      <RelatedLinks
+        eyebrow="For your story"
+        headline="Background reading,"
+        accent="primary sources."
+        links={[
+          {
+            label: "About",
+            title: "Why we built PharmaGuide",
+            description:
+              "Founder origin story, the supplement-industry critique, what we believe — written in plain English.",
+            href: "/about",
+          },
+          {
+            label: "Methodology",
+            title: "How we verify every interaction",
+            description:
+              "Sources, the 5-step process, the medical advisory team, AI transparency. The proof behind every claim.",
+            href: "/methodology",
+          },
+          {
+            label: "Features",
+            title: "What the product actually does",
+            description:
+              "Medication depletion, stack intelligence, ingredient transparency, recall monitoring — pillar by pillar.",
+            href: "/features",
+          },
+        ]}
+      />
       <Footer />
       <script
         type="application/ld+json"

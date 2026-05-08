@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MethodologyClient } from "@/components/methodology/MethodologyClient";
+import { RelatedLinks } from "@/components/shared/RelatedLinks";
 import {
   ADVISORY_TEAM,
   DATA_SOURCES,
@@ -132,6 +133,34 @@ export default function MethodologyPage() {
     <>
       <Header />
       <MethodologyClient />
+      <RelatedLinks
+        eyebrow="Keep reading"
+        headline="See it in practice"
+        accent="and what we're writing about."
+        links={[
+          {
+            label: "Features",
+            title: "The 6 pillars in depth",
+            description:
+              "Medication depletion · Stack intelligence · Quality transparency · Personal fit · Nutrient accumulation · Recall awareness.",
+            href: "/features",
+          },
+          {
+            label: "Blog",
+            title: "Evidence-graded writing",
+            description:
+              "Long-form guides on interactions, depletions, recalls — every claim cited, every post reviewed.",
+            href: "/blog",
+          },
+          {
+            label: "FAQ",
+            title: "The questions we hear most",
+            description:
+              "Privacy, accuracy, special populations, pricing, launch timing — answered honestly.",
+            href: "/faq",
+          },
+        ]}
+      />
       <Footer />
 
       <script

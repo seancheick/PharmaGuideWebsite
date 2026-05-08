@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CareersClient } from "@/components/careers/CareersClient";
+import { RelatedLinks } from "@/components/shared/RelatedLinks";
 import { site } from "@/lib/site";
 
 /**
@@ -55,6 +56,33 @@ export default function CareersPage() {
     <>
       <Header />
       <CareersClient />
+      <RelatedLinks
+        eyebrow="Before you write"
+        headline="Worth reading first."
+        links={[
+          {
+            label: "About",
+            title: "Why this exists",
+            description:
+              "Founder origin, the gap we're closing, what we believe. Skip this and your application reads generic.",
+            href: "/about",
+          },
+          {
+            label: "Methodology",
+            title: "How we ship",
+            description:
+              "Engineering culture in practice — sources, verification process, AI/human boundary, what we don't do.",
+            href: "/methodology",
+          },
+          {
+            label: "Features",
+            title: "What you'd be working on",
+            description:
+              "Six pillars across mobile, backend, content, and clinical. The actual surface area of the product.",
+            href: "/features",
+          },
+        ]}
+      />
       <Footer />
       <script
         type="application/ld+json"

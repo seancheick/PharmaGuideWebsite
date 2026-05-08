@@ -7,21 +7,82 @@ import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 /**
  * /about page client — full body of the About route.
  *
- * Voice + structure refreshed from the legacy WordPress version.
- * Original was 4,800 lines (mostly inlined CSS). This rebuild keeps
- * the content angles that work — supplement-industry critique, recall
- * comparison, values, founder + advisory team — and translates them
- * into our typography/restraint system.
+ * Substance restored from the legacy WordPress version (which I'd
+ * over-trimmed in v1):
+ *   • Founder origin story (two concrete quotes — "my father was
+ *     hospitalized" + "then it happened to me"). About pages live or
+ *     die on the personal narrative; can't drop this.
+ *   • Industry-lies section with 4 specific lie/truth cards + sources
+ *     (FDA Approved, Proprietary Blend, Natural so it can't hurt me,
+ *     100% Daily Value). Concrete claims + linked authoritative sources.
+ *   • 23,000+ ER visits/year stat (NEJM 2015, Geller AI et al.) — the
+ *     specific supplement-interaction ER stat, separate from the
+ *     homepage's 4,100/day ADE figure.
  *
  * Section flow:
- *   1. Hero — "The supplement industry was built to sell.
- *             Not to protect you." (the legacy headline; strong, kept)
- *   2. Origin — short founder note + the thesis
- *   3. The gap — drug vs supplement recall comparison (2-card split)
- *   4. What we believe — 4 value cards
- *   5. Team — founder card + 2 advisor cards
- *   6. CTA — Join the beta
+ *   Hero        — "Industry was built to sell. Not to protect you."
+ *   01 Why we built it  — founder origin (2 personal quotes)
+ *   02 Industry lies    — 4 lie/truth cards with sources
+ *   03 The gap          — drug vs supplement recall comparison
+ *   04 What we believe  — 4 values cards
+ *   05 Team             — founder + 2 advisors
+ *   RelatedLinks        — cross-link to /methodology + /features + /careers
+ *   CTA                 — Join the beta
  */
+
+const FOUNDER_STORY = [
+  {
+    quote: "My father was hospitalized.",
+    body: "He was already on blood pressure medication. The hospital prescribed something new — with a documented interaction with his existing prescription. **A conflict that could have been caught with a simple cross-reference.**",
+  },
+  {
+    quote: "Then it happened to me.",
+    body: "After being diagnosed with a metabolic condition and starting prescription medication, I discovered something troubling: **a supplement I was taking could interfere with how my body processed that medication.** The information existed. Nobody had connected the dots.",
+  },
+];
+
+const INDUSTRY_LIES = [
+  {
+    badge: "Zero pre-market approval",
+    lie: "FDA Approved",
+    truth:
+      'The FDA does not approve supplements before they hit shelves. **Most supplements enter the market without pre-market safety testing.** They are "presumed safe" until proven harmful — sometimes years later, after the harm.',
+    source: {
+      label: "FDA — Information for Consumers on Using Dietary Supplements",
+      href: "https://www.fda.gov/food/dietary-supplements/information-consumers-using-dietary-supplements",
+    },
+  },
+  {
+    badge: "The fairy-dusting deception",
+    lie: "Proprietary Blend",
+    truth:
+      'Companies use "proprietary blends" to hide ingredient amounts. **You might get 1% active ingredient and 99% cheap filler** — and legally, they don\'t have to tell you. PharmaGuide decomposes these blends and estimates per-ingredient ranges.',
+    source: {
+      label: "Learn more · Ingredient & Quality Transparency",
+      href: "/features#ingredient-transparency",
+    },
+  },
+  {
+    badge: "23,000 ER visits per year",
+    lie: "It's natural, so it can't hurt me",
+    truth:
+      'Every year, supplement-related events send **23,000+ Americans to the Emergency Room.** From internal bleeding to heart palpitations to acute liver injury — "natural" doesn\'t mean safe.',
+    source: {
+      label: "Geller AI et al., New England Journal of Medicine (2015)",
+      href: "https://www.nejm.org/doi/full/10.1056/NEJMsa1504267",
+    },
+  },
+  {
+    badge: "The absorption lie",
+    lie: "100% Daily Value",
+    truth:
+      "Your body isn't a beaker. Synthetic vitamins often lack the co-factors needed for absorption. **Synthetic vitamin E is absorbed roughly 50% less efficiently** than its natural form. The label tells you what's in the bottle, not what reaches your bloodstream.",
+    source: {
+      label: "NIH ODS · Vitamin E fact sheet",
+      href: "https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/",
+    },
+  },
+];
 
 const VALUES = [
   {
@@ -69,6 +130,21 @@ const TEAM = [
     note: "Patient-education review. Reads every post and warning from a healthcare-provider angle: is this clear, accessible, and actionable?",
   },
 ];
+
+// Tiny inline-bold renderer so quotes can have **emphasis** without
+// a full markdown dependency. Same pattern used in FAQClient + LegalPage.
+function renderInlineBold(text: string): React.ReactNode {
+  const parts = text.split(/\*\*(.+?)\*\*/g);
+  return parts.map((p, i) =>
+    i % 2 === 1 ? (
+      <strong key={i} className="font-medium text-ink">
+        {p}
+      </strong>
+    ) : (
+      <span key={i}>{p}</span>
+    )
+  );
+}
 
 export function AboutClient() {
   return (
@@ -134,7 +210,168 @@ export function AboutClient() {
         </div>
       </section>
 
-      {/* ━━━━━━━━━━━━━━━━━━ THE GAP ━━━━━━━━━━━━━━━━━━ */}
+      {/* ━━━━━━━━━━━━━━━━━━ 01 WHY WE BUILT IT (founder story) ━━━━━━━━ */}
+      <section
+        aria-labelledby="about-founder-heading"
+        className="relative section-y-sm bg-surface-raised/40"
+      >
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
+
+        <div className="container relative mx-auto">
+          <motion.div
+            variants={fadeUpContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-15%" }}
+            className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
+          >
+            <motion.p
+              variants={fadeUpItem}
+              className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
+            >
+              01 · Why we built it
+            </motion.p>
+            <motion.h2
+              variants={fadeUpItem}
+              id="about-founder-heading"
+              className="text-balance text-display-md text-ink"
+            >
+              This started{" "}
+              <span className="font-serif italic">personal.</span>
+            </motion.h2>
+          </motion.div>
+
+          <motion.ul
+            variants={{
+              hidden: {},
+              visible: {
+                transition: { staggerChildren: 0.12, delayChildren: 0.15 },
+              },
+            }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-10%" }}
+            className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
+          >
+            {FOUNDER_STORY.map((story) => (
+              <motion.li
+                key={story.quote}
+                variants={fadeUpItem}
+                className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
+              >
+                <p className="font-serif text-h2 italic leading-tight text-ink">
+                  &ldquo;{story.quote}&rdquo;
+                </p>
+                <p className="text-body leading-relaxed text-muted">
+                  {renderInlineBold(story.body)}
+                </p>
+              </motion.li>
+            ))}
+          </motion.ul>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={transitions.ambient}
+            className="mx-auto mt-10 max-w-2xl text-balance text-center font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle md:mt-12"
+          >
+            — Sean Cheick Baradji, Founder &amp; CEO
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━━━━━━━━━ 02 INDUSTRY LIES ━━━━━━━━━━━━━━━━━━ */}
+      <section
+        aria-labelledby="about-lies-heading"
+        className="relative section-y-sm"
+      >
+        <div className="container relative mx-auto">
+          <motion.div
+            variants={fadeUpContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-15%" }}
+            className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
+          >
+            <motion.p
+              variants={fadeUpItem}
+              className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
+            >
+              02 · The lies the industry tells
+            </motion.p>
+            <motion.h2
+              variants={fadeUpItem}
+              id="about-lies-heading"
+              className="text-balance text-display-md text-ink"
+            >
+              Four claims you&apos;ve probably believed.{" "}
+              <span className="font-serif italic">All of them wrong.</span>
+            </motion.h2>
+          </motion.div>
+
+          <motion.ul
+            variants={{
+              hidden: {},
+              visible: {
+                transition: { staggerChildren: 0.08, delayChildren: 0.15 },
+              },
+            }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-10%" }}
+            className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
+          >
+            {INDUSTRY_LIES.map((item) => (
+              <motion.li
+                key={item.lie}
+                variants={fadeUpItem}
+                className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
+              >
+                {/* Red badge — the headline framing */}
+                <span className="inline-flex w-fit items-center gap-2 rounded-pill bg-severity-avoid/[0.08] px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-severity-avoid">
+                  <span aria-hidden="true" className="block h-1 w-1 rounded-full bg-severity-avoid" />
+                  {item.badge}
+                </span>
+
+                {/* The Lie */}
+                <div>
+                  <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
+                    The lie
+                  </p>
+                  <p className="mt-1 font-serif text-h2 italic leading-tight text-ink">
+                    &ldquo;{item.lie}&rdquo;
+                  </p>
+                </div>
+
+                {/* The Truth */}
+                <div className="border-t border-border pt-4">
+                  <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-severity-safe">
+                    The truth
+                  </p>
+                  <p className="mt-2 text-body leading-relaxed text-foreground/85">
+                    {renderInlineBold(item.truth)}
+                  </p>
+                </div>
+
+                {/* Source link */}
+                <a
+                  href={item.source.href}
+                  target={item.source.href.startsWith("/") ? undefined : "_blank"}
+                  rel={item.source.href.startsWith("/") ? undefined : "noopener noreferrer"}
+                  className="mt-auto inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.12em] text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
+                >
+                  Source · {item.source.label}{" "}
+                  <span aria-hidden="true">→</span>
+                </a>
+              </motion.li>
+            ))}
+          </motion.ul>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━━━━━━━━━ 03 THE GAP ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="about-gap-heading"
         className="relative section-y-sm bg-surface-raised/40"
@@ -154,7 +391,7 @@ export function AboutClient() {
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
-              01 · The gap we&apos;re closing
+              03 · The gap we&apos;re closing
             </motion.p>
 
             <motion.h2
@@ -270,7 +507,7 @@ export function AboutClient() {
         </div>
       </section>
 
-      {/* ━━━━━━━━━━━━━━━━━━ WHAT WE BELIEVE ━━━━━━━━━━━━━━━━━━ */}
+      {/* ━━━━━━━━━━━━━━━━━━ 04 WHAT WE BELIEVE ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="about-values-heading"
         className="relative section-y-sm"
@@ -287,7 +524,7 @@ export function AboutClient() {
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
-              02 · What we believe
+              04 · What we believe
             </motion.p>
 
             <motion.h2
@@ -333,7 +570,7 @@ export function AboutClient() {
         </div>
       </section>
 
-      {/* ━━━━━━━━━━━━━━━━━━ TEAM ━━━━━━━━━━━━━━━━━━ */}
+      {/* ━━━━━━━━━━━━━━━━━━ 05 TEAM ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="about-team-heading"
         className="relative section-y-sm bg-surface-raised/40"
@@ -353,7 +590,7 @@ export function AboutClient() {
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
-              03 · The team
+              05 · The team
             </motion.p>
 
             <motion.h2
@@ -454,13 +691,6 @@ export function AboutClient() {
                 className="inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               >
                 Join the beta
-                <span aria-hidden="true">→</span>
-              </Link>
-              <Link
-                href="/methodology"
-                className="inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink"
-              >
-                Read the methodology
                 <span aria-hidden="true">→</span>
               </Link>
             </div>

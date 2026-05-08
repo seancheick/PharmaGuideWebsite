@@ -66,7 +66,7 @@ export function Hero() {
             <div className="animate-fade-up flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:gap-6 [animation-delay:320ms]">
               <Link
                 href="#waitlist"
-                className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-accent px-5 py-2.5 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-accent px-5 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               >
                 Request Access
                 <span aria-hidden="true">→</span>
@@ -74,7 +74,7 @@ export function Hero() {
 
               <a
                 href="#problem"
-                className="group inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                className="group inline-flex items-center gap-1.5 py-2 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               >
                 Why interactions matter
                 <span

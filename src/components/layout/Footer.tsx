@@ -378,7 +378,7 @@ function FooterColumn({
             ) : (
               <Link
                 href={link.href}
-                className="group/link relative text-body-sm text-background/70 transition-colors duration-fast ease-smooth hover:text-background"
+                className="group/link relative inline-block py-1 text-body-sm text-background/70 transition-colors duration-fast ease-smooth hover:text-background"
               >
                 <span className="absolute -left-3 top-1/2 h-[3px] w-[3px] -translate-y-1/2 scale-0 rounded-full bg-background/70 transition-transform duration-200 ease-smooth group-hover/link:scale-100" />
                 {link.label}

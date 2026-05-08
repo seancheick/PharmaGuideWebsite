@@ -136,7 +136,7 @@ export function Header() {
               aria-label="Open menu"
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className="rounded-pill p-2 text-ink transition-colors duration-fast ease-smooth hover:bg-surface-subtle md:hidden"
+              className="rounded-pill p-2.5 text-ink transition-colors duration-fast ease-smooth hover:bg-surface-subtle md:hidden"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M3 6h14M3 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />

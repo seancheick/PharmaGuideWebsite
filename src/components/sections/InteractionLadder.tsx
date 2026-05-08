@@ -276,7 +276,7 @@ export function InteractionLadder() {
           <div
             role="tablist"
             aria-label="Severity tiers"
-            className="flex gap-2 overflow-x-auto px-4 py-4 [mask-image:linear-gradient(to_right,black_82%,transparent_100%)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-5 md:gap-0 md:overflow-visible md:p-0 md:[mask-image:none]"
+            className="flex gap-2 overflow-x-auto px-4 py-4 [mask-image:linear-gradient(to_right,black_82%,transparent_100%)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-5 lg:gap-0 lg:overflow-visible lg:p-0 lg:[mask-image:none]"
           >
             {TIERS.map((tier, i) => {
               const isActive = tier.id === activeId;
@@ -297,20 +297,20 @@ export function InteractionLadder() {
                     // Mobile: compact pill with shape + label
                     "flex shrink-0 items-center gap-2 rounded-pill border px-3.5 py-2.5 text-left",
                     // Desktop: full card layout
-                    "md:flex-col md:items-start md:gap-3 md:rounded-none md:border-0 md:px-6 md:py-7",
+                    "lg:flex-col lg:items-start lg:gap-3 lg:rounded-none lg:border-0 lg:px-6 lg:py-7",
                     // Desktop hairline dividers (right, except last)
-                    i < TIERS.length - 1 && "md:border-r md:border-border",
+                    i < TIERS.length - 1 && "lg:border-r lg:border-border",
                     // Active state
                     isActive
-                      ? "border-border-strong bg-surface-raised md:border-transparent md:bg-surface-raised"
-                      : "border-border bg-surface hover:bg-surface-raised/60 focus-visible:bg-surface-raised/60 md:border-transparent"
+                      ? "border-border-strong bg-surface-raised lg:border-transparent lg:bg-surface-raised"
+                      : "border-border bg-surface hover:bg-surface-raised/60 focus-visible:bg-surface-raised/60 lg:border-transparent"
                   )}
                 >
                   {/* Active accent bar — desktop only, bottom edge */}
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "absolute inset-x-0 bottom-0 hidden h-[2px] transition-opacity duration-fast ease-smooth md:block",
+                      "absolute inset-x-0 bottom-0 hidden h-[2px] transition-opacity duration-fast ease-smooth lg:block",
                       tier.barClass,
                       isActive ? "opacity-100" : "opacity-0"
                     )}
@@ -328,7 +328,7 @@ export function InteractionLadder() {
                     </span>
                   </div>
                   {/* Brief — hidden on mobile pills, shown on desktop */}
-                  <p className="hidden text-body-sm leading-snug text-muted md:block">{tier.brief}</p>
+                  <p className="hidden text-body-sm leading-snug text-muted lg:block">{tier.brief}</p>
                 </button>
               );
             })}

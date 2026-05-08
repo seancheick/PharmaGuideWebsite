@@ -49,3 +49,16 @@ yarn-error.log*
 .tmp/
 .cache/
 .vercel
+
+# QA / debug artifacts (root-level only — `/` prefix means
+# repo-root-relative, so src/app/icon.png and public/* are NOT ignored)
+.playwright-mcp/
+/*.png
+/*.jpeg
+/*.jpg
+/lighthouse-report*.json
+/lighthouse*.html
+
+# IDE local
+.cursor/
+.aider*

@@ -198,7 +198,7 @@ export function BetaWelcomeEmail({ email, note }: BetaWelcomeEmailProps) {
             >
               · Read our{" "}
               <Link
-                href="https://pharmaguide-website.vercel.app/faq"
+                href="https://pharmaguide.io/faq"
                 style={{ color: "#183B3F", textDecoration: "underline" }}
               >
                 FAQ

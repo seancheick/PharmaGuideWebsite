@@ -171,7 +171,7 @@ export function NewsletterWelcomeEmail({ email }: NewsletterWelcomeEmailProps) {
               }}
             >
               <Link
-                href="https://pharmaguide-website.vercel.app/#waitlist"
+                href="https://pharmaguide.io/#waitlist"
                 style={{
                   color: "#183B3F",
                   textDecoration: "underline",

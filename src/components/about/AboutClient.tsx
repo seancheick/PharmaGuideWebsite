@@ -37,7 +37,7 @@ const FOUNDER_STORY = [
   },
   {
     quote: "Then it happened to me.",
-    body: "After being diagnosed with a metabolic condition and starting prescription medication, I discovered something troubling: **a supplement I was taking could interfere with how my body processed that medication.** The information existed. Nobody had connected the dots.",
+    body: "After being diagnosed with a metabolic condition and starting prescription medication, I discovered something troubling: **a supplement I was taking was interfering with how my medication worked — and I only found out by accident.** The information existed. Nobody had connected the dots.",
   },
 ];
 
@@ -148,7 +148,7 @@ function renderInlineBold(text: string): React.ReactNode {
 
 export function AboutClient() {
   return (
-    <main id="main">
+    <div>
       {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="about-hero-heading"
@@ -599,7 +599,7 @@ export function AboutClient() {
               className="text-balance text-display-md text-ink"
             >
               Small team.{" "}
-              <span className="font-serif italic">Real names.</span>
+              <span className="font-serif italic text-accent">Sharp focus.</span>
             </motion.h2>
           </motion.div>
 
@@ -697,6 +697,6 @@ export function AboutClient() {
           </motion.div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

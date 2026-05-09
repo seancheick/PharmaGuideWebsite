@@ -105,7 +105,7 @@ export default function FAQPage() {
       name: site.name,
       url: site.url,
     },
-    inLanguage: site.locale,
+    inLanguage: site.lang,
     breadcrumb: { "@id": `${site.url}/faq#breadcrumb` },
     primaryImageOfPage: {
       "@type": "ImageObject",

@@ -32,7 +32,7 @@ import {
 
 export function MethodologyClient() {
   return (
-    <main id="main">
+    <div>
       {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="meth-hero-heading"
@@ -684,6 +684,6 @@ export function MethodologyClient() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

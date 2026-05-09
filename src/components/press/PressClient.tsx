@@ -57,7 +57,7 @@ const LEADERSHIP = [
 
 const BOILERPLATE = {
   oneLiner:
-    "PharmaGuide is a clinical-grade supplement and medication safety platform with on-device interaction analysis, evidence-graded by clinicians.",
+    "PharmaGuide is a clinician-reviewed supplement and medication safety platform with on-device interaction analysis, evidence-graded by clinicians.",
   paragraph:
     "PharmaGuide is the supplement and medication co-pilot for people who want to understand what they actually take. The mobile apps (iOS + Android) read your full stack as a system — flagging interactions, medication-nutrient depletions, dose accumulation, FDA recalls, and ingredient quality across a 180,000-product on-device catalog. Every interaction is reviewed by a licensed clinical pharmacist before it ships. The architecture is privacy-first: your stack and conditions never leave your device. Founded 2025 in Boston by Sean Cheick Baradji. Opening in waves through 2026.",
   longer:

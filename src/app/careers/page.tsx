@@ -15,7 +15,7 @@ import { site } from "@/lib/site";
 export const revalidate = 432000; // 5 days
 
 const description =
-  "Join the team building the world's first comprehensive drug-and-supplement interaction engine. Real clinical impact, ground-floor ownership, calm engineering culture.";
+  "Join the team building the first drug-and-supplement interaction engine that checks depletions, dose accumulation, and recalls — all on-device. Direct clinical impact, ground-floor ownership, calm engineering culture.";
 
 export const metadata: Metadata = {
   title: "Careers",

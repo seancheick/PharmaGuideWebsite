@@ -10,6 +10,7 @@ export const site = {
     "See how your supplements, medications, and timing work together — not one bottle at a time. Cross-referenced catalog of 180,000+ products with evidence-graded interaction analysis.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://pharmaguide.io",
   locale: "en_US",
+  lang: "en-US",
   country: "US",
   email: "info@pharmaguide.io",
   city: "Boston, MA",

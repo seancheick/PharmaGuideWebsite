@@ -39,7 +39,7 @@ export const TERMS_DOC: LegalDocument = {
       title: "Acceptance of these terms",
       body: `By creating an account, downloading the PharmaGuide apps, or using [pharmaguide.io](https://pharmaguide.io), you agree to these Terms of Service. These terms form a binding agreement between you and PharmaGuide Inc. (a Delaware corporation, headquartered in Boston, MA).
 
-If you do not agree, please don't use the service. We won't make you sign anything to walk away.
+If you do not agree, please don't use the service. You can stop using PharmaGuide at any time.
 
 These terms reference our [Privacy Policy](/privacy), which describes how we handle your data. The two documents work together.`,
     },
@@ -64,10 +64,10 @@ These terms reference our [Privacy Policy](/privacy), which describes how we han
 The interactions, evidence levels, and recommendations you see in PharmaGuide are summaries of published research and clinical references. They are intended to help you have better-informed conversations with your healthcare provider — not to replace those conversations.
 
 **Always consult your doctor or pharmacist** before:
-starting, stopping, or changing the dose of any medication
-combining supplements with prescribed medications
-relying on PharmaGuide guidance for a medical condition
-making decisions during pregnancy, breastfeeding, or any other special situation
+- starting, stopping, or changing the dose of any medication
+- combining supplements with prescribed medications
+- relying on PharmaGuide guidance for a medical condition
+- making decisions during pregnancy, breastfeeding, or any other special situation
 
 **In an emergency, call 911 (US) or your local emergency number.** PharmaGuide is not designed for emergencies and cannot help in time-critical situations.
 
@@ -91,19 +91,19 @@ By using PharmaGuide, you acknowledge that you understand this disclaimer and ac
       title: "Acceptable use",
       body: `When you use PharmaGuide, you agree NOT to:
 
-scrape, mirror, or otherwise extract our database (the catalog, interaction rules, and evidence references represent significant clinical work and are protected)
+- scrape, mirror, or otherwise extract our database (the catalog, interaction rules, and evidence references represent significant clinical work and are protected)
 
-reverse engineer or decompile the apps
+- reverse engineer or decompile the apps
 
-probe, test, or attempt to bypass authentication or rate limits
+- probe, test, or attempt to bypass authentication or rate limits
 
-misrepresent our information as your own clinical guidance
+- misrepresent our information as your own clinical guidance
 
-use PharmaGuide for any commercial healthcare service without a separate agreement (the consumer app is for personal use)
+- use PharmaGuide for any commercial healthcare service without a separate agreement (the consumer app is for personal use)
 
-upload content that is illegal, harassing, fraudulent, or contains malware
+- upload content that is illegal, harassing, fraudulent, or contains malware
 
-attempt to harm other users or the service.
+- attempt to harm other users or the service.
 
 Violations may result in account suspension or termination. Egregious violations may be reported to law enforcement.`,
     },

@@ -65,7 +65,7 @@ export function NewsletterCTA() {
         className="pointer-events-none absolute inset-x-0 top-0 h-[70%]"
         style={{
           background:
-            "radial-gradient(55% 75% at 50% 25%, rgb(24 59 63 / 0.08), transparent 70%)",
+            "radial-gradient(55% 75% at 50% 25%, rgb(var(--color-accent) / 0.08), transparent 70%)",
         }}
       />
       <div

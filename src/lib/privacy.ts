@@ -45,7 +45,7 @@ export const PRIVACY_DOC: LegalDocument = {
 
 This policy explains what we collect, what we don't, why, and the rights you have over the data we do hold. It covers the PharmaGuide mobile apps (iOS and Android), the website at [pharmaguide.io](https://pharmaguide.io), and any related services.
 
-By using PharmaGuide, you agree to the practices described here. If you don't agree, don't use the service. We won't take it personally.`,
+By using PharmaGuide, you agree to the practices described here. If you don't agree, don't use the service.`,
     },
     {
       id: "what-we-collect",

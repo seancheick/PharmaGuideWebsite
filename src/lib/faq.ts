@@ -49,8 +49,8 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   },
   {
     q: "Is it free?",
-    a: "The core interaction checker is free during beta — scanning, search, your stack, and every interaction warning with full reasoning. No credit card required. Optional premium features (deep clinical research, advanced personalization) will be available later through a subscription.",
-    body: "The core interaction checker is **free during beta** — scanning, search, your stack, and every interaction warning with full reasoning. No credit card required. Optional premium features (deep clinical research, advanced personalization) will be available later through a subscription.",
+    a: "The core interaction checker is free during beta — scanning, search, your stack, and every interaction warning with full reasoning. No credit card required. Optional premium features (deep clinical research, advanced personalization, the AI pharmacist conversation layer) will be available later through a subscription.",
+    body: "The core interaction checker is **free during beta** — scanning, search, your stack, and every interaction warning with full reasoning. No credit card required. Optional premium features (deep clinical research, advanced personalization, the AI pharmacist conversation layer) will be available later through a subscription.",
   },
   {
     q: "What makes PharmaGuide different?",

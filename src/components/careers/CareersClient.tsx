@@ -20,12 +20,12 @@ import { site } from "@/lib/site";
 const WHY = [
   {
     num: "01",
-    title: "Real impact, not metrics impact",
+    title: "Clinical impact, not metrics impact",
     body: "PharmaGuide ships into people's actual medicine routines — interaction warnings that prevent harm, depletion checks that save years of unexplained fatigue. Not optimizing engagement on a feed.",
   },
   {
     num: "02",
-    title: "Ground floor, real ownership",
+    title: "Ground floor, full ownership",
     body: "Small team. The work you do shows up in production within the same week. Architecture decisions stick around for years. Founding-team equity for the right people.",
   },
   {
@@ -110,9 +110,9 @@ export function CareersClient() {
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              A focused team building the world&apos;s first truly comprehensive
-              drug-and-supplement interaction engine. Early stage. Real
-              clinical impact. No theater.
+              A focused team building the first interaction engine that covers
+              depletions, dose accumulation, and real-time recalls — all
+              on-device. Early stage. Direct clinical impact. No theater.
             </motion.p>
 
             {/* Honest framing — we're not always actively hiring */}

@@ -46,7 +46,7 @@ export default function HipaaPage() {
     headline: "PharmaGuide HIPAA Statement",
     description,
     dateModified: HIPAA_DOC.lastUpdated,
-    inLanguage: site.locale,
+    inLanguage: site.lang,
     publisher: {
       "@type": "Organization",
       name: site.name,

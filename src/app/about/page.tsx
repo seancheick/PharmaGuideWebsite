@@ -49,7 +49,7 @@ export default function AboutPage() {
     name: "About PharmaGuide",
     description,
     url: `${site.url}/about`,
-    inLanguage: site.locale,
+    inLanguage: site.lang,
     mainEntity: {
       "@type": "Organization",
       "@id": `${site.url}#organization`,
@@ -105,6 +105,7 @@ export default function AboutPage() {
   return (
     <>
       <Header />
+      <main id="main">
       <AboutClient />
       <RelatedLinks
         eyebrow="Keep reading"
@@ -134,6 +135,7 @@ export default function AboutPage() {
           },
         ]}
       />
+      </main>
       <Footer />
 
       <script

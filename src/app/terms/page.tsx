@@ -47,7 +47,7 @@ export default function TermsPage() {
     name: "PharmaGuide Terms of Service",
     url: `${site.url}/terms`,
     description,
-    inLanguage: site.locale,
+    inLanguage: site.lang,
     dateModified: TERMS_DOC.lastUpdated,
     publisher: {
       "@type": "Organization",

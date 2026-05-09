@@ -59,7 +59,7 @@ export default function BlogHubPage() {
     name: "PharmaGuide Blog",
     description,
     url: `${site.url}/blog`,
-    inLanguage: site.locale,
+    inLanguage: site.lang,
     publisher: {
       "@type": "Organization",
       name: site.name,

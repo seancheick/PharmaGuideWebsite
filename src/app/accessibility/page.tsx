@@ -42,7 +42,7 @@ export default function AccessibilityPage() {
     headline: "PharmaGuide Accessibility Statement",
     description,
     dateModified: ACCESSIBILITY_DOC.lastUpdated,
-    inLanguage: site.locale,
+    inLanguage: site.lang,
     publisher: {
       "@type": "Organization",
       name: site.name,

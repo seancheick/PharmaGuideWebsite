@@ -92,7 +92,7 @@ export default async function BlogPostPage({
     url: `${site.url}/blog/${post.slug}`,
     datePublished: post.date,
     dateModified: post.date,
-    inLanguage: site.locale,
+    inLanguage: site.lang,
     wordCount: post.wordCount,
     author: {
       "@type": "Person",

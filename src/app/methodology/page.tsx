@@ -77,7 +77,7 @@ export default function MethodologyPage() {
       },
     },
     mainEntityOfPage: `${site.url}/methodology`,
-    inLanguage: site.locale,
+    inLanguage: site.lang,
     citation: DATA_SOURCES.map((s) => ({
       "@type": "CreativeWork",
       name: s.name,
@@ -132,6 +132,7 @@ export default function MethodologyPage() {
   return (
     <>
       <Header />
+      <main id="main">
       <MethodologyClient />
       <RelatedLinks
         eyebrow="Keep reading"
@@ -161,6 +162,7 @@ export default function MethodologyPage() {
           },
         ]}
       />
+      </main>
       <Footer />
 
       <script

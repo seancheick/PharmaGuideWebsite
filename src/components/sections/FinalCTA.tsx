@@ -98,7 +98,7 @@ export function FinalCTA() {
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[35%]"
         style={{
           background:
-            "linear-gradient(180deg, transparent 0%, rgb(244 242 238 / 0.5) 100%)",
+            "linear-gradient(180deg, transparent 0%, rgb(var(--color-surface-subtle) / 0.5) 100%)",
         }}
       />
 

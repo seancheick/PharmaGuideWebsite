@@ -52,7 +52,7 @@ export default function PrivacyPage() {
     name: "PharmaGuide Privacy Policy",
     url: `${site.url}/privacy`,
     description,
-    inLanguage: site.locale,
+    inLanguage: site.lang,
     dateModified: PRIVACY_DOC.lastUpdated,
     publisher: {
       "@type": "Organization",

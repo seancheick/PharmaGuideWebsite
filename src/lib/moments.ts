@@ -146,7 +146,7 @@ export const MOMENTS: readonly Moment[] = [
     flag: {
       name: "St. John's Wort + Sertraline",
       severity: "avoid",
-      severityLabel: "Tier 2 — Avoid",
+      severityLabel: "Avoid",
       description:
         "Co-administration has been associated with serotonin syndrome. Onset within 48 hours of starting both has been documented.",
       metaLeft: "Severity",

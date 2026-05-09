@@ -21,10 +21,10 @@ const config: Config = {
       // Tailwind's container plugin requires each Tailwind breakpoint name
       // declared explicitly — otherwise no max-width applies between them.
       // We cap at --container-max (1280px) at every breakpoint, so the
-      // container is consistently 1280px wide centered with proper margins
+      // container is consistently 1200px wide centered with proper margins
       // on any viewport ≥ sm.
       // Hard px values — CSS variables don't resolve at Tailwind build time.
-      // 1080px matches --container-max in globals.css.
+      // 1200px matches --container-max in globals.css.
       screens: {
         sm: "1200px",
         md: "1200px",

@@ -63,7 +63,7 @@ export function BackToTop() {
         // Anchored bottom-LEFT (was bottom-right). Per-user: right side
         // collides with the chat/help patterns most users associate with
         // bottom-right; left side feels deliberate and out of the way.
-        "fixed bottom-6 left-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-accent-strong/95 text-background shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent",
+        "fixed bottom-6 left-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-accent-strong/95 text-background shadow-lg backdrop-blur-md transition-[opacity,transform,background-color] duration ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent",
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"
       )}
     >

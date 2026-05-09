@@ -269,7 +269,7 @@ export function InteractionLadder() {
             basis behind the verdict.{" "}
             <span className="text-foreground/70">
               <span className="hidden md:inline">Hover or tap a tier.</span>
-              <span className="md:hidden">Swipe through the tiers →</span>
+              <span className="md:hidden">Tap a tier below.</span>
             </span>
           </motion.p>
         </motion.div>

@@ -20,7 +20,7 @@
     --color-background: 250 249 246;        /* warm off-white  #FAF9F6 */
     --color-surface: 255 255 255;           /* card white      #FFFFFF */
     --color-surface-raised: 252 251 248;    /* slight warmth   #FCFBF8 */
-    --color-surface-subtle: 238 235 229;    /* cooler neutral  #EAEBE5 — widened gap from bg for visible section alternation */
+    --color-surface-subtle: 238 235 229;    /* cooler neutral  #EEEBE5 — widened gap from bg for visible section alternation */
 
     /* Foreground / text */
     --color-foreground: 24 26 27;           /* near-black warm #181A1B */

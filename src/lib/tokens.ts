@@ -131,8 +131,8 @@ export const severityTiers = [
   },
   {
     id: "safe",
-    label: "No known issue",
-    description: "Evidence shows no concern.",
+    label: "Informational",
+    description: "FYI — no action needed.",
     chipBg: "bg-severity-safe/10",
     chipText: "text-severity-safe",
     dot: "bg-severity-safe",

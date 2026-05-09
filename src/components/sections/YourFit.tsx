@@ -83,7 +83,7 @@ export function YourFit() {
             >
               What&apos;s high quality for one person
               <br />
-              <span className="font-serif italic">
+              <span className="font-serif italic text-accent">
                 may deserve a second look for another.
               </span>
             </motion.h2>

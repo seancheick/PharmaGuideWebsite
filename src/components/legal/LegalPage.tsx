@@ -212,23 +212,24 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
             <div className="min-w-0">
               <div className="flex flex-col gap-12 md:gap-14">
                 {doc.sections.map((section) => (
-                  <article
+                  <section
                     key={section.id}
                     id={section.id}
+                    aria-labelledby={`heading-${section.id}`}
                     className="scroll-mt-28"
                   >
                     <header className="mb-4 flex items-baseline gap-3">
                       <span className="font-mono text-[11px] font-medium tabular-nums uppercase tracking-[0.18em] text-accent">
                         {section.num}
                       </span>
-                      <h2 className="font-serif text-h2 italic leading-tight text-ink">
+                      <h2 id={`heading-${section.id}`} className="font-serif text-h2 italic leading-tight text-ink">
                         {section.title}
                       </h2>
                     </header>
                     <div className="max-w-prose text-body leading-[1.7] text-muted [&_p+p]:mt-4 [&_strong]:font-medium [&_strong]:text-ink">
                       {renderBody(section.body)}
                     </div>
-                  </article>
+                  </section>
                 ))}
               </div>
             </div>

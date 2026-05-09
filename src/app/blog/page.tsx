@@ -132,9 +132,9 @@ export default function BlogHubPage() {
                 id="blog-hero-heading"
                 className="text-balance text-display-lg leading-[1.06] text-ink"
               >
-                Scan smart.{" "}
+                The science behind{" "}
                 <span className="font-serif italic text-accent">
-                  Stack safely.
+                  what you take.
                 </span>
               </h1>
 

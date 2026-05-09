@@ -29,7 +29,7 @@ import { site } from "@/lib/site";
 
 export const revalidate = 432000; // 5 days
 
-const description = `How PharmaGuide collects, verifies, and ships interaction data — the four primary sources, the five-step verification process, the medical advisory team, and where AI ends and human judgment begins. Last updated ${formatLegalDate(METHODOLOGY_LAST_UPDATED)}.`;
+const description = `How PharmaGuide collects, verifies, and ships interaction data — the four primary sources, the five-step verification process, the medical advisory team, and exactly where human clinical judgment takes over. Last updated ${formatLegalDate(METHODOLOGY_LAST_UPDATED)}.`;
 
 export const metadata: Metadata = {
   title: "Methodology",

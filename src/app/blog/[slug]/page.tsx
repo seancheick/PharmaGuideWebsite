@@ -169,6 +169,7 @@ export default async function BlogPostPage({
               {/* Breadcrumb back-link */}
               <Link
                 href="/blog"
+                aria-label="Back to blog"
                 className="inline-flex items-center gap-1.5 font-mono text-eyebrow font-medium uppercase tracking-[0.14em] text-muted transition-colors duration-fast ease-smooth hover:text-ink"
               >
                 <span aria-hidden="true">←</span>

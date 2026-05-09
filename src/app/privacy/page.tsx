@@ -47,7 +47,7 @@ export default function PrivacyPage() {
   // data for Google + AI crawlers.
   const privacyJsonLd = {
     "@context": "https://schema.org",
-    "@type": "PrivacyPolicy",
+    "@type": "WebPage",
     "@id": `${site.url}/privacy#privacypolicy`,
     name: "PharmaGuide Privacy Policy",
     url: `${site.url}/privacy`,

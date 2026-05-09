@@ -134,12 +134,13 @@ export function BlogHubClient({
                   <path d="M10.5 10.5l3 3" />
                 </svg>
               </span>
+              <label htmlFor="blog-search" className="sr-only">Search blog posts</label>
               <input
+                id="blog-search"
                 type="search"
                 placeholder="Search articles — interactions, depletions, recalls…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                aria-label="Search blog posts"
                 className="w-full rounded-pill border border-border bg-surface px-5 py-3.5 pl-12 text-body text-ink shadow-xs outline-none transition-[border-color,box-shadow] duration-fast ease-smooth placeholder:text-subtle focus:border-accent focus:shadow-glow"
               />
             </div>
@@ -199,13 +200,13 @@ export function BlogHubClient({
             {filtered.length > 0 && (
               <div className="mb-8 flex flex-wrap items-center justify-between gap-3 md:mb-10">
                 <div className="flex items-baseline gap-3">
-                  <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/65">
+                  <h2 className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/65">
                     {isUnfiltered
                       ? "Latest"
                       : query.trim()
                         ? `Results · "${query.trim()}"`
                         : categories.find((c) => c.id === activeCategory)?.label ?? "Latest"}
-                  </p>
+                  </h2>
                   <span aria-hidden="true" className="text-border-strong">·</span>
                   <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
                     {filtered.length}{" "}

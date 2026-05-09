@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   const termsJsonLd = {
     "@context": "https://schema.org",
-    "@type": "TermsOfService",
+    "@type": "WebPage",
     "@id": `${site.url}/terms#termsofservice`,
     name: "PharmaGuide Terms of Service",
     url: `${site.url}/terms`,

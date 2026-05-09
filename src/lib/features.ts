@@ -170,7 +170,7 @@ export const PILLARS: readonly FeaturePillar[] = [
     id: "ingredient-transparency",
     eyebrow: "Ingredient & Quality",
     titleLead: "Every ingredient.",
-    titleEm: "Including the ones nobody else reads.",
+    titleEm: "Including the fillers nobody else parses.",
     intro:
       "We parse the active ingredients AND the inactive ones — fillers, binders, allergens, and the proprietary blends most apps skip because the math is hard. Every product gets a 4-pillar PG Score so you can compare brands on substance, not packaging.",
     illustration: "transparency",

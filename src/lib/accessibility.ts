@@ -17,7 +17,7 @@ import type { LegalDocument } from "./legal";
 export const ACCESSIBILITY_DOC: LegalDocument = {
   eyebrow: "Accessibility",
   titleLead: "An app should work",
-  titleEm: "for every body.",
+  titleEm: "for everyone.",
   subhead:
     "How PharmaGuide approaches accessibility — what we already do, what we're working on, and how to tell us when we miss something.",
   lastUpdated: "2026-05-08",

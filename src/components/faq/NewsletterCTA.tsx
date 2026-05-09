@@ -22,8 +22,6 @@ import { cn } from "@/lib/utils";
  * Mailerlite / Loops once the email provider is chosen.
  */
 
-const SHOW_PROOF = false;
-
 export function NewsletterCTA() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -85,15 +83,6 @@ export function NewsletterCTA() {
           viewport={{ once: true, margin: "-15%" }}
           className="mx-auto flex max-w-2xl flex-col items-center gap-7 text-center md:gap-9"
         >
-          {SHOW_PROOF && (
-            <motion.p
-              variants={fadeUpItem}
-              className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/65"
-            >
-              4,200+ subscribers
-            </motion.p>
-          )}
-
           <motion.h2
             id="newsletter-heading"
             variants={fadeUpItem}

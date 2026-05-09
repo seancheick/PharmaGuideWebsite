@@ -39,7 +39,7 @@ export const HIPAA_DOC: LegalDocument = {
 
 Most consumer health and wellness apps — including PharmaGuide's consumer tier — are **not** covered entities. The information you put into PharmaGuide is **consumer health data**, which is regulated by other frameworks (state consumer privacy laws like California's CCPA/CPRA, the FTC Act, and the FTC's Health Breach Notification Rule) — but not by HIPAA itself.
 
-We are telling you this directly because the industry standard is to wave the HIPAA flag without explaining what's actually covered. We'd rather give you the truth and earn the trust.`,
+We are telling you this directly because the industry standard is to wave the HIPAA flag without explaining what's actually covered. We'd rather give you the truth and let you decide.`,
     },
     {
       id: "design-baseline",

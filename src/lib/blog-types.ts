@@ -67,6 +67,7 @@ export interface BlogPost {
   description: string;
   category: string;
   date: string;
+  updatedAt?: string;
   author: string;
   reviewer?: string;
   featured?: boolean;

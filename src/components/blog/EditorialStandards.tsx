@@ -20,7 +20,7 @@ const STANDARDS = [
 
 const REVIEWERS = [
   { initials: "PL", name: "Dr. Pham L.", title: "PharmD" },
-  { initials: "MD", name: "Miriam D.", title: "NP" },
+  { initials: "MI", name: "Miriam D.", title: "NP" },
 ] as const;
 
 export function EditorialStandards() {

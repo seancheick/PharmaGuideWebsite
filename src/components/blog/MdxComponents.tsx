@@ -20,12 +20,12 @@ import { cn } from "@/lib/utils";
 export const mdxComponents: MDXComponents = {
   // ─── Headings ──────────────────────────────────────────────────────
   h1: ({ children, ...props }) => (
-    <h1
+    <h2
       className="mt-12 text-balance font-serif text-display-md italic leading-tight text-ink first:mt-0"
       {...props}
     >
       {children}
-    </h1>
+    </h2>
   ),
   h2: ({ children, ...props }) => (
     <h2
@@ -140,7 +140,7 @@ export const mdxComponents: MDXComponents = {
 
   blockquote: ({ children, ...props }) => (
     <blockquote
-      className="my-8 border-l-2 border-accent/50 pl-5 font-serif text-h3 italic leading-snug text-ink"
+      className="my-8 border-l-2 border-accent/50 pl-5 font-serif text-h3 italic leading-snug text-ink [&>p]:mt-0"
       {...props}
     >
       {children}

@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   description,
   alternates: { canonical: `${site.url}/blog` },
   openGraph: {
-    title: "Blog",
+    title: `Blog · ${site.name}`,
     description,
     url: `${site.url}/blog`,
     siteName: site.name,
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blog",
+    title: `Blog · ${site.name}`,
     description,
   },
 };
@@ -76,7 +76,7 @@ export default function BlogHubPage() {
       description: p.description,
       url: `${site.url}/blog/${p.slug}`,
       datePublished: p.date,
-      dateModified: p.date,
+      dateModified: p.updatedAt ?? p.date,
       author: { "@type": "Person", name: p.author },
       ...(p.reviewer
         ? {

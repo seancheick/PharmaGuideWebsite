@@ -58,7 +58,7 @@ export async function generateMetadata({
       locale: site.locale,
       type: "article",
       publishedTime: post.date,
-      modifiedTime: post.date,
+      modifiedTime: post.updatedAt ?? post.date,
       authors: [post.author],
       ...(post.tags ? { tags: post.tags } : {}),
     },
@@ -91,7 +91,7 @@ export default async function BlogPostPage({
     description: post.description,
     url: `${site.url}/blog/${post.slug}`,
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: post.updatedAt ?? post.date,
     inLanguage: site.lang,
     wordCount: post.wordCount,
     author: {

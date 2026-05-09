@@ -27,7 +27,6 @@ export function BlogFeaturedCard({ post }: { post: BlogPost }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      aria-label={post.title}
       className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-md transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-1 hover:border-border-strong hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent md:grid md:grid-cols-[3fr_2fr] md:gap-0"
     >
       {/* Cover — 60% on desktop (3fr of 5fr), full-width 16:10 on mobile */}

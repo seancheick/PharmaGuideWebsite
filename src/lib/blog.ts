@@ -61,6 +61,7 @@ export function getAllPosts(): BlogPost[] {
       description: (data.description as string) ?? "",
       category: (data.category as string) ?? "health-education",
       date: (data.date as string) ?? new Date().toISOString().slice(0, 10),
+      updatedAt: data.updatedAt as string | undefined,
       author: (data.author as string) ?? "PharmaGuide",
       reviewer: data.reviewer as string | undefined,
       featured: Boolean(data.featured),

@@ -330,7 +330,7 @@ function EmptyState({
       >
         Nothing yet
       </motion.p>
-      <motion.h3
+      <motion.h2
         variants={fadeUpItem}
         className="mt-4 text-balance font-serif text-h2 italic leading-tight text-ink"
       >
@@ -339,7 +339,7 @@ function EmptyState({
           : category
             ? `Nothing in ${category} yet.`
             : "More content coming soon."}
-      </motion.h3>
+      </motion.h2>
       <motion.p
         variants={fadeUpItem}
         className="mx-auto mt-4 max-w-prose text-body leading-relaxed text-muted"

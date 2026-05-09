@@ -27,7 +27,6 @@ export function BlogCard({ post }: { post: BlogPost }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      aria-label={post.title}
       className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-sm transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-1 hover:border-border-strong hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
     >
       {/* Cover (16:10) — fills the top of the card flush with corners */}

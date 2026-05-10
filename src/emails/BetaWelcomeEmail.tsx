@@ -25,17 +25,13 @@ import {
  *   • Restrained: no images, no buttons that look like ads,
  *     no exclamation marks. Reads like a personal note.
  *
- * Optional `note` is the supplement-stack textarea content from
- * FinalCTA. If present, we acknowledge it inline so the user
- * knows we received it.
  */
 
 interface BetaWelcomeEmailProps {
   email: string;
-  note?: string;
 }
 
-export function BetaWelcomeEmail({ email, note }: BetaWelcomeEmailProps) {
+export function BetaWelcomeEmail({ email }: BetaWelcomeEmailProps) {
   return (
     <Html>
       <Head />
@@ -129,53 +125,6 @@ export function BetaWelcomeEmail({ email, note }: BetaWelcomeEmailProps) {
               launch.
             </Text>
 
-            {/* Optional note acknowledgement — only if user shared one */}
-            {note && note.trim().length > 0 ? (
-              <Section
-                style={{
-                  backgroundColor: "#F4F2EE",
-                  borderRadius: "12px",
-                  padding: "18px 22px",
-                  margin: "0 0 32px 0",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: "11px",
-                    fontWeight: 500,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.14em",
-                    color: "#63666A",
-                    margin: "0 0 8px 0",
-                  }}
-                >
-                  We saw your stack
-                </Text>
-                <Text
-                  style={{
-                    fontSize: "14px",
-                    lineHeight: 1.55,
-                    color: "#111314",
-                    margin: 0,
-                    fontStyle: "italic",
-                  }}
-                >
-                  &ldquo;{note}&rdquo;
-                </Text>
-                <Text
-                  style={{
-                    fontSize: "13px",
-                    lineHeight: 1.55,
-                    color: "#63666A",
-                    margin: "10px 0 0 0",
-                  }}
-                >
-                  Thanks — we&apos;ll prioritize coverage for what you actually
-                  take.
-                </Text>
-              </Section>
-            ) : null}
-
             <Text
               style={{
                 fontSize: "15px",
@@ -204,6 +153,15 @@ export function BetaWelcomeEmail({ email, note }: BetaWelcomeEmailProps) {
                 FAQ
               </Link>{" "}
               — covers privacy, evidence, and what we will and won&apos;t do
+              <br />· Browse the{" "}
+              <Link
+                href="https://pharmaguide.io/blog"
+                style={{ color: "#183B3F", textDecoration: "underline" }}
+              >
+                blog
+              </Link>{" "}
+              — evidence-based guides on interactions, ingredient quality,
+              depletions, and FDA safety alerts
               <br />· Reply to this email if you have a specific question. A
               human reads every reply.
             </Text>
@@ -252,13 +210,24 @@ export function BetaWelcomeEmail({ email, note }: BetaWelcomeEmailProps) {
                 fontSize: "11px",
                 lineHeight: 1.55,
                 color: "#8E9196",
-                margin: 0,
+                margin: "0 0 10px 0",
               }}
             >
               You&apos;re receiving this because you joined the PharmaGuide
               beta waitlist at pharmaguide.io. PharmaGuide is not a substitute
               for medical care — always consult your healthcare provider for
               decisions about medications and supplements.
+            </Text>
+
+            <Text
+              style={{
+                fontSize: "11px",
+                lineHeight: 1.55,
+                color: "#8E9196",
+                margin: 0,
+              }}
+            >
+              PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02124
             </Text>
           </Container>
         </Body>

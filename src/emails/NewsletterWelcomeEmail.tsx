@@ -159,6 +159,37 @@ export function NewsletterWelcomeEmail({ email }: NewsletterWelcomeEmailProps) {
                 margin: "0 0 12px 0",
               }}
             >
+              While the first dispatch comes together, the{" "}
+              <Link
+                href="https://pharmaguide.io/blog"
+                style={{
+                  color: "#183B3F",
+                  textDecoration: "underline",
+                  fontWeight: 500,
+                }}
+              >
+                blog
+              </Link>{" "}
+              already has guides on interactions, ingredient spotlights, news,
+              and safety alerts.
+            </Text>
+
+            <Hr
+              style={{
+                border: "none",
+                borderTop: "1px solid #E5E2DB",
+                margin: "32px 0 24px 0",
+              }}
+            />
+
+            <Text
+              style={{
+                fontSize: "14px",
+                lineHeight: 1.6,
+                color: "#3A3A3A",
+                margin: "0 0 12px 0",
+              }}
+            >
               Want to be among the first to use PharmaGuide when it ships?
               Join the beta waitlist:
             </Text>
@@ -215,12 +246,29 @@ export function NewsletterWelcomeEmail({ email }: NewsletterWelcomeEmailProps) {
                 fontSize: "11px",
                 lineHeight: 1.55,
                 color: "#8E9196",
-                margin: 0,
+                margin: "0 0 10px 0",
               }}
             >
               You&apos;re receiving this because you signed up for the
-              PharmaGuide newsletter at pharmaguide.io. Unsubscribe anytime
-              from the link at the bottom of any newsletter we send.
+              PharmaGuide newsletter at pharmaguide.io.{" "}
+              <Link
+                href="{{{RESEND_UNSUBSCRIBE_URL}}}"
+                style={{ color: "#63666A", textDecoration: "underline" }}
+              >
+                Unsubscribe
+              </Link>{" "}
+              anytime — one click, no questions asked.
+            </Text>
+
+            <Text
+              style={{
+                fontSize: "11px",
+                lineHeight: 1.55,
+                color: "#8E9196",
+                margin: 0,
+              }}
+            >
+              PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02124
             </Text>
           </Container>
         </Body>

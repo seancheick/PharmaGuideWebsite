@@ -1,4 +1,9 @@
+import "server-only";
 import { Resend } from "resend";
+import { render } from "@react-email/render";
+import { env } from "./env";
+import { isValidEmail } from "./validation";
+import { log, hashPii } from "./logger";
 
 /**
  * Resend client + helpers for the two email surfaces:
@@ -11,38 +16,20 @@ import { Resend } from "resend";
  *     broadcasts can target them as a list)
  *   • Sends a one-off welcome email immediately (transactional)
  *
- * Audiences and the API key live in env so we can rotate without code.
- * If env vars are missing at runtime, the helpers fail fast with a
- * descriptive error so we never silently lose a signup.
+ * Env vars are validated at module load via `./env` — missing keys
+ * throw with a clear error rather than silently breaking signups.
  *
- * Server-only — never imported into client components. Wrapped by
- * server actions in src/app/actions/subscribe.ts which is what the
- * UI calls.
+ * Server-only — `import "server-only"` enforces this. The wrapping
+ * server actions in src/app/actions/subscribe.ts are what the UI calls.
  */
 
-const apiKey = process.env.RESEND_API_KEY;
-const audienceBeta = process.env.RESEND_AUDIENCE_BETA_ID;
-const audienceNewsletter = process.env.RESEND_AUDIENCE_NEWSLETTER_ID;
-const fromEmail = process.env.RESEND_FROM_EMAIL ?? "PharmaGuide <hello@pharmaguide.io>";
-const replyTo = process.env.RESEND_REPLY_TO_EMAIL ?? "info@pharmaguide.io";
-
-if (!apiKey) {
-  // Fail fast at module load so missing env is surfaced clearly in
-  // server logs instead of producing silently broken signups.
-  console.warn(
-    "[resend] RESEND_API_KEY is not set — subscribe helpers will throw."
-  );
-}
-
-export const resend = new Resend(apiKey ?? "missing-key-will-fail");
+const resend = new Resend(env.RESEND_API_KEY);
 
 export type SubscribeList = "beta" | "newsletter";
 
 export interface SubscribeOptions {
   email: string;
   list: SubscribeList;
-  /** Optional context — e.g. the supplement-stack textarea on FinalCTA. */
-  note?: string;
   /** First name if collected (none of our forms collect this yet). */
   firstName?: string;
 }
@@ -55,9 +42,9 @@ export interface SubscribeResult {
   code?: string;
 }
 
-const listToAudience: Record<SubscribeList, string | undefined> = {
-  beta: audienceBeta,
-  newsletter: audienceNewsletter,
+const listToAudience: Record<SubscribeList, string> = {
+  beta: env.RESEND_AUDIENCE_BETA_ID,
+  newsletter: env.RESEND_AUDIENCE_NEWSLETTER_ID,
 };
 
 /**
@@ -71,31 +58,17 @@ const listToAudience: Record<SubscribeList, string | undefined> = {
 export async function subscribe({
   email,
   list,
-  note,
   firstName,
 }: SubscribeOptions): Promise<SubscribeResult> {
-  // Cheap server-side validation — defense in depth, the form also
-  // validates client-side before submission.
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { ok: false, message: "Please enter a valid email.", code: "invalid_email" };
-  }
-
-  if (!apiKey) {
+  if (!isValidEmail(email)) {
     return {
       ok: false,
-      message: "Email signup is temporarily unavailable. Please try again later.",
-      code: "missing_api_key",
+      message: "Please enter a valid email.",
+      code: "invalid_email",
     };
   }
 
   const audienceId = listToAudience[list];
-  if (!audienceId) {
-    return {
-      ok: false,
-      message: "Email signup is temporarily unavailable. Please try again later.",
-      code: "missing_audience_id",
-    };
-  }
 
   try {
     // 1. Add to audience (Resend dedupes — re-adds are no-ops)
@@ -103,10 +76,6 @@ export async function subscribe({
       email,
       audienceId,
       ...(firstName ? { firstName } : {}),
-      // Resend doesn't have a generic "metadata" field on contacts —
-      // we stash the optional `note` in unsubscribed status comments
-      // by storing it on the welcome email instead. Future: write to
-      // a separate Supabase row if we need richer signup metadata.
     });
 
     // Some clients return data: null when the email already exists.
@@ -116,8 +85,14 @@ export async function subscribe({
 
     // 2. Send welcome email (only for net-new contacts)
     if (isNewContact) {
-      await sendWelcomeEmail({ email, list, note });
+      await sendWelcomeEmail({ email, list });
     }
+
+    log.info("subscribe.success", {
+      list,
+      email_hash: hashPii(email),
+      new_contact: isNewContact,
+    });
 
     return {
       ok: true,
@@ -126,8 +101,11 @@ export async function subscribe({
         : "You're already on the list — see you soon.",
     };
   } catch (err) {
-    // Log full error server-side; show generic safe message to user.
-    console.error("[resend] subscribe failed:", err);
+    log.error("subscribe.failed", {
+      list,
+      email_hash: hashPii(email),
+      error: err instanceof Error ? err.message : String(err),
+    });
     return {
       ok: false,
       message: "Something went wrong. Try again in a moment?",
@@ -138,17 +116,20 @@ export async function subscribe({
 
 /**
  * Send the appropriate welcome email for the list.
+ *
  * Imports the React Email templates lazily so the entire email
- * surface isn't bundled into the client by accident.
+ * surface isn't bundled into routes that don't send mail.
+ *
+ * Generates an explicit plain-text fallback alongside the HTML.
+ * Resend auto-generates one when omitted, but explicit text gives
+ * us control over what Apple Mail / accessibility tools read.
  */
 async function sendWelcomeEmail({
   email,
   list,
-  note,
 }: {
   email: string;
   list: SubscribeList;
-  note?: string;
 }) {
   const { BetaWelcomeEmail } = await import("@/emails/BetaWelcomeEmail");
   const { NewsletterWelcomeEmail } = await import(
@@ -162,14 +143,17 @@ async function sendWelcomeEmail({
 
   const react =
     list === "beta"
-      ? BetaWelcomeEmail({ email, note })
+      ? BetaWelcomeEmail({ email })
       : NewsletterWelcomeEmail({ email });
 
+  const text = await render(react, { plainText: true });
+
   await resend.emails.send({
-    from: fromEmail,
+    from: env.RESEND_FROM_EMAIL,
     to: email,
-    replyTo,
+    replyTo: env.RESEND_REPLY_TO_EMAIL,
     subject,
     react,
+    text,
   });
 }

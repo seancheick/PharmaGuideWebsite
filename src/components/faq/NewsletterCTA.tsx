@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { subscribeToNewsletter } from "@/app/actions/subscribe";
+import { isValidEmail } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 
 /**
@@ -30,7 +31,7 @@ export function NewsletterCTA() {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!isValidEmail(email)) {
       setError("Please enter a valid email.");
       return;
     }
@@ -38,8 +39,11 @@ export function NewsletterCTA() {
     setSubmitting(true);
     setError("");
 
+    const formData = new FormData(e.currentTarget);
+    const company = (formData.get("company") as string | null) ?? "";
+
     try {
-      const result = await subscribeToNewsletter(email);
+      const result = await subscribeToNewsletter({ email, company });
       if (result.ok) {
         setSubmitted(true);
       } else {
@@ -105,6 +109,24 @@ export function NewsletterCTA() {
               <SuccessState />
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                {/* Honeypot — off-screen, aria-hidden, not tabbable. */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-[-9999px] h-0 w-0 overflow-hidden opacity-0"
+                >
+                  <label htmlFor="newsletter-company">
+                    Company (leave blank)
+                    <input
+                      id="newsletter-company"
+                      type="text"
+                      name="company"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      defaultValue=""
+                    />
+                  </label>
+                </div>
+
                 <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
                   <label className="sr-only" htmlFor="newsletter-email">
                     Email address

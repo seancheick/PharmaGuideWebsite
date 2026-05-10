@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { joinBetaWaitlist } from "@/app/actions/subscribe";
+import { isValidEmail } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 
 /**
@@ -55,7 +56,7 @@ export function FinalCTA() {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!isValidEmail(email)) {
       setError("Please enter a valid email.");
       return;
     }
@@ -63,8 +64,13 @@ export function FinalCTA() {
     setSubmitting(true);
     setError("");
 
+    // Honeypot — bots fill any input named "company"; real users never
+    // see it. Server silently no-ops if non-empty.
+    const formData = new FormData(e.currentTarget);
+    const company = (formData.get("company") as string | null) ?? "";
+
     try {
-      const result = await joinBetaWaitlist(email);
+      const result = await joinBetaWaitlist({ email, company });
       if (result.ok) {
         setSubmitted(true);
       } else {
@@ -143,6 +149,25 @@ export function FinalCTA() {
                 <SuccessState />
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                  {/* Honeypot — off-screen, aria-hidden, not tabbable.
+                      Bots auto-fill all inputs; real users never see it. */}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute left-[-9999px] h-0 w-0 overflow-hidden opacity-0"
+                  >
+                    <label htmlFor="cta-company">
+                      Company (leave blank)
+                      <input
+                        id="cta-company"
+                        type="text"
+                        name="company"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        defaultValue=""
+                      />
+                    </label>
+                  </div>
+
                   <label className="sr-only" htmlFor="cta-email">
                     Email address
                   </label>

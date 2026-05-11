@@ -63,7 +63,7 @@ export function NewsletterWelcomeEmail({ email }: NewsletterWelcomeEmailProps) {
                 IS the settled brand stamp; everything else animates. */}
             <Section style={{ marginBottom: "32px", textAlign: "center" }}>
               <Img
-                src="https://www.pharmaguide.io/brand/logo-pulse.gif"
+                src="https://www.pharmaguide.io/brand/logo-pulse.png"
                 alt="PharmaGuide"
                 width="72"
                 height="72"

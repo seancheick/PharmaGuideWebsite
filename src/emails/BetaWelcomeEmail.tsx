@@ -71,7 +71,7 @@ export function BetaWelcomeEmail({ email }: BetaWelcomeEmailProps) {
                 asset (Gmail's image proxy caches aggressively). */}
             <Section style={{ marginBottom: "32px", textAlign: "center" }}>
               <Img
-                src="https://www.pharmaguide.io/brand/logo-pulse.gif"
+                src="https://www.pharmaguide.io/brand/logo-pulse.png"
                 alt="PharmaGuide"
                 width="72"
                 height="72"

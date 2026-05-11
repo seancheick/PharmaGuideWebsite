@@ -2,8 +2,8 @@
 
 # PharmaGuide
 
-**The marketing surface for the supplement &amp; medication co-pilot.**
-Premium product feel — designed at the **Apple / Linear / Oura** caliber, not a SaaS template. Cinematic motion, restrained editorial voice, design-token-driven from the first pixel.
+**The supplement &amp; medication co-pilot most people don't realize they need.**
+It reads your full stack as a system — multi-way interactions, medication-nutrient depletions, dose accumulation across products, live FDA recall monitoring, and ingredient quality — so the things you take to feel better stop quietly working against each other. Clinician-reviewed. Evidence-graded. Private by architecture.
 
 <sub>Live at **[pharmaguide.io](https://pharmaguide.io)** · mobile app opening in waves through 2026</sub>
 

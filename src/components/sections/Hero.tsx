@@ -92,7 +92,7 @@ export function Hero() {
 
               <a
                 href="#problem"
-                className="group inline-flex items-center gap-1.5 py-2 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                className="group inline-flex items-center gap-1.5 py-2 text-body-sm font-medium text-accent transition-colors duration-fast ease-smooth hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               >
                 Why interactions matter
                 <span

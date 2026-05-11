@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/shared/Logo";
 import {
   footerBadges,
   footerNav,
@@ -164,10 +165,9 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1.2fr] lg:gap-6 xl:gap-8">
           {/* ─── Brand column ─────────────────────────── */}
           <div className="flex flex-col gap-3.5 lg:col-span-1 md:col-span-2 lg:col-auto">
-            {/* Logo — text wordmark + accent dot. Replace with SVG/image
-                when final logo asset is ready. */}
+            {/* Logo — 3D icon mark + live Geist Sans wordmark in cream. */}
             <Link href="/" aria-label={`${site.name} home`} className="inline-flex items-center gap-2.5">
-              <span aria-hidden="true" className="block h-2.5 w-2.5 rounded-full bg-background/70" />
+              <Logo size="md" />
               <span className="font-sans text-[1.5rem] font-semibold tracking-[-0.02em] text-background">
                 {site.name}
               </span>

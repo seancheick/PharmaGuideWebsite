@@ -9,6 +9,7 @@ import {
   useReducedMotion,
   useScroll,
 } from "framer-motion";
+import { Logo } from "@/components/shared/Logo";
 import { nav, site } from "@/lib/site";
 import { transitions } from "@/lib/tokens";
 import { cn } from "@/lib/utils";
@@ -99,7 +100,7 @@ export function Header() {
             aria-label={`${site.name} home`}
             className="flex items-center gap-2 font-sans text-body font-medium tracking-[-0.012em] text-ink transition-colors duration-fast ease-smooth hover:text-accent"
           >
-            <span aria-hidden="true" className="block h-1.5 w-1.5 rounded-full bg-accent" />
+            <Logo size="sm" priority />
             {site.name}
           </Link>
 

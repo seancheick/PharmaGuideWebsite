@@ -170,16 +170,23 @@ export function BeyondInteractions() {
           transition={transitions.ambient}
           className="mt-12 flex flex-col items-center gap-4 md:mt-14 md:flex-row md:justify-center md:gap-6"
         >
+          {/* Primary CTA pill — same teal-on-white treatment as the
+              hero's "Request Access" and FinalCTA's submit button, so
+              the user instantly recognizes this as the page's primary
+              "go deeper" action. */}
           <Link
             href="/features"
-            className="inline-flex items-center gap-2 rounded-pill border border-border bg-surface px-5 py-3 text-body-sm font-medium text-ink shadow-xs transition-[background-color,transform,box-shadow] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-surface-raised hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            className="inline-flex items-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
           >
             See all six capabilities in depth
             <span aria-hidden="true">→</span>
           </Link>
+          {/* Secondary action — accent-colored text link with the
+              animated arrow. Previously muted gray, which made it read
+              as prose rather than a clickable destination. */}
           <Link
             href="/blog"
-            className="group inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            className="group inline-flex items-center gap-1.5 text-body-sm font-medium text-accent transition-colors duration-fast ease-smooth hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
           >
             Or read our evidence-graded guides
             <span

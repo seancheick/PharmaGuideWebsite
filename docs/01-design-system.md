@@ -48,13 +48,37 @@ All values are RGB triplets so Tailwind's `/<alpha>` modifier works
 | `border` | `#E5E2DB` | Default hairlines |
 | `border-strong` | `#D1CDC4` | Emphasized borders, inputs |
 
-### Accent (single brand color)
+### Accent + link (brand teal family)
+
+The brand uses a single deep-teal hue across two lightness tiers. Use
+`accent` for buttons, focus rings, and chrome where depth + weight
+matter; use `link` for inline body-text links where lighter teal stays
+distinguishable from near-black body text.
 
 | Token | Value | Usage |
 |---|---|---|
-| `accent` | `#183B3F` (deep teal) | Primary CTA, links, focus |
-| `accent-strong` | `#102A2D` | Hover/active state |
+| `accent` | `#183B3F` (deep teal, L 17%) | Primary CTA backgrounds, focus rings, italic-serif kickers, eyebrow accents |
+| `accent-strong` | `#102A2D` | Hover/active state on CTAs |
 | `accent-soft` | `#E6ECEC` | Tinted accent backgrounds |
+| `link` | `#246066` (mid teal, L 27%) | Inline body-text links — reads as clearly teal against body copy |
+| `link-strong` | `#184F54` | Inline link hover/active |
+
+**Inline link pattern** (use on every body-text `<a>`):
+
+```tsx
+className="text-link underline decoration-link/60 underline-offset-[3px]
+  transition-[color,text-decoration-color] duration-fast ease-smooth
+  hover:text-link-strong hover:decoration-link"
+```
+
+Action-CTA arrows and inline mono-caps "link-style" buttons can keep
+`text-accent` if they sit on a surface where the deeper teal reads as
+ink-strong (e.g. inside a card with its own background).
+
+> **Rule:** never hardcode link colors. Inline links MUST use `text-link`
+> / `decoration-link`. Buttons + CTAs MUST use `bg-accent` (filled) or
+> `text-accent` (text-only action labels). Source of truth lives in
+> `--color-accent` + `--color-link` in `globals.css`.
 
 ### Severity (5-tier)
 

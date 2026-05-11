@@ -216,6 +216,15 @@ export default async function BlogPostPage({
                 <span aria-hidden="true" className="text-border-strong">·</span>
                 <span>{post.readTime}</span>
               </div>
+
+              {/* Share rail — compact horizontal row directly under the
+                  byline. Client island (clipboard API needs JS); rest
+                  of the hero is server-rendered. */}
+              <BlogShare
+                url={`${site.url}/blog/${post.slug}`}
+                title={post.title}
+                description={post.description}
+              />
             </div>
           </div>
         </section>
@@ -237,15 +246,6 @@ export default async function BlogPostPage({
                 }}
               />
             </article>
-
-            {/* Share rail — sits at end of article, before Related and
-                Newsletter CTA. Client island (clipboard API needs JS);
-                everything else above is server-rendered. */}
-            <BlogShare
-              url={`${site.url}/blog/${post.slug}`}
-              title={post.title}
-              description={post.description}
-            />
           </div>
         </section>
 

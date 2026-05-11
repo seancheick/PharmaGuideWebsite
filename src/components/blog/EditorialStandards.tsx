@@ -70,8 +70,9 @@ export function EditorialStandards() {
                 <Image
                   src={r.photo}
                   alt={r.name}
-                  width={28}
-                  height={28}
+                  width={56}
+                  height={56}
+                  quality={95}
                   className="h-7 w-7 shrink-0 rounded-full object-cover"
                 />
                 <span className="text-body-sm leading-tight text-ink">

@@ -565,8 +565,9 @@ export function MethodologyClient() {
                     <Image
                       src={m.photo}
                       alt={m.name}
-                      width={56}
-                      height={56}
+                      width={112}
+                      height={112}
+                      quality={95}
                       className="h-14 w-14 shrink-0 rounded-full object-cover ring-1 ring-border"
                     />
                   ) : (

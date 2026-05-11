@@ -276,8 +276,9 @@ export function PressClient() {
                   <Image
                     src={m.photo}
                     alt={m.name}
-                    width={48}
-                    height={48}
+                    width={96}
+                    height={96}
+                    quality={95}
                     className="h-12 w-12 shrink-0 rounded-full object-cover ring-1 ring-border"
                   />
                   <div className="min-w-0">

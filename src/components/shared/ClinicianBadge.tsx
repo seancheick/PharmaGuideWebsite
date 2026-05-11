@@ -73,8 +73,11 @@ export function ClinicianBadge({
         <Image
           src={clinician.photo}
           alt={clinician.name}
-          width={avatarSize}
-          height={avatarSize}
+          // 2x natural width so retina screens get a crisp downscale
+          // rather than upscaling a too-small source variant.
+          width={avatarSize * 2}
+          height={avatarSize * 2}
+          quality={95}
           className="shrink-0 rounded-full object-cover ring-1 ring-border"
           style={{ width: avatarSize, height: avatarSize }}
         />

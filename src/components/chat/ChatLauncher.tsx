@@ -345,15 +345,6 @@ export function ChatLauncher() {
                 </button>
               </header>
 
-              {/* Disclaimer — always visible at top of message list */}
-              <div className="border-b border-border bg-accent-soft/40 px-5 py-2.5">
-                <p className="text-[11.5px] leading-snug text-foreground/85">
-                  Educational information only — not a substitute for
-                  professional medical advice. For your specific situation,
-                  talk to your healthcare provider.
-                </p>
-              </div>
-
               {/* Messages */}
               <div
                 role="log"
@@ -385,7 +376,7 @@ export function ChatLauncher() {
               {/* Input */}
               <form
                 onSubmit={handleSubmit}
-                className="flex items-end gap-2 border-t border-border bg-surface p-3"
+                className="flex items-end gap-2 border-t border-border bg-surface px-3 pt-3"
               >
                 <textarea
                   ref={inputRef}
@@ -394,7 +385,9 @@ export function ChatLauncher() {
                   onChange={(e) => setDraft(e.target.value)}
                   onKeyDown={handleKeyDown}
                   disabled={isLoading}
-                  placeholder="Ask about supplements, medications, interactions…"
+                  // Short placeholder to avoid wrapping at the narrow
+                  // textarea width on mobile + at default desktop width.
+                  placeholder="Ask about supplements…"
                   aria-label="Message"
                   className="flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-2.5 text-body-sm leading-relaxed text-ink outline-none transition-[border-color,box-shadow] duration-fast ease-smooth placeholder:text-subtle focus:border-accent focus:shadow-glow disabled:opacity-60"
                   style={{ maxHeight: "120px" }}
@@ -408,6 +401,15 @@ export function ChatLauncher() {
                   <IconSend />
                 </button>
               </form>
+
+              {/* Disclaimer — small, single-line at the bottom of the
+                  panel. Was a heavy banner above the messages; users
+                  read it once, then it just stole vertical space on
+                  every subsequent message. Footer placement matches
+                  the calm-clinical tone (footnote, not banner). */}
+              <p className="border-t border-border/60 bg-surface px-4 py-2 text-center text-[10.5px] leading-snug text-subtle">
+                Educational only · not a substitute for professional medical advice.
+              </p>
             </motion.div>
           </>
         )}

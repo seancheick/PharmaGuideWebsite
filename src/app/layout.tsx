@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClarityProvider } from "@/components/analytics/ClarityProvider";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { ChatLauncherGate } from "@/components/chat/ChatLauncherGate";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import "./globals.css";
@@ -163,6 +164,10 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
+        {/* Floating "Ask PharmaGuide AI" chat launcher. Hidden on
+            legal/disclosure routes; fades in after first scroll past
+            the hero on every other page. See ChatLauncherGate. */}
+        <ChatLauncherGate />
         <Analytics />
         <SpeedInsights />
         <ClarityProvider />

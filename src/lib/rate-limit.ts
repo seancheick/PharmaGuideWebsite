@@ -41,6 +41,48 @@ export const subscribeLimiter = redis
     })
   : null;
 
+/**
+ * Chat rate limiter — more permissive than subscribe because a real
+ * conversation needs many turns. 40 messages per IP per 10 minutes
+ * cuts off scrape/abuse without bothering legit users.
+ */
+export const chatLimiter = redis
+  ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(40, "10 m"),
+      analytics: true,
+      prefix: "rl:chat",
+    })
+  : null;
+
+export async function checkChatRateLimit(
+  ip: string
+): Promise<RateLimitCheck> {
+  if (!chatLimiter) {
+    log.warn("rate_limit.skipped", {
+      reason: "upstash_not_configured",
+      ip_hash: hashPii(ip),
+      scope: "chat",
+    });
+    return { ok: true };
+  }
+
+  const result = await chatLimiter.limit(ip);
+  if (!result.success) {
+    log.warn("rate_limit.exceeded", {
+      ip_hash: hashPii(ip),
+      remaining: result.remaining,
+      reset: result.reset,
+      scope: "chat",
+    });
+  }
+  return {
+    ok: result.success,
+    remaining: result.remaining,
+    reset: result.reset,
+  };
+}
+
 export interface RateLimitCheck {
   ok: boolean;
   remaining?: number;

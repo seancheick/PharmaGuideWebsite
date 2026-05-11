@@ -1,12 +1,15 @@
 import {
   Body,
+  Column,
   Container,
   Head,
   Heading,
   Hr,
   Html,
+  Img,
   Link,
   Preview,
+  Row,
   Section,
   Tailwind,
   Text,
@@ -56,29 +59,32 @@ export function NewsletterWelcomeEmail({ email }: NewsletterWelcomeEmailProps) {
               border: "1px solid #E5E2DB",
             }}
           >
-            <Section>
-              <Text
-                style={{
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  color: "#111314",
-                  letterSpacing: "-0.012em",
-                  margin: "0 0 32px 0",
-                }}
-              >
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: "8px",
-                    height: "8px",
-                    borderRadius: "999px",
-                    backgroundColor: "#183B3F",
-                    marginRight: "8px",
-                    verticalAlign: "middle",
-                  }}
-                />
-                PharmaGuide
-              </Text>
+            {/* Brand mark — see BetaWelcomeEmail for layout rationale. */}
+            <Section style={{ marginBottom: "32px" }}>
+              <Row>
+                <Column style={{ width: "42px", verticalAlign: "middle" }}>
+                  <Img
+                    src="https://pharmaguide.io/brand/logo-icon.png"
+                    alt=""
+                    width="32"
+                    height="29"
+                    style={{ display: "block", border: "none" }}
+                  />
+                </Column>
+                <Column style={{ verticalAlign: "middle", paddingLeft: "10px" }}>
+                  <Text
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: 600,
+                      color: "#111314",
+                      letterSpacing: "-0.012em",
+                      margin: 0,
+                    }}
+                  >
+                    PharmaGuide
+                  </Text>
+                </Column>
+              </Row>
             </Section>
 
             <Heading

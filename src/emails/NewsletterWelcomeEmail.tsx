@@ -64,7 +64,7 @@ export function NewsletterWelcomeEmail({ email }: NewsletterWelcomeEmailProps) {
               <Row>
                 <Column style={{ width: "42px", verticalAlign: "middle" }}>
                   <Img
-                    src="https://pharmaguide.io/brand/logo-icon.png"
+                    src="https://www.pharmaguide.io/brand/logo-icon.png"
                     alt=""
                     width="32"
                     height="29"

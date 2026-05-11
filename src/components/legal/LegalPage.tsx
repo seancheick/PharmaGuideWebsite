@@ -31,7 +31,19 @@ import { cn } from "@/lib/utils";
  * **bold** and [link](/url) in section bodies. Defined inline below.
  */
 
-export function LegalPage({ doc }: { doc: LegalDocument }) {
+/**
+ * `slots` lets a page (e.g. /hipaa) inject custom React content into
+ * a specific section, rendered below the section body. Keyed by
+ * `LegalSection.id`. Used to embed the Healthcare Pros early-access
+ * form inside HIPAA section 5 without forking the layout.
+ */
+export function LegalPage({
+  doc,
+  slots,
+}: {
+  doc: LegalDocument;
+  slots?: Record<string, React.ReactNode>;
+}) {
   // Active section tracking via IntersectionObserver — TOC entry for
   // the section currently in view gets highlighted.
   const [activeId, setActiveId] = useState<string>(doc.sections[0]?.id ?? "");
@@ -226,9 +238,16 @@ export function LegalPage({ doc }: { doc: LegalDocument }) {
                         {section.title}
                       </h2>
                     </header>
-                    <div className="max-w-prose text-body leading-[1.7] text-muted [&_p+p]:mt-4 [&_strong]:font-medium [&_strong]:text-ink">
+                    {/* Body color promoted from text-muted (4.83:1) to
+                        text-foreground/85 (~6:1) for long-form legal
+                        reading — AA-passing alone isn't enough when
+                        people are squinting through 5,000-word docs. */}
+                    <div className="max-w-prose text-body leading-[1.7] text-foreground/85 [&_p+p]:mt-4 [&_strong]:font-medium [&_strong]:text-ink">
                       {renderBody(section.body)}
                     </div>
+                    {slots?.[section.id] && (
+                      <div className="mt-8">{slots[section.id]}</div>
+                    )}
                   </section>
                 ))}
               </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
@@ -109,23 +110,26 @@ const VALUES = [
 
 const TEAM = [
   {
-    initials: "SB",
+    initials: "SC",
+    photo: "/team/sean-cheick.webp",
     name: "Sean Cheick Baradji",
     role: "Founder & CEO",
     org: "B&Br Technology · Boston, MA",
     note: "Built PharmaGuide after watching family members navigate medication and supplement complexity without the tools to do it safely.",
   },
   {
-    initials: "PL",
-    name: "Dr. Pham L., PharmD",
-    role: "Clinical Pharmacist",
+    initials: "LP",
+    photo: "/team/laurie-pham.webp",
+    name: "Laurie Pham, PharmD",
+    role: "Doctor of Pharmacy · Clinical Review",
     org: "15+ years pharmacovigilance",
     note: "Reviews every interaction before it ships. Owns the clinical accuracy bar — drug-supplement, supplement-supplement, and dose-summation reasoning.",
   },
   {
-    initials: "MD",
-    name: "Miriam D., NP",
-    role: "Nurse Practitioner",
+    initials: "MF",
+    photo: "/team/miriam-farez.webp",
+    name: "Miriam Farez, NP",
+    role: "Nurse Practitioner · Patient-Education Review",
     org: "Integrative health practice",
     note: "Patient-education review. Reads every post and warning from a healthcare-provider angle: is this clear, accessible, and actionable?",
   },
@@ -270,15 +274,24 @@ export function AboutClient() {
             ))}
           </motion.ul>
 
-          <motion.p
+          <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={transitions.ambient}
-            className="mx-auto mt-10 max-w-2xl text-balance text-center font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle md:mt-12"
+            className="mx-auto mt-10 flex items-center justify-center gap-3 md:mt-12"
           >
-            — Sean Cheick Baradji, Founder &amp; CEO
-          </motion.p>
+            <Image
+              src="/team/sean-cheick.webp"
+              alt="Sean Cheick Baradji"
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-full object-cover ring-1 ring-border"
+            />
+            <p className="font-mono text-eyebrow uppercase text-subtle">
+              Sean Cheick Baradji, Founder &amp; CEO
+            </p>
+          </motion.div>
         </div>
       </section>
 
@@ -360,7 +373,7 @@ export function AboutClient() {
                   href={item.source.href}
                   target={item.source.href.startsWith("/") ? undefined : "_blank"}
                   rel={item.source.href.startsWith("/") ? undefined : "noopener noreferrer"}
-                  className="mt-auto inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.12em] text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
+                  className="mt-auto inline-flex items-center gap-1.5 font-mono text-eyebrow uppercase text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
                 >
                   Source · {item.source.label}{" "}
                   <span aria-hidden="true">→</span>
@@ -368,6 +381,24 @@ export function AboutClient() {
               </motion.li>
             ))}
           </motion.ul>
+
+          {/* Stat disambiguation — the homepage cites 4,100 daily ER
+              visits across all drug-related events; this page cites
+              23,000 yearly from supplements specifically. A skeptic
+              doing the math would notice; we name the difference
+              explicitly so the page reads as honest, not loose. */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={transitions.ambient}
+            className="mx-auto mt-8 max-w-2xl text-balance text-center text-body-sm leading-relaxed text-subtle md:mt-10"
+          >
+            The 23,000 figure is supplement-specific. Separately, the
+            homepage cites 4,100+ daily ER visits across all
+            medication-related events — a broader category that includes
+            prescription interactions.
+          </motion.p>
         </div>
       </section>
 
@@ -622,17 +653,27 @@ export function AboutClient() {
                 className={`flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8 ${i === 0 ? "md:col-span-3 lg:col-span-1" : ""}`}
               >
                 <div className="flex items-center gap-4">
-                  <span
-                    aria-hidden="true"
-                    className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent text-background"
-                  >
-                    <span className="font-serif text-h3 italic">{m.initials}</span>
-                  </span>
+                  {m.photo ? (
+                    <Image
+                      src={m.photo}
+                      alt={m.name}
+                      width={56}
+                      height={56}
+                      className="h-14 w-14 shrink-0 rounded-full object-cover ring-1 ring-border"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent text-background"
+                    >
+                      <span className="font-serif text-h3 italic">{m.initials}</span>
+                    </span>
+                  )}
                   <div className="min-w-0">
                     <p className="font-serif text-h3 italic leading-tight text-ink">
                       {m.name}
                     </p>
-                    <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
+                    <p className="font-mono text-eyebrow uppercase text-subtle">
                       {m.role}
                     </p>
                   </div>

@@ -47,7 +47,7 @@ const ROLES = [
   },
   {
     role: "Backend / Pipeline Engineer",
-    body: "TypeScript or Python. You'll work on the interaction-rules pipeline, OTA catalog updater, and the systems that keep 180,000 products + 1,400+ rule entries fresh.",
+    body: "TypeScript or Python. You'll work on the interaction-rules pipeline, OTA catalog updater, and the systems that keep the 180,000+ product catalog and the clinical rule set fresh.",
   },
   {
     role: "Clinical Pharmacist (PharmD)",

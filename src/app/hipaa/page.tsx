@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { LegalPage } from "@/components/legal/LegalPage";
+import { HipaaProvidersForm } from "@/components/legal/HipaaProvidersForm";
 import { HIPAA_DOC } from "@/lib/hipaa";
 import { formatLegalDate } from "@/lib/legal";
 import { site } from "@/lib/site";
@@ -77,7 +78,16 @@ export default function HipaaPage() {
   return (
     <>
       <Header />
-      <LegalPage doc={HIPAA_DOC} />
+      <LegalPage
+        doc={HIPAA_DOC}
+        slots={{
+          // Section 5 is "PharmaGuide for Healthcare Pros (2026)" —
+          // the highest-intent surface for clinician leads. Replaces
+          // a passive mailto with a structured form that lands in the
+          // providers inbox.
+          "professional-tier": <HipaaProvidersForm />,
+        }}
+      />
       <Footer />
 
       <script

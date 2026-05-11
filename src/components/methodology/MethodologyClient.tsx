@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import {
@@ -242,6 +243,171 @@ export function MethodologyClient() {
         </div>
       </section>
 
+      {/* ━━━━━━━━━━━━━━━━━━ SEE IT IN ACTION (specimen) ━━━━━━━━━━━━━━ */}
+      {/* A real interaction record from the production pipeline — not a
+          mock. Pulled from scripts/data/ingredient_interaction_rules.json
+          (RULE_IQM_COQ10_HEART_DISEASE_STATINS, high-cholesterol branch).
+          Replaces the "we have sources" claim with a "here is one"
+          artifact so the page reads as evidence, not assertion. */}
+      <section
+        aria-labelledby="meth-specimen-heading"
+        className="relative section-y-sm bg-surface-raised/40"
+      >
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
+
+        <div className="container relative mx-auto">
+          <motion.div
+            variants={fadeUpContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-15%" }}
+            className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
+          >
+            <motion.p
+              variants={fadeUpItem}
+              className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
+            >
+              See it in action
+            </motion.p>
+
+            <motion.h2
+              id="meth-specimen-heading"
+              variants={fadeUpItem}
+              className="text-balance text-display-md text-ink"
+            >
+              One real interaction,{" "}
+              <span className="font-serif italic">end to end.</span>
+            </motion.h2>
+
+            <motion.p
+              variants={fadeUpItem}
+              className="max-w-prose text-body-lg leading-relaxed text-muted"
+            >
+              The card below is pulled from the production interaction-rules
+              pipeline — not a mock. Same structure ships inside the app,
+              same sources, same reviewer signature.
+            </motion.p>
+          </motion.div>
+
+          <motion.article
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={transitions.reveal}
+            className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-2xl border border-border bg-surface shadow-sm md:mt-14"
+            aria-label="Specimen: CoQ10 with statin therapy"
+          >
+            {/* Header strip — tier + evidence + last-reviewed */}
+            <header className="flex flex-col gap-3 border-b border-border bg-surface-subtle px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-subtle">
+                Specimen · ATORVASTATIN ↔ CoQ10
+              </p>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <span className="inline-flex items-center gap-1.5 rounded-pill bg-severity-monitor/[0.08] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-severity-monitor">
+                  <span aria-hidden="true" className="block h-1.5 w-1.5 rounded-full bg-severity-monitor" />
+                  Informational
+                </span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
+                  Evidence · <span className="text-foreground/85">Established</span>
+                </span>
+              </div>
+            </header>
+
+            <div className="flex flex-col gap-6 p-6 md:p-7">
+              {/* Mechanism */}
+              <section className="flex flex-col gap-2">
+                <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
+                  Mechanism
+                </p>
+                <p className="text-body leading-relaxed text-foreground/85">
+                  Statins inhibit HMG-CoA reductase, blocking not only
+                  cholesterol synthesis but also the mevalonate pathway used to
+                  synthesize CoQ10. Plasma and muscle CoQ10 levels are
+                  measurably reduced by statin therapy; CoQ10 depletion is
+                  proposed as a contributing mechanism to statin-induced
+                  myopathy.
+                </p>
+              </section>
+
+              {/* Action */}
+              <section className="flex flex-col gap-2 border-t border-border pt-5">
+                <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-severity-safe">
+                  Recommended action
+                </p>
+                <p className="text-body leading-relaxed text-foreground/85">
+                  CoQ10 supplementation (100–300 mg/day) is commonly used to
+                  address statin-induced muscle symptoms and is considered
+                  safe to combine. Discuss with prescriber whether
+                  supplementation is warranted based on symptoms.
+                </p>
+              </section>
+
+              {/* Sources — real PubMed IDs from the pipeline record */}
+              <section className="flex flex-col gap-2.5 border-t border-border pt-5">
+                <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
+                  Sources (2)
+                </p>
+                <ul className="flex flex-col gap-2">
+                  <li>
+                    <a
+                      href="https://pubmed.ncbi.nlm.nih.gov/19528564/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-baseline gap-2 text-body-sm leading-relaxed text-foreground/85 transition-colors duration-fast ease-smooth hover:text-accent"
+                    >
+                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
+                        PMID
+                      </span>
+                      <span className="font-mono tabular-nums">19528564</span>
+                      <span aria-hidden="true" className="opacity-0 transition-opacity duration-fast group-hover:opacity-100">
+                        →
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://pubmed.ncbi.nlm.nih.gov/12622602/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-baseline gap-2 text-body-sm leading-relaxed text-foreground/85 transition-colors duration-fast ease-smooth hover:text-accent"
+                    >
+                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
+                        PMID
+                      </span>
+                      <span className="font-mono tabular-nums">12622602</span>
+                      <span aria-hidden="true" className="opacity-0 transition-opacity duration-fast group-hover:opacity-100">
+                        →
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </section>
+
+              {/* Reviewer + version footer */}
+              <footer className="flex flex-col gap-2 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+                <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
+                  Reviewed by <span className="text-foreground/85">Laurie Pham, PharmD</span>
+                </p>
+                <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
+                  Schema v6.1 · DB sync 2026-05-06
+                </p>
+              </footer>
+            </div>
+          </motion.article>
+
+          <p className="mx-auto mt-6 max-w-3xl text-center text-body-sm leading-relaxed text-muted md:mt-8">
+            Want the deeper read?{" "}
+            <a
+              href="/blog/statins-and-coq10"
+              className="text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
+            >
+              Read the statins + CoQ10 deep dive →
+            </a>
+          </p>
+        </div>
+      </section>
+
       {/* ━━━━━━━━━━━━━━━━━━ 5-STEP PROCESS ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="meth-process-heading"
@@ -371,8 +537,8 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              Real clinicians,{" "}
-              <span className="font-serif italic">named.</span>
+              The clinicians{" "}
+              <span className="font-serif italic">behind every verdict.</span>
             </motion.h2>
           </motion.div>
 
@@ -395,17 +561,27 @@ export function MethodologyClient() {
                 className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
               >
                 <div className="flex items-center gap-4">
-                  <span
-                    aria-hidden="true"
-                    className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent text-background"
-                  >
-                    <span className="font-serif text-h3 italic">{m.initials}</span>
-                  </span>
+                  {m.photo ? (
+                    <Image
+                      src={m.photo}
+                      alt={m.name}
+                      width={56}
+                      height={56}
+                      className="h-14 w-14 shrink-0 rounded-full object-cover ring-1 ring-border"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent text-background"
+                    >
+                      <span className="font-serif text-h3 italic">{m.initials}</span>
+                    </span>
+                  )}
                   <div className="min-w-0">
                     <p className="font-serif text-h3 italic leading-tight text-ink">
                       {m.name}
                     </p>
-                    <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
+                    <p className="font-mono text-eyebrow uppercase text-subtle">
                       {m.title}
                     </p>
                   </div>

@@ -25,7 +25,7 @@ import type { BlogPost } from "./blog-types";
  *   category: "health-education"              (matches CATEGORIES.id)
  *   date: "2026-05-08"
  *   author: "Sean Cheick Baradji"
- *   reviewer: "Dr. Pham L., PharmD"           (optional)
+ *   reviewer: "Laurie Pham, PharmD"           (optional)
  *   featured: false                           (sets the editor's pick)
  *   image: "/blog/...."                       (optional hero image)
  *   tags: ["statins", "metformin", ...]

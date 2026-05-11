@@ -51,6 +51,11 @@ export const env = {
     process.env.RESEND_FROM_EMAIL ?? "PharmaGuide <hello@pharmaguide.io>",
   RESEND_REPLY_TO_EMAIL:
     process.env.RESEND_REPLY_TO_EMAIL ?? "info@pharmaguide.io",
+  // Inbox that receives Healthcare-Pros early-access inquiries from the
+  // HIPAA page form. Lands as a structured email a human triages — no
+  // ATS / CRM wiring needed for the beta.
+  RESEND_PROVIDERS_NOTIFY_EMAIL:
+    process.env.RESEND_PROVIDERS_NOTIFY_EMAIL ?? "providers@pharmaguide.io",
 
   // Upstash — required in production for rate limiting; optional in dev
   // (rate limiter falls back to allow-with-warning when missing).

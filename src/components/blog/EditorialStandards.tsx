@@ -1,3 +1,6 @@
+import Image from "next/image";
+import Link from "next/link";
+
 /**
  * EditorialStandards — compact footer strip on /blog.
  *
@@ -19,8 +22,8 @@ const STANDARDS = [
 ] as const;
 
 const REVIEWERS = [
-  { initials: "PL", name: "Dr. Pham L.", title: "PharmD" },
-  { initials: "MI", name: "Miriam D.", title: "NP" },
+  { initials: "LP", photo: "/team/laurie-pham.webp", name: "Laurie Pham", title: "PharmD" },
+  { initials: "MF", photo: "/team/miriam-farez.webp", name: "Miriam Farez", title: "NP" },
 ] as const;
 
 export function EditorialStandards() {
@@ -59,23 +62,25 @@ export function EditorialStandards() {
               Reviewed by
             </span>
             {REVIEWERS.map((r) => (
-              <div
+              <Link
                 key={r.name}
-                className="inline-flex items-center gap-2.5 rounded-pill border border-border bg-surface px-3 py-1.5 shadow-xs"
+                href="/about#team"
+                className="inline-flex items-center gap-2.5 rounded-pill border border-border bg-surface px-3 py-1.5 shadow-xs transition-colors duration-fast ease-smooth hover:border-border-strong"
               >
-                <span
-                  aria-hidden="true"
-                  className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-background"
-                >
-                  <span className="font-serif text-[12px] italic">{r.initials}</span>
-                </span>
+                <Image
+                  src={r.photo}
+                  alt={r.name}
+                  width={28}
+                  height={28}
+                  className="h-7 w-7 shrink-0 rounded-full object-cover"
+                />
                 <span className="text-body-sm leading-tight text-ink">
                   {r.name}
                   <span className="ml-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-subtle">
                     {r.title}
                   </span>
                 </span>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

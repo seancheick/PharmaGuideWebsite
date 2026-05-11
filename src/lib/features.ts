@@ -39,6 +39,12 @@ export interface FeaturePillar {
   /** Title in two parts: lead (ink) + em (italic-serif accent) */
   titleLead: string;
   titleEm: string;
+  /**
+   * 12-15 word descriptor rendered on the pillar OVERVIEW grid at the
+   * top of /features. Gives the page information scent before the user
+   * has to scroll into the deep-dive section. Plain text, no markdown.
+   */
+  overview: string;
   /** 1-2 sentence intro paragraph */
   intro: string;
   /** Which illustration to render */
@@ -80,6 +86,8 @@ export const PILLARS: readonly FeaturePillar[] = [
     eyebrow: "Medication Depletion",
     titleLead: "Your medication may be depleting nutrients.",
     titleEm: "We catch it.",
+    overview:
+      "Maps every prescription to the vitamins and minerals it quietly draws down.",
     intro:
       "Many common prescriptions quietly draw down specific vitamins and minerals over months and years. Statins lower CoQ10. Metformin depletes B12 and folate. PPIs reduce magnesium and B12 absorption. We map every medication you add to the nutrients it's known to deplete — and surface what to consider replenishing.",
     illustration: "depletion",
@@ -135,13 +143,15 @@ export const PILLARS: readonly FeaturePillar[] = [
     eyebrow: "Stack Intelligence",
     titleLead: "Every product. Every interaction.",
     titleEm: "All at once.",
+    overview:
+      "Multi-way interactions, cross-product dose summation, timing conflicts — your full stack as a system.",
     intro:
       "Most apps check one bottle at a time. PharmaGuide reads your full stack as a system — multi-way interactions, dose accumulation across products, and the timing conflicts that don't show up in any single label. The result is a single Stack Health verdict you can act on.",
     illustration: "stack",
     capabilities: [
       "Multi-way analysis — interactions between any pair AND beyond",
-      "**Cross-product dose summation** — three caffeine products at 80mg each won't slip past 200mg/day",
-      "Stack Health verdict: **Optimized · Solid · Decent · Concerning · Unsafe**",
+      "Cross-product dose summation — three caffeine products at 80 mg each won't slip past 200 mg/day",
+      "Stack Health verdict: **Optimized · Solid · Decent · Needs review · Unsafe**",
       "Timing conflicts surfaced (e.g. calcium ↔ levothyroxine 4-hour separation)",
     ],
     examples: [
@@ -171,12 +181,14 @@ export const PILLARS: readonly FeaturePillar[] = [
     eyebrow: "Ingredient & Quality",
     titleLead: "Every ingredient.",
     titleEm: "Including the fillers nobody else parses.",
+    overview:
+      "Active and inactive ingredients parsed, proprietary blends decomposed, 4-pillar PG Score per product.",
     intro:
       "We parse the active ingredients AND the inactive ones — fillers, binders, allergens, and the proprietary blends most apps skip because the math is hard. Every product gets a 4-pillar PG Score so you can compare brands on substance, not packaging.",
     illustration: "transparency",
     capabilities: [
-      "**Active and inactive ingredients** parsed — fillers, allergens, excipients",
-      "**Proprietary-blend dose decomposition** — most apps can't read these; we can",
+      "Active and inactive ingredients parsed — fillers, allergens, excipients",
+      "Proprietary-blend dose decomposition — most apps can't read these; we can",
       "PG Score across 4 pillars: ingredient quality, safety & purity, evidence, brand trust",
       "Third-party testing flags (USP, NSF, Informed Sport) where verifiable",
     ],
@@ -209,6 +221,8 @@ export const PILLARS: readonly FeaturePillar[] = [
     eyebrow: "Personal Fit",
     titleLead: "What's safe for one person",
     titleEm: "may not be for another.",
+    overview:
+      "Profile-gated warnings tuned to your conditions, medications, and goals — irrelevant alerts stay hidden.",
     intro:
       "Your conditions, age, current medications, and goals reshape every recommendation. Pregnancy. Hypertension. Anticoagulant therapy. Each modifies the safety calculus. We profile-gate every interaction so you only see warnings that actually apply to you.",
     illustration: "fit",
@@ -245,6 +259,8 @@ export const PILLARS: readonly FeaturePillar[] = [
     eyebrow: "Nutrient Accumulation",
     titleLead: "When 'more' becomes",
     titleEm: "too much.",
+    overview:
+      "Tracks every nutrient across your full stack against RDA and Tolerable Upper Intake Level.",
     intro:
       "Fat-soluble vitamins accumulate. Mineral overdoses are real. We track every nutrient across your full stack against the **Recommended Daily Allowance (RDA)** and the **Tolerable Upper Intake Level (UL)** — and flag the moment your intake crosses into the zone where supplementation harms more than it helps.",
     illustration: "accumulation",
@@ -281,6 +297,8 @@ export const PILLARS: readonly FeaturePillar[] = [
     eyebrow: "Recall & Safety",
     titleLead: "When the FDA pulls something,",
     titleEm: "you find out fast.",
+    overview:
+      "Live FDA recall and FAERS adverse-event monitoring on the products you actually scanned.",
     intro:
       "The FDA recalls dietary supplements regularly — adulterated formulations, undeclared pharmaceuticals, contamination, mislabeling. Most users never hear about it. PharmaGuide pulls active recalls and the FDA Adverse Event Reporting System (FAERS) so a product in your stack can't quietly become unsafe without you noticing.",
     illustration: "recalls",
@@ -326,7 +344,7 @@ export const CLINICIAN_REPORT = {
 
 export const BUILT_ON = [
   {
-    label: "180,000-product catalog",
+    label: "180,000+ product catalog",
     detail: "Pre-loaded on your device. Sub-10ms lookup. Updates over the air.",
   },
   {

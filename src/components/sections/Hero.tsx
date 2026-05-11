@@ -36,16 +36,13 @@ export function Hero() {
             {/* Subhead broadened: covers the full product surface
                 (interactions, depletions, recalls, quality, fit) so the
                 homepage stops framing PharmaGuide as a narrow checker.
-                Capabilities link to the deep-dive at /features.       */}
+                Inline `/features` link removed — it competed with the
+                primary CTA below. Deep-dive lives in the tertiary link
+                under the trust pills.                                  */}
             <p className="animate-fade-up max-w-prose text-body-xl text-muted">
               Interactions, medication-nutrient depletions, dose
-              accumulation, FDA recalls, ingredient quality —{" "}
-              <Link
-                href="/features"
-                className="text-foreground/85 underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-ink hover:decoration-accent"
-              >
-                across your full stack.
-              </Link>
+              accumulation, FDA recalls, ingredient quality — across your
+              full stack.
             </p>
 
             <div className="animate-fade-up flex flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:80ms]">
@@ -73,12 +70,23 @@ export function Hero() {
               </span>
             </div>
 
+            {/* Tertiary deep-dive link — pulled out of the subhead so it
+                stops competing with the primary CTA. Quiet mono caps,
+                under the trust row, above the action buttons.          */}
+            <Link
+              href="/features"
+              className="animate-fade-up inline-flex w-fit items-center gap-1.5 font-mono text-eyebrow uppercase text-accent transition-colors duration-fast ease-smooth hover:text-accent-strong [animation-delay:120ms]"
+            >
+              See everything we check
+              <span aria-hidden="true">→</span>
+            </Link>
+
             <div className="animate-fade-up flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:gap-6 [animation-delay:160ms]">
               <Link
                 href="#waitlist"
                 className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-accent px-5 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               >
-                Request Access
+                Join the beta
                 <span aria-hidden="true">→</span>
               </Link>
 

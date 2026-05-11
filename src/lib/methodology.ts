@@ -39,6 +39,11 @@ export interface AdvisoryMember {
   credentials: string;
   focus: string;
   initials: string;
+  /**
+   * Path to the clinician's portrait under /public. Optional so future
+   * members can ship without a photo and fall back to an initials disc.
+   */
+  photo?: string;
 }
 
 export const TRUST_PILLARS: readonly TrustPillar[] = [
@@ -119,13 +124,13 @@ export const PROCESS_STEPS: readonly ProcessStep[] = [
     num: "03",
     title: "Pharmacist verification",
     body: "A licensed clinical pharmacist reviews every interaction before it ships — checking the science, the framing, and the recommendation against current practice standards.",
-    reviewer: "Dr. Pham L., PharmD",
+    reviewer: "Laurie Pham, PharmD",
   },
   {
     num: "04",
     title: "Clinical advisory review",
     body: "A second reviewer reads from the patient-education angle: is the language clear, the framing accessible, the safety context unambiguous?",
-    reviewer: "Miriam D., NP",
+    reviewer: "Miriam Farez, NP",
   },
   {
     num: "05",
@@ -137,18 +142,20 @@ export const PROCESS_STEPS: readonly ProcessStep[] = [
 
 export const ADVISORY_TEAM: readonly AdvisoryMember[] = [
   {
-    name: "Dr. Pham L., PharmD",
-    title: "Clinical Pharmacist",
+    name: "Laurie Pham, PharmD",
+    title: "Doctor of Pharmacy",
     credentials: "PharmD · 15+ years clinical pharmacy",
     focus: "Drug-supplement interactions · pharmacovigilance · clinical accuracy review",
-    initials: "PL",
+    initials: "LP",
+    photo: "/team/laurie-pham.webp",
   },
   {
-    name: "Miriam D., NP",
+    name: "Miriam Farez, NP",
     title: "Nurse Practitioner",
     credentials: "NP · integrative health practice",
     focus: "Patient education · integrative health · content accessibility",
-    initials: "MD",
+    initials: "MF",
+    photo: "/team/miriam-farez.webp",
   },
 ];
 

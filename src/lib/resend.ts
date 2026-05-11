@@ -157,3 +157,72 @@ async function sendWelcomeEmail({
     text,
   });
 }
+
+// ─── Healthcare Pros inquiry ─────────────────────────────────────────
+// Lightweight lead capture from the HIPAA page form. Sends a plain
+// notification to the providers inbox with the inquirer set as
+// replyTo — recipient can hit reply and start a thread directly.
+
+export interface ProviderInquiry {
+  email: string;
+  role: "Pharmacist" | "Physician" | "Nurse Practitioner" | "Other";
+  organization?: string;
+  notes?: string;
+}
+
+export async function notifyProviderInterest(
+  inq: ProviderInquiry
+): Promise<SubscribeResult> {
+  if (!isValidEmail(inq.email)) {
+    return {
+      ok: false,
+      message: "Please enter a valid email.",
+      code: "invalid_email",
+    };
+  }
+
+  const subject = `Healthcare Pros — early-access inquiry from a ${inq.role}`;
+  const lines = [
+    `Role: ${inq.role}`,
+    `Email: ${inq.email}`,
+    inq.organization ? `Organization: ${inq.organization}` : null,
+    "",
+    inq.notes ? "Notes from the requester:" : null,
+    inq.notes ?? null,
+    "",
+    "— Sent from /hipaa § PharmaGuide for Healthcare Pros",
+  ]
+    .filter((l): l is string => l !== null)
+    .join("\n");
+
+  try {
+    await resend.emails.send({
+      from: env.RESEND_FROM_EMAIL,
+      to: env.RESEND_PROVIDERS_NOTIFY_EMAIL,
+      replyTo: inq.email,
+      subject,
+      text: lines,
+    });
+
+    log.info("providers.inquiry_sent", {
+      email_hash: hashPii(inq.email),
+      role: inq.role,
+    });
+
+    return {
+      ok: true,
+      message:
+        "Thanks — we'll be in touch as the Healthcare Pros tier opens.",
+    };
+  } catch (err) {
+    log.error("providers.inquiry_failed", {
+      email_hash: hashPii(inq.email),
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return {
+      ok: false,
+      message: "Something went wrong. Try again in a moment?",
+      code: "resend_api_error",
+    };
+  }
+}

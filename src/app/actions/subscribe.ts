@@ -1,7 +1,12 @@
 "use server";
 
 import { headers } from "next/headers";
-import { subscribe, type SubscribeResult } from "@/lib/resend";
+import {
+  notifyProviderInterest,
+  subscribe,
+  type ProviderInquiry,
+  type SubscribeResult,
+} from "@/lib/resend";
 import { checkSubscribeRateLimit } from "@/lib/rate-limit";
 import { isValidEmail } from "@/lib/validation";
 import { log } from "@/lib/logger";
@@ -87,6 +92,48 @@ export async function joinBetaWaitlist(
   if (!rl.ok) return RATE_LIMIT_RESPONSE;
 
   return subscribe({ email: cleanEmail, list: "beta" });
+}
+
+/**
+ * Healthcare Pros inquiry from the /hipaa page form.
+ *
+ * Sends a structured notification to providers@pharmaguide.io. Same
+ * defense-in-depth as the subscribe actions: honeypot, format check,
+ * per-IP rate limit. We do NOT add the provider to any Audience —
+ * just notify the team so a human can start a thread.
+ */
+interface ProviderArgs {
+  email: string;
+  role: ProviderInquiry["role"];
+  organization?: string;
+  notes?: string;
+  /** Honeypot — must be empty. Filled = bot. */
+  company?: string;
+}
+
+export async function requestProvidersAccess(
+  args: ProviderArgs
+): Promise<SubscribeResult> {
+  if (args.company && args.company.length > 0) {
+    log.warn("subscribe.honeypot_triggered", { list: "providers" });
+    return SILENT_BOT_RESPONSE;
+  }
+
+  const cleanEmail = args.email.trim().toLowerCase();
+  if (!isValidEmail(cleanEmail)) {
+    return INVALID_EMAIL_RESPONSE;
+  }
+
+  const ip = await getClientIp();
+  const rl = await checkSubscribeRateLimit(ip);
+  if (!rl.ok) return RATE_LIMIT_RESPONSE;
+
+  return notifyProviderInterest({
+    email: cleanEmail,
+    role: args.role,
+    organization: args.organization?.trim() || undefined,
+    notes: args.notes?.trim() || undefined,
+  });
 }
 
 export async function subscribeToNewsletter(

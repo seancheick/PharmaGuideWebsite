@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
@@ -29,28 +30,31 @@ const FACTS = [
   { label: "Founder & CEO", value: "Sean Cheick Baradji" },
   { label: "Parent company", value: "B&Br Technology" },
   { label: "Catalog scale", value: "180,000+ products" },
-  { label: "Test coverage", value: "1,400+ tests passing" },
+  { label: "Clinical review", value: "Licensed PharmD + NP" },
   { label: "Launch", value: "Opening in waves through 2026" },
   { label: "Categories", value: "Health · Medical · Lifestyle" },
 ];
 
 const LEADERSHIP = [
   {
-    initials: "SB",
+    initials: "SC",
+    photo: "/team/sean-cheick.webp",
     name: "Sean Cheick Baradji",
     role: "Founder & CEO",
     bio: "Built PharmaGuide after watching family members navigate medication and supplement complexity without the tools to do it safely. Based in Boston.",
   },
   {
-    initials: "PL",
-    name: "Dr. Pham L., PharmD",
-    role: "Clinical Pharmacist",
+    initials: "LP",
+    photo: "/team/laurie-pham.webp",
+    name: "Laurie Pham, PharmD",
+    role: "Doctor of Pharmacy · Clinical Review",
     bio: "Leads clinical accuracy review across drug-supplement interactions, depletion mappings, and dose-summation reasoning. 15+ years pharmacovigilance.",
   },
   {
-    initials: "MD",
-    name: "Miriam D., NP",
-    role: "Nurse Practitioner",
+    initials: "MF",
+    photo: "/team/miriam-farez.webp",
+    name: "Miriam Farez, NP",
+    role: "Nurse Practitioner · Patient-Education Review",
     bio: "Patient-education review. Reads every interaction warning + post from a healthcare-provider angle: clarity, accessibility, action.",
   },
 ];
@@ -59,9 +63,9 @@ const BOILERPLATE = {
   oneLiner:
     "PharmaGuide is a clinician-reviewed supplement and medication safety platform with on-device interaction analysis, evidence-graded by clinicians.",
   paragraph:
-    "PharmaGuide is the supplement and medication co-pilot for people who want to understand what they actually take. The mobile apps (iOS + Android) read your full stack as a system — flagging interactions, medication-nutrient depletions, dose accumulation, FDA recalls, and ingredient quality across a 180,000-product on-device catalog. Every interaction is reviewed by a licensed clinical pharmacist before it ships. The architecture is privacy-first: your stack and conditions never leave your device. Founded 2025 in Boston by Sean Cheick Baradji. Opening in waves through 2026.",
+    "PharmaGuide is the supplement and medication co-pilot for people who want to understand what they actually take. The mobile apps (iOS + Android) read your full stack as a system — flagging interactions, medication-nutrient depletions, dose accumulation, FDA recalls, and ingredient quality across a 180,000+ product on-device catalog. Every interaction is reviewed by a licensed clinical pharmacist before it ships. The architecture is privacy-first: your stack and conditions never leave your device. Founded 2025 in Boston by Sean Cheick Baradji. Opening in waves through 2026.",
   longer:
-    "Most consumer health apps check one supplement at a time. PharmaGuide reads the full stack — multi-way interactions, dose accumulation across products, timing conflicts, and the depletion patterns of common prescriptions (statins → CoQ10, metformin → B12 + folate, PPIs → magnesium + B12). Live FDA recall monitoring surfaces alerts on the products you actually scanned. A 4-pillar PG Score evaluates ingredient quality, safety + purity, evidence + research, and brand trust — including the proprietary blends most apps can't decompose. The catalog covers 180,000+ products and is reviewed continuously by Dr. Pham L., PharmD (Clinical Pharmacist) and Miriam D., NP (Nurse Practitioner). All computation runs on-device with AES-256 encryption locally; no health data is uploaded to PharmaGuide servers. The architecture is HIPAA-aligned. Founded in 2025 by Sean Cheick Baradji and B&Br Technology, headquartered in Boston, MA. Mobile apps open in waves through 2026.",
+    "Most consumer health apps check one supplement at a time. PharmaGuide reads the full stack — multi-way interactions, dose accumulation across products, timing conflicts, and the depletion patterns of common prescriptions (statins → CoQ10, metformin → B12 + folate, PPIs → magnesium + B12). Live FDA recall monitoring surfaces alerts on the products you actually scanned. A 4-pillar PG Score evaluates ingredient quality, safety + purity, evidence + research, and brand trust — including the proprietary blends most apps can't decompose. The catalog covers 180,000+ products and is reviewed continuously by Laurie Pham, PharmD (Clinical Pharmacist) and Miriam Farez, NP (Nurse Practitioner). All computation runs on-device with AES-256 encryption locally; no health data is uploaded to PharmaGuide servers. The architecture is HIPAA-aligned. Founded in 2025 by Sean Cheick Baradji and B&Br Technology, headquartered in Boston, MA. Mobile apps open in waves through 2026.",
 };
 
 export function PressClient() {
@@ -269,12 +273,13 @@ export function PressClient() {
                 className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
               >
                 <div className="flex items-center gap-4">
-                  <span
-                    aria-hidden="true"
-                    className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-background"
-                  >
-                    <span className="font-serif text-h3 italic">{m.initials}</span>
-                  </span>
+                  <Image
+                    src={m.photo}
+                    alt={m.name}
+                    width={48}
+                    height={48}
+                    className="h-12 w-12 shrink-0 rounded-full object-cover ring-1 ring-border"
+                  />
                   <div className="min-w-0">
                     <p className="font-serif text-h3 italic leading-tight text-ink">
                       {m.name}

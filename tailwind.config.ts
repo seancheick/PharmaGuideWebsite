@@ -91,6 +91,11 @@ const config: Config = {
         // Micro
         "micro": ["var(--fs-micro)", { lineHeight: "var(--lh-normal)", letterSpacing: "var(--ls-wide)" }],
         "eyebrow": ["var(--fs-eyebrow)", { lineHeight: "var(--lh-normal)", letterSpacing: "var(--ls-eyebrow)", fontWeight: "var(--fw-medium)" }],
+        // Tinier scales (11px / 10px) — replace dozens of arbitrary
+        // text-[11px]/text-[10.5px]/text-[10px] literals with named
+        // tokens. tracking + medium weight baked in for caps usage.
+        "nano": ["var(--fs-nano)", { lineHeight: "var(--lh-normal)", letterSpacing: "var(--ls-eyebrow)", fontWeight: "var(--fw-medium)" }],
+        "overline": ["var(--fs-overline)", { lineHeight: "var(--lh-normal)", letterSpacing: "var(--ls-eyebrow)", fontWeight: "var(--fw-medium)" }],
       },
       spacing: {
         // Section padding tokens

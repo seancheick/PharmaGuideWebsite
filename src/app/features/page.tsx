@@ -20,7 +20,7 @@ import { site } from "@/lib/site";
 export const revalidate = 432000; // 5 days
 
 const description =
-  "Every PharmaGuide capability — medication depletion detection, full-stack interaction analysis, ingredient & quality transparency, personal fit, nutrient accumulation tracking, and live FDA recall monitoring. Built on a 180,000-product on-device catalog reviewed by clinicians.";
+  "Every PharmaGuide capability — medication depletion detection, full-stack interaction analysis, ingredient & quality transparency, personal fit, nutrient accumulation tracking, and live FDA recall monitoring. Built on a 180,000+ product on-device catalog reviewed by clinicians.";
 
 export const metadata: Metadata = {
   title: "Features",

@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
  * purely numerical. PharmaGuide does TWO reads on every product:
  *   1. Quality (numerical) — the product itself: evidence, purity, testing.
  *   2. Your Fit (qualitative) — how it lands for THIS person's stack:
- *      Excellent / Good / Limited / Concerning / Not recommended.
+ *      Excellent / Good / Limited / Needs review / Not recommended.
  *
  * The section teaches that duality in a single card with two stacked
  * sections. Animation choreography:
@@ -140,9 +140,12 @@ export function YourFit() {
               />
 
               <div className="relative rounded-2xl border border-severity-safe/15 bg-severity-safe/[0.03] p-6 shadow-lg sm:p-7">
-                {/* Tiny product label — gives context to what we're scoring */}
+                {/* Tiny product label — gives context to what we're scoring.
+                    Different product from the HowItWorks Step 3 mini-card
+                    (which now shows Vitamin D3 Quality only) so the two
+                    surfaces do different jobs rather than duplicating. */}
                 <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-subtle">
-                  Magnesium Glycinate · 200 mg
+                  Magnesium Glycinate · 400 mg
                 </p>
 
                 {/* QUALITY — top section */}

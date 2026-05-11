@@ -310,7 +310,7 @@ export function Footer() {
                 <time dateTime={lastReviewed} className="text-background/70">
                   {lastReviewed}
                 </time>{" "}
-                <span className="mx-1 text-white/15">·</span> by Dr. Pham L., PharmD
+                <span className="mx-1 text-white/15">·</span> by Laurie Pham, PharmD
               </p>
               <div className="flex items-center gap-4">
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/60">

@@ -130,7 +130,7 @@ export function Header() {
                 "md:inline-flex"
               )}
             >
-              Request Access
+              Join the beta
               <span aria-hidden="true" className="translate-y-[-0.5px]">→</span>
             </Link>
 
@@ -222,7 +222,7 @@ export function Header() {
                   onClick={() => setMenuOpen(false)}
                   className="inline-flex items-center gap-2 rounded-pill bg-accent px-6 py-3 text-body font-medium text-white shadow-sm"
                 >
-                  Request Access
+                  Join the beta
                   <span aria-hidden="true">→</span>
                 </Link>
               </motion.div>

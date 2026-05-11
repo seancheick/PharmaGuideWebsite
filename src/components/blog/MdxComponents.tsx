@@ -12,16 +12,22 @@ import { cn } from "@/lib/utils";
  *
  * Used by next-mdx-remote in BlogPostLayout.tsx.
  *
- * Typography rhythm: same italic-serif punchline pattern as the rest
- * of the site. h2 = italic-serif, h3 = ink medium, body in muted with
- * text-body and 1.7 leading for long-form readability.
+ * Typography rhythm rebuilt for proper hierarchy:
+ *   • h1 (MDX) — large italic-serif (display-md). Hits as a section start.
+ *   • h2 (MDX) — smaller italic-serif (display-sm). Subsection.
+ *   • h3 (MDX) — sans-serif medium (text-h3). Clean break from italic
+ *     cascade so the three levels read as three levels, not three
+ *     variants of the same thing.
+ *   • body — text-body-lg (18px) with [&_p+p]:mt-6 paragraph rhythm.
+ *     16px at 1.75 read thin on 65ch desktop widths; 18px earns the
+ *     premium-editorial weight the rest of the site sets up.
  */
 
 export const mdxComponents: MDXComponents = {
   // ─── Headings ──────────────────────────────────────────────────────
   h1: ({ children, ...props }) => (
     <h2
-      className="mt-12 text-balance font-serif text-display-md italic leading-tight text-ink first:mt-0"
+      className="mt-14 text-balance font-serif text-display-md italic leading-[1.08] text-ink first:mt-0"
       {...props}
     >
       {children}
@@ -29,7 +35,7 @@ export const mdxComponents: MDXComponents = {
   ),
   h2: ({ children, ...props }) => (
     <h2
-      className="mt-12 text-balance font-serif text-h1 italic leading-tight text-ink"
+      className="mt-12 text-balance font-serif text-display-sm italic leading-tight text-ink"
       {...props}
     >
       {children}
@@ -37,7 +43,7 @@ export const mdxComponents: MDXComponents = {
   ),
   h3: ({ children, ...props }) => (
     <h3
-      className="mt-10 text-balance text-h2 font-medium leading-snug tracking-[-0.012em] text-ink"
+      className="mt-10 text-balance text-h3 font-medium leading-snug tracking-[-0.012em] text-ink"
       {...props}
     >
       {children}
@@ -53,8 +59,14 @@ export const mdxComponents: MDXComponents = {
   ),
 
   // ─── Body text ─────────────────────────────────────────────────────
+  // 18px (text-body-lg) at 1.75 reads premium on long-form. The
+  // first paragraph after a heading uses mt-5; subsequent paragraphs
+  // open up to mt-6 via [&_p+p] for breathing room.
   p: ({ children, ...props }) => (
-    <p className="mt-5 text-body leading-[1.75] text-foreground/85" {...props}>
+    <p
+      className="mt-5 text-body-lg leading-[1.75] text-foreground/85 [&+p]:mt-6"
+      {...props}
+    >
       {children}
     </p>
   ),
@@ -140,7 +152,7 @@ export const mdxComponents: MDXComponents = {
 
   blockquote: ({ children, ...props }) => (
     <blockquote
-      className="my-8 border-l-2 border-accent/50 pl-5 font-serif text-h3 italic leading-snug text-ink [&>p]:mt-0"
+      className="my-8 border-l-2 border-accent/50 pl-5 font-serif text-h3 italic leading-snug text-ink [&>p]:mt-0 [&>p]:text-h3 [&>p]:italic"
       {...props}
     >
       {children}
@@ -200,6 +212,31 @@ export const mdxComponents: MDXComponents = {
       <span aria-hidden="true" className="block h-1 w-1 rounded-full bg-accent" />
       {level}
     </span>
+  ),
+
+  /**
+   * Source citation — small, structured chip for academic-style
+   * footnotes. Replaces the pattern of using a `> **Source:** [link]`
+   * blockquote (which compiles to an oversized italic-serif pull quote
+   * that overwhelms the citation tone).
+   *
+   * Usage in MDX:
+   *   <Source>
+   *     Folkers et al., PNAS 1990 — [pubmed.ncbi.nlm.nih.gov/2308954](https://pubmed.ncbi.nlm.nih.gov/2308954/)
+   *   </Source>
+   */
+  Source: ({ children }: { children: React.ReactNode }) => (
+    <aside className="my-6 flex items-start gap-3 rounded-xl border border-border bg-surface-subtle px-4 py-3">
+      <span
+        aria-hidden="true"
+        className="mt-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-accent"
+      >
+        Source
+      </span>
+      <span className="text-body-sm leading-relaxed text-muted [&_a]:text-accent [&_a]:underline [&_a]:decoration-accent/40 [&_a]:underline-offset-[3px]">
+        {children}
+      </span>
+    </aside>
   ),
 
   /**

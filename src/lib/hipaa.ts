@@ -98,7 +98,7 @@ That product **will** be designed for HIPAA-covered use. Specifically:
 - A comprehensive Security Rule audit before launch
 - Access control, audit logging, and breach response calibrated for PHI handling
 
-If you are a clinician interested in early access, write to [info@pharmaguide.io](mailto:info@pharmaguide.io) with subject line "Pro tier."`,
+Prefer email? Reach us at [providers@pharmaguide.io](mailto:providers@pharmaguide.io) — a human reads every message within 5 business days. The form below routes to the same inbox.`,
     },
     {
       id: "your-rights",

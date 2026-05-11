@@ -39,7 +39,7 @@ export async function GET() {
   lines.push(`# ${site.name}`);
   lines.push("");
   lines.push(
-    `> ${site.description} On-device interaction analysis, evidence-graded by clinicians, across a 180,000-product catalog.`
+    `> ${site.description} On-device interaction analysis, evidence-graded by clinicians, across a 180,000+ product catalog.`
   );
   lines.push("");
 
@@ -109,13 +109,13 @@ export async function GET() {
   lines.push("## Authority signals");
   lines.push("");
   lines.push(
-    "- Reviewed by licensed clinicians: Dr. Pham L., PharmD (Clinical Pharmacist) and Miriam D., NP (Nurse Practitioner)"
+    "- Reviewed by licensed clinicians: Laurie Pham, PharmD (Doctor of Pharmacy) and Miriam Farez, NP (Nurse Practitioner)"
   );
   lines.push(
     "- Sources: FDA, NIH Office of Dietary Supplements (ODS), Dietary Supplement Label Database (DSLD), DailyMed, PubMed, Cochrane Library, NCCIH"
   );
   lines.push(
-    "- 180,000+ product catalog with 1,400+ test cases passing on the underlying interaction engine"
+    "- 180,000+ product catalog reviewed by a licensed PharmD before each release"
   );
   lines.push(
     "- Privacy-first architecture: AES-256 on-device, HIPAA-aligned design, no health-data sale ever"

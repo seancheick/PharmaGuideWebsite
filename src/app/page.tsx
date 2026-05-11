@@ -16,7 +16,7 @@ import { FinalCTA } from "@/components/sections/FinalCTA";
  * TrustBlock ("How we think — Built to explain uncertainty…") was removed
  * because its content overlapped the Infrastructure Strip and the new
  * footer's trust-badges + disclaimer bars. The credentials line
- * (Cross-referenced with FDA · NIH · PubMed · DSLD + Dr. Pham L.) was
+ * (Cross-referenced with FDA · NIH · PubMed · DSLD + Laurie Pham, PharmD) was
  * folded into HowItWorks as a single statement line. The "we don't"
  * restraint promises live in the footer's trust-badges bar now.
  *

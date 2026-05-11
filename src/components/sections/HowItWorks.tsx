@@ -26,7 +26,7 @@ import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
  * (bg-surface-subtle) so it reads as a "screen inside the card."
  *
  * The credentials line at the bottom (FDA · NIH · PubMed · DSLD +
- * Dr. Pham L. + Catalog updated weekly) was folded in from the
+ * Laurie Pham, PharmD + Catalog updated weekly) was folded in from the
  * removed TrustBlock and ties off the trust angle.
  */
 
@@ -34,7 +34,7 @@ const STEPS = [
   {
     num: "01",
     title: "Scan or search.",
-    body: "180,000-product catalog, pre-loaded on your device. Works in pharmacies, on flights, or in the supplement aisle with one bar of signal. No cloud lookup required.",
+    body: "180,000+ product catalog, pre-loaded on your device. Works in pharmacies, on flights, or in the supplement aisle with one bar of signal. No cloud lookup required.",
     visual: "catalog" as const,
   },
   {
@@ -45,8 +45,8 @@ const STEPS = [
   },
   {
     num: "03",
-    title: "Quality score + your personal fit.",
-    body: "Two reads on every product — an objective quality score (0-100) AND a personalized fit assessment based on your stack, conditions, and goals. Tap any note to read the mechanism, evidence level, and clinical trial.",
+    title: "Quality score with reasoning.",
+    body: "Every product gets an objective Quality score (0-100) backed by ingredient form, third-party testing, evidence weight, and brand trust — the four pillars of the PG Score. The verdict isn't a black box; the reasoning shows up alongside it.",
     visual: "yourfit" as const,
   },
 ] as const;
@@ -167,7 +167,7 @@ export function HowItWorks() {
             </p>
             <p className="text-body-sm leading-relaxed text-muted">
               Reviewed by{" "}
-              <span className="text-ink">Dr. Pham L., PharmD</span>
+              <span className="text-ink">Laurie Pham, PharmD</span>
               <span className="mx-2 text-border-strong">·</span>
               Catalog updated weekly
             </p>
@@ -239,7 +239,7 @@ function CatalogVisual() {
 
       {/* Footer note — emphasizes scale */}
       <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
-        <span>180,000 products</span>
+        <span>180,000+ products</span>
         <span>on-device · no cloud</span>
       </div>
     </div>
@@ -322,28 +322,26 @@ function CrossRefVisual() {
   );
 }
 
-// ─── Step 3 — Quality score + Your Fit (DUAL output) ─────────────────
-// Compressed mirror of the YourFit section's full dual-assessment card.
-// Shows BOTH halves of what PharmaGuide produces for every product:
-//   1. Quality (objective, 0-100) — animated count-up + bar
-//   2. Your Fit (qualitative) — verdict pill in severity color
-//
-// The earlier version of this visual only showed the qualitative half,
-// which under-told the story. Real product output is the dual read,
-// so the homepage card teases the dual read.
+// ─── Step 3 — Quality score (single read) ────────────────────────────
+// Was the full dual-read (Quality + Your Fit) — duplicated the YourFit
+// section's exclusive punchline a few sections down. Trimmed to the
+// Quality half on a DIFFERENT product (Vitamin D3 5000 IU) so this card
+// teaches "a verdict exists with reasoning"; the YourFit section then
+// teaches "fit is different from quality" on Magnesium Glycinate
+// without repeating the same artifact. Two surfaces, two jobs.
 
 function YourFitVisual() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-15%" });
 
   return (
-    <div ref={ref} className="flex h-[280px] flex-col justify-center gap-3.5 p-5">
-      {/* Product label — sets the context for what's being scored */}
+    <div ref={ref} className="flex h-[280px] flex-col justify-center gap-5 p-5">
+      {/* Product label — different from the YourFit section's product */}
       <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.16em] text-subtle">
-        Magnesium glycinate · 200 mg
+        Vitamin D3 · 5,000 IU
       </p>
 
-      {/* QUALITY half — score + bar */}
+      {/* QUALITY — the only read this card shows */}
       <div>
         <div className="flex items-baseline justify-between gap-3">
           <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-subtle">
@@ -353,58 +351,43 @@ function YourFitVisual() {
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.32, 0.72, 0, 1] }}
-            className="font-serif text-h2 italic leading-none tabular-nums text-severity-safe"
+            className="font-serif text-display-sm italic leading-none tabular-nums text-severity-safe"
           >
-            89
+            87
           </motion.span>
         </div>
-        <div className="mt-2 h-[4px] overflow-hidden rounded-full bg-border">
+        <div className="mt-3 h-[5px] overflow-hidden rounded-full bg-border">
           <motion.div
             className="h-full rounded-full bg-severity-safe"
             initial={{ width: "0%" }}
-            animate={inView ? { width: "89%" } : {}}
+            animate={inView ? { width: "87%" } : {}}
             transition={{ duration: 1.1, delay: 0.3, ease: [0.32, 0.72, 0, 1] }}
           />
         </div>
-        <p className="mt-1.5 text-[11px] leading-snug text-muted">
-          <span className="font-medium text-ink">Excellent</span> · 3rd-party tested
+        <p className="mt-2.5 text-[11px] leading-snug text-muted">
+          <span className="font-medium text-ink">Strong</span> · USP-verified · cholecalciferol form
         </p>
       </div>
 
-      {/* Hairline divider — same rhythm as the YourFit homepage card */}
-      <motion.div
-        initial={{ scaleX: 0 }}
-        animate={inView ? { scaleX: 1 } : {}}
-        transition={{ duration: 0.5, delay: 0.9, ease: [0.32, 0.72, 0, 1] }}
-        style={{ transformOrigin: "left" }}
-        className="h-px bg-border"
-      />
-
-      {/* YOUR FIT half — pill + supporting note */}
-      <div>
-        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-subtle">
-          Your Fit
-        </span>
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 1.1, ease: [0.32, 0.72, 0, 1] }}
-          className="mt-1.5 inline-flex w-fit items-center gap-2 rounded-pill bg-severity-safe/12 px-3 py-1"
-        >
-          <span
-            aria-hidden="true"
-            className="block h-1.5 w-1.5 rounded-full bg-severity-safe"
-          />
-          <span className="font-serif text-[15px] italic leading-none text-severity-safe">
-            Good fit
-          </span>
-        </motion.div>
-        <p className="mt-2 text-[11px] leading-snug text-muted">
-          2 timing notes
-          <span className="mx-1 text-border-strong">·</span>
-          1 to review
-        </p>
-      </div>
+      {/* Reasoning chips — concrete proof beneath the score */}
+      <motion.ul
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ duration: 0.5, delay: 0.8, ease: [0.32, 0.72, 0, 1] }}
+        className="flex flex-wrap gap-1.5"
+      >
+        {["3rd-party tested", "No fillers flagged", "Evidence: established"].map(
+          (chip) => (
+            <li
+              key={chip}
+              className="inline-flex items-center gap-1.5 rounded-pill border border-severity-safe/30 bg-severity-safe/[0.06] px-2 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-severity-safe"
+            >
+              <span aria-hidden="true" className="block h-1 w-1 rounded-full bg-severity-safe" />
+              {chip}
+            </li>
+          )
+        )}
+      </motion.ul>
     </div>
   );
 }

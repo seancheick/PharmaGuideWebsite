@@ -34,7 +34,7 @@ const BETA_CAPABILITIES = [
   {
     num: "01",
     title: "Scan & search",
-    body: "180,000-product catalog, pre-loaded on your device. Sub-10ms lookup, even offline.",
+    body: "180,000+ product catalog, pre-loaded on your device. Sub-10ms lookup, even offline.",
   },
   {
     num: "02",
@@ -194,7 +194,7 @@ export function FinalCTA() {
                         : "hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow"
                     )}
                   >
-                    {submitting ? "Sending…" : "Request early access"}
+                    {submitting ? "Sending…" : "Join the beta"}
                     {!submitting && <span aria-hidden="true">→</span>}
                   </button>
                   {error && (

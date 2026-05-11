@@ -90,7 +90,7 @@ export function FeaturesClient() {
               variants={fadeUpItem}
               className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle"
             >
-              <span>180,000-product catalog</span>
+              <span>180,000+ product catalog</span>
               <span aria-hidden="true" className="text-border-strong">·</span>
               <span>Clinician-reviewed</span>
               <span aria-hidden="true" className="text-border-strong">·</span>
@@ -124,7 +124,7 @@ export function FeaturesClient() {
               <motion.li
                 key={p.id}
                 variants={fadeUpItem}
-                className="rounded-xl border border-border bg-surface px-5 py-4 transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
+                className="rounded-xl border border-border bg-surface px-5 py-5 transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
               >
                 <a href={`#${p.id}`} className="block">
                   <div className="flex items-baseline gap-2.5">
@@ -139,10 +139,49 @@ export function FeaturesClient() {
                     {p.titleLead}{" "}
                     <span className="text-accent">{p.titleEm}</span>
                   </p>
+                  {/* 12-15 word descriptor — gives information scent before
+                      the reader has to scroll into the pillar deep-dive. */}
+                  <p className="mt-2.5 text-body-sm leading-relaxed text-muted">
+                    {p.overview}
+                  </p>
                 </a>
               </motion.li>
             ))}
           </motion.ul>
+
+          {/* Two-scales explainer — a frequent point of confusion in the
+              beta. The interaction-tier scale (Contraindicated → Avoid →
+              Caution → Monitor → Informational) lives per-interaction and
+              uses severity colors + shapes. The Stack Health verdict
+              (Optimized → Solid → Decent → Needs review → Unsafe)
+              evaluates the whole stack and uses a neutral quality bar.
+              Same words ("safety") but different units of measurement;
+              spelling that out here prevents the comparison in the user's
+              head from going wrong by the time they reach Pillar 2. */}
+          <motion.aside
+            initial={{ opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={transitions.reveal}
+            className="mx-auto mt-10 max-w-3xl rounded-2xl border border-border bg-surface-raised/50 p-6 text-center md:mt-12 md:p-7"
+            aria-label="The two scales we use"
+          >
+            <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-accent">
+              Two scales, two questions
+            </p>
+            <p className="mt-3 font-serif text-h3 italic leading-snug text-ink">
+              Interaction tier asks{" "}
+              <span className="text-accent">&ldquo;is this combo risky?&rdquo;</span>
+              <br />
+              Stack Health asks{" "}
+              <span className="text-accent">&ldquo;how well does my stack work together?&rdquo;</span>
+            </p>
+            <p className="mx-auto mt-4 max-w-prose text-body-sm leading-relaxed text-muted">
+              You&apos;ll see both inside the app. They measure different
+              things on different units — we keep them visually separated so
+              they never blur into one number.
+            </p>
+          </motion.aside>
         </div>
       </section>
 

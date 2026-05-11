@@ -70,13 +70,13 @@ export default function AboutPage() {
       employee: [
         {
           "@type": "Person",
-          name: "Dr. Pham L., PharmD",
-          jobTitle: "Clinical Pharmacist",
+          name: "Laurie Pham, PharmD",
+          jobTitle: "Doctor of Pharmacy · Clinical Review",
         },
         {
           "@type": "Person",
-          name: "Miriam D., NP",
-          jobTitle: "Nurse Practitioner",
+          name: "Miriam Farez, NP",
+          jobTitle: "Nurse Practitioner · Patient-Education Review",
         },
       ],
     },

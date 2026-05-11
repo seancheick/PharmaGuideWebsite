@@ -1,6 +1,5 @@
 import {
   Body,
-  Column,
   Container,
   Head,
   Heading,
@@ -9,7 +8,6 @@ import {
   Img,
   Link,
   Preview,
-  Row,
   Section,
   Tailwind,
   Text,
@@ -59,38 +57,33 @@ export function BetaWelcomeEmail({ email }: BetaWelcomeEmailProps) {
               border: "1px solid #E5E2DB",
             }}
           >
-            {/* Brand mark — logo icon + wordmark.
-                Row/Column renders as a table for reliable horizontal
-                layout across Outlook, Gmail, and Apple Mail. The icon
-                column has a fixed width; the wordmark column flexes.
-                Image is served from the same domain as the website
-                (pharmaguide.io/brand/logo-icon.png) and gets cached
-                by Gmail's image proxy after first fetch. */}
-            <Section style={{ marginBottom: "32px" }}>
-              <Row>
-                <Column style={{ width: "42px", verticalAlign: "middle" }}>
-                  <Img
-                    src="https://www.pharmaguide.io/brand/logo-icon.png"
-                    alt=""
-                    width="32"
-                    height="29"
-                    style={{ display: "block", border: "none" }}
-                  />
-                </Column>
-                <Column style={{ verticalAlign: "middle", paddingLeft: "10px" }}>
-                  <Text
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      color: "#111314",
-                      letterSpacing: "-0.012em",
-                      margin: 0,
-                    }}
-                  >
-                    PharmaGuide
-                  </Text>
-                </Column>
-              </Row>
+            {/* Brand mark — centered animated pulse logo, no wordmark.
+                The From-name and subject line have already told the
+                recipient who this is; the logo just confirms it visually
+                while breathing on its own. The GIF (1.92s loop) renders
+                in Apple Mail / Gmail web + apps / Yahoo / Outlook.com.
+                Outlook desktop renders the first frame, which is the
+                settled brand mark — looks correct as a static stamp.
+                border-radius makes it a disc where the client honors
+                it; a clean square otherwise.
+
+                Cache-bust via ?v=2 only when redeploying a NEW pulse
+                asset (Gmail's image proxy caches aggressively). */}
+            <Section style={{ marginBottom: "32px", textAlign: "center" }}>
+              <Img
+                src="https://www.pharmaguide.io/brand/logo-pulse.gif"
+                alt="PharmaGuide"
+                width="72"
+                height="72"
+                style={{
+                  display: "block",
+                  margin: "0 auto",
+                  border: "none",
+                  borderRadius: "9999px",
+                  outline: "none",
+                  textDecoration: "none",
+                }}
+              />
             </Section>
 
             <Heading

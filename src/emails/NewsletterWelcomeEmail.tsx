@@ -1,6 +1,5 @@
 import {
   Body,
-  Column,
   Container,
   Head,
   Heading,
@@ -9,7 +8,6 @@ import {
   Img,
   Link,
   Preview,
-  Row,
   Section,
   Tailwind,
   Text,
@@ -59,32 +57,25 @@ export function NewsletterWelcomeEmail({ email }: NewsletterWelcomeEmailProps) {
               border: "1px solid #E5E2DB",
             }}
           >
-            {/* Brand mark — see BetaWelcomeEmail for layout rationale. */}
-            <Section style={{ marginBottom: "32px" }}>
-              <Row>
-                <Column style={{ width: "42px", verticalAlign: "middle" }}>
-                  <Img
-                    src="https://www.pharmaguide.io/brand/logo-icon.png"
-                    alt=""
-                    width="32"
-                    height="29"
-                    style={{ display: "block", border: "none" }}
-                  />
-                </Column>
-                <Column style={{ verticalAlign: "middle", paddingLeft: "10px" }}>
-                  <Text
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      color: "#111314",
-                      letterSpacing: "-0.012em",
-                      margin: 0,
-                    }}
-                  >
-                    PharmaGuide
-                  </Text>
-                </Column>
-              </Row>
+            {/* Brand mark — centered animated pulse logo. See
+                BetaWelcomeEmail for the full email-client compatibility
+                rationale. Outlook desktop shows the first frame, which
+                IS the settled brand stamp; everything else animates. */}
+            <Section style={{ marginBottom: "32px", textAlign: "center" }}>
+              <Img
+                src="https://www.pharmaguide.io/brand/logo-pulse.gif"
+                alt="PharmaGuide"
+                width="72"
+                height="72"
+                style={{
+                  display: "block",
+                  margin: "0 auto",
+                  border: "none",
+                  borderRadius: "9999px",
+                  outline: "none",
+                  textDecoration: "none",
+                }}
+              />
             </Section>
 
             <Heading

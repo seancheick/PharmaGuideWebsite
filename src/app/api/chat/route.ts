@@ -135,6 +135,14 @@ export async function POST(req: Request) {
     }
 
     const data = (await upstream.json()) as Record<string, unknown>;
+
+    // Strip implementation-detail fields before returning to the
+    // browser. Keeps the "PharmaGuide AI" brand opaque about which
+    // model is under the hood and avoids leaking internal state
+    // (used for analytics on the upstream side, not for the client).
+    delete data.model;
+    delete data._state;
+
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
     clearTimeout(timeout);

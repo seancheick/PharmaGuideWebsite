@@ -275,7 +275,7 @@ function SuccessState() {
       animate={{ opacity: 1, y: 0 }}
       transition={transitions.reveal}
       className={cn(
-        "flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface px-6 py-7 text-center shadow-sm md:items-start md:text-left"
+        "flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface px-6 py-7 text-center shadow-sm"
       )}
       role="status"
       aria-live="polite"

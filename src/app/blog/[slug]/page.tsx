@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NewsletterCTA } from "@/components/faq/NewsletterCTA";
 import { BlogCard } from "@/components/blog/BlogCard";
+import { BlogShare } from "@/components/blog/BlogShare";
 import { mdxComponents } from "@/components/blog/MdxComponents";
 import {
   formatBlogDate,
@@ -236,6 +237,15 @@ export default async function BlogPostPage({
                 }}
               />
             </article>
+
+            {/* Share rail — sits at end of article, before Related and
+                Newsletter CTA. Client island (clipboard API needs JS);
+                everything else above is server-rendered. */}
+            <BlogShare
+              url={`${site.url}/blog/${post.slug}`}
+              title={post.title}
+              description={post.description}
+            />
           </div>
         </section>
 

@@ -53,6 +53,12 @@ const config: Config = {
           soft: "rgb(var(--color-accent-soft) / <alpha-value>)",
           strong: "rgb(var(--color-accent-strong) / <alpha-value>)",
         },
+        // Link — brighter teal for inline text links so they don't
+        // read as near-black body text. CTA buttons keep `bg-accent`.
+        link: {
+          DEFAULT: "rgb(var(--color-link) / <alpha-value>)",
+          strong: "rgb(var(--color-link-strong) / <alpha-value>)",
+        },
         // Border
         border: {
           DEFAULT: "rgb(var(--color-border) / <alpha-value>)",

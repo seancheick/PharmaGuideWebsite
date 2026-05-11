@@ -35,20 +35,25 @@ export function BlogFeaturedCard({ post }: { post: BlogPost }) {
           post={post}
           sizes="(max-width: 768px) 100vw, 60vw"
         />
-        {/* Category badge over image */}
-        {cat && (
-          <span className="absolute left-5 top-5 inline-flex items-center gap-1.5 rounded-pill bg-surface/95 px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-ink shadow-xs backdrop-blur-sm sm:left-6 sm:top-6">
-            {cat.shortLabel}
+        {/* Pill row: SPOTLIGHT (featured flag) + category. Two pills
+            side-by-side on the image, top-left. The featured pill is
+            accent-teal-on-white (the loudest visual on the card); the
+            category pill is ink-on-white (informational). */}
+        <div className="absolute left-5 top-5 flex flex-wrap items-center gap-2 sm:left-6 sm:top-6">
+          <span className="inline-flex items-center gap-1.5 rounded-pill bg-accent px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-white shadow-xs">
+            <span aria-hidden="true" className="block h-1 w-1 rounded-full bg-white/90" />
+            Spotlight
           </span>
-        )}
+          {cat && (
+            <span className="inline-flex items-center gap-1.5 rounded-pill bg-surface/95 px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-ink shadow-xs backdrop-blur-sm">
+              {cat.shortLabel}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Content — 40% on desktop */}
       <div className="flex flex-col justify-center gap-5 p-7 md:p-9 lg:p-10">
-        <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-accent">
-          Editor&apos;s pick
-        </p>
-
         <h3 className="text-balance font-serif text-display-sm italic leading-tight text-ink md:text-display-md">
           {post.title}
         </h3>
@@ -60,8 +65,6 @@ export function BlogFeaturedCard({ post }: { post: BlogPost }) {
         {/* Meta strip + read CTA */}
         <div className="mt-2 flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3 text-body-sm text-muted">
-            <span className="text-foreground/85">{post.author}</span>
-            <span aria-hidden="true" className="text-border-strong">·</span>
             <span className="font-mono text-[10.5px] uppercase tracking-[0.12em]">
               {formatBlogDate(post.date)}
             </span>

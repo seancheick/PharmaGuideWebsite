@@ -74,7 +74,7 @@ export function PressClient() {
       {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="press-hero-heading"
-        className="relative section-y-sm overflow-hidden"
+        className="relative pt-24 pb-section-y-sm overflow-hidden sm:pt-28 md:pt-32"
       >
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div
@@ -125,7 +125,7 @@ export function PressClient() {
               Press contact ·{" "}
               <a
                 href="mailto:press@pharmaguide.io"
-                className="text-accent underline decoration-accent/40 underline-offset-[3px] hover:decoration-accent"
+                className="text-link underline decoration-link/60 underline-offset-[3px] hover:text-link-strong hover:decoration-link"
               >
                 press@pharmaguide.io
               </a>
@@ -485,7 +485,7 @@ export function PressClient() {
               Email{" "}
               <a
                 href="mailto:press@pharmaguide.io"
-                className="text-accent underline decoration-accent/40 underline-offset-[3px] hover:decoration-accent"
+                className="text-link underline decoration-link/60 underline-offset-[3px] hover:text-link-strong hover:decoration-link"
               >
                 press@pharmaguide.io
               </a>{" "}

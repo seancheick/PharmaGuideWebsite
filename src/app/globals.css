@@ -36,6 +36,10 @@
     --color-accent: 24 59 63;               /* primary CTA     #183B3F */
     --color-accent-strong: 16 42 45;        /* hover/active    #102A2D */
     --color-accent-soft: 230 236 236;       /* tinted bg       #E6ECEC */
+    /* Link — same hue as accent, lighter so inline links read as
+       clearly teal (not near-black). Contrast on bg ~6.5:1, AAA. */
+    --color-link: 36 96 102;                /* inline links    #246066 */
+    --color-link-strong: 24 79 84;          /* hover/active    #184F54 */
 
     /* Severity (5-tier verdict system)
        Polished, restrained values. Easily replaced when matching Flutter app.

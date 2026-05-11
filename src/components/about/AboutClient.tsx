@@ -156,7 +156,7 @@ export function AboutClient() {
       {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="about-hero-heading"
-        className="relative section-y-sm overflow-hidden"
+        className="relative pt-24 pb-section-y-sm overflow-hidden sm:pt-28 md:pt-32"
       >
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div
@@ -374,7 +374,7 @@ export function AboutClient() {
                   href={item.source.href}
                   target={item.source.href.startsWith("/") ? undefined : "_blank"}
                   rel={item.source.href.startsWith("/") ? undefined : "noopener noreferrer"}
-                  className="mt-auto inline-flex items-center gap-1.5 font-mono text-eyebrow uppercase text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
+                  className="mt-auto inline-flex items-center gap-1.5 font-mono text-eyebrow uppercase text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
                 >
                   Source · {item.source.label}{" "}
                   <span aria-hidden="true">→</span>

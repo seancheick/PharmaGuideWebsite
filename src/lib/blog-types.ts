@@ -28,9 +28,13 @@ export const CATEGORIES: readonly BlogCategory[] = [
       "Research-backed guides on safe supplementation — interactions, depletions, quality, and how to build a smarter regimen.",
   },
   {
+    // id stays "ingredient-spotlights" for URL stability — renaming the
+    // visible labels only. Old label "Ingredient Spotlights" overlapped
+    // with the "Spotlight" featured-pill on the blog hub and read as
+    // a feature flag rather than a category. "Deep Dives" is clearer.
     id: "ingredient-spotlights",
-    label: "Ingredient Spotlights",
-    shortLabel: "Spotlights",
+    label: "Ingredient Deep Dives",
+    shortLabel: "Deep Dive",
     description:
       "Deep dives into specific ingredients — what the evidence actually says, dosing, risks, and what to look for on a label.",
   },

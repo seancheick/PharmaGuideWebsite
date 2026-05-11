@@ -37,7 +37,7 @@ export function MethodologyClient() {
       {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="meth-hero-heading"
-        className="relative section-y-sm overflow-hidden"
+        className="relative pt-24 pb-section-y-sm overflow-hidden sm:pt-28 md:pt-32"
       >
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div
@@ -400,7 +400,7 @@ export function MethodologyClient() {
             Want the deeper read?{" "}
             <a
               href="/blog/statins-and-coq10"
-              className="text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
+              className="text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
             >
               Read the statins + CoQ10 deep dive →
             </a>

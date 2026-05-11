@@ -107,7 +107,7 @@ export const mdxComponents: MDXComponents = {
     const isExternal = typeof href === "string" && /^https?:\/\//.test(href);
     const isInternal = typeof href === "string" && href.startsWith("/");
     const className =
-      "text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent";
+      "text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link";
 
     if (isInternal) {
       return (
@@ -233,7 +233,7 @@ export const mdxComponents: MDXComponents = {
       >
         Source
       </span>
-      <span className="text-body-sm leading-relaxed text-muted [&_a]:text-accent [&_a]:underline [&_a]:decoration-accent/40 [&_a]:underline-offset-[3px]">
+      <span className="text-body-sm leading-relaxed text-muted [&_a]:text-link [&_a]:underline [&_a]:decoration-link/60 [&_a]:underline-offset-[3px] [&_a:hover]:text-link-strong [&_a:hover]:decoration-link">
         {children}
       </span>
     </aside>

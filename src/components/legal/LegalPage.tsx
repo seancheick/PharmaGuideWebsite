@@ -85,7 +85,7 @@ export function LegalPage({
       {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="legal-hero-heading"
-        className="relative section-y-sm overflow-hidden"
+        className="relative pt-24 pb-section-y-sm overflow-hidden sm:pt-28 md:pt-32"
       >
         {/* Subtle ambient halo — same pattern as /faq for continuity */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
@@ -270,7 +270,7 @@ export function LegalPage({
               Reach us at{" "}
               <a
                 href={`mailto:${site.email}`}
-                className="text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
+                className="text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
               >
                 {site.email}
               </a>{" "}
@@ -379,7 +379,7 @@ function renderInline(text: string): React.ReactNode {
           {...(isExternal
             ? { target: "_blank", rel: "noopener noreferrer" }
             : {})}
-          className="text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
+          className="text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
         >
           {tok.value}
         </a>

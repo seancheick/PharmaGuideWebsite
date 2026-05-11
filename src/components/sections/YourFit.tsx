@@ -112,7 +112,7 @@ export function YourFit() {
             <motion.div variants={fadeUpItem}>
               <Link
                 href="/features#ingredient-transparency"
-                className="group inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
+                className="group inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
               >
                 How we score products
                 <span

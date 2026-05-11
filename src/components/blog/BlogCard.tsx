@@ -54,9 +54,10 @@ export function BlogCard({ post }: { post: BlogPost }) {
           {post.description}
         </p>
 
+        {/* Meta strip — date appears above title; this row carries the
+            read-time only (author belongs on the post page byline, not
+            on the listing card where it adds noise without value). */}
         <div className="mt-auto flex items-center gap-3 border-t border-border pt-4 text-body-sm text-muted">
-          <span className="text-foreground/85">{post.author}</span>
-          <span aria-hidden="true" className="text-border-strong">·</span>
           <span className="font-mono text-[10.5px] uppercase tracking-[0.12em]">
             {post.readTime}
           </span>

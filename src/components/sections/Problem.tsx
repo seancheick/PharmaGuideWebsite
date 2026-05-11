@@ -199,7 +199,7 @@ export function Problem() {
               href="https://www.cdc.gov/medication-safety/data-research/facts-stats/index.html"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="font-medium text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
             >
               Source: CDC ↗
             </a>

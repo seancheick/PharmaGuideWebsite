@@ -120,7 +120,7 @@ export default function FAQPage() {
         {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
         <section
           aria-labelledby="faq-hero-heading"
-          className="relative section-y-sm overflow-hidden"
+          className="relative pt-24 pb-section-y-sm overflow-hidden sm:pt-28 md:pt-32"
         >
           {/* Same warm halo + capsule ambience as the homepage Problem
               section, dialed down — keeps the page feeling like the

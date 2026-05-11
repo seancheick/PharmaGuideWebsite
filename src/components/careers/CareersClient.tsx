@@ -72,7 +72,7 @@ export function CareersClient() {
       {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="careers-hero-heading"
-        className="relative section-y-sm overflow-hidden"
+        className="relative pt-24 pb-section-y-sm overflow-hidden sm:pt-28 md:pt-32"
       >
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div
@@ -311,7 +311,7 @@ export function CareersClient() {
               Send a short note to{" "}
               <a
                 href={`mailto:careers@pharmaguide.io?subject=PharmaGuide%20—%20Inbound`}
-                className="text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
+                className="text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
               >
                 careers@pharmaguide.io
               </a>{" "}

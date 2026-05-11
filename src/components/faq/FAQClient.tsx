@@ -294,7 +294,7 @@ function renderInline(text: string): React.ReactNode {
         <a
           key={i}
           href={tok.href}
-          className="text-accent underline decoration-accent/40 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:decoration-accent"
+          className="text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
         >
           {tok.value}
         </a>

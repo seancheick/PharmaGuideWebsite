@@ -113,7 +113,7 @@ export default function BlogHubPage() {
         {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
         <section
           aria-labelledby="blog-hero-heading"
-          className="relative section-y-sm overflow-hidden"
+          className="relative pt-24 pb-section-y-sm overflow-hidden sm:pt-28 md:pt-32"
         >
           <div aria-hidden="true" className="pointer-events-none absolute inset-0">
             <div

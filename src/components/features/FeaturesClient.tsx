@@ -497,18 +497,23 @@ export function FeaturesClient() {
               {BOUNDARIES.items.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-2.5 rounded-xl border border-border/70 bg-surface/50 px-4 py-3.5 text-left backdrop-blur-sm"
+                  className="flex items-start gap-3 rounded-xl border border-border/40 px-4 py-3.5 text-left"
                 >
+                  {/* Boundary marker — horizontal line, not an X.
+                      X + chip-style card was reading as a dismissible
+                      pill ("click to close"). A short minus line reads
+                      cleanly as "negation / boundary statement" without
+                      suggesting interactivity. */}
                   <svg
-                    width="14"
+                    width="12"
                     height="14"
-                    viewBox="0 0 14 14"
+                    viewBox="0 0 12 14"
                     fill="none"
                     aria-hidden="true"
-                    className="mt-[3px] shrink-0 text-muted"
+                    className="mt-[9px] shrink-0 text-muted"
                   >
                     <path
-                      d="M3 3l8 8M11 3l-8 8"
+                      d="M1 7h10"
                       stroke="currentColor"
                       strokeWidth="1.4"
                       strokeLinecap="round"

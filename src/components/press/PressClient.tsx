@@ -334,10 +334,13 @@ export function PressClient() {
                 label="Primary logo · 512px"
                 href={`${site.url}/icon2.png`}
                 preview={
-                  <div className="flex h-32 items-center justify-center rounded-xl bg-accent">
-                    <span
-                      aria-hidden="true"
-                      className="block h-3 w-3 rounded-full bg-background"
+                  <div className="flex h-32 items-center justify-center rounded-xl bg-surface-subtle">
+                    <Image
+                      src="/icon2.png"
+                      alt=""
+                      width={88}
+                      height={79}
+                      className="h-20 w-auto"
                     />
                   </div>
                 }
@@ -347,12 +350,13 @@ export function PressClient() {
                 href={`${site.url}/icon.png`}
                 preview={
                   <div className="flex h-32 items-center justify-center rounded-xl bg-surface-subtle">
-                    <div className="rounded-lg bg-accent px-3 py-2">
-                      <span
-                        aria-hidden="true"
-                        className="block h-1 w-1 rounded-full bg-background"
-                      />
-                    </div>
+                    <Image
+                      src="/icon.png"
+                      alt=""
+                      width={40}
+                      height={36}
+                      className="h-10 w-auto"
+                    />
                   </div>
                 }
               />

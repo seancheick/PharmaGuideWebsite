@@ -87,15 +87,15 @@ export const PILLARS: readonly FeaturePillar[] = [
     titleLead: "Your medication may be depleting nutrients.",
     titleEm: "We catch it.",
     overview:
-      "Maps every prescription to the vitamins and minerals it quietly draws down.",
+      "Maps supported prescriptions to the vitamins and minerals they may draw down over time.",
     intro:
-      "Many common prescriptions quietly draw down specific vitamins and minerals over months and years. Statins lower CoQ10. Metformin depletes B12 and folate. PPIs reduce magnesium and B12 absorption. We map every medication you add to the nutrients it's known to deplete — and surface what to consider replenishing.",
+      "Some common prescriptions are associated with lower levels of specific vitamins and minerals over months and years — for example, metformin and B12, or PPIs and magnesium absorption. We map supported medications to the nutrients they may deplete, and surface what to consider discussing with your clinician.",
     illustration: "depletion",
     capabilities: [
-      "Add a medication → instantly see which nutrients are at risk",
-      "Evidence-graded depletion mappings, never speculative",
+      "Add a medication → see which nutrients may be affected",
+      "Evidence-graded depletion mappings from published research",
       "Replenishment suggestions you can discuss with your clinician",
-      "Updates as new pharmacology research is published",
+      "Updated as new pharmacology research is published",
     ],
     examples: [
       {
@@ -141,12 +141,12 @@ export const PILLARS: readonly FeaturePillar[] = [
     num: "02",
     id: "stack-intelligence",
     eyebrow: "Stack Intelligence",
-    titleLead: "Every product. Every interaction.",
-    titleEm: "All at once.",
+    titleLead: "Your full stack.",
+    titleEm: "Checked as a system.",
     overview:
-      "Multi-way interactions, cross-product dose summation, timing conflicts — your full stack as a system.",
+      "Multi-way interactions, cross-product dose summation, timing conflicts — your stack analyzed together.",
     intro:
-      "Most apps check one bottle at a time. PharmaGuide reads your full stack as a system — multi-way interactions, dose accumulation across products, and the timing conflicts that don't show up in any single label. The result is a single Stack Health verdict you can act on.",
+      "Most apps check one bottle at a time. PharmaGuide reads your stack as a system — multi-way interactions, dose overlap across products, and the timing conflicts that don't show up in any single label. The result is a Stack Health verdict you can act on.",
     illustration: "stack",
     capabilities: [
       "Multi-way analysis — interactions between any pair AND beyond",
@@ -179,8 +179,8 @@ export const PILLARS: readonly FeaturePillar[] = [
     num: "03",
     id: "ingredient-transparency",
     eyebrow: "Ingredient & Quality",
-    titleLead: "Every ingredient.",
-    titleEm: "Including the fillers nobody else parses.",
+    titleLead: "Active and inactive ingredients.",
+    titleEm: "Including the ones most apps skip.",
     overview:
       "Active and inactive ingredients parsed, proprietary blends decomposed, 4-pillar PG Score per product.",
     intro:
@@ -235,11 +235,11 @@ export const PILLARS: readonly FeaturePillar[] = [
     examples: [
       {
         trigger: "St. John's Wort + sertraline + 'mood support' goal",
-        result: "**Contraindicated** — serotonin syndrome risk, full stop",
+        result: "**Avoid** — serotonin syndrome risk; review with a clinician",
       },
       {
         trigger: "High-dose vitamin A + 'pregnancy' profile flag",
-        result: "**Caution** — teratogenic risk above 10,000 IU daily",
+        result: "**Caution** — high-dose preformed vitamin A may not be appropriate; review before use",
       },
       {
         trigger: "Niacin + active statin therapy",
@@ -262,7 +262,7 @@ export const PILLARS: readonly FeaturePillar[] = [
     overview:
       "Tracks every nutrient across your full stack against RDA and Tolerable Upper Intake Level.",
     intro:
-      "Fat-soluble vitamins accumulate. Mineral overdoses are real. We track every nutrient across your full stack against the **Recommended Daily Allowance (RDA)** and the **Tolerable Upper Intake Level (UL)** — and flag the moment your intake crosses into the zone where supplementation harms more than it helps.",
+      "Fat-soluble vitamins accumulate. Mineral overdoses are real. We track nutrients across your stack against the **Recommended Daily Allowance (RDA)** and the **Tolerable Upper Intake Level (UL)** — and flag when your intake crosses into the zone where supplementation may do more harm than good.",
     illustration: "accumulation",
     capabilities: [
       "RDA + UL tracking per nutrient across the entire stack",
@@ -296,17 +296,17 @@ export const PILLARS: readonly FeaturePillar[] = [
     id: "recall-safety",
     eyebrow: "Recall & Safety",
     titleLead: "When the FDA pulls something,",
-    titleEm: "you find out fast.",
+    titleEm: "you find out.",
     overview:
-      "Live FDA recall and FAERS adverse-event monitoring on the products you actually scanned.",
+      "FDA recall monitoring and adverse-event signal awareness on the products you actually scanned.",
     intro:
-      "The FDA recalls dietary supplements regularly — adulterated formulations, undeclared pharmaceuticals, contamination, mislabeling. Most users never hear about it. PharmaGuide pulls active recalls and the FDA Adverse Event Reporting System (FAERS) so a product in your stack can't quietly become unsafe without you noticing.",
+      "The FDA recalls dietary supplements regularly — adulterated formulations, undeclared pharmaceuticals, contamination, mislabeling. Most users never hear about it. PharmaGuide monitors active recalls and FDA Adverse Event Reporting System (FAERS) signals so a product in your stack doesn't quietly become unsafe without you noticing.",
     illustration: "recalls",
     capabilities: [
-      "Live FDA recall monitoring across dietary supplements + medications",
-      "FAERS-linked safety signals — adverse event reports surface in-app",
+      "FDA recall monitoring across dietary supplements and medications",
+      "FAERS-linked safety signals — adverse event reports surfaced in-app",
       "Lot-level recall checking when manufacturers publish lot data",
-      "FDA warning letter awareness for repeat-offender brands",
+      "FDA warning letter awareness for flagged brands",
     ],
     examples: [
       {
@@ -319,7 +319,7 @@ export const PILLARS: readonly FeaturePillar[] = [
       },
       {
         trigger: "FAERS adverse event cluster on a kratom product",
-        result: "**Safety signal** — surfaced before the FDA formally pulls the product",
+        result: "**Potential safety signal** — surfaced for review with appropriate context",
       },
     ],
     sources: [
@@ -352,12 +352,12 @@ export const BUILT_ON = [
     detail: "Scan and analyze with one bar of signal — pharmacy, flight, supplement aisle.",
   },
   {
-    label: "Privacy by architecture",
-    detail: "Your stack and conditions never leave your device. AES-256 locally. HIPAA-aligned.",
+    label: "Private by design",
+    detail: "Core stack checks run on-device with privacy-first storage and safeguards.",
   },
   {
     label: "Clinician-reviewed",
-    detail: "Every interaction passes through a licensed pharmacist before it ships.",
+    detail: "Interaction guidance reviewed by licensed pharmacists.",
   },
 ];
 

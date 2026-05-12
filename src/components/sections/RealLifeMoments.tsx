@@ -144,7 +144,8 @@ export function RealLifeMoments() {
             variants={fadeUpItem}
             className="mt-6 max-w-prose text-body-lg leading-relaxed text-muted"
           >
-            Most people never check the combination.
+            From morning prescriptions to trending supplements, PharmaGuide
+            catches the combinations people usually miss.
           </motion.p>
         </motion.div>
       </div>
@@ -416,16 +417,31 @@ const MomentCard = ({
             extra room lets the title widen to 18ch instead of 15ch.
             On sm+ open, widens further to 20ch as before. Font size
             stays the same so layout doesn't jiggle mid-animation.   */}
-        <h3
-          className={cn(
-            "font-serif font-normal leading-[1.12] tracking-[-0.014em] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]",
-            "text-[clamp(1.5rem,2.2vw,2rem)]",
-            isOpen ? "max-w-[18ch] sm:max-w-[20ch]" : "max-w-[15ch]"
+        <div className="flex flex-col gap-3">
+          <h3
+            className={cn(
+              "font-serif font-normal leading-[1.12] tracking-[-0.014em] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]",
+              "text-[clamp(1.5rem,2.2vw,2rem)]",
+              isOpen ? "max-w-[18ch] sm:max-w-[20ch]" : "max-w-[15ch]"
+            )}
+          >
+            {moment.title.lead}{" "}
+            <span className="italic">{moment.title.em}</span>
+          </h3>
+
+          {/* Preview chip — visible only on closed card */}
+          {!isOpen && (
+            <span className="inline-flex w-fit items-center gap-2 rounded-pill border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur-sm">
+              <span
+                aria-hidden="true"
+                className={cn("block h-1.5 w-1.5 rounded-full", sev.dot)}
+              />
+              <span className="font-mono text-[10px] font-medium tracking-[0.08em] text-white/90">
+                {moment.preview}
+              </span>
+            </span>
           )}
-        >
-          {moment.title.lead}{" "}
-          <span className="italic">{moment.title.em}</span>
-        </h3>
+        </div>
       </div>
 
       {/* Insights aside — slides in from right when open. md+ only.

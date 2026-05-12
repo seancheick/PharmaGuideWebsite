@@ -36,6 +36,10 @@ export interface Moment {
   description: string;
   learnMore: string;
 
+  // Short preview shown on the CLOSED card so users get value without opening.
+  // Format: "Severity · Ingredient A + Ingredient B"
+  preview: string;
+
   // Hero image (full-bleed background of compact card)
   image: string;
   imageAlt: string;
@@ -69,6 +73,7 @@ export const MOMENTS: readonly Moment[] = [
     description:
       "Sometimes the problem isn't what you take. It's what you started taking later.",
     learnMore: "Learn about long-term stacks",
+    preview: "Caution · Calcium + Levothyroxine",
     image:
       "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1400&q=80&auto=format&fit=crop",
     imageAlt:
@@ -100,8 +105,8 @@ export const MOMENTS: readonly Moment[] = [
     description:
       "Some ingredients become more important. Others suddenly matter a lot more.",
     learnMore: "Learn about pregnancy safety",
-    image:
-      "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=1400&q=80&auto=format&fit=crop",
+    preview: "Caution · High-dose Vitamin A",
+    image: "/images/moments/pregnancy.jpg",
     imageAlt:
       "Soft natural-light photograph of a pregnant person at a kitchen table, hand resting near the bump.",
     member: {
@@ -131,6 +136,7 @@ export const MOMENTS: readonly Moment[] = [
     description:
       "Most interaction problems don't start with a supplement. They start when something new enters the stack.",
     learnMore: "Learn about prescription transitions",
+    preview: "Avoid · St. John's Wort + Sertraline",
     image:
       "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=1400&q=80&auto=format&fit=crop",
     imageAlt:
@@ -162,8 +168,8 @@ export const MOMENTS: readonly Moment[] = [
     description:
       "Pre-workout. Hydration. Recovery. Sleep. Individually they looked fine.",
     learnMore: "Learn about stimulant stacking",
-    image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1400&q=80&auto=format&fit=crop",
+    preview: "Caution · Combined caffeine load",
+    image: "/images/moments/performance.jpg",
     imageAlt:
       "Athletic person at a home gym counter with a row of supplement tubs and a shaker bottle, soft daylight.",
     member: {
@@ -193,6 +199,7 @@ export const MOMENTS: readonly Moment[] = [
     description:
       "As prescriptions increase, so does the chance something starts overlapping.",
     learnMore: "Learn about polypharmacy",
+    preview: "Caution · Ginkgo + Aspirin",
     image:
       "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1400&q=80&auto=format&fit=crop",
     imageAlt:
@@ -224,6 +231,7 @@ export const MOMENTS: readonly Moment[] = [
     description:
       "More supplements doesn't always mean more benefit. Sometimes it just means more interaction risk.",
     learnMore: "Learn about ingredient overlap",
+    preview: "Monitor · Multiple magnesium sources",
     image:
       "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=1400&q=80&auto=format&fit=crop",
     imageAlt:

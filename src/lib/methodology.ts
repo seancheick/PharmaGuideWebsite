@@ -49,7 +49,7 @@ export interface AdvisoryMember {
 export const TRUST_PILLARS: readonly TrustPillar[] = [
   {
     title: "Traceability",
-    body: "Every interaction warning is traceable to a regulatory source, peer-reviewed publication, or professional reference. No anonymous claims.",
+    body: "Interaction guidance is traceable to regulatory sources, peer-reviewed publications, or professional references. No anonymous claims.",
   },
   {
     title: "Accuracy",
@@ -123,7 +123,7 @@ export const PROCESS_STEPS: readonly ProcessStep[] = [
   {
     num: "03",
     title: "Pharmacist verification",
-    body: "A licensed clinical pharmacist reviews every interaction before it ships — checking the science, the framing, and the recommendation against current practice standards.",
+    body: "A licensed clinical pharmacist reviews interaction guidance before it ships — checking the science, the framing, and the recommendation against current practice standards.",
     reviewer: "Laurie Pham, PharmD",
   },
   {

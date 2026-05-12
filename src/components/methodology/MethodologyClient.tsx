@@ -71,7 +71,7 @@ export function MethodologyClient() {
             >
               The science behind{" "}
               <span className="font-serif italic text-accent">
-                every verdict.
+                the guidance.
               </span>
             </motion.h1>
 
@@ -284,9 +284,9 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              The card below is pulled from the production interaction-rules
-              pipeline — not a mock. Same structure ships inside the app,
-              same sources, same reviewer signature.
+              The card below follows the same structure used by our
+              interaction-rules pipeline — same sources, same evidence
+              levels, same reviewer signature.
             </motion.p>
           </motion.div>
 
@@ -336,10 +336,9 @@ export function MethodologyClient() {
                   Recommended action
                 </p>
                 <p className="text-body leading-relaxed text-foreground/85">
-                  CoQ10 supplementation (100–300 mg/day) is commonly used to
-                  address statin-induced muscle symptoms and is considered
-                  safe to combine. Discuss with prescriber whether
-                  supplementation is warranted based on symptoms.
+                  CoQ10 is commonly discussed for statin-associated muscle
+                  symptoms. Ask your prescriber whether supplementation
+                  fits your situation.
                 </p>
               </section>
 
@@ -537,8 +536,8 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              The clinicians{" "}
-              <span className="font-serif italic">behind every verdict.</span>
+              Clinical review{" "}
+              <span className="font-serif italic">behind the guidance.</span>
             </motion.h2>
           </motion.div>
 

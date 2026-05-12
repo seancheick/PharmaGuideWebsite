@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 
 const GROUP_PREFIX: Record<FAQGroup, string> = {
   product: "P",
-  privacy: "D",
+  privacy: "PR",
   launch: "L",
 };
 
@@ -84,7 +84,7 @@ export function FAQClient() {
           Launch sections. */}
       <motion.div
         variants={fadeUpItem}
-        className="sticky top-20 z-10 -mx-4 mb-8 bg-background/80 px-4 py-3 backdrop-blur-md md:top-24"
+        className="z-10 -mx-4 mb-8 bg-background/80 px-4 py-3 backdrop-blur-md md:sticky md:top-24"
       >
         <label className="relative block">
           <span className="sr-only">Search the FAQ</span>
@@ -290,10 +290,12 @@ function renderInline(text: string): React.ReactNode {
       );
     }
     if (tok.type === "link") {
+      const isExternal = /^https?:\/\//.test(tok.href);
       return (
         <a
           key={i}
           href={tok.href}
+          {...(isExternal && { target: "_blank", rel: "noopener noreferrer" })}
           className="text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
         >
           {tok.value}

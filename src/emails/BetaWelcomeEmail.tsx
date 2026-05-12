@@ -123,10 +123,9 @@ export function BetaWelcomeEmail({ email }: BetaWelcomeEmailProps) {
               }}
             >
               In the meantime, you don&apos;t need to do anything. We&apos;re
-              putting the finishing touches on the catalog (180,000+ products,
-              every one cross-referenced with FDA, NIH, PubMed, and DSLD) and
-              having every interaction reviewed by a clinical pharmacist before
-              launch.
+              putting the finishing touches on the catalog, interaction logic,
+              and clinical review process — cross-referencing products against
+              sources like FDA, NIH, PubMed, and DSLD before launch.
             </Text>
 
             <Text
@@ -220,7 +219,13 @@ export function BetaWelcomeEmail({ email }: BetaWelcomeEmailProps) {
               You&apos;re receiving this because you joined the PharmaGuide
               beta waitlist at pharmaguide.io. PharmaGuide is not a substitute
               for medical care — always consult your healthcare provider for
-              decisions about medications and supplements.
+              decisions about medications and supplements.{" "}
+              <Link
+                href="{{{RESEND_UNSUBSCRIBE_URL}}}"
+                style={{ color: "#63666A", textDecoration: "underline" }}
+              >
+                Unsubscribe
+              </Link>
             </Text>
 
             <Text

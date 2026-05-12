@@ -130,8 +130,7 @@ export function NewsletterWelcomeEmail({ email }: NewsletterWelcomeEmailProps) {
                   margin: 0,
                 }}
               >
-                · The week&apos;s most relevant supplement and medication
-                research, distilled
+                · Recent supplement and medication research, distilled
                 <br />· Recall and safety alerts that affect what you actually
                 take
                 <br />· One quick-read article on something that matters in

@@ -54,11 +54,11 @@ I tried three more pharmacies. Same answer. *Supplements aren't our scope.*
 
 So I asked my doctor. Same shrug. *Ask the pharmacist.*
 
-The thing is — the interaction is real. Statins deplete CoQ10 (every clinical
-reference says so). Fish oil at the wrong dose thins your blood while you're
-already on a med that affects clotting. There's *literature* on this. It just
-sits in a place where the people who could read it to you have decided it
-isn't their job.
+The thing is — interactions like this are documented. Calcium can reduce
+thyroid medication absorption by up to 30% if taken together. Metformin is
+associated with lower B12 levels over time. There's *literature* on all of
+this. It just sits in a place where the people who could read it to you have
+decided it isn't their job.
 
 That's why PharmaGuide exists.
 
@@ -104,10 +104,10 @@ all four:
 
 - **NIH Dietary Supplement Label Database (DSLD)** — the FDA-aligned
   label-of-record for supplements sold in the US. The ground truth.
-- **FDA NSDE + recall feed** — active drug ingredients, dose strengths,
-  and the live recall pipeline (we re-pull this nightly).
-- **FAERS** — adverse event signals. Lets us flag when a product is
-  generating real-world complaints, not just theoretical interaction risk.
+- **FDA drug labeling + recall sources** — active drug ingredients, dose
+  strengths, and the recall pipeline.
+- **FAERS** — adverse event signals. Helps surface safety concerns that
+  require context, not just theoretical interaction risk.
 - **Manufacturer label scrapes + brand-direct integrations** — for the
   proprietary blend gap. (Yes, we decompose those too.)
 
@@ -261,9 +261,9 @@ It does what nobody else will:
 
 - Checks every supplement and medication you take, *together*, for real
   interactions — the kind backed by clinical evidence, not chatroom rumor.
-- Catches what your medications are quietly *taking away* from you (statins
-  drain CoQ10; metformin drains B12; birth control drains folate — and
-  most clinicians won't mention it).
+- Catches what your medications may be quietly *taking away* from you —
+  some medications are associated with lower nutrient levels over time,
+  like metformin and B12, and most clinicians won't mention it.
 - Decodes what's actually inside a "proprietary blend" so you stop paying
   for pixie dust.
 - Flags FDA recalls and adverse-event signals on products you're already
@@ -282,14 +282,15 @@ becomes a charge" nonsense. Forever.
 
 If you have parents on five medications and a kitchen counter full of
 supplements? Sign them up too. If you have a friend who's been on
-antidepressants for ten years and nobody's ever told them what nutrients
-those drugs deplete? Send them this email. The whole reason I built this
+medication for years and nobody's ever checked what else it might
+affect? Send them this email. The whole reason I built this
 is the people I love kept getting hurt by a system that wasn't paying
 attention.
 
 Reach out — text, call, email — for *anything*. Questions about the
-product, questions about a specific supplement, questions about whether
-your dad's stack is okay. I will personally look at it for you.
+product, questions about how to use it, questions about what to ask
+your clinician. I'll help you understand the tool and get the most
+out of it.
 
 Thank you for putting up with me talking about this for two years. The
 work is real now. Let's get healthy together.

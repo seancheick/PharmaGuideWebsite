@@ -81,10 +81,10 @@ export function YourFit() {
               variants={fadeUpItem}
               className="text-balance text-display-lg text-ink"
             >
-              What&apos;s high quality for one person
+              High quality doesn&apos;t always mean
               <br />
               <span className="font-serif italic text-accent">
-                may deserve a second look for another.
+                right for you.
               </span>
             </motion.h2>
 
@@ -236,7 +236,7 @@ export function YourFit() {
                       1 interaction to review
                     </NoteItem>
                     <NoteItem dotClass="bg-severity-safe">
-                      No major conflicts detected
+                      No high-risk conflicts detected
                     </NoteItem>
                   </motion.ul>
                 </div>
@@ -248,7 +248,7 @@ export function YourFit() {
                   transition={{ duration: 0.4, delay: 2.5 }}
                   className="mt-6 border-t border-border pt-4 font-mono text-[10px] uppercase tracking-[0.12em] text-subtle"
                 >
-                  Personalized to your stack · updated continuously
+                  Personalized to your stack · updates when your stack changes
                 </motion.p>
               </div>
             </motion.div>

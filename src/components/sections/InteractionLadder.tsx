@@ -83,10 +83,10 @@ const TIERS: readonly TierData[] = [
     pair: "St. John's Wort + Sertraline",
     headline: "Serotonin syndrome risk",
     mechanism:
-      "St. John's Wort enhances serotonin reuptake, becoming dangerously additive to SSRI activity.",
-    recommendation: "Avoid combining unless supervised by a clinician.",
+      "St. John's Wort inhibits serotonin reuptake, adding to SSRI activity and risking serotonin syndrome.",
+    recommendation: "Do not combine. Consult your clinician before starting or stopping either.",
     evidence: "Established",
-    studies: "Meta-analysis · 17 RCTs",
+    studies: "Case reports · FDA warning",
     shape: "triangle",
     textClass: "text-severity-contraindicated",
     barClass: "bg-severity-contraindicated",
@@ -97,13 +97,13 @@ const TIERS: readonly TierData[] = [
     id: "avoid",
     label: "Avoid",
     brief: "Strong reason to separate.",
-    pair: "Ginkgo + Warfarin",
-    headline: "Clinically significant bleeding risk",
+    pair: "Grapefruit + Simvastatin",
+    headline: "Dangerous increase in statin levels",
     mechanism:
-      "Ginkgo's antiplatelet activity is additive to warfarin's anticoagulation effect.",
-    recommendation: "Avoid the combination, or monitor INR closely with clinician oversight.",
-    evidence: "Probable",
-    studies: "6 cohort studies",
+      "Grapefruit inhibits CYP3A4, dramatically increasing simvastatin blood levels and raising the risk of rhabdomyolysis.",
+    recommendation: "Avoid grapefruit entirely while taking simvastatin. FDA-labeled interaction.",
+    evidence: "Established",
+    studies: "Multiple controlled studies · FDA-labeled",
     shape: "circle",
     textClass: "text-severity-avoid",
     barClass: "bg-severity-avoid",
@@ -117,10 +117,10 @@ const TIERS: readonly TierData[] = [
     pair: "Calcium + Levothyroxine",
     headline: "Reduced thyroid absorption",
     mechanism:
-      "Calcium binds levothyroxine in the gut, decreasing bioavailability up to 30% within 4 hours.",
-    recommendation: "Separate doses by at least 4 hours.",
+      "Calcium chelates levothyroxine in the gut, reducing absorption by up to 25–30%.",
+    recommendation: "Separate doses by at least 4 hours. Take levothyroxine on an empty stomach.",
     evidence: "Established",
-    studies: "4 RCTs · 1 meta-analysis",
+    studies: "Multiple controlled studies · FDA-labeled",
     shape: "diamond",
     textClass: "text-severity-caution",
     barClass: "bg-severity-caution",
@@ -132,12 +132,12 @@ const TIERS: readonly TierData[] = [
     label: "Monitor",
     brief: "Manage with timing.",
     pair: "Magnesium + Levothyroxine",
-    headline: "Minor absorption shift",
+    headline: "Possible absorption shift",
     mechanism:
-      "Magnesium may reduce levothyroxine absorption when taken too closely together.",
-    recommendation: "Separate by at least 4 hours.",
-    evidence: "Moderate",
-    studies: "2 pharmacokinetic studies",
+      "Magnesium, like other cations, may chelate levothyroxine and reduce absorption when taken together.",
+    recommendation: "Separate by at least 4 hours as a precaution.",
+    evidence: "Limited",
+    studies: "Limited evidence · mechanism extrapolated from calcium data",
     shape: "ring",
     textClass: "text-severity-monitor",
     barClass: "bg-severity-monitor",
@@ -151,10 +151,10 @@ const TIERS: readonly TierData[] = [
     pair: "Vitamin D3 + Atorvastatin",
     headline: "No clinically relevant interaction",
     mechanism:
-      "No shared metabolism pathway of concern. Statin efficacy may even be modestly improved.",
+      "Both are CYP3A4 substrates, but no clinically significant interaction has been demonstrated at therapeutic doses.",
     recommendation: "Take as directed — no timing adjustment needed.",
     evidence: "Established",
-    studies: "Meta-analysis · 12 RCTs",
+    studies: "Clinical evidence supports safety",
     shape: "square",
     textClass: "text-severity-safe",
     barClass: "bg-severity-safe",
@@ -200,10 +200,8 @@ function TierShape({ shape, className }: { shape: Shape; className: string }) {
 }
 
 export function InteractionLadder() {
-  // Default to "monitor" — matches the hero loop, so the visual continues
-  // "the same example you saw at hero scale."
-  const [activeId, setActiveId] = useState<TierId>("monitor");
-  const active = TIERS.find((t) => t.id === activeId) ?? TIERS[3]!;
+  const [activeId, setActiveId] = useState<TierId>("caution");
+  const active = TIERS.find((t) => t.id === activeId) ?? TIERS[2]!;
 
   // WAI-ARIA Tabs: arrow keys move between tabs, wrapping at edges
   const handleTabKeyDown = (e: React.KeyboardEvent, idx: number) => {
@@ -265,8 +263,8 @@ export function InteractionLadder() {
             variants={fadeUpItem}
             className="max-w-prose text-body-xl text-muted"
           >
-            Five severity tiers, each with the mechanism, evidence level, and study
-            basis behind the verdict.{" "}
+            Every verdict includes the reason, the evidence level, and what to do
+            next.{" "}
             <span className="text-foreground/70">
               <span className="hidden md:inline">Hover or tap a tier.</span>
               <span className="md:hidden">Tap a tier below.</span>

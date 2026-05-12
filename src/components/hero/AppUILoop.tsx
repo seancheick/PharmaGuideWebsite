@@ -30,9 +30,10 @@ type Props = {
   searchText: string;
   resultFor: ItemKey | null;
   stack: StackItem[];
+  showVerdict?: boolean;
 };
 
-export function AppUILoop({ searchText, resultFor, stack }: Props) {
+export function AppUILoop({ searchText, resultFor, stack, showVerdict = false }: Props) {
   return (
     <div
       className="absolute inset-0 flex flex-col"
@@ -93,7 +94,7 @@ export function AppUILoop({ searchText, resultFor, stack }: Props) {
             </span>
           </span>
           <span className="mt-0.5 font-mono text-[8.5px] font-medium uppercase tracking-[0.1em] text-subtle">
-            Add to stack
+            Stack check
           </span>
         </div>
       </div>
@@ -161,7 +162,7 @@ export function AppUILoop({ searchText, resultFor, stack }: Props) {
                   {ITEMS[resultFor].dose}
                 </span>
               </div>
-              <p className="mt-0.5 text-[10.5px] text-muted">Tap to add to your stack</p>
+              <p className="mt-0.5 text-[10.5px] text-muted">Found in catalog</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -204,6 +205,37 @@ export function AppUILoop({ searchText, resultFor, stack }: Props) {
                   ))}
                 </AnimatePresence>
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* In-phone verdict — compact result that appears before the floating card */}
+      <div className="px-4 pt-2">
+        <AnimatePresence>
+          {showVerdict && (
+            <motion.div
+              key="verdict"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ ...transitions.reveal, duration: 0.35 }}
+              className="rounded-lg border border-severity-monitor/25 bg-severity-monitor/[0.06] px-3 py-2"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-severity-monitor">
+                  Timing issue found
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="block h-1 w-1 rounded-full bg-severity-monitor" />
+                  <span className="font-mono text-[9px] font-medium uppercase tracking-[0.06em] text-severity-monitor">
+                    Monitor
+                  </span>
+                </span>
+              </div>
+              <p className="mt-1 text-[10.5px] leading-snug text-muted">
+                Separate doses by at least 4 hours
+              </p>
             </motion.div>
           )}
         </AnimatePresence>

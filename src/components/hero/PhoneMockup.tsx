@@ -30,6 +30,7 @@ export function PhoneMockup() {
   const [searchText, setSearchText] = useState("");
   const [resultFor, setResultFor] = useState<ItemKey | null>(null);
   const [stack, setStack] = useState<StackItem[]>([]);
+  const [showVerdict, setShowVerdict] = useState(false);
   const [showInteraction, setShowInteraction] = useState(false);
   const [showFitTag, setShowFitTag] = useState(false);
 
@@ -38,6 +39,7 @@ export function PhoneMockup() {
       setSearchText("");
       setResultFor(null);
       setStack([ITEMS.magnesium, ITEMS.levothyroxine]);
+      setShowVerdict(true);
       setShowInteraction(true);
       setShowFitTag(true);
       return;
@@ -60,6 +62,7 @@ export function PhoneMockup() {
         setSearchText("");
         setResultFor(null);
         setStack([]);
+        setShowVerdict(false);
         setShowInteraction(false);
         setShowFitTag(false);
         await wait(400);
@@ -91,12 +94,16 @@ export function PhoneMockup() {
         await wait(550);
         if (cancelled) return;
 
+        setShowVerdict(true);
+        await wait(700);
+        if (cancelled) return;
+
         setShowInteraction(true);
         await wait(1000);
         if (cancelled) return;
 
         setShowFitTag(true);
-        await wait(2200);
+        await wait(3200);
       }
     }
 
@@ -153,7 +160,7 @@ export function PhoneMockup() {
                 />
 
                 {/* In-screen UI flow (no interaction card here anymore) */}
-                <AppUILoop searchText={searchText} resultFor={resultFor} stack={stack} />
+                <AppUILoop searchText={searchText} resultFor={resultFor} stack={stack} showVerdict={showVerdict} />
               </div>
             </div>
 
@@ -195,10 +202,10 @@ export function PhoneMockup() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-subtle">
-                        Interaction detected
+                        Timing issue found
                       </p>
                       <p className="mt-1 text-[13px] font-medium leading-tight text-ink">
-                        Magnesium <span className="text-muted">+</span> Levothyroxine
+                        Magnesium <span className="text-muted">+</span> thyroid medication
                       </p>
                     </div>
                     <span className="inline-flex shrink-0 items-center gap-1 rounded-pill bg-severity-monitor/10 px-2 py-0.5">
@@ -210,7 +217,7 @@ export function PhoneMockup() {
                   </div>
 
                   <p className="mt-2.5 text-[11.5px] leading-snug text-muted">
-                    Magnesium may reduce levothyroxine absorption when taken too closely
+                    Magnesium may chelate levothyroxine and reduce absorption when taken
                     together.
                   </p>
 
@@ -227,7 +234,7 @@ export function PhoneMockup() {
                     <span className="font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-subtle">
                       Evidence
                     </span>
-                    <span className="text-[10.5px] font-medium text-muted">Moderate</span>
+                    <span className="text-[10.5px] font-medium text-muted">Limited</span>
                   </div>
                 </motion.div>
               )}

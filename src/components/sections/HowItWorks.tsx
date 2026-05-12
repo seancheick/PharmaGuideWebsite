@@ -34,19 +34,19 @@ const STEPS = [
   {
     num: "01",
     title: "Scan or search.",
-    body: "180,000+ product catalog, pre-loaded on your device. Works in pharmacies, on flights, or in the supplement aisle with one bar of signal. No cloud lookup required.",
+    body: "Find products instantly from a large on-device catalog, even offline or with weak signal.",
     visual: "catalog" as const,
   },
   {
     num: "02",
-    title: "We cross-reference your full stack.",
-    body: "Every supplement is checked against your medications, timing, and personal health context. All computation happens on-device. Nothing about your body is ever sent anywhere.",
+    title: "Check it against your stack.",
+    body: "PharmaGuide compares supplements, medications, timing, and health context to surface risks people usually miss. Core interaction checks run entirely on your device.",
     visual: "crossref" as const,
   },
   {
     num: "03",
-    title: "Quality score with reasoning.",
-    body: "Every product gets an objective Quality score (0-100) backed by ingredient form, third-party testing, evidence weight, and brand trust — the four pillars of the PG Score. The verdict isn't a black box; the reasoning shows up alongside it.",
+    title: "Get a clear verdict.",
+    body: "See the quality score, interaction flags, evidence level, and reasoning behind every recommendation — in plain language.",
     visual: "yourfit" as const,
   },
 ] as const;
@@ -93,8 +93,8 @@ export function HowItWorks() {
             variants={fadeUpItem}
             className="max-w-prose text-body-lg leading-relaxed text-muted"
           >
-            From scan to decision — PharmaGuide brings everything together so
-            you can understand your stack in seconds.
+            From scan to verdict — find the product, check it against your stack,
+            and understand what to do next.
           </motion.p>
         </motion.div>
 
@@ -260,7 +260,7 @@ const CROSS_REFS = [
     severity: "contraindicated" as const,
   },
   {
-    name: "Ginkgo ↔ warfarin",
+    name: "Grapefruit ↔ simvastatin",
     label: "Avoid",
     severity: "avoid" as const,
   },

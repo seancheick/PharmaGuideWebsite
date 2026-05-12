@@ -34,11 +34,11 @@ export function InfrastructureStrip() {
           <span aria-hidden="true" className="hidden text-border-strong sm:mx-4 sm:inline">
             ·
           </span>
-          <span>Clinician-informed review</span>
+          <span>Clinician-informed content</span>
           <span aria-hidden="true" className="hidden text-border-strong sm:mx-4 sm:inline">
             ·
           </span>
-          <span>Privacy-first architecture</span>
+          <span>Private by design</span>
         </p>
       </motion.div>
     </section>

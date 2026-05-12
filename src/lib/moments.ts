@@ -3,9 +3,11 @@
  *
  * Card copy is written for IDENTITY RECOGNITION, not feature explanation.
  * Each card should make the reader think "that's me / I do that / I never
- * thought about that." Clinical detail (mechanism, dosages, drug names)
- * lives ONLY in the expanded "PharmaGuide flag" panel — never in the
- * headline or surface description.
+ * thought about that."
+ *
+ * Closed cards may show a short interaction preview (e.g. "Caution ·
+ * Calcium + Levothyroxine"). Mechanism, dose thresholds, and clinical
+ * rationale belong only in the expanded "PharmaGuide flag" panel.
  *
  * `image` and `member.avatar` are Unsplash placeholders for V1. Swap them
  * with your Cloudinary URLs once the AI-generated photos are uploaded.
@@ -122,9 +124,9 @@ export const MOMENTS: readonly Moment[] = [
       severity: "caution",
       severityLabel: "Caution · 1st trimester",
       description:
-        "Daily intake above 10,000 IU in the first trimester carries documented teratogenic risk. Many “prenatal” stacks still contain it.",
+        "High-dose preformed vitamin A may not be appropriate during early pregnancy. Check the exact form and amount with your clinician before continuing.",
       metaLeft: "Trimester 1",
-      metaRight: "Skip until cleared",
+      metaRight: "Review before use",
     },
   },
 
@@ -156,7 +158,7 @@ export const MOMENTS: readonly Moment[] = [
       description:
         "Co-administration has been associated with serotonin syndrome. Onset within 48 hours of starting both has been documented.",
       metaLeft: "Severity",
-      metaRight: "Stop both — call MD",
+      metaRight: "Discuss with MD",
     },
   },
 
@@ -249,7 +251,7 @@ export const MOMENTS: readonly Moment[] = [
       severity: "monitor",
       severityLabel: "Monitor",
       description:
-        "Magnesium glycinate, oxide-blend multivitamin, and a “sleep” blend. Combined daily intake exceeded the upper tolerable limit for several weeks.",
+        "Magnesium glycinate, oxide-blend multivitamin, and a 'sleep' blend. Combined daily intake exceeded the upper tolerable limit for several weeks.",
       metaLeft: "Daily total",
       metaRight: "Above upper limit",
     },

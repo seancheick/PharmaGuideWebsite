@@ -54,10 +54,18 @@ const statementsContainer = {
 function useCountUp(target: number, durationMs = 1800) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-15%" });
+  const prefersReduced = useRef(
+    typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
 
   useEffect(() => {
     if (!inView || !ref.current) return;
     const el = ref.current;
+    if (prefersReduced.current) {
+      el.textContent = target.toLocaleString("en-US");
+      return;
+    }
     const start = performance.now();
     let frame = 0;
     const tick = (now: number) => {
@@ -182,14 +190,15 @@ export function Problem() {
             </p>
           </div>
           <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.14em] text-foreground/65">
-            ER visits per day · U.S.
+            Medication harm is common
           </p>
           <p className="mt-3 max-w-prose text-body leading-relaxed text-muted">
-            Every day, thousands of people visit the ER from adverse drug
-            events, including known drug interactions.
+            The CDC estimates thousands of emergency visits happen each day
+            from adverse drug events. PharmaGuide focuses on one preventable
+            blind spot: what people combine.
           </p>
           <p className="mt-4 text-body-xl leading-snug text-ink">
-            Information is your first line of defense.
+            The first step is knowing what overlaps.
           </p>
           {/* Source line — link styled with accent so it reads as a link.
               Tracking eased back, size bumped slightly so it stops looking

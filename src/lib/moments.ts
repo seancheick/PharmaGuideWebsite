@@ -72,7 +72,7 @@ export const MOMENTS: readonly Moment[] = [
     preview: "Caution · Calcium + Levothyroxine",
     image: "/images/moments/daily.jpg",
     imageAlt:
-      "A small organized row of supplement bottles on a sunlit kitchen counter beside a coffee mug.",
+      "Close-up of a woman's hands pouring white supplement capsules from a labeled energy packet into her palm.",
     member: {
       name: "Hannah L.",
       role: "Member spotlight",
@@ -101,7 +101,7 @@ export const MOMENTS: readonly Moment[] = [
     preview: "Caution · High-dose Vitamin A",
     image: "/images/moments/pregnancy.jpg",
     imageAlt:
-      "Soft natural-light photograph of a pregnant person at a kitchen table, hand resting near the bump.",
+      "Pregnant woman in a white linen blouse cradling her bump in soft natural window light.",
     member: {
       name: "Maya R.",
       role: "Member spotlight",
@@ -131,7 +131,7 @@ export const MOMENTS: readonly Moment[] = [
     preview: "Avoid · St. John's Wort + Sertraline",
     image: "/images/moments/medication.jpg",
     imageAlt:
-      "Quiet medical setting — a clinician's hand passing a prescription slip to a patient, soft daylight.",
+      "Open palm holding a mix of different-colored pills and capsules against a dark background.",
     member: {
       name: "Jordan T.",
       role: "Member spotlight",
@@ -161,7 +161,7 @@ export const MOMENTS: readonly Moment[] = [
     preview: "Caution · Combined caffeine load",
     image: "/images/moments/performance.jpg",
     imageAlt:
-      "Athletic person at a home gym counter with a row of supplement tubs and a shaker bottle, soft daylight.",
+      "Athletic man running on a treadmill in a bright gym, wearing a PharmaGuide wristband.",
     member: {
       name: "Devon P.",
       role: "Member spotlight",
@@ -190,7 +190,7 @@ export const MOMENTS: readonly Moment[] = [
     preview: "Caution · Ginkgo + Aspirin",
     image: "/images/moments/parents.jpg",
     imageAlt:
-      "Older person's hands organizing four supplement bottles next to a coffee maker on a kitchen counter.",
+      "Elderly couple walking together on a city sidewalk, seen from behind, arm in arm with a shopping trolley.",
     member: {
       name: "Sarah K.",
       role: "Member spotlight",
@@ -221,7 +221,7 @@ export const MOMENTS: readonly Moment[] = [
     preview: "Monitor · Multiple magnesium sources",
     image: "/images/moments/wellness.jpg",
     imageAlt:
-      "Editorial photo of an organized row of varied supplement bottles on a wooden shelf, soft daylight.",
+      "Two women meditating on yoga mats in a bright modern studio with large windows and plants.",
     member: {
       name: "Tasha K.",
       role: "Member spotlight",

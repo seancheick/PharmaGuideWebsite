@@ -18,12 +18,7 @@
  * with italic emphasis" without HTML markup in strings.
  */
 
-export type SeverityTier =
-  | "monitor"
-  | "caution"
-  | "avoid"
-  | "safe"
-  | "contraindicated";
+export type SeverityTier = "monitor" | "caution" | "avoid" | "safe" | "contraindicated";
 
 export interface Moment {
   id: string;
@@ -72,12 +67,10 @@ export const MOMENTS: readonly Moment[] = [
     id: "morning",
     category: "Daily routine",
     title: { lead: "The vitamins", em: "you've taken for years" },
-    description:
-      "Sometimes the problem isn't what you take. It's what you started taking later.",
+    description: "Sometimes the problem isn't what you take. It's what you started taking later.",
     learnMore: "Learn about long-term stacks",
     preview: "Caution · Calcium + Levothyroxine",
-    image:
-      "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1400&q=80&auto=format&fit=crop",
+    image: "/images/moments/daily.jpg",
     imageAlt:
       "A small organized row of supplement bottles on a sunlit kitchen counter beside a coffee mug.",
     member: {
@@ -86,8 +79,7 @@ export const MOMENTS: readonly Moment[] = [
       avatar:
         "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=160&q=80&auto=format&fit=crop",
     },
-    quote:
-      "I'd been taking calcium with my thyroid medication every morning for almost a decade.",
+    quote: "I'd been taking calcium with my thyroid medication every morning for almost a decade.",
     flag: {
       name: "Calcium ↔ Levothyroxine",
       severity: "caution",
@@ -104,8 +96,7 @@ export const MOMENTS: readonly Moment[] = [
     id: "pregnancy",
     category: "Pregnancy",
     title: { lead: "Pregnancy changes", em: "more than your routine" },
-    description:
-      "Some ingredients become more important. Others suddenly matter a lot more.",
+    description: "Some ingredients become more important. Others suddenly matter a lot more.",
     learnMore: "Learn about pregnancy safety",
     preview: "Caution · High-dose Vitamin A",
     image: "/images/moments/pregnancy.jpg",
@@ -117,8 +108,7 @@ export const MOMENTS: readonly Moment[] = [
       avatar:
         "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&q=80&auto=format&fit=crop",
     },
-    quote:
-      "I thought if it was sold over the counter, it had to be safe.",
+    quote: "I thought if it was sold over the counter, it had to be safe.",
     flag: {
       name: "High-dose Vitamin A",
       severity: "caution",
@@ -139,8 +129,7 @@ export const MOMENTS: readonly Moment[] = [
       "Most interaction problems don't start with a supplement. They start when something new enters the stack.",
     learnMore: "Learn about prescription transitions",
     preview: "Avoid · St. John's Wort + Sertraline",
-    image:
-      "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=1400&q=80&auto=format&fit=crop",
+    image: "/images/moments/medication.jpg",
     imageAlt:
       "Quiet medical setting — a clinician's hand passing a prescription slip to a patient, soft daylight.",
     member: {
@@ -167,8 +156,7 @@ export const MOMENTS: readonly Moment[] = [
     id: "gym-stack",
     category: "Performance",
     title: { lead: "Your gym stack,", em: "all together" },
-    description:
-      "Pre-workout. Hydration. Recovery. Sleep. Individually they looked fine.",
+    description: "Pre-workout. Hydration. Recovery. Sleep. Individually they looked fine.",
     learnMore: "Learn about stimulant stacking",
     preview: "Caution · Combined caffeine load",
     image: "/images/moments/performance.jpg",
@@ -180,8 +168,7 @@ export const MOMENTS: readonly Moment[] = [
       avatar:
         "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=160&q=80&auto=format&fit=crop",
     },
-    quote:
-      "Three supplements later, I was accidentally over 600 mg of caffeine a day.",
+    quote: "Three supplements later, I was accidentally over 600 mg of caffeine a day.",
     flag: {
       name: "Combined caffeine load",
       severity: "caution",
@@ -198,12 +185,10 @@ export const MOMENTS: readonly Moment[] = [
     id: "parents",
     category: "Family",
     title: { lead: "The supplements", em: "your parents take now" },
-    description:
-      "As prescriptions increase, so does the chance something starts overlapping.",
+    description: "As prescriptions increase, so does the chance something starts overlapping.",
     learnMore: "Learn about polypharmacy",
     preview: "Caution · Ginkgo + Aspirin",
-    image:
-      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1400&q=80&auto=format&fit=crop",
+    image: "/images/moments/parents.jpg",
     imageAlt:
       "Older person's hands organizing four supplement bottles next to a coffee maker on a kitchen counter.",
     member: {
@@ -234,8 +219,7 @@ export const MOMENTS: readonly Moment[] = [
       "More supplements doesn't always mean more benefit. Sometimes it just means more interaction risk.",
     learnMore: "Learn about ingredient overlap",
     preview: "Monitor · Multiple magnesium sources",
-    image:
-      "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=1400&q=80&auto=format&fit=crop",
+    image: "/images/moments/wellness.jpg",
     imageAlt:
       "Editorial photo of an organized row of varied supplement bottles on a wooden shelf, soft daylight.",
     member: {
@@ -244,8 +228,7 @@ export const MOMENTS: readonly Moment[] = [
       avatar:
         "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&q=80&auto=format&fit=crop",
     },
-    quote:
-      "I wasn't taking anything dangerous. Just too many things that did the same thing.",
+    quote: "I wasn't taking anything dangerous. Just too many things that did the same thing.",
     flag: {
       name: "Multiple magnesium sources",
       severity: "monitor",

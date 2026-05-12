@@ -24,37 +24,37 @@ const CAPABILITIES = [
   {
     num: "01",
     title: "Medication depletion",
-    body: "Statins lower CoQ10. Metformin depletes B12. We catch these.",
+    body: "Flags common medication-linked nutrient depletion patterns.",
     href: "/features#medication-depletion",
   },
   {
     num: "02",
     title: "Stack intelligence",
-    body: "Multi-way analysis. Dose summation across products. One verdict.",
+    body: "Checks combinations, timing, and dose overlap across products.",
     href: "/features#stack-intelligence",
   },
   {
     num: "03",
-    title: "Quality + transparency",
-    body: "Active and inactive ingredients. Proprietary blends, decomposed.",
+    title: "Ingredient transparency",
+    body: "Shows active ingredients, excipients, blends, and label gaps.",
     href: "/features#ingredient-transparency",
   },
   {
     num: "04",
     title: "Personal fit",
-    body: "Profile-gated. Conditions, age, drug class, pregnancy aware.",
+    body: "Adapts to your age, conditions, and medications.",
     href: "/features#personal-fit",
   },
   {
     num: "05",
     title: "Nutrient accumulation",
-    body: "RDA + UL tracking. Catches stack-level over-supplementation.",
+    body: "Catches when multiple products push the same nutrient too high.",
     href: "/features#nutrient-accumulation",
   },
   {
     num: "06",
     title: "Recall + safety alerts",
-    body: "Live FDA recalls. FAERS adverse-event signals. Lot-level checks.",
+    body: "Surfaces recalls, safety concerns, and adverse-event signals.",
     href: "/features#recall-safety",
   },
 ] as const;
@@ -107,10 +107,9 @@ export function BeyondInteractions() {
             variants={fadeUpItem}
             className="max-w-prose text-body-lg leading-relaxed text-muted"
           >
-            PharmaGuide reads your full stack — not just for conflicts, but
-            for what your medications quietly take away, what's hidden in
-            the proprietary blend, where your nutrients are accumulating,
-            and what got recalled while you weren&apos;t looking.
+            PharmaGuide checks the full picture: interactions, nutrient
+            depletion, dose overlap, ingredient quality, personal fit,
+            and recall alerts.
           </motion.p>
         </motion.div>
 

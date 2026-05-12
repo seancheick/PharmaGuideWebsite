@@ -40,8 +40,8 @@ export function Hero() {
                 primary CTA below. Deep-dive lives in the tertiary link
                 under the trust pills.                                  */}
             <p className="animate-fade-up max-w-prose text-body-xl text-muted">
-              Interactions, medication-nutrient depletions, dose
-              accumulation, FDA recalls, ingredient quality — across your
+              Check interactions, medication-nutrient depletions, dose
+              overlap, FDA recalls, and ingredient quality across your
               full stack.
             </p>
 

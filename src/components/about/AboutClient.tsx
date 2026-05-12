@@ -57,7 +57,7 @@ const INDUSTRY_LIES = [
     badge: "The fairy-dusting deception",
     lie: "Proprietary Blend",
     truth:
-      'Companies use "proprietary blends" to hide ingredient amounts. **You might get 1% active ingredient and 99% cheap filler** — and legally, they don\'t have to tell you. PharmaGuide decomposes these blends and estimates per-ingredient ranges.',
+      'Companies use "proprietary blends" to list ingredients without disclosing individual amounts. **The label may not reveal the exact dose of each active ingredient** — and legally, it doesn\'t have to. PharmaGuide decomposes these blends and estimates per-ingredient ranges.',
     source: {
       label: "Learn more · Ingredient & Quality Transparency",
       href: "/features#ingredient-transparency",
@@ -77,7 +77,7 @@ const INDUSTRY_LIES = [
     badge: "The absorption lie",
     lie: "100% Daily Value",
     truth:
-      "Your body isn't a beaker. Synthetic vitamins often lack the co-factors needed for absorption. **Synthetic vitamin E is absorbed roughly 50% less efficiently** than its natural form. The label tells you what's in the bottle, not what reaches your bloodstream.",
+      "Your body isn't a beaker. **Different forms of the same vitamin can absorb differently** — for example, synthetic vitamin E is absorbed less efficiently than its natural form. The label tells you what's in the bottle, not what reaches your bloodstream.",
     source: {
       label: "NIH ODS · Vitamin E fact sheet",
       href: "https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/",
@@ -99,12 +99,12 @@ const VALUES = [
   {
     num: "03",
     title: "Privacy by design",
-    body: "Your stack and conditions stay on your device. AES-256 encryption locally. We can't read your data — by architecture, not policy.",
+    body: "Core stack checks are designed with local-first privacy safeguards. Your data stays on your device wherever possible.",
   },
   {
     num: "04",
     title: "Clinician-reviewed",
-    body: "Every interaction is reviewed by a licensed pharmacist before it ships. Not just AI, not just engineers — actual clinical judgment.",
+    body: "Clinical guidance is reviewed by licensed healthcare professionals before release. Not just AI, not just engineers — actual clinical judgment.",
   },
 ];
 
@@ -123,7 +123,7 @@ const TEAM = [
     name: "Laurie Pham, PharmD",
     role: "Doctor of Pharmacy · Clinical Review",
     org: "15+ years pharmacovigilance",
-    note: "Reviews every interaction before it ships. Owns the clinical accuracy bar — drug-supplement, supplement-supplement, and dose-summation reasoning.",
+    note: "Reviews interaction guidance before release. Owns the clinical accuracy bar — drug-supplement, supplement-supplement, and dose-summation reasoning.",
   },
   {
     initials: "MF",
@@ -190,7 +190,7 @@ export function AboutClient() {
             >
               The supplement industry was built to sell.{" "}
               <span className="font-serif italic text-accent">
-                Not to protect you.
+                Not always to protect you.
               </span>
             </motion.h1>
 
@@ -313,15 +313,15 @@ export function AboutClient() {
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
-              02 · The lies the industry tells
+              02 · What supplement labels don&apos;t always make clear
             </motion.p>
             <motion.h2
               variants={fadeUpItem}
               id="about-lies-heading"
               className="text-balance text-display-md text-ink"
             >
-              Four claims you&apos;ve probably believed.{" "}
-              <span className="font-serif italic">All of them wrong.</span>
+              Four common assumptions.{" "}
+              <span className="font-serif italic">Worth a closer look.</span>
             </motion.h2>
           </motion.div>
 
@@ -352,7 +352,7 @@ export function AboutClient() {
                 {/* The Lie */}
                 <div>
                   <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
-                    The lie
+                    The assumption
                   </p>
                   <p className="mt-1 font-serif text-h2 italic leading-tight text-ink">
                     &ldquo;{item.lie}&rdquo;
@@ -466,7 +466,7 @@ export function AboutClient() {
                 If your prescription drug is recalled
               </p>
               <h3 className="mt-4 font-serif text-h2 italic leading-tight text-ink">
-                You&apos;re tracked, notified, protected.
+                There are established systems to identify and respond.
               </h3>
               <ul className="mt-5 flex flex-col gap-2.5 text-body leading-relaxed text-foreground/85">
                 {[
@@ -495,7 +495,7 @@ export function AboutClient() {
                 If your supplement is recalled
               </p>
               <h3 className="mt-4 font-serif text-h2 italic leading-tight text-ink">
-                You keep taking it.
+                You may never hear about it.
               </h3>
               <ul className="mt-5 flex flex-col gap-2.5 text-body leading-relaxed text-foreground/85">
                 {[

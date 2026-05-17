@@ -101,6 +101,151 @@ SEO + JSON-LD schema generates from the frontmatter.
 
 ---
 
+## Generating posts with the pg-blog-mdx skill
+
+Two Claude Code skills automate the new-site content pipeline:
+
+- **`pg-blog-mdx`** (`~/.claude/skills/pg-blog-mdx/`) — generates a complete `.mdx` from a topic
+- **`pg-social-mdx`** (`~/.claude/skills/pg-social-mdx/`) — generates platform-adapted social artifacts (Instagram, LinkedIn, Twitter) from a topic OR from an existing `.mdx`
+
+### Quick start
+
+Ask Claude:
+
+```
+/pg-blog-mdx <topic>
+```
+
+or just describe what you want:
+
+> "Write a blog post for the new site about magnesium and antibiotic timing"
+
+The skill runs an 8-phase pipeline:
+
+1. **Research** — parallel WebSearches + direct PubMed (`PUBMED_API_KEY`) and OpenFDA (`OPENFDA_API_KEY`) API queries
+2. **Classify** — picks one of 5 categories, evidence level, depth
+3. **Claim validation** — each claim is graded VERIFIED / SUPPORTED / WEAK / UNVERIFIABLE / CONTRADICTED. Unverifiable claims are dropped.
+4. **Risk gate** — computes a Risk Score (0–100). High-risk topics (Risk Score ≥ 71) produce a brief only, not a publishable draft.
+5. **Outline** — heading plan per category guide
+6. **Draft MDX** — uses the 5-component vocabulary (`Callout`, `EvidencePill`, `Source`, `PostImage`, `Illustration`) plus plain markdown
+7. **Images** — `<Illustration>` (inline SVG) by default; editorial mood photos via Gemini Nano Banana (`GEMINI_API_KEY`); never fake clinical scenes
+8. **Editor sidecar** — writes `content/blog/.review/<slug>.review.md` with claim audit + Risk Score + SEO package
+
+### After generation
+
+```bash
+# Verify the post
+pnpm blog:validate <slug>
+
+# Visually inspect
+pnpm dev   # then open http://localhost:3000/blog/<slug>
+
+# Before committing
+pnpm blog:publish-check <slug>
+```
+
+### Generating social content from a post
+
+Once a post is published:
+
+```
+/pg-social-mdx from-mdx <slug>
+```
+
+This reads `content/blog/<slug>.mdx`, runs the same claim-validation matrix, and writes platform artifacts to `social-content/<slug>/` (NOT under `public/` — these are working files for human review, not served assets).
+
+For a topic-only run:
+
+```
+/pg-social-mdx auto <topic>
+```
+
+For end-to-end (blog + social in one session):
+
+```
+/pg-social-mdx full <topic>
+```
+
+### What the skills enforce (clinical governance)
+
+- **Risk gate** — high-risk topics (Risk Score ≥ 71) cannot produce a publishable MDX; the skill writes a research brief at `content/blog/.briefs/<slug>.brief.md` instead and exits with a notice that human PharmD authorship is required
+- **YMYL disclaimer** — every post has `<Callout tone="info">` within first 300 words
+- **Banned marketing words** — AI-powered, revolutionary, synergy, seamless, etc. flagged
+- **Banned medical-advice phrases** — "you should take," "cures," "prevents disease," "the best supplement" etc. flagged
+- **Brand-recommendation guards** — "buy this brand," "our top pick," "we recommend" etc. flagged. Factual brand mentions are allowed (e.g., naming a recalled brand in a safety alert).
+- **Citation rule (risk-based)** — inline `<Source>` chips required for dosing / interactions / FDA / pregnancy / mechanism-driving-recommendation claims; section-level `**Source:**` line is fine for background framing
+- **Image policy** — illustrations preferred over AI-generated photos; AI photos limited to editorial-mood imagery (no fake pills, doctors, bottles, labels, lab settings)
+- **Reviewer requirement** — posts with Risk Score 31–70 get `review_required: true` in frontmatter; `blog:publish-check` fails until a `reviewer:` field is set
+
+### Validator commands
+
+| Command | Purpose | When to use |
+|---|---|---|
+| `pnpm blog:list` | List all posts, see which is Editor's Pick | Anytime |
+| `pnpm blog:validate <slug>` | Structural + clinical + URL checks | After any edit; daily |
+| `pnpm blog:publish-check <slug>` | Stricter ship gate (also fails on missing reviewer, high risk, URL warnings) | Before every commit that publishes |
+| `pnpm blog:feature <slug>` | Set the Editor's Pick (auto-unsets the previous) | When promoting a post |
+
+`blog:validate` runs **structural, clinical-governance, and URL checks** — frontmatter shape, component allowlist, image-file resolution, internal-link count, sources section, word-count floor, banned marketing/medical-advice/brand phrases, YMYL disclaimer presence, per-section citations for high-risk categories, fake-clinical-asset filename patterns, reviewer invariants, URL reachability, and authoritative-domain hint for clinical citations. Readability warnings (long paragraphs, long sentences, academic connectives) print as warnings but don't fail the build.
+
+`blog:publish-check` adds: reviewer-field gating, Risk Score ≥ 71 hard fail, URL warnings as failures (unless `--accept-warnings`).
+
+### The full ship gate (run before every publishing commit)
+
+```bash
+pnpm blog:validate <slug>          # structural + clinical + URL
+pnpm blog:publish-check <slug>     # stricter — reviewer field required if reviewRequired
+pnpm typecheck                     # TypeScript on the frontmatter schema
+pnpm build                         # Next.js MDX/React compile — the real final gate
+```
+
+**`pnpm build` matters.** The validator parses the post as text; only `pnpm build` actually compiles the MDX through React. Malformed JSX inside `<Illustration>`, mismatched tags, or invalid component props will pass validation and fail the build. Run `pnpm build` before any publishing commit.
+
+### Frontmatter extension
+
+The skill writes governance fields to YAML frontmatter using snake_case; the parser in `src/lib/blog.ts` maps to camelCase on load. See `src/lib/blog-types.ts` for the `BlogPost` interface:
+
+```yaml
+---
+title: "…"
+description: "…"
+slug: "…"
+category: "interactions-stacks"
+date: "2026-05-15"
+author: "Sean Cheick Baradji"
+# reviewer: "Laurie Pham, PharmD"  # add after PharmD sign-off — do NOT write reviewer: "" (empty looks intentional)
+featured: false
+tags: ["…"]
+review_required: true              # set by skill when Risk Score 31–70
+risk_score: 45                     # computed Risk Score
+evidence_level: "Moderate"         # Strong | Moderate | Limited | Mixed
+---
+```
+
+### Where the skill lives
+
+```
+~/.claude/skills/pg-blog-mdx/
+  SKILL.md                          ← Main orchestrator
+  references/
+    voice-guide.md                  ← Voice + banned words/phrases
+    category-guide.md               ← 5 categories with decision objectives
+    mdx-component-reference.md      ← Exact MDX component syntax
+    claim-validation-rules.md       ← Validation matrix + Risk Score
+
+~/.claude/skills/pg-social-mdx/
+  SKILL.md                          ← Social orchestrator
+  references/
+    voice-guide.md                  ← (shared with pg-blog-mdx)
+    claim-validation-rules.md       ← (shared with pg-blog-mdx)
+    platform-voice-guide.md         ← Instagram/LinkedIn/Twitter voice
+    verification-rules.md           ← Chain of custody + manifest format
+```
+
+Edit those reference files to evolve the voice or rules. Both skills load them on every run.
+
+---
+
 ## How the system works
 
 ```
@@ -311,6 +456,36 @@ A meta-analysis of 17 RCTs supports this claim. <EvidencePill level="Established
 Levels: `Established` · `Probable` · `Moderate` · `Limited` · `Theoretical`
 
 ### `<PostImage>` — see Images section above.
+
+### `<Source>` — inline citation chip
+
+For high-stakes clinical claims (dosing, interactions, FDA actions, pregnancy, mechanism-driving recommendations). Use the chip inline next to the claim; reserve section-level `**Source:** [link](url)` for background framing.
+
+```mdx
+The literature on CoQ10 reversing statin-associated muscle symptoms is mixed.
+
+<Source>
+  Banach et al., Mayo Clinic Proceedings 2018 — [pubmed.ncbi.nlm.nih.gov/29545008](https://pubmed.ncbi.nlm.nih.gov/29545008/)
+</Source>
+```
+
+### `<Illustration>` — inline SVG / HTML diagram
+
+The default image type for PharmaGuide. Use for mechanism diagrams, severity ladders, dose-response curves, comparison charts, decision flows, and pathway visuals. Inline SVG so readers can interact / share / reuse, and so the diagram scales cleanly on every device.
+
+```mdx
+<Illustration caption="How statins can affect CoQ10 synthesis" credit="PharmaGuide">
+  <svg viewBox="0 0 800 400" role="img" aria-label="Statin pathway diagram">
+    <title>Statin pathway diagram</title>
+    <desc>HMG-CoA reductase blocks both cholesterol and CoQ10 synthesis</desc>
+    {/* path / rect / text elements */}
+  </svg>
+</Illustration>
+```
+
+**Accessibility:** the root `<svg>` must include `role="img"` and `aria-label="<short description>"`. Add `<title>` and `<desc>` as the first children so screen readers can announce the diagram. Never put critical information in color alone.
+
+**Use illustrations over AI-generated photos for clinical content.** AI photos are limited to editorial-mood imagery (lifestyle context, no clinical scenes) — see [Images](#images-publicblog-slug) above.
 
 ### Standard markdown all works:
 - **Bold**, *italic*, `inline code`

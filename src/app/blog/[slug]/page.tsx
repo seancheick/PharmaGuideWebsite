@@ -207,7 +207,12 @@ export default async function BlogPostPage({
                     <span aria-hidden="true" className="text-border-strong">·</span>
                     <span>
                       Reviewed by{" "}
-                      <span className="text-foreground/85">{post.reviewer}</span>
+                      <Link
+                        href="/about/"
+                        className="text-foreground/85 underline decoration-foreground/30 underline-offset-[3px] transition-colors hover:text-link hover:decoration-link/60"
+                      >
+                        {post.reviewer}
+                      </Link>
                     </span>
                   </>
                 )}

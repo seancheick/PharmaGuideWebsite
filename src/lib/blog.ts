@@ -55,6 +55,23 @@ export function getAllPosts(): BlogPost[] {
       (data.slug as string | undefined) ??
       filename.replace(/\.mdx?$/, "").replace(/^\d+-/, "");
 
+    // Governance frontmatter keys arrive snake_case from YAML; map to
+    // camelCase on the BlogPost shape. Older posts won't have them.
+    const reviewRequired =
+      data.review_required !== undefined
+        ? Boolean(data.review_required)
+        : data.reviewRequired !== undefined
+          ? Boolean(data.reviewRequired)
+          : undefined;
+    const riskScore =
+      data.risk_score !== undefined
+        ? Number(data.risk_score)
+        : data.riskScore !== undefined
+          ? Number(data.riskScore)
+          : undefined;
+    const evidenceLevel = (data.evidence_level ??
+      data.evidenceLevel) as BlogPost["evidenceLevel"];
+
     return {
       slug,
       title: (data.title as string) ?? "Untitled",
@@ -70,6 +87,9 @@ export function getAllPosts(): BlogPost[] {
       readTime: stats.text,
       wordCount: stats.words,
       content,
+      reviewRequired,
+      riskScore,
+      evidenceLevel,
     } satisfies BlogPost;
   });
 

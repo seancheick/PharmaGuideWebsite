@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Option 3 — Supplement Timing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #FAF9F6; display: flex; flex-direction: column; align-items: center; padding: 48px 20px; color: #111314; }
+    .meta { text-align: center; margin-bottom: 40px; max-width: 560px; }
+    .meta h1 { font-family: 'Newsreader', Georgia, serif; font-style: italic; font-weight: 400; font-size: 28px; line-height: 1.15; color: #111314; margin-bottom: 12px; }
+    .meta p { font-size: 15px; line-height: 1.6; color: #63666A; }
+    .card { background: #FFFFFF; border: 1px solid #E5E2DB; border-radius: 28px; padding: 40px 44px; max-width: 740px; width: 100%; box-shadow: 0 2px 6px -1px rgba(17,19,20,0.05), 0 1px 3px -1px rgba(17,19,20,0.04); }
+  </style>
+</head>
+<body>
+  <div class="meta">
+    <h1>Option 3: When to take what</h1>
+    <p>Practical timing diagram — the most useful visual in the post. No other source has this for GLP-1 users. Highly saveable, highly shareable.</p>
+  </div>
+  <div class="card">
+    <svg viewBox="0 0 660 520" role="img" aria-label="Daily supplement timing diagram for GLP-1 medication users">
+      <title>Supplement timing on GLP-1 days</title>
+      <desc>Three time windows showing optimal supplement placement, spacing rules, and nausea adjustments</desc>
+      <defs>
+        <filter id="pill-shadow" x="-4%" y="-8%" width="108%" height="120%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="2" />
+          <feOffset dy="1" />
+          <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" />
+          <feColorMatrix values="0 0 0 0 0.067 0 0 0 0 0.075 0 0 0 0 0.078 0 0 0 0.04 0" />
+          <feBlend in2="SourceGraphic" />
+        </filter>
+      </defs>
+      <style>
+        .eyebrow { font-family: ui-monospace, 'Menlo', monospace; font-size: 9.5px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; fill: #63666A; }
+        .time-label { font-family: ui-monospace, 'Menlo', monospace; font-size: 12px; font-weight: 500; fill: #183B3F; letter-spacing: 0.04em; }
+        .time-name { font-family: -apple-system, system-ui, sans-serif; font-size: 11px; fill: #63666A; }
+        .supp-name { font-family: -apple-system, system-ui, sans-serif; font-size: 13px; fill: #111314; font-weight: 500; }
+        .supp-detail { font-family: -apple-system, system-ui, sans-serif; font-size: 11px; fill: #63666A; }
+        .supp-why { font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 11px; fill: #246066; }
+        .rule-text { font-family: -apple-system, system-ui, sans-serif; font-size: 12px; fill: #181A1B; }
+        .rule-note { font-family: -apple-system, system-ui, sans-serif; font-size: 11px; fill: #63666A; }
+        .section-title { font-family: ui-monospace, 'Menlo', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; fill: #183B3F; }
+        .footer { font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 12px; fill: #686B70; }
+      </style>
+
+      <!-- Title -->
+      <text x="0" y="14" class="eyebrow">Adjust to your schedule · optimized for reduced appetite and GI tolerance</text>
+
+      <!-- Timeline bar -->
+      <rect x="0" y="36" width="660" height="4" rx="2" fill="#EEEBE5" />
+
+      <!-- Morning window -->
+      <rect x="0" y="36" width="200" height="4" rx="2" fill="#183B3F" />
+      <text x="8" y="66" class="time-label">7 – 8 AM</text>
+      <text x="8" y="82" class="time-name">With breakfast</text>
+
+      <!-- Morning supplements -->
+      <rect x="8" y="96" width="184" height="52" rx="10" fill="#FFFFFF" stroke="#E5E2DB" stroke-width="1" filter="url(#pill-shadow)" />
+      <text x="20" y="116" class="supp-name">Vitamin D</text>
+      <text x="20" y="134" class="supp-detail">take with dietary fat</text>
+      <text x="124" y="134" class="supp-why">fat-soluble</text>
+
+      <rect x="8" y="158" width="184" height="52" rx="10" fill="#FFFFFF" stroke="#E5E2DB" stroke-width="1" filter="url(#pill-shadow)" />
+      <text x="20" y="178" class="supp-name">Vitamin B12</text>
+      <text x="20" y="196" class="supp-detail">with food for absorption</text>
+
+      <!-- Midday window -->
+      <rect x="230" y="36" width="200" height="4" rx="2" fill="#246066" />
+      <text x="238" y="66" class="time-label">12 – 1 PM</text>
+      <text x="238" y="82" class="time-name">Midday refuel</text>
+
+      <rect x="238" y="96" width="184" height="52" rx="10" fill="#FFFFFF" stroke="#E5E2DB" stroke-width="1" filter="url(#pill-shadow)" />
+      <text x="250" y="116" class="supp-name">Protein shake</text>
+      <text x="250" y="134" class="supp-detail">25–30g whey or plant</text>
+      <text x="380" y="134" class="supp-why">key gap</text>
+
+      <rect x="238" y="158" width="184" height="52" rx="10" fill="#FFFFFF" stroke="#F6F0E2" stroke-width="1.5" filter="url(#pill-shadow)" />
+      <text x="250" y="178" class="supp-name">Iron</text>
+      <text x="250" y="196" class="supp-detail" style="fill: #AD7A24;">separate from calcium · 2h+</text>
+
+      <!-- Evening window -->
+      <rect x="460" y="36" width="200" height="4" rx="2" fill="#3F6250" />
+      <text x="468" y="66" class="time-label">8 – 9 PM</text>
+      <text x="468" y="82" class="time-name">Evening wind-down</text>
+
+      <rect x="468" y="96" width="184" height="52" rx="10" fill="#FFFFFF" stroke="#E5E2DB" stroke-width="1" filter="url(#pill-shadow)" />
+      <text x="480" y="116" class="supp-name">Magnesium</text>
+      <text x="480" y="134" class="supp-detail">glycinate preferred</text>
+      <text x="614" y="134" class="supp-why">sleep</text>
+
+      <rect x="468" y="158" width="184" height="52" rx="10" fill="#FFFFFF" stroke="#E5E2DB" stroke-width="1" filter="url(#pill-shadow)" />
+      <text x="480" y="178" class="supp-name">Fiber</text>
+      <text x="480" y="196" class="supp-detail">if constipation · start low</text>
+
+      <!-- Spacing rules section -->
+      <line x1="0" y1="240" x2="660" y2="240" stroke="#E5E2DB" stroke-width="1" />
+      <text x="0" y="268" class="section-title">Spacing rules</text>
+
+      <rect x="0" y="282" width="316" height="44" rx="10" fill="#E6ECEC" />
+      <text x="16" y="308" class="rule-text">Iron ↔ Calcium or Magnesium</text>
+      <text x="276" y="308" class="rule-note">2h+</text>
+
+      <rect x="330" y="282" width="330" height="44" rx="10" fill="#E6ECEC" />
+      <text x="346" y="308" class="rule-text">Fiber ↔ all other supplements</text>
+      <text x="622" y="308" class="rule-note">1h+</text>
+
+      <rect x="0" y="338" width="316" height="44" rx="10" fill="#F6F0E2" />
+      <text x="16" y="364" class="rule-text">GLP-1 injection day: supplements</text>
+      <text x="276" y="364" class="rule-note">2h+</text>
+
+      <rect x="330" y="338" width="330" height="44" rx="10" fill="#E6ECEC" />
+      <text x="346" y="364" class="rule-text">Protein: spread across meals</text>
+      <text x="590" y="364" class="rule-note">not 1 bolus</text>
+
+      <!-- Nausea note -->
+      <line x1="0" y1="406" x2="660" y2="406" stroke="#E5E2DB" stroke-width="1" />
+      <text x="0" y="434" class="section-title">If nausea is a problem</text>
+
+      <text x="0" y="460" class="rule-text">Take supplements with your best-tolerated meal — taken beats skipped, even if timing is suboptimal.</text>
+      <text x="0" y="482" class="rule-text">Ginger chew 20 min before supplements can reduce stomach upset on empty stomach.</text>
+
+      <!-- Footer -->
+      <line x1="0" y1="506" x2="660" y2="506" stroke="#E5E2DB" stroke-width="0.5" />
+      <text x="330" y="518" class="footer" text-anchor="middle">Adjust timing to your routine. Consistency matters more than perfection.</text>
+    </svg>
+  </div>
+</body>
+</html>

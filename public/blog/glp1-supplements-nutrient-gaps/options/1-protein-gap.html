@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Option 1 — The Protein Gap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #FAF9F6; display: flex; flex-direction: column; align-items: center; padding: 48px 20px; color: #111314; }
+    .meta { text-align: center; margin-bottom: 40px; max-width: 560px; }
+    .meta h1 { font-family: 'Newsreader', Georgia, serif; font-style: italic; font-weight: 400; font-size: 28px; line-height: 1.15; color: #111314; margin-bottom: 12px; }
+    .meta p { font-size: 15px; line-height: 1.6; color: #63666A; }
+    .card { background: #FFFFFF; border: 1px solid #E5E2DB; border-radius: 28px; padding: 40px 44px; max-width: 680px; width: 100%; box-shadow: 0 2px 6px -1px rgba(17,19,20,0.05), 0 1px 3px -1px rgba(17,19,20,0.04); }
+  </style>
+</head>
+<body>
+  <div class="meta">
+    <h1>Option 1: The Protein Gap</h1>
+    <p>Shows the dramatic shortfall between what GLP-1 users actually eat vs. what they need. Shareable, data-driven, matches PharmaGuide's editorial weight.</p>
+  </div>
+  <div class="card">
+    <svg viewBox="0 0 600 380" role="img" aria-label="Protein intake gap in GLP-1 users">
+      <title>Daily protein intake gap — GLP-1 users</title>
+      <desc>Visual comparing actual average protein intake to the recommended range for lean mass preservation</desc>
+      <defs>
+        <linearGradient id="actual-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#F5E6E6" />
+          <stop offset="100%" stop-color="#F0DCDC" />
+        </linearGradient>
+        <linearGradient id="target-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#E6ECEC" />
+          <stop offset="100%" stop-color="#DCE5E5" />
+        </linearGradient>
+        <filter id="soft-shadow" x="-4%" y="-4%" width="108%" height="112%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+          <feOffset dy="2" />
+          <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" />
+          <feColorMatrix values="0 0 0 0 0.067 0 0 0 0 0.075 0 0 0 0 0.078 0 0 0 0.06 0" />
+          <feBlend in2="SourceGraphic" />
+        </filter>
+      </defs>
+      <style>
+        .eyebrow { font-family: ui-monospace, 'Menlo', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; fill: #63666A; }
+        .serif-title { font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 20px; font-weight: 400; fill: #111314; }
+        .metric { font-family: ui-monospace, 'Menlo', monospace; font-size: 36px; font-weight: 500; fill: #111314; letter-spacing: -0.02em; }
+        .metric-unit { font-family: -apple-system, system-ui, sans-serif; font-size: 13px; fill: #63666A; font-weight: 400; }
+        .label { font-family: -apple-system, system-ui, sans-serif; font-size: 13px; fill: #63666A; font-weight: 400; }
+        .label-strong { font-family: -apple-system, system-ui, sans-serif; font-size: 13px; fill: #111314; font-weight: 500; }
+        .gap-text { font-family: ui-monospace, 'Menlo', monospace; font-size: 10px; fill: #9F2929; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; }
+        .source { font-family: -apple-system, system-ui, sans-serif; font-size: 11px; fill: #686B70; }
+        .tip { font-family: -apple-system, system-ui, sans-serif; font-size: 12.5px; fill: #181A1B; line-height: 1.5; }
+        .tip-accent { fill: #183B3F; }
+      </style>
+
+      <!-- Eyebrow -->
+      <text x="0" y="14" class="eyebrow">For a 180 lb (82 kg) person on semaglutide or tirzepatide</text>
+
+      <!-- Actual intake block -->
+      <rect x="0" y="36" width="230" height="150" rx="20" fill="url(#actual-grad)" filter="url(#soft-shadow)" />
+      <rect x="0" y="36" width="230" height="150" rx="20" fill="none" stroke="#E5E2DB" stroke-width="1" />
+      <text x="24" y="68" class="eyebrow" style="fill: #9F2929;">What most eat</text>
+      <text x="24" y="118" class="metric">~49g</text>
+      <text x="24" y="142" class="metric-unit">0.6 g/kg · daily average</text>
+      <text x="24" y="170" class="label">Observational dietary data</text>
+
+      <!-- Gap indicator -->
+      <line x1="250" y1="111" x2="320" y2="111" stroke="#D1CDC4" stroke-width="1.5" stroke-dasharray="4,3" />
+      <circle cx="285" cy="111" r="18" fill="#FAF9F6" stroke="#D1CDC4" stroke-width="1" />
+      <text x="285" y="108" class="gap-text" text-anchor="middle">GAP</text>
+      <text x="285" y="118" class="gap-text" text-anchor="middle" style="font-size: 8.5px; letter-spacing: 0.06em;">~50–80g</text>
+
+      <!-- Target block -->
+      <rect x="340" y="36" width="260" height="150" rx="20" fill="url(#target-grad)" filter="url(#soft-shadow)" />
+      <rect x="340" y="36" width="260" height="150" rx="20" fill="none" stroke="#E5E2DB" stroke-width="1" />
+      <text x="364" y="68" class="eyebrow" style="fill: #3F6250;">Target for lean mass</text>
+      <text x="364" y="118" class="metric">100–130g</text>
+      <text x="364" y="142" class="metric-unit">1.2–1.6 g/kg · recommended</text>
+      <text x="364" y="170" class="label">Clinical guidance (2025)</text>
+
+      <!-- Divider -->
+      <line x1="0" y1="216" x2="600" y2="216" stroke="#E5E2DB" stroke-width="1" />
+
+      <!-- Practical tip -->
+      <rect x="0" y="236" width="600" height="72" rx="14" fill="#E6ECEC" />
+      <text x="24" y="262" class="tip">
+        <tspan class="tip-accent" font-weight="500">Practical math:</tspan>
+        <tspan dx="6">One 25g protein scoop = ~25% of the gap.</tspan>
+      </text>
+      <text x="24" y="284" class="tip">Two scoops + one protein-rich meal = target range for most people.</text>
+
+      <!-- Source -->
+      <line x1="0" y1="330" x2="600" y2="330" stroke="#E5E2DB" stroke-width="0.5" />
+      <text x="0" y="352" class="source">Source: Nutritional Priorities to Support GLP-1 Therapy for Obesity, 2025 · pubmed.ncbi.nlm.nih.gov/40445127</text>
+      <text x="0" y="370" class="source">Note: 0.6 g/kg average from cross-sectional dietary analysis. Individual intake varies.</text>
+    </svg>
+  </div>
+</body>
+</html>

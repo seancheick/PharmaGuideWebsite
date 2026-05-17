@@ -297,4 +297,42 @@ export const mdxComponents: MDXComponents = {
       )}
     </figure>
   ),
+
+  /**
+   * In-post illustration — wraps hand-built inline SVG or HTML/CSS
+   * diagrams (mechanism flows, severity ladders, dose-response curves,
+   * comparison charts) in the same chrome as <PostImage> so they sit
+   * cleanly in the editorial rhythm.
+   *
+   * Usage in MDX:
+   *   <Illustration caption="How statins downregulate CoQ10 synthesis">
+   *     <svg viewBox="0 0 800 400" role="img" aria-label="...">…</svg>
+   *   </Illustration>
+   *
+   * The child should be authored with accessibility in mind — provide
+   * role="img" + aria-label on the root SVG, and use <title>/<desc>
+   * children where appropriate.
+   */
+  Illustration: ({
+    caption,
+    credit,
+    children,
+  }: {
+    caption?: string;
+    credit?: string;
+    children: React.ReactNode;
+  }) => (
+    <figure className="my-10 md:my-12">
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-surface-subtle p-4 sm:p-6 [&>svg]:h-auto [&>svg]:w-full">
+        {children}
+      </div>
+      {(caption || credit) && (
+        <figcaption className="mt-3 text-balance text-center text-body-sm italic leading-relaxed text-subtle">
+          {caption}
+          {caption && credit && " · "}
+          {credit && <span className="not-italic text-muted">{credit}</span>}
+        </figcaption>
+      )}
+    </figure>
+  ),
 };

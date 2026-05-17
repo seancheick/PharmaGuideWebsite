@@ -80,6 +80,12 @@ export interface BlogPost {
   readTime: string;
   wordCount: number;
   content: string;
+  // Governance fields (written by pg-blog-mdx skill).
+  // YAML uses snake_case (review_required, risk_score, evidence_level);
+  // the parser in blog.ts maps to these camelCase keys on load.
+  reviewRequired?: boolean;
+  riskScore?: number;
+  evidenceLevel?: "Strong" | "Moderate" | "Limited" | "Mixed";
 }
 
 export function formatBlogDate(iso: string): string {

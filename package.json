@@ -12,7 +12,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,css}\"",
     "blog:list": "node scripts/blog.mjs list",
-    "blog:feature": "node scripts/blog.mjs feature"
+    "blog:feature": "node scripts/blog.mjs feature",
+    "blog:validate": "node scripts/validate-blog.mjs",
+    "blog:publish-check": "node scripts/validate-blog.mjs --publish-check"
   },
   "dependencies": {
     "@microsoft/clarity": "^1.0.2",

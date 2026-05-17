@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Option 2 — Decision Flow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #FAF9F6; display: flex; flex-direction: column; align-items: center; padding: 48px 20px; color: #111314; }
+    .meta { text-align: center; margin-bottom: 40px; max-width: 560px; }
+    .meta h1 { font-family: 'Newsreader', Georgia, serif; font-style: italic; font-weight: 400; font-size: 28px; line-height: 1.15; color: #111314; margin-bottom: 12px; }
+    .meta p { font-size: 15px; line-height: 1.6; color: #63666A; }
+    .card { background: #FFFFFF; border: 1px solid #E5E2DB; border-radius: 28px; padding: 40px 44px; max-width: 700px; width: 100%; box-shadow: 0 2px 6px -1px rgba(17,19,20,0.05), 0 1px 3px -1px rgba(17,19,20,0.04); }
+  </style>
+</head>
+<body>
+  <div class="meta">
+    <h1>Option 2: Should I supplement?</h1>
+    <p>Clean decision tree. Walks the reader through the exact clinical sequence. This is PharmaGuide's core value prop visualized — decision support, not product recommendation.</p>
+  </div>
+  <div class="card">
+    <svg viewBox="0 0 620 560" role="img" aria-label="Decision flowchart for supplementation on GLP-1 medications">
+      <title>Should I supplement on a GLP-1?</title>
+      <desc>Flowchart guiding users through: get labs, interpret results, target supplementation if needed, then retest</desc>
+      <defs>
+        <filter id="card-shadow" x="-2%" y="-1%" width="104%" height="106%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="2.5" />
+          <feOffset dy="1.5" />
+          <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" />
+          <feColorMatrix values="0 0 0 0 0.067 0 0 0 0 0.075 0 0 0 0 0.078 0 0 0 0.05 0" />
+          <feBlend in2="SourceGraphic" />
+        </filter>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#D1CDC4" />
+        </marker>
+        <marker id="arrow-yes" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#3F6250" />
+        </marker>
+        <marker id="arrow-no" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#AD7A24" />
+        </marker>
+      </defs>
+      <style>
+        .eyebrow { font-family: ui-monospace, 'Menlo', monospace; font-size: 9.5px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; fill: #63666A; }
+        .step-label { font-family: -apple-system, system-ui, sans-serif; font-size: 13.5px; fill: #111314; font-weight: 500; }
+        .step-sub { font-family: -apple-system, system-ui, sans-serif; font-size: 11.5px; fill: #63666A; }
+        .decision-q { font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 15px; fill: #111314; }
+        .branch-yes { font-family: ui-monospace, 'Menlo', monospace; font-size: 10px; fill: #3F6250; font-weight: 500; letter-spacing: 0.08em; }
+        .branch-no { font-family: ui-monospace, 'Menlo', monospace; font-size: 10px; fill: #AD7A24; font-weight: 500; letter-spacing: 0.08em; }
+        .always { font-family: -apple-system, system-ui, sans-serif; font-size: 12px; fill: #183B3F; font-weight: 500; }
+        .footer { font-family: -apple-system, system-ui, sans-serif; font-size: 11px; fill: #686B70; font-style: italic; }
+      </style>
+
+      <!-- Step 1: Start pill -->
+      <rect x="190" y="0" width="240" height="44" rx="22" fill="#183B3F" filter="url(#card-shadow)" />
+      <text x="310" y="27" text-anchor="middle" style="font-family: -apple-system, system-ui, sans-serif; font-size: 13px; fill: white; font-weight: 500;">Starting a GLP-1 medication?</text>
+
+      <line x1="310" y1="44" x2="310" y2="76" stroke="#D1CDC4" stroke-width="1.5" marker-end="url(#arrow)" />
+
+      <!-- Step 2: Get labs -->
+      <rect x="150" y="76" width="320" height="64" rx="14" fill="#FFFFFF" stroke="#E5E2DB" stroke-width="1" filter="url(#card-shadow)" />
+      <text x="176" y="101" class="step-label">Get baseline labs</text>
+      <text x="176" y="122" class="step-sub">Vitamin D  ·  B12  ·  Iron (ferritin)  ·  Magnesium  ·  BMP</text>
+
+      <line x1="310" y1="140" x2="310" y2="175" stroke="#D1CDC4" stroke-width="1.5" marker-end="url(#arrow)" />
+
+      <!-- Step 3: Decision -->
+      <rect x="175" y="175" width="270" height="70" rx="14" fill="#FAF9F6" stroke="#D1CDC4" stroke-width="1.5" filter="url(#card-shadow)" />
+      <text x="310" y="206" class="decision-q" text-anchor="middle">Do results show a deficiency?</text>
+      <text x="310" y="228" class="step-sub" text-anchor="middle">Compare to lab reference ranges</text>
+
+      <!-- Yes branch (right) -->
+      <line x1="445" y1="210" x2="510" y2="210" stroke="#3F6250" stroke-width="1.5" marker-end="url(#arrow-yes)" />
+      <text x="470" y="200" class="branch-yes">YES</text>
+      <rect x="510" y="185" width="110" height="50" rx="12" fill="#E9EEE2" stroke="#3F6250" stroke-width="1" filter="url(#card-shadow)" />
+      <text x="565" y="207" class="step-label" text-anchor="middle" style="fill: #3F6250;">Targeted</text>
+      <text x="565" y="224" class="step-label" text-anchor="middle" style="fill: #3F6250;">supplement</text>
+
+      <line x1="565" y1="235" x2="565" y2="275" stroke="#3F6250" stroke-width="1.5" marker-end="url(#arrow-yes)" />
+
+      <rect x="500" y="275" width="130" height="50" rx="12" fill="#FFFFFF" stroke="#E5E2DB" stroke-width="1" filter="url(#card-shadow)" />
+      <text x="565" y="297" class="step-label" text-anchor="middle">Retest 3–6 mo</text>
+      <text x="565" y="314" class="step-sub" text-anchor="middle">adjust based on levels</text>
+
+      <!-- No branch (down) -->
+      <line x1="310" y1="245" x2="310" y2="290" stroke="#AD7A24" stroke-width="1.5" marker-end="url(#arrow-no)" />
+      <text x="322" y="270" class="branch-no">NO</text>
+      <rect x="195" y="290" width="230" height="50" rx="12" fill="#FFFFFF" stroke="#E5E2DB" stroke-width="1" filter="url(#card-shadow)" />
+      <text x="310" y="312" class="step-label" text-anchor="middle">Continue monitoring</text>
+      <text x="310" y="329" class="step-sub" text-anchor="middle">Retest at 6 and 12 months</text>
+
+      <!-- Convergence line -->
+      <line x1="310" y1="340" x2="310" y2="395" stroke="#D1CDC4" stroke-width="1.5" marker-end="url(#arrow)" />
+      <line x1="565" y1="325" x2="565" y2="370" stroke="#D1CDC4" stroke-width="1" stroke-dasharray="4,3" />
+      <line x1="565" y1="370" x2="310" y2="395" stroke="#D1CDC4" stroke-width="1" stroke-dasharray="4,3" />
+
+      <!-- Always box -->
+      <rect x="110" y="395" width="400" height="80" rx="16" fill="#E6ECEC" />
+      <text x="150" y="422" class="eyebrow" style="fill: #183B3F;">Regardless of lab results</text>
+      <text x="150" y="444" class="always">Protein: aim for 1.2–1.6 g/kg/day</text>
+      <text x="150" y="464" class="always">Resistance training: 2–3 sessions per week</text>
+
+      <!-- Footer -->
+      <line x1="110" y1="500" x2="510" y2="500" stroke="#E5E2DB" stroke-width="0.5" />
+      <text x="310" y="524" class="footer" text-anchor="middle">This is a discussion framework for your clinician — not a self-treatment protocol.</text>
+      <text x="310" y="544" class="footer" text-anchor="middle">PharmaGuide.io · Educational information, not medical advice.</text>
+    </svg>
+  </div>
+</body>
+</html>

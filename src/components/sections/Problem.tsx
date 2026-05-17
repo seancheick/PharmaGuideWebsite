@@ -190,7 +190,7 @@ export function Problem() {
             </p>
           </div>
           <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.14em] text-foreground/65">
-            Medication harm is common
+            ER visits per day from preventable drug events
           </p>
           <p className="mt-3 max-w-prose text-body leading-relaxed text-muted">
             The CDC estimates thousands of emergency visits happen each day

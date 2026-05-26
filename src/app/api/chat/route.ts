@@ -32,6 +32,15 @@ interface HistoryItem {
 interface ChatRequest {
   message: string;
   history?: HistoryItem[];
+  /**
+   * Opaque conversation-memory payload returned by the upstream on
+   * the previous turn. Carries durable patient context — populations
+   * (e.g. "pregnancy"), current medications, prior clarifications —
+   * that the upstream uses to ground subsequent replies. Treated as
+   * a black box here; upstream validates its own shape (see chatbot
+   * API Bug #2 fix — string vs. array of strings, etc.).
+   */
+  _state?: Record<string, unknown>;
 }
 
 async function getClientIp(): Promise<string> {
@@ -103,10 +112,23 @@ export async function POST(req: Request) {
   const timeout = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
 
   try {
+    // Only forward `_state` if it's a plain object — defends against
+    // a buggy or malicious client sending arrays/scalars. The upstream
+    // does its own per-field validation but we may as well reject
+    // structural garbage at the proxy edge.
+    const forwardState =
+      body._state &&
+      typeof body._state === "object" &&
+      !Array.isArray(body._state);
+
     const upstream = await fetch(UPSTREAM, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: body.message.trim(), history }),
+      body: JSON.stringify({
+        message: body.message.trim(),
+        history,
+        ...(forwardState ? { _state: body._state } : {}),
+      }),
       signal: controller.signal,
     });
 
@@ -136,12 +158,13 @@ export async function POST(req: Request) {
 
     const data = (await upstream.json()) as Record<string, unknown>;
 
-    // Strip implementation-detail fields before returning to the
-    // browser. Keeps the "PharmaGuide AI" brand opaque about which
-    // model is under the hood and avoids leaking internal state
-    // (used for analytics on the upstream side, not for the client).
+    // Strip the upstream model name — keeps the "PharmaGuide AI"
+    // brand opaque about which LLM is under the hood. `_state` IS
+    // passed through: the client persists it across turns and echoes
+    // it back, which is how the assistant remembers patient context
+    // (pregnancy, medications, prior clarifications). `confidence`
+    // also passes through so the bubble can render its tier badge.
     delete data.model;
-    delete data._state;
 
     return NextResponse.json(data, { status: 200 });
   } catch (err) {

@@ -26,17 +26,35 @@ import { cn } from "@/lib/utils";
  */
 
 const STORAGE_KEY = "pg-chat-history";
+const STATE_STORAGE_KEY = "pg-chat-state";
 const HISTORY_SEND_LIMIT = 10;
 const HISTORY_STORE_LIMIT = 20;
 const SCROLL_REVEAL_PX = 200;
 
+// Three starter questions aligned with the chatbot API's routing.
+// Each showcases a different PharmaGuide capability and is verified
+// to pass the upstream's intent gate (the prior "Check an interaction"
+// + "Supplement timing tips" prompts either got blocked off-topic or
+// produced generic answers with zero KB hits).
+//   1. Clarifier → LLM: asks which med, then grounded interaction check
+//   2. Clarifier → LLM: asks which med, then specific depletion guidance
+//      (the upstream system prompt now has a 9-drug-class depletion section)
+//   3. Wellness-goal LLM: direct answer (melatonin, mag glycinate, L-theanine)
 const QUICK_ACTIONS = [
-  "Can I take magnesium with metformin?",
-  "Does my supplement deplete any nutrient?",
-  "Is my health data private with PharmaGuide?",
+  "Can I take magnesium with my medication?",
+  "Does my medication deplete any nutrients?",
+  "What supplements help with sleep?",
 ] as const;
 
 type Role = "user" | "assistant";
+
+/**
+ * Opaque conversation-memory payload from the upstream chatbot API.
+ * Carries durable patient context (populations, medications, prior
+ * clarifications). We treat it as a black box — read it from each
+ * response, send it back on the next request, persist across visits.
+ */
+type ConversationState = Record<string, unknown>;
 
 interface Message {
   id: string;
@@ -44,12 +62,20 @@ interface Message {
   content: string;
   /** True when the assistant message represents an error state */
   error?: boolean;
+  /**
+   * Confidence tier returned by the upstream for assistant replies.
+   * Drives the small badge under the bubble. See `resolveConfidence`
+   * for accepted values — anything unrecognized is dropped silently.
+   */
+  confidence?: string;
 }
 
 interface ChatApiResponse {
   reply?: string;
   error?: string;
   retryAfter?: number;
+  confidence?: string;
+  _state?: ConversationState;
 }
 
 export function ChatLauncher() {
@@ -57,6 +83,8 @@ export function ChatLauncher() {
   const [revealed, setRevealed] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [conversationState, setConversationState] =
+    useState<ConversationState | null>(null);
   const [draft, setDraft] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const reducedMotion = useReducedMotion();
@@ -76,6 +104,21 @@ export function ChatLauncher() {
       }
     } catch {
       // Corrupted localStorage — silently start fresh
+    }
+    try {
+      const rawState = localStorage.getItem(STATE_STORAGE_KEY);
+      if (rawState) {
+        const parsedState = JSON.parse(rawState) as unknown;
+        if (
+          parsedState &&
+          typeof parsedState === "object" &&
+          !Array.isArray(parsedState)
+        ) {
+          setConversationState(parsedState as ConversationState);
+        }
+      }
+    } catch {
+      // Corrupted state — start fresh; the API will rebuild it
     }
   }, []);
 
@@ -102,6 +145,23 @@ export function ChatLauncher() {
       // Quota / private mode — drop silently. Session-only fallback.
     }
   }, [messages, mounted]);
+
+  // ─── Persist conversation state (patient context) ──────────────
+  useEffect(() => {
+    if (!mounted) return;
+    try {
+      if (conversationState) {
+        localStorage.setItem(
+          STATE_STORAGE_KEY,
+          JSON.stringify(conversationState)
+        );
+      } else {
+        localStorage.removeItem(STATE_STORAGE_KEY);
+      }
+    } catch {
+      // Quota / private mode — drop silently
+    }
+  }, [conversationState, mounted]);
 
   // ─── Body scroll lock + Esc when panel is open on mobile ───────
   useEffect(() => {
@@ -163,6 +223,10 @@ export function ChatLauncher() {
               .filter((m) => !m.error)
               .slice(-HISTORY_SEND_LIMIT)
               .map((m) => ({ role: m.role, content: m.content })),
+            // Echo back the opaque conversation state from the prior
+            // turn so the upstream remembers patient context. Omitted
+            // on the very first turn (state is null).
+            ...(conversationState ? { _state: conversationState } : {}),
           }),
         });
 
@@ -187,12 +251,26 @@ export function ChatLauncher() {
           return;
         }
 
+        // Capture the new conversation state — defensive shape check.
+        // Upstream validates its own fields; we just confirm we got
+        // an object before storing.
+        if (
+          data._state &&
+          typeof data._state === "object" &&
+          !Array.isArray(data._state)
+        ) {
+          setConversationState(data._state);
+        }
+
         setMessages((prev) => [
           ...prev,
           {
             id: `a-${Date.now()}`,
             role: "assistant",
             content: data.reply!,
+            ...(typeof data.confidence === "string"
+              ? { confidence: data.confidence }
+              : {}),
           },
         ]);
       } catch {
@@ -209,7 +287,7 @@ export function ChatLauncher() {
         setIsLoading(false);
       }
     },
-    [isLoading, messages]
+    [isLoading, messages, conversationState]
   );
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -226,9 +304,11 @@ export function ChatLauncher() {
 
   const newChat = () => {
     setMessages([]);
+    setConversationState(null);
     setDraft("");
     try {
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STATE_STORAGE_KEY);
     } catch {
       // ignore
     }
@@ -460,6 +540,10 @@ function MessageBubble({ message }: { message: Message }) {
       </li>
     );
   }
+  const badge =
+    !message.error && message.confidence
+      ? resolveConfidence(message.confidence)
+      : null;
   return (
     <li className="flex justify-start">
       <div
@@ -471,16 +555,150 @@ function MessageBubble({ message }: { message: Message }) {
         )}
       >
         <FormattedReply text={message.content} />
+        {badge && (
+          <div
+            className={cn(
+              "mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-border/40 bg-surface/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em]",
+              badge.textClass
+            )}
+          >
+            <span
+              aria-hidden="true"
+              className={cn("block h-1.5 w-1.5 rounded-full", badge.dotClass)}
+            />
+            {badge.label}
+          </div>
+        )}
       </div>
     </li>
   );
 }
 
 /**
+ * Map the upstream's `confidence` field to a UI tier. The chatbot
+ * dev described three display labels (Clinical guidelines /
+ * Available evidence / Verify with pharmacist) but the on-the-wire
+ * field could be a short code (`high|medium|low`), a domain code
+ * (`clinical_guideline|kb_grounded|general`), or the label itself.
+ * We handle all three plausible contracts and return `null` for
+ * anything unrecognized — better to drop the badge than fabricate
+ * a confidence tier we can't actually verify.
+ */
+function resolveConfidence(
+  value: string
+): { label: string; textClass: string; dotClass: string } | null {
+  const v = value.trim().toLowerCase();
+  if (
+    v === "high" ||
+    v === "clinical_guideline" ||
+    v === "clinical_guidelines" ||
+    v === "guideline" ||
+    v === "clinical guidelines"
+  ) {
+    return {
+      label: "Clinical guidelines",
+      textClass: "text-severity-safe",
+      dotClass: "bg-severity-safe",
+    };
+  }
+  if (
+    v === "medium" ||
+    v === "kb_grounded" ||
+    v === "kb" ||
+    v === "available evidence" ||
+    v === "available_evidence"
+  ) {
+    return {
+      label: "Available evidence",
+      textClass: "text-severity-caution",
+      dotClass: "bg-severity-caution",
+    };
+  }
+  if (
+    v === "low" ||
+    v === "general" ||
+    v === "no_kb" ||
+    v === "verify with pharmacist" ||
+    v === "verify_with_pharmacist"
+  ) {
+    return {
+      label: "Verify with pharmacist",
+      textClass: "text-severity-avoid",
+      dotClass: "bg-severity-avoid",
+    };
+  }
+  return null;
+}
+
+/**
+ * Inline-format a text run for the chat bubble. The upstream chatbot
+ * emits two inline Markdown constructs:
+ *   • `**bold**` — around medication names, severity labels
+ *   • `[text](url)` — citation / pharmaguide.io links (URLs are
+ *     already allowlist-filtered upstream per chatbot API Bug #3)
+ *
+ * We render those without pulling in a full Markdown library —
+ * anything else passes through unchanged. Unclosed runs degrade
+ * gracefully to literal text rather than throwing.
+ *
+ * The regex uses lazy character-class matches so adjacent runs
+ * (`**a** and **b**`) don't collapse, and so a malformed token
+ * can't eat across boundaries. URL hrefs are re-validated client-
+ * side (http/https only) as defense in depth — never trust the
+ * upstream blindly even though it filters.
+ */
+function formatInline(text: string) {
+  const parts: Array<string | React.ReactElement> = [];
+  // Alternation matches either **bold** OR [label](href).
+  // Group 1 = bold inner. Groups 2+3 = link label + href.
+  const regex = /\*\*([^*]+?)\*\*|\[([^\]]+)\]\(([^)\s]+)\)/g;
+  let lastIndex = 0;
+  let key = 0;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    if (match[1] !== undefined) {
+      parts.push(
+        <strong key={key++} className="font-semibold text-ink">
+          {match[1]}
+        </strong>
+      );
+    } else if (match[2] !== undefined && match[3] !== undefined) {
+      const label = match[2];
+      const rawHref = match[3];
+      if (/^https?:\/\//i.test(rawHref)) {
+        parts.push(
+          <a
+            key={key++}
+            href={rawHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent underline decoration-accent/40 underline-offset-2 transition-colors duration-fast ease-smooth hover:decoration-accent"
+          >
+            {label}
+          </a>
+        );
+      } else {
+        // Non-http(s) scheme — render as plain text. Should never
+        // happen post-allowlist filtering, but defensive.
+        parts.push(label);
+      }
+    }
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+  return parts.length === 0 ? [text] : parts;
+}
+
+/**
  * Render the assistant reply preserving bullet-style lines and
  * paragraph breaks. The upstream returns markdown-ish prose with
- * "• " bullets and \n line breaks. We render those structurally
- * without pulling in a full markdown library.
+ * "• " bullets, \n line breaks, and **bold** runs. We render those
+ * structurally without pulling in a full markdown library.
  */
 function FormattedReply({ text }: { text: string }) {
   const paragraphs = text.split(/\n\n+/);
@@ -497,7 +715,7 @@ function FormattedReply({ text }: { text: string }) {
               {lines.map((l, j) => (
                 <li key={j} className="flex gap-2">
                   <span aria-hidden="true" className="mt-1.5 block h-1 w-1 shrink-0 rounded-full bg-accent" />
-                  <span>{l.trim().replace(/^[•\-]\s*/, "")}</span>
+                  <span>{formatInline(l.trim().replace(/^[•\-]\s*/, ""))}</span>
                 </li>
               ))}
             </ul>
@@ -507,7 +725,7 @@ function FormattedReply({ text }: { text: string }) {
           <p key={i} className={cn(i > 0 && "mt-3")}>
             {lines.map((l, j) => (
               <span key={j}>
-                {l}
+                {formatInline(l)}
                 {j < lines.length - 1 && <br />}
               </span>
             ))}

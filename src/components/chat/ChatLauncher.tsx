@@ -706,8 +706,16 @@ function FormattedReply({ text }: { text: string }) {
     <>
       {paragraphs.map((para, i) => {
         const lines = para.split(/\n/);
+        // Accept any of three bullet markers the upstream emits:
+        //   "• " (Unicode), "- " (hyphen), "* " (Markdown asterisk).
+        // The asterisk variant is what the LLM produces on freeform
+        // wellness-goal replies (e.g. "What supplements help sleep?")
+        // — without this, the leading "*" rendered as literal text.
         const looksLikeList = lines.every(
-          (l) => l.trim().startsWith("• ") || l.trim().startsWith("- ")
+          (l) =>
+            l.trim().startsWith("• ") ||
+            l.trim().startsWith("- ") ||
+            l.trim().startsWith("* ")
         );
         if (looksLikeList) {
           return (
@@ -715,7 +723,7 @@ function FormattedReply({ text }: { text: string }) {
               {lines.map((l, j) => (
                 <li key={j} className="flex gap-2">
                   <span aria-hidden="true" className="mt-1.5 block h-1 w-1 shrink-0 rounded-full bg-accent" />
-                  <span>{formatInline(l.trim().replace(/^[•\-]\s*/, ""))}</span>
+                  <span>{formatInline(l.trim().replace(/^[•\-*]\s*/, ""))}</span>
                 </li>
               ))}
             </ul>

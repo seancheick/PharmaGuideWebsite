@@ -124,7 +124,7 @@ export default function BlogHubPage() {
 
           <div className="container relative mx-auto">
             <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7">
-              <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
+              <p className="font-mono text-h3 font-medium uppercase tracking-[0.14em] text-accent">
                 Blog
               </p>
 

@@ -240,6 +240,37 @@ export const mdxComponents: MDXComponents = {
   ),
 
   /**
+   * Collapsible sources section — keeps the reference list accessible
+   * without dominating the post footer.
+   *
+   * Usage in MDX:
+   *   <Sources>
+   *   - Folkers K, et al. (1990). [Link text](url). *Journal.*
+   *   - ...
+   *   </Sources>
+   */
+  Sources: ({ children }: { children: React.ReactNode }) => (
+    <details className="group my-10 rounded-2xl border border-border bg-surface-subtle">
+      <summary className="flex cursor-pointer select-none items-center gap-3 px-5 py-4 font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80 transition-colors duration-fast hover:text-ink sm:px-6 sm:py-5">
+        <svg
+          aria-hidden="true"
+          className="h-4 w-4 shrink-0 text-accent transition-transform duration-fast group-open:rotate-90"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+        Sources
+      </summary>
+      <div className="border-t border-border px-5 pb-5 pt-4 sm:px-6 sm:pb-6 [&_a]:text-link [&_a]:underline [&_a]:decoration-link/60 [&_a]:underline-offset-[3px] [&_a:hover]:text-link-strong [&_a:hover]:decoration-link [&_li]:text-body-sm [&_li]:leading-relaxed [&_li]:text-muted [&_ol]:mt-0 [&_ol]:gap-2 [&_ul]:mt-0 [&_ul]:gap-2">
+        {children}
+      </div>
+    </details>
+  ),
+
+  /**
    * In-post image with optional caption.
    *
    * Usage in MDX:

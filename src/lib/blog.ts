@@ -110,10 +110,11 @@ export function getFeaturedPost(): BlogPost | undefined {
 }
 
 export function getRelatedPosts(post: BlogPost, limit = 3): BlogPost[] {
-  return getAllPosts()
-    .filter((p) => p.slug !== post.slug)
-    .filter((p) => p.category === post.category)
-    .slice(0, limit);
+  const all = getAllPosts().filter((p) => p.slug !== post.slug);
+  const sameCategory = all.filter((p) => p.category === post.category);
+  // Fall back to most recent posts when the category has no other entries
+  const pool = sameCategory.length > 0 ? sameCategory : all;
+  return pool.slice(0, limit);
 }
 
 // Re-export types + pure helpers so server code can keep one import path

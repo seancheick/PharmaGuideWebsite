@@ -266,7 +266,7 @@ export default async function BlogPostPage({
             <div className="container relative mx-auto">
               <div className="mx-auto max-w-6xl">
                 <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
-                  Keep reading
+                  Related reading
                 </p>
                 <h2
                   id="related-heading"
@@ -274,7 +274,9 @@ export default async function BlogPostPage({
                 >
                   More from{" "}
                   <span className="font-serif italic text-accent">
-                    {category?.label ?? "the blog"}.
+                    {related.every((p) => p.category === post.category)
+                      ? (category?.label ?? "the blog")
+                      : "the blog"}.
                   </span>
                 </h2>
 

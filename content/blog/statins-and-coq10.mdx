@@ -44,6 +44,51 @@ When statins inhibit HMG-CoA reductase, two things happen downstream:
 1. Cholesterol production drops (the intended therapeutic effect)
 2. **CoQ10 production also drops**, because CoQ10's biosynthesis branches off the same upstream pathway
 
+<Illustration caption="How statins block both cholesterol and CoQ10 production through the mevalonate pathway">
+  <svg viewBox="0 0 760 340" role="img" aria-label="Diagram showing how statins block HMG-CoA reductase, reducing both cholesterol and CoQ10 production through the shared mevalonate pathway">
+    <title>Statin mechanism: mevalonate pathway</title>
+    <desc>Statins inhibit HMG-CoA reductase, the enzyme that converts HMG-CoA to mevalonate. Mevalonate branches into two pathways: one producing cholesterol (the intended target) and one producing CoQ10 (an unintended reduction).</desc>
+    <style>{`
+      .node { font-family: system-ui, sans-serif; font-size: 13px; fill: #1e293b; font-weight: 600; }
+      .sub { font-family: system-ui, sans-serif; font-size: 10.5px; fill: #64748b; }
+      .arrow { stroke: #94a3b8; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .block-line { stroke: #ef4444; stroke-width: 2.5; stroke-dasharray: 6 4; }
+      .block-label { font-family: system-ui, sans-serif; font-size: 11px; fill: #ef4444; font-weight: 700; }
+      .good { fill: #0d9488; }
+      .warn { fill: #f59e0b; }
+    `}</style>
+    <defs>
+      <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6" fill="#94a3b8" />
+      </marker>
+    </defs>
+    <rect x="20" y="30" width="160" height="44" rx="8" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
+    <text x="100" y="57" className="node" textAnchor="middle">HMG-CoA</text>
+    <line x1="100" y1="74" x2="100" y2="120" className="arrow" />
+    <rect x="180" y="80" width="160" height="36" rx="6" fill="#fef2f2" stroke="#fecaca" strokeWidth="1" />
+    <text x="260" y="103" className="node" textAnchor="middle">HMG-CoA Reductase</text>
+    <text x="260" y="128" className="sub" textAnchor="middle">enzyme</text>
+    <line x1="340" y1="98" x2="390" y2="98" className="block-line" />
+    <rect x="390" y="82" width="100" height="32" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.5" />
+    <text x="440" y="103" className="block-label" textAnchor="middle">STATIN</text>
+    <text x="500" y="103" className="sub">blocks</text>
+    <rect x="20" y="140" width="160" height="44" rx="8" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
+    <text x="100" y="167" className="node" textAnchor="middle">Mevalonate</text>
+    <line x1="60" y1="184" x2="60" y2="250" className="arrow" />
+    <line x1="140" y1="184" x2="140" y2="250" className="arrow" />
+    <text x="100" y="220" className="sub" textAnchor="middle">branches into</text>
+    <rect x="0" y="260" width="130" height="52" rx="8" stroke="#0d9488" strokeWidth="1.5" fill="#f0fdfa" />
+    <text x="65" y="283" className="node good" textAnchor="middle">Cholesterol</text>
+    <text x="65" y="300" className="sub" textAnchor="middle">intended target ↓</text>
+    <rect x="160" y="260" width="130" height="52" rx="8" stroke="#f59e0b" strokeWidth="1.5" fill="#fffbeb" />
+    <text x="225" y="283" className="node warn" textAnchor="middle">CoQ10</text>
+    <text x="225" y="300" className="sub" textAnchor="middle">also reduced ↓</text>
+    <rect x="400" y="260" width="340" height="52" rx="8" fill="#fef2f2" stroke="#fecaca" strokeWidth="1" />
+    <text x="570" y="280" className="sub" textAnchor="middle">Serum CoQ10 drops 25–50% on statin therapy.</text>
+    <text x="570" y="298" className="sub" textAnchor="middle">The effect is dose-dependent — higher dose = larger drop.</text>
+  </svg>
+</Illustration>
+
 This isn't a side effect in the traditional sense; it's a structural feature of how the medication works. Multiple studies dating back to the 1990s have measured serum CoQ10 in people on statins and found consistent reductions of 25–50% over months of treatment. The effect is dose-dependent — higher statin doses produce larger CoQ10 drops. (Statins are one of five common medication classes with documented depletion patterns — [see the full overview](/blog/medication-depletion-guide).)
 
 > **Source:** [Folkers K, et al. PNAS, 1990](https://www.pnas.org/doi/10.1073/pnas.87.22.8931) — original demonstration that lovastatin lowers serum CoQ10 in human patients. [Mortensen SA, et al. Mol Aspects Med, 1997](https://pubmed.ncbi.nlm.nih.gov/9266536/) — confirmation across multiple statin types.
@@ -73,6 +118,40 @@ If you read only the wellness blogs, you'd think CoQ10 supplementation reliably 
 - **Young JM, et al. (2007)** — randomized 44 statin patients with myalgia to CoQ10 200 mg/day vs placebo for 12 weeks. **No significant difference** in muscle pain between groups. *Source: [Am J Cardiol 2007](https://pubmed.ncbi.nlm.nih.gov/17920367/)*
 - **Taylor BA, et al. (2015)** — randomized 41 statin patients to 600 mg CoQ10/day vs placebo for 8 weeks. **No significant reduction** in muscle pain. *Source: [Atherosclerosis 2015](https://pubmed.ncbi.nlm.nih.gov/25898160/)*
 - **Bookstaver DA, et al. (2012)** — open-label CoQ10 supplementation in statin-rechallenged patients with prior myalgia. About half tolerated the rechallenge with CoQ10, but the lack of placebo control means this could be regression to the mean or placebo effect.
+
+<Illustration caption="CoQ10 for statin muscle pain — what the evidence actually shows">
+  <svg viewBox="0 0 720 280" role="img" aria-label="Evidence scorecard showing the statin CoQ10 depletion mechanism is well-established while supplementation benefit is mixed">
+    <title>CoQ10 evidence scorecard</title>
+    <desc>Two questions scored: Does statin lower CoQ10? Strong evidence, well-established. Does CoQ10 supplementation fix muscle pain? Mixed evidence, meta-analyses lean positive but individual RCTs are inconsistent.</desc>
+    <style>{`
+      .q { font-family: system-ui, sans-serif; font-size: 13px; fill: #1e293b; font-weight: 600; }
+      .a { font-family: system-ui, sans-serif; font-size: 11.5px; fill: #64748b; }
+      .pill { font-family: system-ui, sans-serif; font-size: 10.5px; fill: white; font-weight: 700; }
+      .head { font-family: system-ui, sans-serif; font-size: 11px; fill: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    `}</style>
+    <text x="20" y="28" className="head">Question</text>
+    <text x="420" y="28" className="head">Evidence</text>
+    <text x="560" y="28" className="head">Verdict</text>
+    <line x1="20" y1="40" x2="700" y2="40" stroke="#e2e8f0" strokeWidth="1" />
+    <text x="20" y="75" className="q">Do statins lower CoQ10 levels?</text>
+    <text x="20" y="95" className="a">Multiple RCTs, consistent 25–50% serum drop</text>
+    <rect x="420" y="60" width="90" height="24" rx="12" fill="#0d9488" />
+    <text x="465" y="77" className="pill" textAnchor="middle">Strong</text>
+    <text x="560" y="77" className="q" style={{fill: '#0d9488'}}>Yes — well-established</text>
+    <line x1="20" y1="120" x2="700" y2="120" stroke="#f1f5f9" strokeWidth="1" />
+    <text x="20" y="155" className="q">Does supplementing CoQ10 fix muscle pain?</text>
+    <text x="20" y="175" className="a">Meta-analyses lean positive; individual RCTs mixed</text>
+    <rect x="420" y="140" width="90" height="24" rx="12" fill="#f59e0b" />
+    <text x="465" y="157" className="pill" textAnchor="middle">Mixed</text>
+    <text x="560" y="157" className="q" style={{fill: '#f59e0b'}}>Maybe — modest effect</text>
+    <line x1="20" y1="200" x2="700" y2="200" stroke="#f1f5f9" strokeWidth="1" />
+    <text x="20" y="235" className="q">Do guidelines recommend CoQ10 for SAMS?</text>
+    <text x="20" y="255" className="a">ACC/AHA and ESC/EAS mention it, don't routinely recommend</text>
+    <rect x="420" y="220" width="90" height="24" rx="12" fill="#64748b" />
+    <text x="465" y="237" className="pill" textAnchor="middle">Neutral</text>
+    <text x="560" y="237" className="q" style={{fill: '#64748b'}}>Discussion point only</text>
+  </svg>
+</Illustration>
 
 **How to read this honestly:** the meta-analyses lean positive. The individual better-designed trials (placebo-controlled, longer duration, larger N) are mixed. (For more on how we evaluate clinical evidence, see our [methodology](/methodology).) The effect, when present, is modest — not the dramatic "fixed my muscle pain overnight" testimonial you see on social media.
 

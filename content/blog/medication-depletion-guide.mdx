@@ -42,6 +42,63 @@ This guide walks through five of the most common medication classes and the nutr
 
 If you're taking any of the medications below and want to discuss replenishment, the conversation with your clinician is short: "I read that this medication can reduce levels of [nutrient]. Should I be supplementing, or should we test my levels?" That's it. They'll know. For the broader framing of how we evaluate evidence for these depletion patterns, see our [methodology page](/methodology/).
 
+<Illustration caption="5 common medication classes and the nutrients they deplete — at a glance">
+  <svg viewBox="0 0 780 380" role="img" aria-label="Matrix showing five medication classes and their associated nutrient depletions: statins deplete CoQ10, metformin depletes B12 and folate, PPIs deplete magnesium B12 and calcium, diuretics deplete potassium magnesium and thiamine, and oral contraceptives deplete folate B-vitamins and magnesium">
+    <title>Medication-nutrient depletion matrix</title>
+    <desc>Visual grid mapping statins, metformin, PPIs, diuretics, and oral contraceptives to the specific vitamins and minerals each class is documented to reduce over time.</desc>
+    <style>{`
+      .med { font-family: system-ui, sans-serif; font-size: 12px; fill: white; font-weight: 700; }
+      .nut { font-family: system-ui, sans-serif; font-size: 11px; fill: #1e293b; font-weight: 600; }
+      .mech { font-family: system-ui, sans-serif; font-size: 10px; fill: #64748b; }
+      .col-head { font-family: system-ui, sans-serif; font-size: 10px; fill: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+      .dot { fill: #0d9488; }
+      .dot-mod { fill: #f59e0b; }
+    `}</style>
+    <text x="200" y="20" className="col-head">CoQ10</text>
+    <text x="280" y="20" className="col-head">B12</text>
+    <text x="350" y="20" className="col-head">Folate</text>
+    <text x="430" y="20" className="col-head">Mg</text>
+    <text x="500" y="20" className="col-head">Ca</text>
+    <text x="560" y="20" className="col-head">K</text>
+    <text x="620" y="20" className="col-head">B1</text>
+    <text x="680" y="20" className="col-head">B6</text>
+    <line x1="10" y1="30" x2="760" y2="30" stroke="#e2e8f0" strokeWidth="1" />
+    <rect x="10" y="42" width="170" height="48" rx="8" fill="#0d9488" />
+    <text x="95" y="63" className="med" textAnchor="middle">Statins</text>
+    <text x="95" y="78" className="med" textAnchor="middle" style={{fontSize: '9px', opacity: 0.8}}>atorvastatin, simvastatin</text>
+    <circle cx="215" cy="66" r="10" className="dot" /><text x="215" y="70" className="med" textAnchor="middle" style={{fontSize: '10px'}}>●</text>
+    <rect x="10" y="100" width="170" height="48" rx="8" fill="#0d9488" />
+    <text x="95" y="121" className="med" textAnchor="middle">Metformin</text>
+    <text x="95" y="136" className="med" textAnchor="middle" style={{fontSize: '9px', opacity: 0.8}}>type 2 diabetes</text>
+    <circle cx="295" cy="124" r="10" className="dot" />
+    <circle cx="365" cy="124" r="10" className="dot-mod" />
+    <rect x="10" y="158" width="170" height="48" rx="8" fill="#0d9488" />
+    <text x="95" y="179" className="med" textAnchor="middle">PPIs</text>
+    <text x="95" y="194" className="med" textAnchor="middle" style={{fontSize: '9px', opacity: 0.8}}>omeprazole, pantoprazole</text>
+    <circle cx="295" cy="182" r="10" className="dot-mod" />
+    <circle cx="445" cy="182" r="10" className="dot" />
+    <circle cx="515" cy="182" r="10" className="dot-mod" />
+    <rect x="10" y="216" width="170" height="48" rx="8" fill="#0d9488" />
+    <text x="95" y="237" className="med" textAnchor="middle">Diuretics</text>
+    <text x="95" y="252" className="med" textAnchor="middle" style={{fontSize: '9px', opacity: 0.8}}>furosemide, HCTZ</text>
+    <circle cx="445" cy="240" r="10" className="dot" />
+    <circle cx="575" cy="240" r="10" className="dot" />
+    <circle cx="635" cy="240" r="10" className="dot-mod" />
+    <rect x="10" y="274" width="170" height="48" rx="8" fill="#0d9488" />
+    <text x="95" y="295" className="med" textAnchor="middle">Oral Contraceptives</text>
+    <text x="95" y="310" className="med" textAnchor="middle" style={{fontSize: '9px', opacity: 0.8}}>combined pill</text>
+    <circle cx="295" cy="298" r="10" className="dot-mod" />
+    <circle cx="365" cy="298" r="10" className="dot" />
+    <circle cx="445" cy="298" r="10" className="dot-mod" />
+    <circle cx="695" cy="298" r="10" className="dot-mod" />
+    <line x1="10" y1="340" x2="760" y2="340" stroke="#e2e8f0" strokeWidth="1" />
+    <circle cx="30" cy="362" r="8" className="dot" />
+    <text x="45" y="366" className="mech">Well-documented depletion</text>
+    <circle cx="250" cy="362" r="8" className="dot-mod" />
+    <text x="265" y="366" className="mech">Documented, less commonly screened</text>
+  </svg>
+</Illustration>
+
 ## Do statins deplete CoQ10?
 
 Statins (atorvastatin, simvastatin, rosuvastatin, pravastatin) work by inhibiting an enzyme called HMG-CoA reductase, which the liver uses to make cholesterol. The catch: that same enzyme is upstream of the body's production of [coenzyme Q10](https://ods.od.nih.gov/factsheets/CoenzymeQ10-HealthProfessional/), a critical molecule in cellular energy production. Block the cholesterol pathway, and you also dial down CoQ10 synthesis.

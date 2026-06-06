@@ -204,7 +204,7 @@ export const MOMENTS: readonly Moment[] = [
       severity: "caution",
       severityLabel: "Caution",
       description:
-        "Both reduce platelet aggregation. The combination raises bleeding risk meaningfully — common in older adults taking aspirin for cardiac protection.",
+        "Both inhibit platelet aggregation. Together they compound bleeding risk — a real concern for older adults already on aspirin for cardiac protection. Worth raising before any procedure.",
       metaLeft: "Bleeding risk",
       metaRight: "Discuss with MD",
     },
@@ -234,9 +234,73 @@ export const MOMENTS: readonly Moment[] = [
       severity: "monitor",
       severityLabel: "Monitor",
       description:
-        "Magnesium glycinate, oxide-blend multivitamin, and a 'sleep' blend. Combined daily intake exceeded the upper tolerable limit for several weeks.",
+        "Magnesium glycinate, an oxide-blend multivitamin, and a 'sleep' blend. Combined supplemental intake ran past the 350 mg/day tolerable upper limit for several weeks — the likely cause of the loose stools.",
       metaLeft: "Daily total",
       metaRight: "Above upper limit",
+    },
+  },
+
+  // ─── 7. RECALL ALERT ───
+  // Image target: /public/images/moments/recall.jpg (generate before launch).
+  {
+    id: "recall",
+    category: "Safety alert",
+    title: { lead: "The recall", em: "you'd never have heard about" },
+    description:
+      "The FDA pulls supplements constantly — often for drug ingredients that were never printed on the label. The alert rarely reaches the person holding the bottle.",
+    learnMore: "Learn about recall monitoring",
+    preview: "Avoid · Undeclared sildenafil",
+    image: "/images/moments/recall.jpg",
+    imageAlt:
+      "An unbranded supplement bottle on a kitchen counter in low evening light, capsules spilled beside it, an unsettling quiet to the scene.",
+    member: {
+      name: "Marcus D.",
+      role: "Member spotlight",
+      avatar:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&q=80&auto=format&fit=crop",
+    },
+    quote:
+      "It was a 'natural' energy booster. Turns out it had a prescription drug in it the label never mentioned.",
+    flag: {
+      name: "Undeclared sildenafil",
+      severity: "avoid",
+      severityLabel: "Active recall",
+      description:
+        "FDA recalled this product for containing undeclared sildenafil — a prescription drug that can dangerously lower blood pressure when combined with nitrates. If you'd scanned it, your stack flags the recall immediately.",
+      metaLeft: "FDA status",
+      metaRight: "Active recall",
+    },
+  },
+
+  // ─── 8. CONDITION-AWARE (drug ↔ condition) ───
+  // Image target: /public/images/moments/condition.jpg (generate before launch).
+  {
+    id: "condition",
+    category: "Your conditions",
+    title: { lead: "Safe for most —", em: "not for your profile" },
+    description:
+      "The same capsule can be fine for one person and risky for another. Your conditions and medications change the math — quietly.",
+    learnMore: "Learn about condition-aware checks",
+    preview: "Caution · Potassium + kidney profile",
+    image: "/images/moments/condition.jpg",
+    imageAlt:
+      "A middle-aged person at a kitchen table holding a single supplement capsule, a row of prescription bottles and a glass of water nearby, considering it carefully in soft morning light.",
+    member: {
+      name: "Elena V.",
+      role: "Member spotlight",
+      avatar:
+        "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=160&q=80&auto=format&fit=crop",
+    },
+    quote:
+      "Nobody flagged that a potassium supplement was a problem with my kidney condition and my blood-pressure medication.",
+    flag: {
+      name: "Potassium + ACE inhibitor",
+      severity: "caution",
+      severityLabel: "Condition flag",
+      description:
+        "With reduced kidney function and an ACE inhibitor, added potassium raises the risk of hyperkalemia — a dangerous rise in blood potassium. Surfaced because all three are in your profile.",
+      metaLeft: "Risk",
+      metaRight: "Hyperkalemia",
     },
   },
 ];

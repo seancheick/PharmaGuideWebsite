@@ -8,6 +8,7 @@ import {
   AI_DOES,
   AI_DOES_NOT,
   DATA_SOURCES,
+  ENGINE_STAGES,
   PROCESS_STEPS,
   SCOPE_IS,
   SCOPE_IS_NOT,
@@ -243,6 +244,113 @@ export function MethodologyClient() {
         </div>
       </section>
 
+      {/* ━━━━━━━━━━━━━━━━━━ HOW THE ENGINE WORKS ━━━━━━━━━━━━━━━━━━ */}
+      {/* The runtime pipeline — the technical moat. Six stages from a
+          scanned product to a Stack Health verdict. Each stage maps to a
+          shipped capability documented on /features. */}
+      <section
+        aria-labelledby="meth-engine-heading"
+        className="relative section-y-sm"
+      >
+        <div className="container relative mx-auto">
+          <motion.div
+            variants={fadeUpContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-15%" }}
+            className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
+          >
+            <motion.p
+              variants={fadeUpItem}
+              className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
+            >
+              03 · How the engine works
+            </motion.p>
+
+            <motion.h2
+              id="meth-engine-heading"
+              variants={fadeUpItem}
+              className="text-balance text-display-md text-ink"
+            >
+              From a scanned product{" "}
+              <span className="font-serif italic">to a verdict.</span>
+            </motion.h2>
+
+            <motion.p
+              variants={fadeUpItem}
+              className="max-w-prose text-body-lg leading-relaxed text-muted"
+            >
+              Every check runs through the same six-stage pipeline — most
+              of it on your device. Here&apos;s what happens between the
+              scan and the score.
+            </motion.p>
+          </motion.div>
+
+          <motion.ol
+            variants={{
+              hidden: {},
+              visible: {
+                transition: { staggerChildren: 0.08, delayChildren: 0.15 },
+              },
+            }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-10%" }}
+            className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
+          >
+            {ENGINE_STAGES.map((stage) => (
+              <motion.li
+                key={stage.num}
+                variants={fadeUpItem}
+                className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent bg-surface">
+                    <span className="font-mono text-[11px] font-medium tabular-nums tracking-[0.08em] text-accent">
+                      {stage.num}
+                    </span>
+                  </span>
+                  <h3 className="font-serif text-h3 italic leading-tight text-ink">
+                    {stage.title}
+                  </h3>
+                </div>
+                <p className="text-body-sm leading-relaxed text-muted">
+                  {stage.body}
+                </p>
+                <p className="mt-1 border-t border-border pt-4 font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
+                  {stage.detail}
+                </p>
+              </motion.li>
+            ))}
+          </motion.ol>
+
+          {/* Closing: the pipeline resolves to the Stack Health verdict */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={transitions.reveal}
+            className="mx-auto mt-10 flex max-w-3xl flex-col items-center gap-4 text-center md:mt-12"
+          >
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-subtle">
+              The six stages resolve to one verdict
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {["Optimized", "Solid", "Decent", "Needs review", "Unsafe"].map(
+                (label) => (
+                  <span
+                    key={label}
+                    className="inline-flex items-center rounded-pill border border-border bg-surface px-3 py-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-foreground/80"
+                  >
+                    {label}
+                  </span>
+                ),
+              )}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ━━━━━━━━━━━━━━━━━━ SEE IT IN ACTION (specimen) ━━━━━━━━━━━━━━ */}
       {/* A real interaction record from the production pipeline — not a
           mock. Pulled from scripts/data/ingredient_interaction_rules.json
@@ -424,7 +532,7 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
-              03 · Our 5-step process
+              04 · How we verify content
             </motion.p>
 
             <motion.h2
@@ -528,7 +636,7 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
-              04 · Medical advisory team
+              05 · Medical advisory team
             </motion.p>
 
             <motion.h2
@@ -618,7 +726,7 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
-              05 · AI transparency
+              06 · AI transparency
             </motion.p>
 
             <motion.h2
@@ -732,7 +840,7 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
-              06 · Limitations and scope
+              07 · Limitations and scope
             </motion.p>
 
             <motion.h2

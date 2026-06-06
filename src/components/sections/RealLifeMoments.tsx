@@ -39,8 +39,28 @@ const SEV_STYLES: Record<
   },
 };
 
+/**
+ * Tracks whether the viewport is desktop-width (md+, 768px). Used to
+ * decide between the inline FLIP expand (desktop) and the full-screen
+ * sheet (mobile). Defaults to `true` so server render + first paint
+ * never flashes the mobile sheet on desktop; corrected in effect.
+ */
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(true);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return isDesktop;
+}
+
 export function RealLifeMoments() {
   const [openIdx, setOpenIdx] = useState<number>(-1);
+  const isDesktop = useIsDesktop();
+  const openMoment = openIdx >= 0 ? MOMENTS[openIdx] : undefined;
   const [progress, setProgress] = useState({ width: 30, left: 0 });
   const railRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -63,9 +83,10 @@ export function RealLifeMoments() {
     return () => window.removeEventListener("keydown", onKey);
   }, [openIdx]);
 
-  // Scroll opened card into view
+  // Scroll opened card into view — desktop inline-expand only. On mobile
+  // the card opens as a full-screen sheet, so there's nothing to scroll.
   useEffect(() => {
-    if (openIdx < 0) return;
+    if (openIdx < 0 || !isDesktop) return;
     const card = cardRefs.current[openIdx];
     const rail = railRef.current;
     if (!card || !rail) return;
@@ -85,7 +106,18 @@ export function RealLifeMoments() {
       }
       updateProgress();
     });
-  }, [openIdx, updateProgress]);
+  }, [openIdx, isDesktop, updateProgress]);
+
+  // Mobile full-screen sheet: lock body scroll while it's open so the
+  // page behind doesn't scroll under the sheet.
+  useEffect(() => {
+    if (isDesktop || openIdx < 0) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isDesktop, openIdx]);
 
   // Progress bar tracking
   useEffect(() => {
@@ -188,13 +220,23 @@ export function RealLifeMoments() {
                 cardRefs.current[i] = el;
               }}
               moment={moment}
-              isOpen={openIdx === i}
+              isOpen={openIdx === i && isDesktop}
               onOpen={() => setOpenIdx(i)}
               onClose={() => setOpenIdx(-1)}
             />
           ))}
         </LayoutGroup>
       </div>
+
+      {/* Mobile: full-screen sheet instead of inline expand. The rail
+          card stays compact; tapping it opens this sheet, which is the
+          only place mobile users see the member quote + PharmaGuide
+          flag. Closes on the ×, the backdrop, or Esc. */}
+      <AnimatePresence>
+        {!isDesktop && openMoment && (
+          <MomentSheet moment={openMoment} onClose={() => setOpenIdx(-1)} />
+        )}
+      </AnimatePresence>
 
       {/* Controls */}
       <div className="container mx-auto mt-6">
@@ -478,6 +520,9 @@ const MomentCard = ({
                     <span className="ml-2 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/55">
                       {moment.member.role}
                     </span>
+                    <span className="ml-1.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/35">
+                      · Illustrative
+                    </span>
                   </p>
                   <p className="mt-2 text-[12px] leading-relaxed text-white/80">
                     “{moment.quote}”
@@ -524,3 +569,189 @@ const MomentCard = ({
   );
 };
 MomentCard.displayName = "MomentCard";
+
+/**
+ * MomentSheet — mobile-only full-screen presentation of an opened moment.
+ *
+ * On small screens the inline FLIP expand is cramped and hides the
+ * insights aside (member quote + flag). This sheet instead takes over
+ * the full viewport: a photo header up top, then the full content —
+ * title, description, member quote, and the PharmaGuide flag that's the
+ * actual payoff. Slides up from the bottom; closes on × / backdrop / Esc.
+ */
+const MomentSheet = ({
+  moment,
+  onClose,
+}: {
+  moment: Moment;
+  onClose: () => void;
+}) => {
+  const sev = SEV_STYLES[moment.flag.severity];
+
+  return (
+    <motion.div
+      // z above the fixed Header (z-300) and its mobile menu (z-400) so the
+      // full-screen sheet covers the bar and its close × is tappable.
+      className="fixed inset-0 z-[500] md:hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      role="dialog"
+      aria-modal="true"
+      aria-label={moment.flag.name}
+    >
+      {/* Backdrop */}
+      <button
+        type="button"
+        aria-label="Close"
+        onClick={onClose}
+        className="absolute inset-0 h-full w-full bg-black/40"
+        tabIndex={-1}
+      />
+
+      {/* Sheet — slides up, covers the viewport */}
+      <motion.div
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ duration: 0.42, ease: [0.32, 0.72, 0.24, 1] }}
+        className="absolute inset-0 flex flex-col overflow-hidden bg-ink"
+      >
+        {/* Photo header */}
+        <div className="relative h-[38vh] shrink-0 overflow-hidden">
+          <Image
+            src={moment.image}
+            alt={moment.imageAlt}
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 35%, rgba(8,12,14,0.55) 80%, rgba(8,12,14,0.95) 100%)",
+            }}
+          />
+
+          {/* Category pill */}
+          <span className="pointer-events-none absolute left-5 top-5 inline-flex items-center gap-2 rounded-pill border border-white/25 bg-white/15 px-3.5 py-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-white shadow-sm backdrop-blur-md">
+            <span className="block h-1 w-1 rounded-full bg-white/70" />
+            {moment.category}
+          </span>
+
+          {/* Close */}
+          <button
+            type="button"
+            aria-label="Close moment"
+            onClick={onClose}
+            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-ink shadow-md focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M4 4l8 8M12 4l-8 8"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+
+          {/* Title anchored over the photo */}
+          <h3 className="absolute bottom-5 left-5 right-5 font-serif text-[clamp(1.6rem,7vw,2.1rem)] font-normal leading-[1.12] tracking-[-0.014em] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
+            {moment.title.lead}{" "}
+            <span className="italic">{moment.title.em}</span>
+          </h3>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-5 py-6 text-white">
+          <p className="text-body leading-relaxed text-white/90">
+            {moment.description}
+          </p>
+
+          <a
+            href="#waitlist"
+            onClick={onClose}
+            className="inline-flex w-fit items-center gap-2 rounded-pill bg-white px-5 py-2.5 text-body-sm font-medium text-ink shadow-md"
+          >
+            {moment.learnMore}
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M3 8h10M9 4l4 4-4 4"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </a>
+
+          {/* Member quote */}
+          <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-4">
+            <div className="flex items-start gap-3">
+              <span
+                aria-hidden="true"
+                className="block h-9 w-9 shrink-0 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/20"
+                style={{
+                  backgroundImage: `url(${moment.member.avatar})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              />
+              <div className="min-w-0">
+                <p className="text-[12.5px] font-medium leading-tight text-white">
+                  {moment.member.name}
+                  <span className="ml-2 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/55">
+                    {moment.member.role}
+                  </span>
+                  <span className="ml-1.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/35">
+                    · Illustrative
+                  </span>
+                </p>
+                <p className="mt-2 text-[13px] leading-relaxed text-white/80">
+                  “{moment.quote}”
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* PharmaGuide flag — the payoff */}
+          <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-4">
+            <div className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className={cn("block h-1.5 w-1.5 rounded-full", sev.dot)}
+              />
+              <span
+                className={cn(
+                  "font-mono text-[9.5px] font-medium uppercase tracking-[0.12em]",
+                  sev.text
+                )}
+              >
+                PharmaGuide flag · {moment.flag.severityLabel}
+              </span>
+            </div>
+            <h4 className="mt-2 font-serif text-[19px] italic leading-tight text-white">
+              {moment.flag.name}
+            </h4>
+            <p className="mt-2 text-[13px] leading-relaxed text-white/75">
+              {moment.flag.description}
+            </p>
+            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-2.5">
+              <span className="font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/55">
+                {moment.flag.metaLeft}
+              </span>
+              <span className="font-mono text-[12px] font-semibold tabular-nums text-white">
+                {moment.flag.metaRight}
+              </span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+MomentSheet.displayName = "MomentSheet";

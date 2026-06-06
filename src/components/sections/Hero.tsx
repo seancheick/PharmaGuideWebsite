@@ -16,7 +16,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative overflow-x-clip halo-hero pb-section-y pt-24 sm:pt-28 md:pt-32"
+      className="halo-hero relative overflow-x-clip pb-section-y pt-24 sm:pt-28 md:pt-32"
       aria-label="Hero"
     >
       <div className="container mx-auto">
@@ -34,39 +34,74 @@ export function Hero() {
             </h1>
 
             {/* Subhead broadened: covers the full product surface
-                (interactions, depletions, recalls, quality, fit) so the
-                homepage stops framing PharmaGuide as a narrow checker.
-                Inline `/features` link removed — it competed with the
-                primary CTA below. Deep-dive lives in the tertiary link
-                under the trust pills.                                  */}
-            <p className="animate-fade-up max-w-prose text-body-xl text-muted">
-              Check interactions, medication-nutrient depletions, dose
-              overlap, FDA recalls, and ingredient quality across your
-              full stack.
+                (interactions, depletions, recalls, quality, fit) and now
+                names the personalization + privacy posture that the app
+                actually ships — checked against your conditions and
+                medications, computed on-device. Kept as decision-support
+                framing, not medical advice. Inline `/features` link lives
+                in the tertiary link under the trust pills.             */}
+            <p className="max-w-prose animate-fade-up text-body-xl text-muted">
+              Check interactions, medication-nutrient depletions, dose overlap, FDA recalls, and
+              ingredient quality across your full stack — personalized to your conditions and
+              medications, privately on your device.
             </p>
 
-            <div className="animate-fade-up flex flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:80ms]">
+            <div className="flex animate-fade-up flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:80ms]">
               <span className="inline-flex items-center gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-accent" aria-hidden="true">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-accent"
+                  aria-hidden="true"
+                >
                   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
                   <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                   <line x1="12" y1="22.08" x2="12" y2="12" />
                 </svg>
-                <span className="font-medium text-ink tnum">180,000+</span> products
+                <span className="tnum font-medium text-ink">180,000+</span> products
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-accent" aria-hidden="true">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-accent"
+                  aria-hidden="true"
+                >
                   <path d="M9 3h6v2H9zM12 5v3" />
                   <path d="M15.5 11h-7l-1 9h9l-1-9z" />
                   <circle cx="12" cy="15" r="1.5" />
                 </svg>
-                Evidence-graded
+                FDA · NIH · PubMed verified
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-accent" aria-hidden="true">
-                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-accent"
+                  aria-hidden="true"
+                >
+                  <path d="M19 11H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2z" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
-                Clinician-informed
+                Private by design
               </span>
             </div>
 
@@ -75,16 +110,16 @@ export function Hero() {
                 under the trust row, above the action buttons.          */}
             <Link
               href="/features"
-              className="animate-fade-up inline-flex w-fit items-center gap-1.5 font-mono text-eyebrow uppercase text-accent transition-colors duration-fast ease-smooth hover:text-accent-strong [animation-delay:120ms]"
+              className="inline-flex w-fit animate-fade-up items-center gap-1.5 font-mono text-eyebrow uppercase text-accent transition-colors duration-fast ease-smooth [animation-delay:120ms] hover:text-accent-strong"
             >
               See everything we check
               <span aria-hidden="true">→</span>
             </Link>
 
-            <div className="animate-fade-up flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:gap-6 [animation-delay:160ms]">
+            <div className="flex animate-fade-up flex-col gap-4 pt-2 [animation-delay:160ms] sm:flex-row sm:items-center sm:gap-6">
               <Link
                 href="#waitlist"
-                className="inline-flex items-center justify-center gap-1.5 rounded-pill bg-accent px-5 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill bg-accent px-5 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent"
               >
                 Join the beta
                 <span aria-hidden="true">→</span>
@@ -92,7 +127,7 @@ export function Hero() {
 
               <a
                 href="#problem"
-                className="group inline-flex items-center gap-1.5 py-2 text-body-sm font-medium text-accent transition-colors duration-fast ease-smooth hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                className="focus-visible:outline-offset-3 group inline-flex items-center gap-1.5 py-2 text-body-sm font-medium text-accent transition-colors duration-fast ease-smooth hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-accent"
               >
                 Why interactions matter
                 <span

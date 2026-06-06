@@ -189,6 +189,7 @@ export const PILLARS: readonly FeaturePillar[] = [
     capabilities: [
       "Active and inactive ingredients parsed — fillers, allergens, excipients",
       "Proprietary-blend dose decomposition — most apps can't read these; we can",
+      "Probiotic strain + CFU and prebiotic fiber checks — strains named, live counts and fiber type verified, not just 'blend'",
       "PG Score across 4 pillars: ingredient quality, safety & purity, evidence, brand trust",
       "Third-party testing flags (USP, NSF, Informed Sport) where verifiable",
     ],
@@ -197,6 +198,11 @@ export const PILLARS: readonly FeaturePillar[] = [
         trigger: '"Energy Blend 850mg" with no per-ingredient dose',
         result:
           "**Decomposed** — we estimate per-ingredient ranges and flag what's hidden",
+      },
+      {
+        trigger: '"50 billion CFU probiotic" with strains unnamed',
+        result:
+          "**Strain-gap flag** — CFU counts mean little without the specific strains the evidence is built on",
       },
       {
         trigger: "Capsule with magnesium stearate + titanium dioxide",
@@ -228,6 +234,7 @@ export const PILLARS: readonly FeaturePillar[] = [
     illustration: "fit",
     capabilities: [
       "Profile gating — irrelevant warnings stay hidden, relevant ones surface clearly",
+      "Medication ↔ condition flags — surfaces when something in your stack is risky given a diagnosis you've entered",
       "Pregnancy + breastfeeding flags treated as separate, never combined",
       "Drug-class awareness: SSRIs, statins, anticoagulants, hypoglycemics, more",
       "Goal-driven stack recommendations (sleep, energy, recovery, longevity)",
@@ -236,6 +243,10 @@ export const PILLARS: readonly FeaturePillar[] = [
       {
         trigger: "St. John's Wort + sertraline + 'mood support' goal",
         result: "**Avoid** — serotonin syndrome risk; review with a clinician",
+      },
+      {
+        trigger: "Potassium + ACE inhibitor + 'kidney disease' profile",
+        result: "**Flag** — combined hyperkalemia risk; surfaced because all three are in your profile",
       },
       {
         trigger: "High-dose vitamin A + 'pregnancy' profile flag",

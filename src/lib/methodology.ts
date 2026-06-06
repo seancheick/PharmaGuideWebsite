@@ -24,6 +24,14 @@ export interface DataSource {
   use: string;
 }
 
+export interface EngineStage {
+  num: string;
+  title: string;
+  body: string;
+  /** Concrete proof line rendered in mono caps under the body. */
+  detail: string;
+}
+
 export interface ProcessStep {
   num: string;
   title: string;
@@ -105,6 +113,54 @@ export const DATA_SOURCES: readonly DataSource[] = [
       "Professional society guidelines",
     ],
     use: "Cross-referencing interactions · clinical context",
+  },
+];
+
+/**
+ * ENGINE_STAGES — the runtime analysis pipeline. This is the technical
+ * moat: what actually happens between scanning a product and seeing a
+ * verdict. Every stage is grounded in a shipped capability documented
+ * on /features (catalog, normalization, multi-way detection, profile
+ * gating, UL tracking, recall sync). No stage claims more than the
+ * product does; specific external API names are intentionally left to
+ * the data-sources section, which is verified.
+ */
+export const ENGINE_STAGES: readonly EngineStage[] = [
+  {
+    num: "01",
+    title: "Catalog match",
+    body: "A scan or search resolves to a specific product in a 180,000+ item catalog that lives on your device — so identification happens in milliseconds, offline, without a round-trip to a server.",
+    detail: "180,000+ products · on-device · sub-10ms lookup",
+  },
+  {
+    num: "02",
+    title: "Ingredient normalization",
+    body: "Active and inactive ingredients are parsed and mapped to canonical identities — and proprietary blends are decomposed into estimated per-ingredient ranges, the step most apps skip because the label hides the math.",
+    detail: "Actives + inactives · proprietary-blend decomposition",
+  },
+  {
+    num: "03",
+    title: "Interaction detection",
+    body: "Your stack is analyzed as a system, not one bottle at a time: supplement–supplement, supplement–drug, and drug–drug interactions, cross-product dose summation, and timing conflicts are each checked against the rules library.",
+    detail: "Multi-way · dose summation · timing conflicts",
+  },
+  {
+    num: "04",
+    title: "Personal gating",
+    body: "Every result is filtered through your profile — conditions, medications, age, and goals. Irrelevant warnings stay hidden; a medication that's risky given one of your conditions is surfaced as a flag.",
+    detail: "Condition · medication · drug↔condition flags",
+  },
+  {
+    num: "05",
+    title: "Accumulation tracking",
+    body: "Each nutrient is summed across the entire stack and measured against its Recommended Daily Allowance and Tolerable Upper Intake Level — so three products quietly stacking the same mineral don't slip past the safe ceiling.",
+    detail: "RDA + UL per nutrient · across the full stack",
+  },
+  {
+    num: "06",
+    title: "Recall & safety sync",
+    body: "The products you've scanned are checked against active FDA recalls and adverse-event signals, so a bottle in your stack doesn't quietly become unsafe without you hearing about it.",
+    detail: "FDA recalls · FAERS signals · lot-level when published",
   },
 ];
 

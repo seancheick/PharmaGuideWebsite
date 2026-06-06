@@ -30,7 +30,7 @@ const CAPABILITIES = [
   {
     num: "02",
     title: "Stack intelligence",
-    body: "Checks combinations, timing, and dose overlap across products.",
+    body: "Checks supplement–supplement, supplement–drug, and drug–drug combinations, timing, and dose overlap.",
     href: "/features#stack-intelligence",
   },
   {
@@ -42,7 +42,7 @@ const CAPABILITIES = [
   {
     num: "04",
     title: "Personal fit",
-    body: "Adapts to your age, conditions, and medications.",
+    body: "Flags when a supplement or medication clashes with one of your conditions — across 14, including pregnancy, trying to conceive, diabetes, and upcoming surgery.",
     href: "/features#personal-fit",
   },
   {
@@ -64,7 +64,7 @@ export function BeyondInteractions() {
     <section
       id="beyond-interactions"
       aria-labelledby="beyond-heading"
-      className="relative section-y"
+      className="section-y relative"
     >
       {/* Faint accent halos for ambient depth */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -99,17 +99,15 @@ export function BeyondInteractions() {
             variants={fadeUpItem}
             className="text-balance text-display-lg leading-[1.06] text-ink"
           >
-            Interactions are{" "}
-            <span className="font-serif italic text-accent">just the start.</span>
+            Interactions are <span className="font-serif italic text-accent">just the start.</span>
           </motion.h2>
 
           <motion.p
             variants={fadeUpItem}
             className="max-w-prose text-body-lg leading-relaxed text-muted"
           >
-            PharmaGuide checks the full picture: interactions, nutrient
-            depletion, dose overlap, ingredient quality, personal fit,
-            and recall alerts.
+            PharmaGuide checks the full picture: interactions, nutrient depletion, dose overlap,
+            ingredient quality, personal fit, and recall alerts.
           </motion.p>
         </motion.div>
 
@@ -130,19 +128,15 @@ export function BeyondInteractions() {
             <motion.li key={cap.num} variants={fadeUpItem} className="group">
               <Link
                 href={cap.href}
-                className="flex h-full flex-col gap-3 rounded-2xl border border-border bg-surface p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-1 hover:border-border-strong hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent md:p-7"
+                className="focus-visible:outline-offset-3 flex h-full flex-col gap-3 rounded-2xl border border-border bg-surface p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-1 hover:border-border-strong hover:shadow-md focus-visible:outline-2 focus-visible:outline-accent md:p-7"
               >
-                <span className="font-mono text-[10.5px] font-medium tabular-nums uppercase tracking-[0.18em] text-accent">
+                <span className="font-mono text-[10.5px] font-medium uppercase tabular-nums tracking-[0.18em] text-accent">
                   {cap.num}
                 </span>
 
-                <h3 className="font-serif text-h3 italic leading-snug text-ink">
-                  {cap.title}
-                </h3>
+                <h3 className="font-serif text-h3 italic leading-snug text-ink">{cap.title}</h3>
 
-                <p className="text-body-sm leading-relaxed text-muted">
-                  {cap.body}
-                </p>
+                <p className="text-body-sm leading-relaxed text-muted">{cap.body}</p>
 
                 <span className="mt-auto inline-flex items-center gap-1.5 pt-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent">
                   See how
@@ -175,7 +169,7 @@ export function BeyondInteractions() {
               "go deeper" action. */}
           <Link
             href="/features"
-            className="inline-flex items-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            className="focus-visible:outline-offset-3 inline-flex items-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent"
           >
             See all six capabilities in depth
             <span aria-hidden="true">→</span>
@@ -185,7 +179,7 @@ export function BeyondInteractions() {
               as prose rather than a clickable destination. */}
           <Link
             href="/blog"
-            className="group inline-flex items-center gap-1.5 text-body-sm font-medium text-accent transition-colors duration-fast ease-smooth hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+            className="focus-visible:outline-offset-3 group inline-flex items-center gap-1.5 text-body-sm font-medium text-accent transition-colors duration-fast ease-smooth hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-accent"
           >
             Or read our evidence-graded guides
             <span

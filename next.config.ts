@@ -1,9 +1,19 @@
 import type { NextConfig } from "next";
+import path from "node:path";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
+
+  // Pin Turbopack's workspace root to THIS project. Without this, a stray
+  // lockfile in the home directory (~/package-lock.json) made Next infer
+  // ~/ as the root, so Turbopack watched the entire home folder for file
+  // changes — pegging CPU/memory and freezing the machine. Locking the
+  // root here keeps the dev watcher scoped to the project only.
+  turbopack: {
+    root: path.join(__dirname),
+  },
 
   // Image optimization defaults
   images: {

@@ -131,9 +131,9 @@ const TRUST_ICON_MAP = {
 } as const;
 
 const SOCIAL_LINKS = [
-  { label: "X (Twitter)", href: "https://twitter.com/pharmaguideai", Icon: IconX },
-  { label: "LinkedIn", href: "https://linkedin.com/company/pharmaguide", Icon: IconLinkedIn },
-  { label: "Instagram", href: "https://instagram.com/pharmaguide.io", Icon: IconInstagram },
+  { label: "X (Twitter)", href: "https://x.com/pharmaguideai", Icon: IconX },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/pharmaguide.ai", Icon: IconLinkedIn },
+  { label: "Instagram", href: "https://www.instagram.com/pharmaguide.ai", Icon: IconInstagram },
 ] as const;
 
 export function Footer() {

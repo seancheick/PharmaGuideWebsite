@@ -79,9 +79,9 @@ export default function PressPage() {
       },
     ],
     sameAs: [
-      `https://twitter.com/${site.twitter.replace("@", "")}`,
-      "https://linkedin.com/company/pharmaguide",
-      "https://instagram.com/pharmaguide.io",
+      `https://x.com/${site.twitter.replace("@", "")}`,
+      "https://www.linkedin.com/company/pharmaguide.ai",
+      "https://www.instagram.com/pharmaguide.ai",
     ],
   };
 

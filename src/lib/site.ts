@@ -14,7 +14,7 @@ export const site = {
   country: "US",
   email: "info@pharmaguide.io",
   city: "Boston, MA",
-  twitter: "@pharmaguide",
+  twitter: "@pharmaguideai",
 } as const;
 
 /**

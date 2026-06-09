@@ -52,31 +52,40 @@ email or on the linked page. Otherwise, soften.
 
 ## Drip 1 — Day 5 — Why we built PharmaGuide
 
-**Subject:** Why pharmacists wouldn't answer my question
-**Preview text:** The conversation that became this whole thing.
-**From:** PharmaGuide <info@pharmaguide.io>
+**Subject:** "Probably fine" is not an answer
+**Preview text:** The pharmacy-counter question that started all this.
+**From:** Sean at PharmaGuide <info@pharmaguide.io>
 **Send when:** 5 days after waitlist signup
 **Audience:** Beta Waitlist
+**Primary KPI:** reply rate
 
 ---
 
 Hey —
 
-A few years ago I walked into a pharmacy holding a bottle of fish oil and a
-prescription for atorvastatin, and asked a simple question: *do these
-interact?*
+A few years ago I stood at a pharmacy counter with a bottle of fish oil
+and a prescription for atorvastatin, and asked what I thought was a simple
+question: *do these interact?*
 
-The pharmacist looked at the prescription, then at me, then back at the
-prescription. "We don't really cover supplements."
+The pharmacist was generous with his time. He glanced at the bottle and
+said, "Those should be fine — maybe space them out a bit."
 
-I tried three more pharmacies. Same answer. *Supplements aren't our scope.*
+That was the whole answer. Not because he didn't know his field — because
+the systems behind the counter aren't built for the question. Pharmacy
+software checks drugs against drugs, automatically, every time. The
+supplement half of my question wasn't in the system at all.
 
-So I asked my doctor. Same shrug. *Ask the pharmacist.*
+My doctor's office, same structural problem: a fifteen-minute visit has
+room for the prescriptions, and the supplement list — if it comes up at
+all — gets a "probably fine" on the way out the door.
 
-The thing is — interactions like this are documented. Calcium can interfere
-with thyroid medication absorption when taken too close together. Metformin
-is associated with lower B12 levels over time. There's *literature* on all
-of this. It just sits in a place that's hard for most people to reach.
+Here's what stuck with me. When I eventually dug through the literature
+myself, the answer was mostly reassuring. The frustrating part was never
+the answer — *it was that nobody could show me the evidence.* And for
+plenty of other combinations, it isn't reassuring at all: calcium can
+interfere with thyroid medication absorption when taken too close
+together. Metformin is associated with lower B12 levels over time. It's
+all documented. It just sits where most people can't reach it.
 
 That's why PharmaGuide exists.
 
@@ -89,7 +98,12 @@ support: interaction signals, medication-nutrient depletions, dose
 accumulation across products, ingredient quality, FDA recalls. With the
 citations attached.
 
-Beta opens soon. You'll be one of the first in.
+Beta invites go out in order of signup — you're in the first wave.
+
+One ask while you wait: **hit reply and tell me the one question about
+your stack you've never gotten a straight answer on.** An interaction, an
+ingredient's quality, a brand you're not sure about — whatever it is.
+I read every reply, and the answers shape what we build and write next.
 
 — Sean
 Founder, PharmaGuide
@@ -101,13 +115,21 @@ Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 
 ---
 
+> **Authenticity note:** the pharmacy scene above must be *your* real one.
+> If the actual pair wasn't fish oil + atorvastatin, swap in whatever you
+> were carrying that day — the copy works with any combination, and a true
+> detail always reads truer than an optimized one.
+
+---
+
 ## Drip 2 — Day 14 — Inside the database
 
-**Subject:** Inside the database — 180,000 products and counting
+**Subject:** Inside the database — 180,000 products
 **Preview text:** Where the data comes from, and why that matters.
-**From:** PharmaGuide <info@pharmaguide.io>
+**From:** Sean at PharmaGuide <info@pharmaguide.io>
 **Send when:** 14 days after waitlist signup
 **Audience:** Beta Waitlist
+**Primary KPI:** click-through to the linked post
 
 ---
 
@@ -139,7 +161,12 @@ instead of picking one. *Your check is only as good as what's behind it.*
 That's also why we don't sell your stack data. You shouldn't have to wonder
 who else is reading what you swallow.
 
-Beta opens soon.
+If you want to see what this looks like in practice, start here:
+
+**→ [What "proprietary blend" actually hides](https://www.pharmaguide.io/blog/proprietary-blends-decoded?utm_source=resend&utm_medium=email&utm_campaign=drip-day14)**
+
+You're one of [N] people on the waitlist — invites go out in order of
+signup, and you're in the first wave.
 
 — Sean
 
@@ -150,13 +177,21 @@ Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 
 ---
 
+> **Before sending:** replace `[N]` with the real waitlist count, rounded
+> down. If the number is still small, cut the "[N] people" clause and keep
+> only the wave sentence — never inflate. Swap the linked post for whatever
+> deep-dive is actually live; keep the `utm_campaign=drip-day14` tag.
+
+---
+
 ## Drip 3 — Day 28 — Read while you wait
 
-**Subject:** A few reads while you wait
-**Preview text:** Three pieces worth your time before beta opens.
-**From:** PharmaGuide <info@pharmaguide.io>
+**Subject:** The 5 interactions we catch most often
+**Preview text:** Evidence-graded, plus two more reads before beta opens.
+**From:** Sean at PharmaGuide <info@pharmaguide.io>
 **Send when:** 28 days after waitlist signup
 **Audience:** Beta Waitlist
+**Primary KPI:** blog click-through
 
 ---
 
@@ -165,20 +200,17 @@ Hey —
 Beta's getting close. While you wait, three things from the blog that are
 worth the ten minutes:
 
-**→ The interactions almost nobody warns you about**
+**→ [The interactions almost nobody warns you about](https://www.pharmaguide.io/blog/most-common-interactions?utm_source=resend&utm_medium=email&utm_campaign=drip-day28)**
 The five most common supplement-medication conflicts we catch in real user
 stacks. Evidence-graded, no fluff.
-*(/blog/most-common-interactions)*
 
-**→ What "proprietary blend" actually hides**
+**→ [What "proprietary blend" actually hides](https://www.pharmaguide.io/blog/proprietary-blends-decoded?utm_source=resend&utm_medium=email&utm_campaign=drip-day28)**
 A look at what a manufacturer is legally allowed to leave off the label,
 and what we do about it.
-*(/blog/proprietary-blends-decoded)*
 
-**→ Why your multivitamin and your statin are arguing**
+**→ [Why your multivitamin and your statin are arguing](https://www.pharmaguide.io/blog/statins-and-coq10?utm_source=resend&utm_medium=email&utm_campaign=drip-day28)**
 Medication-nutrient depletions, the category most clinicians skip
 entirely. Worked through with one real example.
-*(/blog/statins-and-coq10)*
 
 If any of those resonate, hit reply and let me know — the blog roadmap is
 shaped more by what waitlist readers ask about than by SEO research.
@@ -197,7 +229,9 @@ Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 > **Note:** Update the three blog URLs above to your actual top-performing
 > posts before sending. The titles in this draft are placeholders chosen to
 > match topics likely in the catalog — swap them for whatever's actually
-> live and getting reads at the time you wire the automation.
+> live and getting reads at the time you wire the automation. The first
+> slot must match the subject line's promise (the 5-interactions piece);
+> keep the `utm_campaign=drip-day28` tag on whatever you swap in.
 
 ---
 
@@ -205,8 +239,10 @@ Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 
 **Subject:** We went quiet on purpose
 **Preview text:** Heads down for months. The result is live.
-**From:** PharmaGuide <info@pharmaguide.io>
+**From:** Sean at PharmaGuide <info@pharmaguide.io>
 **Send when:** One-off broadcast, anytime post-launch
+**Primary KPI:** clicks + unsubscribes (clicks = re-engaged; unsubscribes =
+list cleaning — both are wins; complaints over 0.10% are the only failure)
 **Audience:** Beta Waitlist, filter: signed up > 60 days ago AND not engaged in last 30 days
 
 ---
@@ -225,8 +261,7 @@ enough. So we didn't ship it.
 
 A quick tour of what's new:
 
-- **A redesigned site** at [pharmaguide.io](https://www.pharmaguide.io) —
-  the full product story, not just a signup form.
+- **A redesigned site** — the full product story, not just a signup form.
 - **A new chatbot** that can actually walk you through a real interaction
   check, citing the evidence as it goes. Not a sales bot, not a wellness
   chatbot — a clinical-grade engine in conversation.
@@ -235,9 +270,12 @@ A quick tour of what's new:
 - **180,000+ products** in the catalog. Beta access opening to waitlist
   in the coming weeks — you're still on the list.
 
-If you want to come back and look around, the door's open. If your needs
-have shifted and you'd rather not hear from us, the unsubscribe link below
-is honest and one-click — no offense taken.
+If you want to come back and look around, the door's open:
+
+**→ [pharmaguide.io](https://www.pharmaguide.io?utm_source=resend&utm_medium=email&utm_campaign=reactivation)**
+
+If your needs have shifted and you'd rather not hear from us, the
+unsubscribe link below is honest and one-click — no offense taken.
 
 Either way, thanks for waiting.
 
@@ -263,6 +301,12 @@ Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 > footer, no unsubscribe link, no Resend involvement. Write it from your
 > personal Gmail, BCC the list so nobody sees each other's addresses, and
 > sign it as Sean.
+
+> **Operational note — decide BEFORE sending:** "free forever" needs a
+> mechanism or it becomes support debt. Pick one: a dedicated promo code,
+> or a `friends-family` tag applied manually to their account the day they
+> sign up (keep the BCC list as your checklist). The promise is only as
+> good as the flag that honors it.
 
 ---
 
@@ -323,6 +367,46 @@ would actually use it. That's how things spread. ❤️
 
 ---
 
+## Measurement
+
+Apple Mail Privacy Protection pre-fetches images, so open rates run
+inflated and are directional at best. Judge every send by clicks and
+replies, not opens:
+
+| Email | Primary KPI | Healthy signal |
+|---|---|---|
+| Drip 1 | Reply rate | Any genuine replies — each one also boosts deliverability |
+| Drip 2 | Click-through to linked post | ~2–4% of delivered |
+| Drip 3 | Blog click-through | ~2–4% of delivered |
+| Reactivation | Clicks + unsubscribes | Clicks = re-engaged, unsubscribes = list cleaning; both fine. Spam complaints are the only failure — stay under 0.10% |
+| Friends & Family | Signups (you'll hear directly) | n/a — personal send |
+
+**UTM convention** — every link in a Resend send carries:
+`?utm_source=resend&utm_medium=email&utm_campaign=<drip-day5|drip-day14|drip-day28|reactivation>`
+
+**Reply handling:** replies to `info@pharmaguide.io` must land in a real,
+monitored inbox. Drip 1's entire CTA is "I read every reply" — that has to
+be literally true, and answered replies are the cheapest retention and
+research channel this campaign has.
+
+---
+
+## After Day 28 — don't go quiet again
+
+The Reactivation email exists because the list went cold once. Don't
+rebuild the same problem behind the new sequence. Once a subscriber
+finishes Drip 3, the list needs a heartbeat until beta opens:
+
+- **Monthly safety brief** (Resend Broadcast to the full waitlist): one
+  recall worth knowing about + one evidence-graded answer to a real reader
+  question (sourced from Drip 1 replies) + one blog link. ~15 minutes to
+  assemble from content that already exists.
+- Cadence: monthly until beta opens, then shift to weekly once there's
+  product activity worth reporting.
+- Same claim-language guardrails and CAN-SPAM footer as the drips.
+
+---
+
 ## Wiring checklist
 
 When you sit down to actually send these, in this order:
@@ -339,6 +423,10 @@ When you sit down to actually send these, in this order:
   - Resend → Broadcasts → New
   - Audience: Beta Waitlist, filtered to "created_at > 60 days ago"
   - Schedule for a Tuesday or Wednesday, 10am Eastern (best open rates)
+  - **Send in batches** — a 60-day-cold segment is a spam-complaint risk,
+    and Gmail's tolerance ceiling is 0.10%. First batch: ~20% of the
+    segment. Check complaint + unsubscribe rates after 24h before
+    releasing the rest.
 - [ ] **Friends & Family from personal Gmail**
   - Compose in Gmail
   - **BCC** everyone — never To/CC; respect their privacy
@@ -390,3 +478,18 @@ words, tweak them here first, then propagate.
   wouldn't, the doctor couldn't"). Added a reusable "Claim-language
   guardrails" table so this lesson doesn't have to be relearned for the
   next drip.
+- **2026-06-09** — Conversion pass. Rewrote the Drip 1 story for
+  credibility: the failure is now a hedged "probably fine" plus a systems
+  gap (pharmacy software doesn't see supplements), not clinicians refusing
+  to answer — with an authenticity note to swap in the real product pair.
+  Sender switched to "Sean at PharmaGuide" on all Resend sends. One CTA
+  per email: Drip 1 gains a reply-ask (any stack question — interactions,
+  ingredient quality, brands; "I read every reply"), Drip 2 a single
+  UTM-tagged deep-dive link + waitlist-count social proof placeholder,
+  Drip 3 a benefit-led subject ("The 5 interactions we catch most often")
+  + full clickable URLs, Reactivation cut to a single site CTA. Added
+  wave mechanics ("invites go out in order of signup"), a Measurement
+  section (click/reply KPIs per email, UTM convention, reply-inbox
+  requirement), an "After Day 28" warm-keeping plan (monthly safety
+  brief), reactivation batch-send guidance, and a free-forever mechanism
+  note on Friends & Family.

@@ -21,6 +21,25 @@ PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02124
 Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 ```
 
+**Claim-language guardrails (apply to every drip, broadcast, and personal send):**
+
+PharmaGuide is decision support, not medical advice. Email copy should
+reflect that — both for clinical-risk reasons and because over-claiming
+erodes the calm-clinical credibility the brand depends on.
+
+| ❌ Avoid | ✅ Use |
+|---|---|
+| "Reduces absorption by X%" *(without a cited study in the email)* | "Can interfere with absorption when taken too close together" |
+| "FDA-aligned," "label-of-record," "ground truth" | "A major public reference," "one of the strongest public reference points" |
+| "We decompose / decode proprietary blends" | "We flag blends and surface what can and can't be verified" |
+| "Real interactions vs. chatroom rumor" | "Evidence-graded interaction signals" |
+| "Is this safe for me?" *(implies clinical answer)* | "What should I know before taking this with everything else in my stack?" |
+| "The thing the pharmacist wouldn't, the doctor couldn't" | "The tool between the pharmacy counter, the doctor's office, and the supplement aisle" |
+
+**Trust the reader.** Specifics are good; absolute claims are not. If you
+quote a study figure ("up to 30%"), the citation rides along in the same
+email or on the linked page. Otherwise, soften.
+
 **Sending map:**
 
 | Message | Tool | Trigger |
@@ -54,21 +73,21 @@ I tried three more pharmacies. Same answer. *Supplements aren't our scope.*
 
 So I asked my doctor. Same shrug. *Ask the pharmacist.*
 
-The thing is — interactions like this are documented. Calcium can reduce
-thyroid medication absorption by up to 30% if taken together. Metformin is
-associated with lower B12 levels over time. There's *literature* on all of
-this. It just sits in a place where the people who could read it to you have
-decided it isn't their job.
+The thing is — interactions like this are documented. Calcium can interfere
+with thyroid medication absorption when taken too close together. Metformin
+is associated with lower B12 levels over time. There's *literature* on all
+of this. It just sits in a place that's hard for most people to reach.
 
 That's why PharmaGuide exists.
 
-We built the thing the pharmacist wouldn't, the doctor couldn't, and the
-supplement aisle definitely wasn't going to. *One check, across your full
+We built the tool I wished existed between the pharmacy counter, the
+doctor's office, and the supplement aisle. *One check, across your full
 stack — medications and supplements, together.*
 
-Not a quiz. Not a vibes-based "wellness score." A real analysis: interactions,
-medication-nutrient depletions, dose accumulation across products, ingredient
-quality, FDA recalls. Graded by evidence strength, with the citations attached.
+Not a quiz. Not a vibes-based "wellness score." Evidence-graded decision
+support: interaction signals, medication-nutrient depletions, dose
+accumulation across products, ingredient quality, FDA recalls. With the
+citations attached.
 
 Beta opens soon. You'll be one of the first in.
 
@@ -102,14 +121,16 @@ and a growing prescription drug index. The data comes from four places that
 disagree with each other constantly, which is exactly the point of having
 all four:
 
-- **NIH Dietary Supplement Label Database (DSLD)** — the FDA-aligned
-  label-of-record for supplements sold in the US. The ground truth.
+- **NIH Dietary Supplement Label Database (DSLD)** — a major public label
+  database for supplements sold in the US. One of the strongest public
+  reference points we have.
 - **FDA drug labeling + recall sources** — active drug ingredients, dose
   strengths, and the recall pipeline.
 - **FAERS** — adverse event signals. Helps surface safety concerns that
   require context, not just theoretical interaction risk.
 - **Manufacturer label scrapes + brand-direct integrations** — for the
-  proprietary blend gap. (Yes, we decompose those too.)
+  proprietary blend gap. (We flag those blends and surface what can and
+  can't be verified.)
 
 When the same product shows up across all four sources with conflicting dose
 labels — and it happens more than you'd think — we surface the disagreement
@@ -257,21 +278,21 @@ existed when I first walked into a pharmacy asking whether my supplements
 were going to fight with my prescription — and got told *"we don't cover
 that."*
 
-It does what nobody else will:
+It brings together the pieces most people still have to check separately:
 
-- Checks every supplement and medication you take, *together*, for real
-  interactions — the kind backed by clinical evidence, not chatroom rumor.
+- Checks every supplement and medication you take, *together*, and
+  flags evidence-graded interaction signals across your full stack.
 - Catches what your medications may be quietly *taking away* from you —
   some medications are associated with lower nutrient levels over time,
   like metformin and B12, and most clinicians won't mention it.
-- Decodes what's actually inside a "proprietary blend" so you stop paying
-  for pixie dust.
+- Surfaces what's verifiable inside a "proprietary blend" — and what
+  isn't — so you can see exactly what you're paying for.
 - Flags FDA recalls and adverse-event signals on products you're already
   taking, the moment they happen.
 
 180,000+ products in the catalog. Real citations. No vibes, no horoscope.
-Just the answer to *"is this safe for me, given everything else I'm
-on?"* — finally, in one place.
+Just decision support for the question *"what should I know before taking
+this with everything else in my stack?"* — finally, in one place.
 
 **Here's the part for you specifically:**
 
@@ -284,8 +305,7 @@ If you have parents on five medications and a kitchen counter full of
 supplements? Sign them up too. If you have a friend who's been on
 medication for years and nobody's ever checked what else it might
 affect? Send them this email. The whole reason I built this
-is the people I love kept getting hurt by a system that wasn't paying
-attention.
+is the people I love kept getting left to figure this out on their own.
 
 Reach out — text, call, email — for *anything*. Questions about the
 product, questions about how to use it, questions about what to ask
@@ -355,3 +375,18 @@ words, tweak them here first, then propagate.
 ## Changelog
 
 - **2026-05-11** — Initial draft. Drip 1/2/3 + Reactivation + Friends & Family.
+- **2026-06-08** — Clinical-risk pass per dev review. Softened nine specific
+  claims across Drip 1, Drip 2, and Friends & Family — replaced "reduces
+  absorption by 30%," "FDA-aligned label-of-record," "ground truth,"
+  "decompose proprietary blends," "decodes what's actually inside,"
+  "real interactions vs. chatroom rumor," "is this safe for me," "does
+  what nobody else will," and "hurt by a system that wasn't paying
+  attention" with decision-support framing ("interferes when too close
+  together," "major public reference," "flags / surfaces what can be
+  verified," "evidence-graded interaction signals," "what should I know,"
+  "brings together the pieces most people still have to check
+  separately," "left to figure this out on their own"). Removed
+  adversarial-toward-clinicians framing ("the thing the pharmacist
+  wouldn't, the doctor couldn't"). Added a reusable "Claim-language
+  guardrails" table so this lesson doesn't have to be relearned for the
+  next drip.

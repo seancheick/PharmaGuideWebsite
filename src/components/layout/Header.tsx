@@ -121,7 +121,7 @@ export function Header() {
           {/* CTA + mobile hamburger */}
           <div className="flex items-center gap-2">
             <Link
-              href="#waitlist"
+              href="/#waitlist"
               className={cn(
                 "hidden items-center gap-1.5 rounded-pill bg-accent px-4 py-2 text-body-sm font-medium text-white shadow-xs",
                 "transition-[background-color,box-shadow,transform] duration-fast ease-smooth",
@@ -218,7 +218,7 @@ export function Header() {
                 className="pt-8"
               >
                 <Link
-                  href="#waitlist"
+                  href="/#waitlist"
                   onClick={() => setMenuOpen(false)}
                   className="inline-flex items-center gap-2 rounded-pill bg-accent px-6 py-3 text-body font-medium text-white shadow-sm"
                 >

@@ -124,7 +124,7 @@ const jsonLd = {
   },
   sameAs: [
     `https://x.com/${site.twitter.replace("@", "")}`,
-    "https://www.linkedin.com/company/pharmaguide.ai",
+    "https://www.linkedin.com/company/pharmaguideai",
     "https://www.instagram.com/pharmaguide.ai",
   ],
 };

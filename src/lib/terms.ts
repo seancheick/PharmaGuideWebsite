@@ -53,7 +53,7 @@ These terms reference our [Privacy Policy](/privacy), which describes how we han
 
 **Children under 13:** PharmaGuide is not for you. Please don't create an account. If you do, we are required by law to delete it.
 
-**Healthcare professionals:** the consumer-facing service is not designed for clinical practice. We're working on a separate professional offering (see [Healthcare Pros — 2026](/healthcare-pros) on the homepage). Until that ships, do not rely on the consumer app for clinical decision-making.`,
+**Healthcare professionals:** the consumer-facing service is not designed for clinical practice. We're working on a separate professional offering (see [Healthcare Pros — 2026](/hipaa#professional-tier) in our HIPAA statement). Until that ships, do not rely on the consumer app for clinical decision-making.`,
     },
     {
       id: "medical-disclaimer",

@@ -70,7 +70,7 @@ const INDUSTRY_LIES = [
       'Every year, supplement-related events send **23,000+ Americans to the Emergency Room.** From internal bleeding to heart palpitations to acute liver injury — "natural" doesn\'t mean safe.',
     source: {
       label: "Geller AI et al., New England Journal of Medicine (2015)",
-      href: "https://www.nejm.org/doi/full/10.1056/NEJMsa1504267",
+      href: "https://pubmed.ncbi.nlm.nih.gov/26465986/",
     },
   },
   {

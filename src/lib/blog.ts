@@ -75,6 +75,7 @@ export function getAllPosts(): BlogPost[] {
     return {
       slug,
       title: (data.title as string) ?? "Untitled",
+      seoTitle: (data.seoTitle ?? data.seo_title) as string | undefined,
       description: (data.description as string) ?? "",
       category: (data.category as string) ?? "health-education",
       date: (data.date as string) ?? new Date().toISOString().slice(0, 10),

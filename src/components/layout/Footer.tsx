@@ -132,7 +132,7 @@ const TRUST_ICON_MAP = {
 
 const SOCIAL_LINKS = [
   { label: "X (Twitter)", href: "https://x.com/pharmaguideai", Icon: IconX },
-  { label: "LinkedIn", href: "https://www.linkedin.com/company/pharmaguide.ai", Icon: IconLinkedIn },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/pharmaguideai", Icon: IconLinkedIn },
   { label: "Instagram", href: "https://www.instagram.com/pharmaguide.ai", Icon: IconInstagram },
 ] as const;
 
@@ -146,7 +146,7 @@ export function Footer() {
     // and accent dots have been hinting at all the way down. Reads as
     // brand-anchored, not generic-dark. text-background/80 over teal
     // gives ~10:1 contrast — well above WCAG AA.
-    <footer className="relative bg-accent text-background/85" id="contact" role="contentinfo">
+    <footer className="relative bg-accent text-background/85" role="contentinfo">
       {/* Top-center halo — light teal at 8% alpha so it lifts the
           surface slightly under the wordmark and ties the rail visually
           to the warm cream above. Bumped from 6% → 8% because the teal

@@ -46,9 +46,10 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) return { title: "Post not found" };
+  const metadataTitle = post.seoTitle ?? post.title;
 
   return {
-    title: post.title,
+    title: metadataTitle,
     description: post.description,
     alternates: { canonical: `${site.url}/blog/${post.slug}` },
     openGraph: {
@@ -65,7 +66,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
+      title: metadataTitle,
       description: post.description,
     },
   };

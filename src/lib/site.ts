@@ -63,7 +63,7 @@ export const footerNav = {
     { label: "FAQ", href: "/faq" },
     {
       label: "Healthcare Pros",
-      href: "/healthcare-pros",
+      href: "/hipaa#professional-tier",
       comingSoon: true,
       badge: "2026",
     },

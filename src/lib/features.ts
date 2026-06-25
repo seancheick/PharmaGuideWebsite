@@ -68,11 +68,12 @@ export interface FeaturePillar {
 // ─── External authority URL constants (used across pillars) ──────────
 const FDA_RECALLS = "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts";
 const FDA_SUPPLEMENTS = "https://www.fda.gov/food/dietary-supplements";
-const FAERS = "https://www.fda.gov/drugs/questions-and-answers-fdas-adverse-event-reporting-system-faers";
+const FAERS =
+  "https://www.fda.gov/drugs/drug-approvals-and-databases/fda-adverse-event-reporting-system-faers-database";
 const NIH_ODS = "https://ods.od.nih.gov";
 const DSLD = "https://dsld.od.nih.gov";
 const PUBMED = "https://pubmed.ncbi.nlm.nih.gov";
-const COCHRANE = "https://www.cochranelibrary.com";
+const COCHRANE = "https://www.cochrane.org/evidence";
 const NCCIH = "https://www.nccih.nih.gov";
 const DAILYMED = "https://dailymed.nlm.nih.gov";
 

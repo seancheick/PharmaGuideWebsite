@@ -68,6 +68,7 @@ export function getCategory(id: string): BlogCategory | undefined {
 export interface BlogPost {
   slug: string;
   title: string;
+  seoTitle?: string;
   description: string;
   category: string;
   date: string;

@@ -5,9 +5,10 @@
   "description": "PharmaGuide marketing website — supplement intelligence platform",
   "scripts": {
     "dev": "next dev --turbopack",
+    "preview": "next build && next start",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,css}\"",
@@ -67,5 +68,10 @@
     "plugins": [
       "prettier-plugin-tailwindcss"
     ]
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "next-mdx-remote": "patches/next-mdx-remote.patch"
+    }
   }
 }

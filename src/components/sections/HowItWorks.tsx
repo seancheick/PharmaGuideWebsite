@@ -4,6 +4,8 @@ import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { qualityBand } from "@/lib/quality-score";
+import { cn } from "@/lib/utils";
 
 /**
  * How It Works — 3 premium step-cards with concrete in-app illustrations.
@@ -330,6 +332,13 @@ function CrossRefVisual() {
 // teaches "fit is different from quality" on Magnesium Glycinate
 // without repeating the same artifact. Two surfaces, two jobs.
 
+// Demo score for the Vitamin D3 card. Number, bar width, verdict word, and
+// color all derive from this one value via the shared band table — before,
+// the 87 was typed three separate times (text, bar width, verdict) and could
+// drift apart silently.
+const D3_SCORE = 85;
+const D3_BAND = qualityBand(D3_SCORE);
+
 function YourFitVisual() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-15%" });
@@ -351,21 +360,26 @@ function YourFitVisual() {
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.32, 0.72, 0, 1] }}
-            className="font-serif text-display-sm italic leading-none tabular-nums text-severity-safe"
+            role="img"
+            aria-label={`Quality score ${D3_SCORE} out of 100`}
+            /* Template string, not cn() — tailwind-merge would treat
+               `text-display-sm` and `text-severity-safe` as conflicting
+               `text-*` utilities and drop the font size. */
+            className={`font-serif text-display-sm italic leading-none tabular-nums ${D3_BAND.textClass}`}
           >
-            87
+            {D3_SCORE}
           </motion.span>
         </div>
         <div className="mt-3 h-[5px] overflow-hidden rounded-full bg-border">
           <motion.div
-            className="h-full rounded-full bg-severity-safe"
+            className={cn("h-full rounded-full", D3_BAND.barClass)}
             initial={{ width: "0%" }}
-            animate={inView ? { width: "87%" } : {}}
+            animate={inView ? { width: `${D3_SCORE}%` } : {}}
             transition={{ duration: 1.1, delay: 0.3, ease: [0.32, 0.72, 0, 1] }}
           />
         </div>
         <p className="mt-2.5 text-[11px] leading-snug text-muted">
-          <span className="font-medium text-ink">Strong</span> · USP-verified · cholecalciferol form
+          <span className="font-medium text-ink">{D3_BAND.label}</span> · USP-verified · cholecalciferol form
         </p>
       </div>
 

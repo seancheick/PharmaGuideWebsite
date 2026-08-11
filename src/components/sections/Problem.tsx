@@ -3,6 +3,13 @@
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { ADE_ER_VISITS } from "@/lib/claims";
+
+// The animated figure, kept numeric for the count-up. Its derivation
+// (1.5M+ CDC ED visits ÷ 365), the verbatim source quote, and the boundary
+// of what it does not claim all live in ADE_ER_VISITS — change one, read
+// the other first.
+const COUNT_TARGET = 4100;
 
 /**
  * Problem — first big copy moment after the hero.
@@ -59,6 +66,15 @@ function useCountUp(target: number, durationMs = 1800) {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 
+  // The figure ships as its real value in the server markup so crawlers,
+  // text-only readers, and no-JS visitors always get the right number.
+  // JS zeroes it on mount — long before the section reaches the viewport —
+  // so the count-up still animates without a 4,100 → 0 flicker on entry.
+  useEffect(() => {
+    if (prefersReduced.current || !ref.current) return;
+    ref.current.textContent = "0";
+  }, []);
+
   useEffect(() => {
     if (!inView || !ref.current) return;
     const el = ref.current;
@@ -83,7 +99,7 @@ function useCountUp(target: number, durationMs = 1800) {
 }
 
 export function Problem() {
-  const { ref: countRef } = useCountUp(4100, 1800);
+  const { ref: countRef } = useCountUp(COUNT_TARGET, 1800);
 
   return (
     <section
@@ -184,18 +200,37 @@ export function Problem() {
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 -z-10 mx-auto block h-full w-full rounded-full bg-accent/[0.06] blur-2xl"
             />
-            <p className="font-sans text-display-md font-medium leading-none tabular-nums tracking-[-0.02em] text-accent">
-              <span ref={countRef}>4,100</span>
+            {/* role="img" + aria-label pins the accessible name to the
+                final figure, so a screen reader announces the real number
+                whether it lands here before, during, or after the count. */}
+            <p
+              role="img"
+              aria-label={`More than ${COUNT_TARGET.toLocaleString("en-US")}`}
+              className="font-sans text-display-md font-medium leading-none tabular-nums tracking-[-0.02em] text-accent"
+            >
+              <span ref={countRef}>
+                {COUNT_TARGET.toLocaleString("en-US")}
+              </span>
               <span>+</span>
             </p>
           </div>
           <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.14em] text-foreground/65">
-            ER visits per day from preventable drug events
+            ER visits per day from adverse drug events
           </p>
+          {/* Precision over drama. The CDC figure counts adverse drug events
+              of every kind and its leading causes are prescription drug
+              classes, so we name them rather than letting the number imply
+              supplements caused these visits. The claim we make is adjacency
+              — same picture, different blind spot. "Preventable" is absent
+              from the label above for the same reason: CDC calls ADEs a
+              preventable problem in general but does not apply the word to
+              this count, so neither do we. Full derivation, citation, and
+              claim boundary live in @/lib/claims.                        */}
           <p className="mt-3 max-w-prose text-body leading-relaxed text-muted">
-            The CDC estimates thousands of emergency visits happen each day
-            from adverse drug events. PharmaGuide focuses on one preventable
-            blind spot: what people combine.
+            CDC counts more than 1.5 million of them a year, led by blood
+            thinners, diabetes medicines, and antibiotics. Supplements are a
+            smaller, separate estimate. PharmaGuide works the blind spot they
+            share: what people combine, and whether anyone checked.
           </p>
           <p className="mt-4 text-body-xl leading-snug text-ink">
             The first step is knowing what overlaps.
@@ -203,15 +238,19 @@ export function Problem() {
           {/* Source line — link styled with accent so it reads as a link.
               Tracking eased back, size bumped slightly so it stops looking
               like a watermark and starts looking like sourced data.       */}
+          {/* The arithmetic is shown, not just the conclusion — a visitor who
+              wants to check the number can do it without leaving the page. */}
           <figcaption className="mt-4 font-mono text-[11px] uppercase tracking-[0.1em] text-subtle">
             <a
-              href="https://www.cdc.gov/medication-safety/data-research/facts-stats/index.html"
+              href={ADE_ER_VISITS.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
             >
               Source: CDC ↗
             </a>
+            <span className="mx-2 text-border-strong">·</span>
+            1.5M+ a year ÷ 365
             <span className="mx-2 text-border-strong">·</span>
             Not all interactions require emergency care
           </figcaption>

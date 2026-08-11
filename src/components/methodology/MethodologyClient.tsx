@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import {
@@ -505,12 +506,12 @@ export function MethodologyClient() {
 
           <p className="mx-auto mt-6 max-w-3xl text-center text-body-sm leading-relaxed text-muted md:mt-8">
             Want the deeper read?{" "}
-            <a
+            <Link
               href="/blog/statins-and-coq10"
               className="text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
             >
               Read the statins + CoQ10 deep dive →
-            </a>
+            </Link>
           </p>
         </div>
       </section>
@@ -950,20 +951,20 @@ export function MethodologyClient() {
               The methodology is the foundation. The product is the proof.
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-5">
-              <a
+              <Link
                 href="/#waitlist"
                 className="inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               >
                 Join the beta
                 <span aria-hidden="true">→</span>
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/faq"
                 className="inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               >
                 Read the FAQ
                 <span aria-hidden="true">→</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

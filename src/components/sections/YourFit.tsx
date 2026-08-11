@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { qualityBand } from "@/lib/quality-score";
 import { cn } from "@/lib/utils";
 
 /**
@@ -18,7 +19,7 @@ import { cn } from "@/lib/utils";
  * The section teaches that duality in a single card with two stacked
  * sections. Animation choreography:
  *   T+0     card fades in
- *   T+200   quality bar fills + score counts 0→89
+ *   T+200   quality bar fills + score counts 0→TARGET_SCORE
  *   T+1400  divider draws in
  *   T+1600  Your Fit badge slides up
  *   T+1900  supporting notes stagger in
@@ -28,17 +29,38 @@ import { cn } from "@/lib/utils";
  * section's thesis — closes the loop.
  */
 
-const TARGET_SCORE = 89;
+// Demo score for the Magnesium Glycinate card. The verdict word and the colors
+// are DERIVED from it via the shared band table — change this number and the
+// card re-labels itself instead of quietly contradicting the new value.
+// (Was 89 with a hardcoded "Excellent quality"; 89 falls in the Strong band,
+// so the number moved into the Excellent band rather than the copy changing.)
+const TARGET_SCORE = 92;
+const BAND = qualityBand(TARGET_SCORE);
 const SCORE_DURATION_MS = 1200;
+
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export function YourFit() {
   const cardRef = useRef<HTMLDivElement>(null);
   const scoreRef = useRef<HTMLSpanElement>(null);
   const inView = useInView(cardRef, { once: true, margin: "-15%" });
 
+  // The score ships as its real value in the server markup, so
+  // crawlers, text-only readers, and no-JS visitors get the number that
+  // actually matters — never a mid-animation 0. Once JS takes over we
+  // zero the display so the count-up still reads as an animation. This
+  // section sits far below the fold, so the reset happens long before
+  // anyone can see it. Reduced-motion visitors keep the static number.
+  useEffect(() => {
+    if (prefersReducedMotion() || !scoreRef.current) return;
+    scoreRef.current.textContent = "0";
+  }, []);
+
   // Count-up via direct DOM mutation — zero re-renders during animation
   useEffect(() => {
-    if (!inView || !scoreRef.current) return;
+    if (!inView || !scoreRef.current || prefersReducedMotion()) return;
     const el = scoreRef.current;
     let raf = 0;
     const start = performance.now();
@@ -154,21 +176,32 @@ export function YourFit() {
                     <span className="font-mono text-eyebrow font-medium uppercase tracking-[0.14em] text-subtle">
                       Quality
                     </span>
-                    {/* Score colored to match the bar. Severity-safe at 89
-                        keeps the visual story coherent: number, bar, and
-                        verdict pill all read the same green. */}
-                    <span ref={scoreRef} className="font-serif text-display-md italic leading-none tabular-nums text-severity-safe">
-                      0
+                    {/* Number, bar, and verdict all take their color from the
+                        same band, so the visual story can't contradict the
+                        score. role="img" + aria-label pins the accessible
+                        name to the final value, so screen readers announce
+                        the real number whether they reach it before, during,
+                        or after the count-up. */}
+                    <span
+                      ref={scoreRef}
+                      role="img"
+                      aria-label={`Quality score ${TARGET_SCORE} out of 100`}
+                      /* Plain template string, NOT cn(): tailwind-merge reads
+                         `text-display-md` and `text-severity-safe` as two
+                         `text-*` utilities in conflict and silently drops the
+                         font size, shrinking the score to body text. */
+                      className={`font-serif text-display-md italic leading-none tabular-nums ${BAND.textClass}`}
+                    >
+                      {TARGET_SCORE}
                     </span>
                   </div>
 
-                  {/* Progress bar — colored by severity. 89 = excellent, so
-                      severity-safe green. (At low scores this would shift to
-                      monitor/caution/avoid; for now we hard-code the demo
-                      product, which is genuinely high quality.)             */}
+                  {/* Progress bar — width and color both come from the score,
+                      so a lower demo score would shift the bar to the
+                      monitor/caution tone automatically. */}
                   <div className="mt-3 h-[6px] overflow-hidden rounded-full bg-border">
                     <motion.div
-                      className="h-full rounded-full bg-severity-safe"
+                      className={cn("h-full rounded-full", BAND.barClass)}
                       initial={{ width: "0%" }}
                       animate={inView ? { width: `${TARGET_SCORE}%` } : {}}
                       transition={{ duration: SCORE_DURATION_MS / 1000, ease: [0.32, 0.72, 0, 1] }}
@@ -181,7 +214,9 @@ export function YourFit() {
                     transition={{ duration: 0.4, delay: 1.0, ease: [0.32, 0.72, 0, 1] }}
                     className="mt-3 text-body-sm leading-snug text-muted"
                   >
-                    <span className="font-medium text-ink">Excellent quality</span>
+                    <span className="font-medium text-ink">
+                      {BAND.label} quality
+                    </span>
                     {" · "}3rd-party tested · clean ingredient list
                   </motion.p>
                 </div>

@@ -549,20 +549,20 @@ export function FeaturesClient() {
               Join the beta. Opening in waves through 2026.
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-5">
-              <a
+              <Link
                 href="/#waitlist"
                 className="inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
               >
                 Join the beta
                 <span aria-hidden="true">→</span>
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/methodology"
                 className="inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink"
               >
                 Read the methodology
                 <span aria-hidden="true">→</span>
-              </a>
+              </Link>
             </div>
           </motion.div>
         </div>

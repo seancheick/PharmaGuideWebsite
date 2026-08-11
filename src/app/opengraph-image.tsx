@@ -88,7 +88,7 @@ export default async function OGImage() {
               letterSpacing: "-0.022em",
             }}
           >
-            Your supplements don't
+            Your supplements don&apos;t
           </span>
           <span
             style={{

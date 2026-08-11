@@ -77,6 +77,15 @@
        The middle term (viewport-based) interpolates smoothly. */
 
     /* Display (hero, section headlines) */
+    /* display-hero is tuned to the COLUMN it lives in, not the viewport.
+       The hero h1 sits in a ~550px half-column, so the viewport-width
+       coefficient that display-xl uses (5.5vw) overshot badly: 78px type
+       at a 1280px viewport wrapped the headline to six lines, made the
+       hero 1140px tall, and pushed the primary CTA ~190px below the fold
+       on the most common laptop size. A gentler coefficient keeps the
+       statement-headline feel while the whole hero — headline, promise,
+       trust row, both CTAs — fits above the fold at 1280x800.        */
+    --fs-display-hero: clamp(2.5rem, 3.4vw + 0.75rem, 4rem);   /* 40 → 64 */
     --fs-display-xl: clamp(2.75rem, 5.5vw + 0.5rem, 5.5rem);   /* 44 → 88 */
     --fs-display-lg: clamp(2.25rem, 4.5vw + 0.5rem, 4.5rem);   /* 36 → 72 */
     --fs-display-md: clamp(2rem, 3.5vw + 0.5rem, 3.5rem);      /* 32 → 56 */
@@ -316,11 +325,34 @@
     padding-bottom: var(--section-y-sm);
   }
 
-  /* Glass effect for floating header */
+  /* Frosted glass — resting state (Apple Liquid Glass) */
+  .glass-frost {
+    background: rgb(250 249 246 / 0.55);
+    backdrop-filter: blur(40px) saturate(160%);
+    -webkit-backdrop-filter: blur(40px) saturate(160%);
+    border-color: rgb(255 255 255 / 0.20);
+    box-shadow: 0 8px 32px -8px rgb(0 0 0 / 0.10),
+                inset 0 1px 0 rgb(255 255 255 / 0.65);
+  }
+
+  /* Glass effect — scrolled state (stronger frost + depth) */
   .glass {
-    background-color: rgb(var(--color-background) / 0.82);
-    backdrop-filter: blur(var(--blur-lg)) saturate(1.6);
-    -webkit-backdrop-filter: blur(var(--blur-lg)) saturate(1.6);
+    background: rgb(250 249 246 / 0.72);
+    backdrop-filter: blur(48px) saturate(190%);
+    -webkit-backdrop-filter: blur(48px) saturate(190%);
+    border-color: rgb(255 255 255 / 0.28);
+    box-shadow: 0 12px 48px -12px rgb(0 0 0 / 0.16),
+                inset 0 1px 0 rgb(255 255 255 / 0.75);
+  }
+
+  /* Dark mode glass variants */
+  .dark .glass-frost {
+    background: rgb(30 30 30 / 0.60);
+    border-color: rgb(255 255 255 / 0.09);
+  }
+  .dark .glass {
+    background: rgb(20 20 20 / 0.72);
+    border-color: rgb(255 255 255 / 0.14);
   }
 
   /* Smooth gradient fade — used between sections */

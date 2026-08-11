@@ -1,0 +1,21 @@
+diff --git a/dist/rsc.js b/dist/rsc.js
+index dac1b5fced124f4349cebb11e60dfee09b7eacac..e5b2321b91b828c6383e34ad07680b1081a3250c 100644
+--- a/dist/rsc.js
++++ b/dist/rsc.js
+@@ -3,6 +3,7 @@
+  * SPDX-License-Identifier: MPL-2.0
+  */
+ import React from 'react';
++import { jsx as _jsx } from 'react/jsx-runtime';
+ import { jsxRuntime } from './jsx-runtime.cjs';
+ import { serialize } from './serialize.js';
+ export async function compileMDX({ source, options, components = {}, }) {
+@@ -25,7 +26,7 @@ export async function compileMDX({ source, options, components = {}, }) {
+     const hydrateFn = Reflect.construct(Function, keys.concat(`${compiledSource}`));
+     const Content = hydrateFn.apply(hydrateFn, values).default;
+     return {
+-        content: React.createElement(Content, { components: components }),
++        content: _jsx(Content, { components: components }),
+         frontmatter,
+     };
+ }

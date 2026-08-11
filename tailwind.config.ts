@@ -80,6 +80,7 @@ const config: Config = {
       },
       fontSize: {
         // Display scale
+        "display-hero": ["var(--fs-display-hero)", { lineHeight: "var(--lh-display)", letterSpacing: "var(--ls-display)", fontWeight: "var(--fw-display)" }],
         "display-xl": ["var(--fs-display-xl)", { lineHeight: "var(--lh-display)", letterSpacing: "var(--ls-display)", fontWeight: "var(--fw-display)" }],
         "display-lg": ["var(--fs-display-lg)", { lineHeight: "var(--lh-display)", letterSpacing: "var(--ls-display)", fontWeight: "var(--fw-display)" }],
         "display-md": ["var(--fs-display-md)", { lineHeight: "var(--lh-tight)", letterSpacing: "var(--ls-display)", fontWeight: "var(--fw-display)" }],

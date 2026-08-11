@@ -16,34 +16,44 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="halo-hero relative overflow-x-clip pb-section-y pt-24 sm:pt-28 md:pt-32"
+      className="halo-hero relative overflow-x-clip pb-section-y pt-24 sm:pt-28"
       aria-label="Hero"
     >
       <div className="container mx-auto">
-        <div className="grid items-center gap-14 md:grid-cols-[1.05fr_1fr] md:gap-12 lg:gap-20">
-          {/* Copy column */}
-          <div className="space-y-8 md:space-y-10">
+        {/* Copy column widened from 1.05fr to 1.2fr and the gap pulled in.
+            An extra ~100px of measure is what takes the headline from five
+            wrapped lines to four — cheaper vertical space than shrinking
+            the type further, and the phone mockup reads fine narrower.
+
+            Two columns start at lg, not md: at exactly 768px the split left
+            the copy ~340px wide, which wrapped the CTA labels and squeezed
+            the phone against the header. Tablets now get the stacked mobile
+            layout, which has room for the headline at full measure.     */}
+        <div className="grid items-center gap-14 lg:grid-cols-[1.2fr_0.9fr] lg:items-start lg:gap-14">
+          {/* Copy column — rhythm tightened from space-y-8/10. Six children
+              at 40px apart spent 200px of vertical budget on air; 24/28px
+              still reads as editorial spacing and buys back the room that
+              puts the CTA pair above the fold. */}
+          <div className="space-y-6 md:space-y-7">
             <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
               The supplement &amp; medication co-pilot
             </p>
 
-            <h1 className="text-display-xl text-ink">
+            <h1 className="text-display-hero text-ink">
               Your supplements don&apos;t work in isolation.
               <br />
               <span className="text-accent">Neither should your check.</span>
             </h1>
 
-            {/* Subhead broadened: covers the full product surface
-                (interactions, depletions, recalls, quality, fit) and now
-                names the personalization + privacy posture that the app
-                actually ships — checked against your conditions and
-                medications, computed on-device. Kept as decision-support
-                framing, not medical advice. Inline `/features` link lives
-                in the tertiary link under the trust pills.             */}
+            {/* One personal promise — replaces the feature inventory
+                (interactions, depletions, dose overlap, recalls, quality)
+                that used to live here. That list is real, but it made the
+                hero a spec sheet; it now lives on /features, linked below
+                the trust pills. What the hero owes a first-time visitor is
+                the outcome, stated as decision support — not advice.   */}
             <p className="max-w-prose animate-fade-up text-body-xl text-muted">
-              Check interactions, medication-nutrient depletions, dose overlap, FDA recalls, and
-              ingredient quality across your full stack — personalized to your conditions and
-              medications, privately on your device.
+              Know whether this supplement is right for you — before it conflicts
+              with your medications, conditions, or existing stack.
             </p>
 
             <div className="flex animate-fade-up flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:80ms]">
@@ -116,27 +126,43 @@ export function Hero() {
               <span aria-hidden="true">→</span>
             </Link>
 
-            <div className="flex animate-fade-up flex-col gap-4 pt-2 [animation-delay:160ms] sm:flex-row sm:items-center sm:gap-6">
-              <Link
-                href="#waitlist"
-                className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill bg-accent px-5 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent"
-              >
-                Join the beta
-                <span aria-hidden="true">→</span>
-              </Link>
-
-              <a
-                href="#problem"
-                className="focus-visible:outline-offset-3 group inline-flex items-center gap-1.5 py-2 text-body-sm font-medium text-accent transition-colors duration-fast ease-smooth hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-accent"
-              >
-                Why interactions matter
-                <span
-                  aria-hidden="true"
-                  className="transition-transform duration-fast ease-smooth group-hover:translate-y-0.5"
+            {/* CTA pair — the primary is the visitor's job ("Check my
+                stack"), not ours ("Join the beta"). Both land on the same
+                waitlist form because joining IS how you get a stack check
+                today, so the secondary says "waitlist" out loud and the
+                caption dates the promise: nobody should click "Check my
+                stack" expecting an instant answer and find a signup form.
+                When the app ships, the primary repoints and the caption
+                comes out. Replaces the old "Why interactions matter ↓"
+                scroll cue — three actions in one hero was one too many,
+                and #problem is the next section anyway.                */}
+            <div className="animate-fade-up pt-2 [animation-delay:160ms]">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <Link
+                  href="#waitlist"
+                  /* border-transparent so the filled and outlined pills share
+                     a box model and line up to the pixel. */
+                  className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill border border-transparent bg-accent px-5 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent"
                 >
-                  ↓
-                </span>
-              </a>
+                  Check my stack
+                  <span aria-hidden="true">→</span>
+                </Link>
+
+                <Link
+                  href="#waitlist"
+                  className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill border border-border bg-surface px-5 py-3 text-body-sm font-medium text-ink shadow-xs transition-[transform,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-accent"
+                >
+                  Join the beta waitlist
+                </Link>
+              </div>
+
+              {/* Sets expectation before the click, not after it. Mirrors the
+                  waitlist section's own trust note so the two agree. Sits
+                  inside the CTA block rather than taking its own space-y
+                  slot — it belongs to the buttons, not beside them. */}
+              <p className="mt-3 text-body-sm text-subtle">
+                Free during beta · opening in waves through 2026
+              </p>
             </div>
           </div>
 

@@ -1,0 +1,61 @@
+name: CI
+
+# The repo had no CI and no working lint gate — `next lint` was removed in
+# Next 16, so nothing checked the code before it shipped. This runs the same
+# three commands a developer runs locally, in the same order, so a red build
+# here means the same thing it means on a laptop.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A second push to the same branch cancels the first — no point burning
+# minutes on a commit that has already been superseded.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Version comes from package.json's `packageManager` field, so the
+      # workflow can't drift from what developers actually run.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # Build last: it is the slowest step and the one most likely to be
+      # fixed by whatever lint or typecheck already caught.
+      - name: Build
+        run: pnpm build
+        # src/lib/env.ts fails fast on import: the three Resend vars throw
+        # always, and the two Upstash vars throw whenever NODE_ENV is
+        # production — which `next build` sets. CI is compiling pages, not
+        # sending mail or rate-limiting anyone, so placeholders are the
+        # correct input here; real values live in Vercel. If a future change
+        # makes the build actually call these services, this step will start
+        # failing, which is the behaviour we want.
+        env:
+          RESEND_API_KEY: ci-placeholder
+          RESEND_AUDIENCE_BETA_ID: ci-placeholder
+          RESEND_AUDIENCE_NEWSLETTER_ID: ci-placeholder
+          UPSTASH_REDIS_REST_URL: https://ci-placeholder.invalid
+          UPSTASH_REDIS_REST_TOKEN: ci-placeholder

@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  next-mdx-remote:
+    hash: vjrtgmdeigdgxbujuh7u4pbvgu
+    path: patches/next-mdx-remote.patch
+
 importers:
 
   .:
@@ -46,7 +51,7 @@ importers:
         version: 16.2.5(@babel/core@7.29.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       next-mdx-remote:
         specifier: ^6.0.0
-        version: 6.0.0(@types/react@19.2.14)(react@19.0.0)
+        version: 6.0.0(patch_hash=vjrtgmdeigdgxbujuh7u4pbvgu)(@types/react@19.2.14)(react@19.0.0)
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -5242,7 +5247,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  next-mdx-remote@6.0.0(@types/react@19.2.14)(react@19.0.0):
+  next-mdx-remote@6.0.0(patch_hash=vjrtgmdeigdgxbujuh7u4pbvgu)(@types/react@19.2.14)(react@19.0.0):
     dependencies:
       '@babel/code-frame': 7.29.0
       '@mdx-js/mdx': 3.1.1

@@ -79,19 +79,26 @@ export function Header() {
     <>
       <motion.header
         initial={false}
-        animate={{ y: slideY }}
-        transition={reducedMotion ? { duration: 0 } : transitions.hover}
-        className="fixed inset-x-0 top-3 z-[300] flex justify-center px-4 sm:top-4"
+        animate={{
+          y: slideY,
+          opacity: hidden && !reducedMotion ? 0.85 : 1,
+        }}
+        transition={
+          reducedMotion
+            ? { duration: 0 }
+            : { type: "spring", stiffness: 280, damping: 28 }
+        }
+        className="fixed inset-x-0 top-3 z-[300] flex justify-center px-4 sm:top-5"
       >
         <div
           className={cn(
             // Bumped from max-w-3xl (768) → max-w-4xl (896) and py-2 → py-2.5
             // because 5 nav items at gap-7 was cramped. Pill still feels
             // tight and floating; just less squeezed.
-            "flex w-full max-w-4xl items-center justify-between gap-6 rounded-pill border px-3 py-2.5 transition-[background-color,box-shadow,backdrop-filter,border-color] duration-slow ease-smooth sm:px-4",
+            "flex w-full max-w-4xl items-center justify-between gap-6 rounded-[22px] border px-4 py-3 transition-all duration-500 ease-out",
             scrolled
-              ? "glass border-border/70 shadow-md"
-              : "border-transparent bg-background/30 backdrop-blur-xs"
+              ? "glass shadow-xl shadow-black/10"
+              : "glass-frost shadow-none"
           )}
         >
           {/* Wordmark */}
@@ -105,8 +112,13 @@ export function Header() {
           </Link>
 
           {/* Desktop nav — gap-8 between items reads cleaner with 5 items
-              than the previous gap-7. Pairs with the wider max-w-4xl pill. */}
-          <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
+              than the previous gap-7. Pairs with the wider max-w-4xl pill.
+
+              Shows from lg, not md: five links plus the logo and CTA do not
+              fit in 768px, so at exactly the md breakpoint the nav wrapped
+              "How It Works" onto three lines and broke the header pill.
+              Tablets keep the hamburger, which fits at any width.      */}
+          <nav aria-label="Main" className="hidden items-center gap-8 lg:flex">
             {nav.map((item) => (
               <Link
                 key={item.href}
@@ -127,7 +139,7 @@ export function Header() {
                 "transition-[background-color,box-shadow,transform] duration-fast ease-smooth",
                 "hover:bg-accent-strong hover:shadow-glow",
                 "focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent",
-                "md:inline-flex"
+                "lg:inline-flex"
               )}
             >
               Join the beta
@@ -141,7 +153,7 @@ export function Header() {
               aria-label="Open menu"
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className="rounded-pill p-2.5 text-ink transition-colors duration-fast ease-smooth hover:bg-surface-subtle md:hidden"
+              className="rounded-pill p-2.5 text-ink transition-colors duration-fast ease-smooth hover:bg-surface-subtle lg:hidden"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <path d="M3 6h14M3 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -163,7 +175,7 @@ export function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={transitions.reveal}
-            className="fixed inset-0 z-[400] bg-background/95 backdrop-blur-xl md:hidden"
+            className="fixed inset-0 z-[400] bg-background/95 backdrop-blur-xl lg:hidden"
             onClick={(e) => {
               // Close when clicking the backdrop (not the inner content)
               if (e.target === e.currentTarget) setMenuOpen(false);

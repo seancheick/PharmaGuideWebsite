@@ -39,8 +39,14 @@ export function Hero() {
               The supplement &amp; medication co-pilot
             </p>
 
+            {/* "act", not "work" — "don't work in isolation" reads as an
+                efficacy claim (they're ineffective alone), which is not what
+                we mean and not a claim we want to make. "Act" is the
+                pharmacologic verb and carries only the intended reading.
+                Matters most where this line travels without its subhead:
+                the OG image, search snippets, the business card.        */}
             <h1 className="text-display-hero text-ink">
-              Your supplements don&apos;t work in isolation.
+              Your supplements don&apos;t act in isolation.
               <br />
               <span className="text-accent">Neither should your check.</span>
             </h1>

@@ -99,7 +99,7 @@ export default async function OGImage() {
               letterSpacing: "-0.022em",
             }}
           >
-            work in isolation.
+            act in isolation.
           </span>
           <span
             style={{

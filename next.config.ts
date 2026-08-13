@@ -34,6 +34,32 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["framer-motion", "clsx", "tailwind-merge"],
   },
 
+  // Print → web entry points.
+  //
+  // /card is the URL encoded in the QR on the business card. The card is
+  // permanent; the destination is not. Keeping a first-party redirect in
+  // between means the printed code never goes stale — when the app ships,
+  // repoint the destination here and every card already in someone's wallet
+  // starts landing on the app.
+  //
+  // KEEP THIS TEMPORARY (307) FOREVER. `permanent: true` emits a 301, which
+  // browsers cache indefinitely: anyone who scanned once would keep hitting
+  // the old destination after a repoint, and you cannot clear their cache.
+  //
+  // The utm_campaign value is the per-event knob — change it before each
+  // conference print run; utm_source/medium stay put so all card traffic
+  // rolls up together in GA.
+  async redirects() {
+    return [
+      {
+        source: "/card",
+        destination:
+          "/?utm_source=business-card&utm_medium=qr&utm_campaign=conference-2026",
+        permanent: false,
+      },
+    ];
+  },
+
   // Security + SEO friendly headers
   async headers() {
     return [

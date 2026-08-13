@@ -158,16 +158,17 @@ export function Hero() {
                   href="#waitlist"
                   className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill border border-border bg-surface px-5 py-3 text-body-sm font-medium text-ink shadow-xs transition-[transform,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-accent"
                 >
-                  Join the beta waitlist
+                  Get early access
                 </Link>
               </div>
 
-              {/* Sets expectation before the click, not after it. Mirrors the
-                  waitlist section's own trust note so the two agree. Sits
-                  inside the CTA block rather than taking its own space-y
-                  slot — it belongs to the buttons, not beside them. */}
+              {/* Sets expectation before the click, not after it. "Waitlist"
+                  and "opening in waves" both described a queue you sit in;
+                  the first testers are being added by hand right now, so the
+                  line says that instead. Update this the day the app opens
+                  to everyone — it dates itself on purpose. */}
               <p className="mt-3 text-body-sm text-subtle">
-                Free during beta · opening in waves through 2026
+                Free in beta · we&apos;re adding the first testers now
               </p>
             </div>
           </div>

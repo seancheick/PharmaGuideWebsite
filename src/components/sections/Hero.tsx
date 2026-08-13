@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PhoneMockup } from "@/components/hero/PhoneMockup";
+import { CATALOG_SIZE } from "@/lib/site";
 
 /**
  * Hero — first viewport, two-column on desktop, stacked on mobile.
@@ -80,7 +81,8 @@ export function Hero() {
                   <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                   <line x1="12" y1="22.08" x2="12" y2="12" />
                 </svg>
-                <span className="tnum font-medium text-ink">180,000+</span> products
+                <span className="tnum font-medium text-ink">{CATALOG_SIZE}</span>{" "}
+                products
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <svg

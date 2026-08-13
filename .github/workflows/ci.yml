@@ -59,3 +59,8 @@ jobs:
           RESEND_AUDIENCE_NEWSLETTER_ID: ci-placeholder
           UPSTASH_REDIS_REST_URL: https://ci-placeholder.invalid
           UPSTASH_REDIS_REST_TOKEN: ci-placeholder
+          # No SUPABASE_* placeholders on purpose. Those vars default to ""
+          # and never throw, so the build compiles the share routes with the
+          # feature disabled — which is exactly the state we want CI to prove
+          # is buildable. Adding fake values here would instead assert that a
+          # misconfigured deploy looks healthy.

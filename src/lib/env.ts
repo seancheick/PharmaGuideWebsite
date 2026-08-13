@@ -61,4 +61,45 @@ export const env = {
   // (rate limiter falls back to allow-with-warning when missing).
   UPSTASH_REDIS_REST_URL: requiredInProduction("UPSTASH_REDIS_REST_URL"),
   UPSTASH_REDIS_REST_TOKEN: requiredInProduction("UPSTASH_REDIS_REST_TOKEN"),
+
+  // Supabase — backs product share links (/api/share, /s/[code]).
+  //
+  // Optional everywhere on purpose, including production. Sharing is an
+  // additive feature: if these are unset the API returns 503 and the app
+  // falls back to the text-only share it does today. Throwing at boot would
+  // take the whole marketing site down over a feature nobody has scanned yet,
+  // which is the wrong failure for the more important pages.
+  //
+  // ANON is the publishable key (safe to expose; row-level security applies).
+  // SERVICE_ROLE bypasses RLS — server-only, never prefixed NEXT_PUBLIC_, and
+  // used solely by the validated, rate-limited write path in share-store.ts.
+  SUPABASE_URL: process.env.SUPABASE_URL ?? "",
+  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY ?? "",
+  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
+
+  // Optional shared secret for POST /api/share.
+  //
+  // Product names on a share page are free text, so an unauthenticated write
+  // endpoint lets anyone mint a pharmaguide.io URL displaying words we did not
+  // write. The pages are noindexed and robots-disallowed, so this is a
+  // reputational rather than an SEO risk — but it is a real one for a health
+  // brand, and the fix is cheap.
+  //
+  // When set, the app must send the same value in `x-pharmaguide-key`. This is
+  // NOT strong authentication: a secret shipped inside an app binary can be
+  // extracted by anyone determined enough. It raises the cost from "curl the
+  // endpoint you saw in a share link" to "reverse-engineer the app", which is
+  // the actual threat at this scale. Leave unset in dev; set it in Vercel and
+  // pass the same value to the app via --dart-define=PHARMAGUIDE_SHARE_KEY.
+  SHARE_API_KEY: process.env.SHARE_API_KEY ?? "",
 } as const;
+
+/**
+ * True when both halves of the share pipeline are configured. Routes check
+ * this and degrade to 503 / 404 rather than throwing, so a missing key is a
+ * disabled feature and not a broken deployment.
+ */
+export const shareStorageConfigured =
+  env.SUPABASE_URL !== "" &&
+  env.SUPABASE_ANON_KEY !== "" &&
+  env.SUPABASE_SERVICE_ROLE_KEY !== "";

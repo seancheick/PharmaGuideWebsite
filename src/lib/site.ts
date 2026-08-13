@@ -3,11 +3,21 @@
  * Anything that appears in multiple places lives here.
  */
 
+/**
+ * Catalog size, as shown to visitors.
+ *
+ * Hoisted out of `site` so the description below can interpolate it: this
+ * number was hardcoded in four separate places (this description, the hero
+ * trust row, the beta capability list, and the share landing page), which is
+ * three chances for it to disagree with itself the first time the catalog
+ * grows. Update here, everywhere follows.
+ */
+export const CATALOG_SIZE = "180,000+";
+
 export const site = {
   name: "PharmaGuide",
   tagline: "Supplement intelligence.",
-  description:
-    "See how your supplements, medications, and timing work together — not one bottle at a time. Cross-referenced catalog of 180,000+ products with evidence-graded interaction analysis.",
+  description: `See how your supplements, medications, and timing work together — not one bottle at a time. Cross-referenced catalog of ${CATALOG_SIZE} products with evidence-graded interaction analysis.`,
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://pharmaguide.io",
   locale: "en_US",
   lang: "en-US",

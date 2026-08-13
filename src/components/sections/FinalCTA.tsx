@@ -132,16 +132,23 @@ export function FinalCTA() {
               variants={fadeUpItem}
               className="text-balance text-display-lg leading-[1.06] text-ink"
             >
-              Opening{" "}
-              <span className="font-serif italic text-accent">in waves.</span>
+              Join the{" "}
+              <span className="font-serif italic text-accent">
+                founding testers.
+              </span>
             </motion.h2>
 
+            {/* Recruiting collaborators, not collecting downloads. "Opening in
+                waves" described a queue; the first group is being added by
+                hand this month, and saying what we want back from them is
+                what makes a clinician or a serious stack-keeper reply. */}
             <motion.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              Join the beta and be among the first to use PharmaGuide as we
-              prepare for launch.
+              We&apos;re adding the first group by hand this month. You get
+              early access and a direct line to us — we get to find the edge
+              cases before PharmaGuide opens to everyone.
             </motion.p>
 
             <motion.div variants={fadeUpItem} className="w-full max-w-lg">
@@ -194,7 +201,7 @@ export function FinalCTA() {
                         : "hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow"
                     )}
                   >
-                    {submitting ? "Sending…" : "Join the beta"}
+                    {submitting ? "Sending…" : "Get early access"}
                     {!submitting && <span aria-hidden="true">→</span>}
                   </button>
                   {error && (

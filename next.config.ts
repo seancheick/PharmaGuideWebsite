@@ -46,18 +46,22 @@ const nextConfig: NextConfig = {
   // browsers cache indefinitely: anyone who scanned once would keep hitting
   // the old destination after a repoint, and you cannot clear their cache.
   //
-  // The utm_campaign value is the per-event knob — change it before each
-  // conference print run; utm_source/medium stay put so all card traffic
-  // rolls up together in GA.
+  // One path per printed surface, so GA can tell them apart: utm_source is
+  // the surface, utm_campaign groups the print run. When the app ships,
+  // change PRINT_DESTINATION once and every piece of paper already in the
+  // wild follows — that is the entire reason this indirection exists.
   async redirects() {
-    return [
-      {
-        source: "/card",
-        destination:
-          "/?utm_source=business-card&utm_medium=qr&utm_campaign=conference-2026",
-        permanent: false,
-      },
+    const PRINT_DESTINATION = "/";
+    const printed = [
+      { source: "/card", utmSource: "business-card", campaign: "conference-2026" },
+      { source: "/pharmacy", utmSource: "pharmacy-counter", campaign: "counter-cards-2026" },
+      { source: "/gym", utmSource: "gym-counter", campaign: "counter-cards-2026" },
     ];
+    return printed.map(({ source, utmSource, campaign }) => ({
+      source,
+      destination: `${PRINT_DESTINATION}?utm_source=${utmSource}&utm_medium=qr&utm_campaign=${campaign}`,
+      permanent: false,
+    }));
   },
 
   // Security + SEO friendly headers

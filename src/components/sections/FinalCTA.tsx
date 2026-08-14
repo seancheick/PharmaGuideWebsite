@@ -219,9 +219,9 @@ export function FinalCTA() {
               {/* Trust note */}
               <p className="mt-4 text-body-sm text-muted">
                 Free during beta
-                <span className="mx-2 text-border-strong">·</span>
+                <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
                 No credit card
-                <span className="mx-2 text-border-strong">·</span>
+                <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
                 We never sell your health data
               </p>
             </motion.div>

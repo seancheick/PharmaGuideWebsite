@@ -26,7 +26,12 @@
     --color-foreground: 24 26 27;           /* near-black warm #181A1B */
     --color-ink: 17 19 20;                  /* deepest text    #111314 */
     --color-muted: 99 102 106;              /* secondary       #63666A */
-    --color-subtle: 104 107 112;            /* tertiary        #686B70 — 4.65:1 on bg (was #6E7176 at 4.45:1, just under AA) */
+    /* tertiary #63666B. Was #686B70, which cleared AA on --color-background
+       (4.65:1) but landed at 4.496:1 on --color-surface-subtle — a rounding
+       error away from failing, and it does fail there in Lighthouse. The
+       earlier note only checked one of the two backgrounds this token sits on.
+       #63666B is 4.84:1 on surface-subtle and 5.48:1 on background. */
+    --color-subtle: 99 102 107;
 
     /* Borders / dividers */
     --color-border: 229 226 219;            /* warm hairline   #E5E2DB */
@@ -43,12 +48,29 @@
 
     /* Severity (5-tier verdict system)
        Polished, restrained values. Easily replaced when matching Flutter app.
-       Each pairs with -bg (10% tint) for chip backgrounds. */
-    --color-severity-contraindicated: 159 41 41;   /* deep red       #9F2929 */
-    --color-severity-avoid: 184 84 41;             /* burnt orange   #B85429 */
-    --color-severity-caution: 173 122 36;          /* warm amber     #AD7A24 */
-    --color-severity-monitor: 130 113 64;          /* muted ochre    #827140 */
-    --color-severity-safe: 63 98 80;               /* deep sage      #3F6250 */
+       Each pairs with -bg (10% tint) for chip backgrounds.
+
+       CONTRAST FLOOR: every value here clears WCAG AA (4.5:1) as body text on
+       --color-surface-subtle (#EEEBE5). That surface is the constraint, not
+       white: it is the darkest light background these colours sit on (the
+       feature illustration cards), so a value that passes there passes on
+       #FFFFFF, #FCFBF8 and #FAF9F6 too. Sizing the palette against white
+       instead is what let three of these ship below AA — a Lighthouse audit on
+       2026-08-13 caught caution at 3.16:1, avoid at 4.07:1 and monitor at
+       4.02:1 on that card background.
+
+       This matters more here than on a normal marketing site: these colours
+       carry the verdict words. Someone with low vision reading "Caution" on a
+       supplement is the exact person the word is for.
+
+       Hue and saturation are held; only lightness moved — the same method the
+       Flutter app's tier ramp documents. Re-solve against #EEEBE5 if any of
+       these change. */
+    --color-severity-contraindicated: 159 41 41;   /* deep red       #9F2929 — 6.25:1, unchanged */
+    --color-severity-avoid: 170 78 38;             /* burnt orange   #AA4E26 — was #B85429 (4.07:1) */
+    --color-severity-caution: 138 97 29;           /* warm amber     #8A611D — was #AD7A24 (3.16:1) */
+    --color-severity-monitor: 119 104 59;          /* muted ochre    #77683B — was #827140 (4.02:1) */
+    --color-severity-safe: 63 98 80;               /* deep sage      #3F6250 — 5.74:1, unchanged */
 
     /* Severity backgrounds (10% tint, ready to use) */
     --color-severity-contraindicated-bg: 245 230 230;
@@ -245,6 +267,28 @@
     --color-accent: 175 198 200;
     --color-accent-strong: 200 218 220;
     --color-accent-soft: 22 36 38;
+
+    /* Severity otherwise inherits from :root, where three of these were
+       darkened to clear AA on a near-white card. Contrast runs the OTHER way
+       on a dark surface: darker text on dark ground is worse, so inheriting
+       those values would hand dark mode the very failure light mode just
+       fixed. Pinned to the original, lighter values here.
+       Measured as text on --color-surface-raised (#1A1C1F), the tightest of
+       the three dark surfaces:
+         caution 4.54:1 (passes)   avoid 3.53:1   monitor 3.57:1
+         safe    2.50:1            contraindicated 2.30:1
+       So four of the five FAIL AA on dark — including the two pinned here.
+       That is a pre-existing gap, not something this change introduced: these
+       values were only ever solved against light backgrounds, and dark mode is
+       NOT shipped (V1 is light only, activated by `class="dark"` which nothing
+       sets). Pinning them still matters, because without it dark mode would
+       inherit the darkened light-mode values and be worse again.
+       The real fix is to re-solve the entire dark ramp — all five, most likely
+       lightening them substantially — on the day dark mode ships. Do not
+       enable `.dark` before doing that. */
+    --color-severity-avoid: 184 84 41;
+    --color-severity-caution: 173 122 36;
+    --color-severity-monitor: 130 113 64;
   }
 
   /* ────────────── BASE STYLES ────────────── */

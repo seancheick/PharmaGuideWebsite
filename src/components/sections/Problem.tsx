@@ -249,9 +249,9 @@ export function Problem() {
             >
               Source: CDC ↗
             </a>
-            <span className="mx-2 text-border-strong">·</span>
+            <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
             1.5M+ a year ÷ 365
-            <span className="mx-2 text-border-strong">·</span>
+            <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
             Not all interactions require emergency care
           </figcaption>
         </motion.figure>

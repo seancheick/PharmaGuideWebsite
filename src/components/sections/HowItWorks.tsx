@@ -160,17 +160,17 @@ export function HowItWorks() {
             <p className="text-balance text-body leading-relaxed text-ink transition-colors duration-fast ease-smooth group-hover:text-accent">
               Cross-referenced with{" "}
               <span className="font-medium">FDA</span>
-              <span className="mx-1.5 text-border-strong">·</span>
+              <span aria-hidden="true" className="mx-1.5 text-border-strong">·</span>
               <span className="font-medium">NIH</span>
-              <span className="mx-1.5 text-border-strong">·</span>
+              <span aria-hidden="true" className="mx-1.5 text-border-strong">·</span>
               <span className="font-medium">PubMed</span>
-              <span className="mx-1.5 text-border-strong">·</span>
+              <span aria-hidden="true" className="mx-1.5 text-border-strong">·</span>
               <span className="font-medium">DSLD</span>
             </p>
             <p className="text-body-sm leading-relaxed text-muted">
               Reviewed by{" "}
               <span className="text-ink">Laurie Pham, PharmD</span>
-              <span className="mx-2 text-border-strong">·</span>
+              <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
               Catalog updated weekly
             </p>
             <p className="mt-1 inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent">

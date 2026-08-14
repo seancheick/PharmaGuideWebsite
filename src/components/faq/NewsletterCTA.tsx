@@ -170,9 +170,9 @@ export function NewsletterCTA() {
 
             <p className="mt-4 text-body-sm text-muted">
               Roughly monthly
-              <span className="mx-2 text-border-strong">·</span>
+              <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
               No spam
-              <span className="mx-2 text-border-strong">·</span>
+              <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
               Unsubscribe anytime
             </p>
           </motion.div>

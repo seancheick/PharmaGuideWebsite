@@ -96,7 +96,7 @@ export function BlogPagination({
         <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
           Showing {visiblePosts} of {totalPosts}{" "}
           {totalPosts === 1 ? "article" : "articles"}
-          <span className="mx-2 text-border-strong">·</span>
+          <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
           Page {currentPage} of {totalPages}
         </p>
       )}

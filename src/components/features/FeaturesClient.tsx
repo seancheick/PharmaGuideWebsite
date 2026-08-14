@@ -305,7 +305,7 @@ export function FeaturesClient() {
                             {s.name}
                           </a>
                           {k < pillar.sources.length - 1 && (
-                            <span className="mx-2 text-border-strong">·</span>
+                            <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
                           )}
                         </span>
                       ))}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getShareSnapshot } from "@/lib/share-store";
+import { shareDispositionCopy } from "@/lib/share-snapshot";
 import { bandForTierId } from "@/lib/quality-score";
 import { CATALOG_SIZE, site } from "@/lib/site";
 
@@ -55,9 +56,24 @@ function productTitle(name: string, brand: string | null): string {
   return brand ? `${name} — ${brand}` : name;
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+function catalogBuildDate(version: string): string {
+  const match = /^(\d{4})\.(\d{2})\.(\d{2})\.\d{6}$/.exec(version);
+  if (!match) return version;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  if (
+    parsed.getUTCFullYear() !== year ||
+    parsed.getUTCMonth() !== month - 1 ||
+    parsed.getUTCDate() !== day
+  ) {
+    return version;
+  }
+  return DATE_FORMAT.format(parsed);
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { code } = await params;
   const snapshot = await getShareSnapshot(code);
   if (!snapshot) {
@@ -66,9 +82,11 @@ export async function generateMetadata({
 
   const title = productTitle(snapshot.productName, snapshot.brandName);
   const band = snapshot.qualityTier ? bandForTierId(snapshot.qualityTier) : undefined;
-  const description = band && snapshot.qualityScore !== null
-    ? `PharmaGuide quality score: ${snapshot.qualityScore}/100 — ${band.label}. Quality reflects the product itself; personal fit depends on your medications and conditions.`
-    : `Checked in PharmaGuide. Quality reflects the product itself; personal fit depends on your medications and conditions.`;
+  const dispositionCopy = shareDispositionCopy(snapshot.catalogDisposition);
+  const description =
+    band && snapshot.qualityScore !== null
+      ? `PharmaGuide quality score: ${snapshot.qualityScore}/100 — ${band.label}. Quality reflects the product itself; personal fit depends on your medications and conditions.`
+      : `${dispositionCopy.description} Personal fit depends on your medications and conditions.`;
 
   return {
     title,
@@ -96,7 +114,9 @@ export default async function SharePage({ params }: PageProps) {
 
   const band = snapshot.qualityTier ? bandForTierId(snapshot.qualityTier) : undefined;
   const hasScore = snapshot.qualityScore !== null && band !== undefined;
-  const checkedOn = DATE_FORMAT.format(new Date(snapshot.createdAt));
+  const dispositionCopy = shareDispositionCopy(snapshot.catalogDisposition);
+  const sharedOn = DATE_FORMAT.format(new Date(snapshot.createdAt));
+  const evaluatedOn = catalogBuildDate(snapshot.catalogVersion);
 
   return (
     <main className="halo-hero relative min-h-screen overflow-x-clip pb-section-y pt-24 sm:pt-28">
@@ -107,10 +127,7 @@ export default async function SharePage({ params }: PageProps) {
             href="/"
             className="inline-flex w-fit items-center gap-2 text-body-sm font-medium text-ink transition-opacity duration-fast ease-smooth hover:opacity-70"
           >
-            <span
-              aria-hidden="true"
-              className="h-2 w-2 rounded-full bg-accent"
-            />
+            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent" />
             PharmaGuide
           </Link>
 
@@ -134,15 +151,11 @@ export default async function SharePage({ params }: PageProps) {
                       `text-display-lg` and `text-severity-safe` as conflicting
                       `text-*` utilities and drops the font size — the same bug
                       that silently shrank the YourFit card in August. */}
-                  <span
-                    className={`text-display-lg leading-none ${band.textClass}`}
-                  >
+                  <span className={`text-display-lg leading-none ${band.textClass}`}>
                     {snapshot.qualityScore}
                   </span>
                   <span className="text-body-lg text-subtle">/100</span>
-                  <span
-                    className={`ml-auto text-body-lg font-medium ${band.textClass}`}
-                  >
+                  <span className={`ml-auto text-body-lg font-medium ${band.textClass}`}>
                     {band.label}
                   </span>
                 </div>
@@ -160,21 +173,30 @@ export default async function SharePage({ params }: PageProps) {
 
                 {snapshot.confidence && (
                   <p className="mt-3 text-body-sm text-muted">
-                    Score confidence: {snapshot.confidence} — this product&apos;s
-                    label data is incomplete, so the score carries more
-                    uncertainty than usual.
+                    Score confidence: {snapshot.confidence} — this product&apos;s label data is
+                    incomplete, so the score carries more uncertainty than usual.
                   </p>
                 )}
               </div>
             ) : (
-              /* No score is a real state, not an error: the product is either
-                 blocked or its label data did not survive the scoring gate.
-                 Saying so plainly beats an empty space that reads as broken. */
-              <p className="mt-7 rounded-2xl border border-border bg-surface-subtle px-5 py-4 text-body-sm text-muted">
-                This product doesn&apos;t have a published quality score yet —
-                its label data didn&apos;t meet the bar for one. Open it in
-                PharmaGuide for the full picture.
-              </p>
+              <div
+                className={`mt-7 rounded-2xl border px-5 py-4 ${
+                  snapshot.catalogDisposition === "blocked"
+                    ? "border-severity-avoid/30 bg-severity-avoid/5"
+                    : "border-border bg-surface-subtle"
+                }`}
+              >
+                <p
+                  className={`text-body-sm font-medium ${
+                    snapshot.catalogDisposition === "blocked" ? "text-severity-avoid" : "text-ink"
+                  }`}
+                >
+                  {dispositionCopy.title}
+                </p>
+                <p className="mt-1.5 text-body-sm leading-relaxed text-muted">
+                  {dispositionCopy.body}
+                </p>
+              </div>
             )}
 
             {snapshot.highlights.length > 0 && (
@@ -207,8 +229,7 @@ export default async function SharePage({ params }: PageProps) {
             )}
 
             <p className="mt-7 border-t border-border/70 pt-5 font-mono text-[10px] uppercase tracking-[0.16em] text-subtle">
-              Checked {checkedOn}
-              {snapshot.catalogVersion && ` · catalog v${snapshot.catalogVersion}`}
+              Shared {sharedOn} · Catalog evaluated {evaluatedOn}
             </p>
           </article>
 
@@ -219,18 +240,17 @@ export default async function SharePage({ params }: PageProps) {
               This score is about the product, not about you.
             </p>
             <p className="mt-2 text-body-sm leading-relaxed text-muted">
-              Quality measures what&apos;s in the bottle — the forms used, the
-              dosing, third-party testing, label transparency. Whether it&apos;s
-              right for <em>you</em> depends on your medications, conditions,
-              and what else you already take. That part needs your own check.
+              Quality measures what&apos;s in the bottle — the forms used, the dosing, third-party
+              testing, label transparency. Whether it&apos;s right for <em>you</em> depends on your
+              medications, conditions, and what else you already take. That part needs your own
+              check.
             </p>
           </div>
 
           {/* ─── The ask, once, at the end ─── */}
           <div className="flex flex-col gap-4">
             <h2 className="text-balance text-display-sm leading-[1.12] text-ink">
-              Run this against{" "}
-              <span className="font-serif italic text-accent">your</span> stack.
+              Run this against <span className="font-serif italic text-accent">your</span> stack.
             </h2>
             <p className="max-w-prose text-body leading-relaxed text-muted">
               {/* Explicit {" "} after the expression: the text node that
@@ -238,9 +258,8 @@ export default async function SharePage({ params }: PageProps) {
                   whitespace of a multi-line node — which silently rendered
                   "180,000+supplements". The Hero's trust row has the same
                   guard for the same reason. */}
-              PharmaGuide checks {CATALOG_SIZE}{" "}
-              supplements against your medications, conditions, and the rest of
-              your stack — and tells you what interacts, what overlaps, and
+              PharmaGuide checks {CATALOG_SIZE} supplements against your medications, conditions,
+              and the rest of your stack — and tells you what interacts, what overlaps, and
               what&apos;s redundant.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">

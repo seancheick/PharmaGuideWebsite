@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "outDir": "../.tmp/share-test-build",
+    "rootDir": ".."
+  },
+  "include": ["../src/lib/quality-score.ts", "../src/lib/share-snapshot.ts"]
+}

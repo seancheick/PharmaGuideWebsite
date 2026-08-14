@@ -1,10 +1,14 @@
 import "server-only";
 import { cache } from "react";
+import { createHash } from "node:crypto";
 import { env } from "./env";
 import { log } from "./logger";
 import {
   SHARE_CODE_RE,
   generateShareCode,
+  resolveShareSnapshotFromIndex,
+  type CatalogDisposition,
+  type ShareRequest,
   type ShareHighlight,
   type ShareSnapshot,
 } from "./share-snapshot";
@@ -14,39 +18,36 @@ import { type QualityTierId } from "./quality-score";
  * Storage for public share snapshots, over Supabase PostgREST.
  *
  * ─── WHY RAW FETCH AND NOT @supabase/supabase-js ───────────────────────────
- * This module does exactly two things: insert one row, and select one row by
- * primary key. The official client would add ~50 KB and pull in realtime,
+ * This module resolves one immutable release shard, inserts one row, and
+ * selects one row by primary key. The official client would add ~50 KB and pull in realtime,
  * auth, and storage sub-clients none of which are used here, in exchange for
  * sugar over two REST calls. PostgREST is a plain HTTP API and `fetch` speaks
  * it directly, which also keeps Next's fetch caching under our control.
  *
  * If this file ever grows joins, RPC, or auth, revisit that call.
  *
- * ─── KEY SEPARATION ────────────────────────────────────────────────────────
- * Reads use the publishable (anon) key, so row-level security still applies
- * and a bug in the read path cannot reach any other table. Writes use the
- * service role, which bypasses RLS — that is exactly why the write path is
- * server-only, rate limited, and validated against the share contract before
- * it is ever called. There is deliberately no INSERT policy for anon, so
- * `/api/share` is the single door into this table.
+ * Every storage and table operation uses the service role in this server-only
+ * module. Browser roles have no table grant, so knowing or guessing a code
+ * never grants PostgREST enumeration; `/s/{code}` is the only read surface.
  */
 
 const TABLE = "public_share_snapshots";
 
 /** Columns the read path asks for. Explicit so a future column is opt-in. */
 const READ_COLUMNS =
-  "code,dsld_id,product_name,brand_name,quality_score,quality_tier,score_confidence,highlights,catalog_version,created_at";
+  "code,dsld_id,product_name,brand_name,catalog_disposition,quality_score,quality_tier,score_confidence,highlights,catalog_version,created_at";
 
 type SnapshotRow = {
   code: string;
   dsld_id: string;
   product_name: string;
   brand_name: string | null;
+  catalog_disposition: CatalogDisposition;
   quality_score: number | null;
   quality_tier: string | null;
   score_confidence: string | null;
   highlights: string[] | null;
-  catalog_version: string | null;
+  catalog_version: string;
   created_at: string;
 };
 
@@ -66,6 +67,7 @@ function rowToSnapshot(row: SnapshotRow): StoredShareSnapshot {
     dsldId: row.dsld_id,
     productName: row.product_name,
     brandName: row.brand_name,
+    catalogDisposition: row.catalog_disposition,
     qualityScore: row.quality_score,
     // Trusted on the way out because it was validated on the way in and the
     // table has a CHECK keeping score and tier paired. Cast rather than
@@ -76,6 +78,60 @@ function rowToSnapshot(row: SnapshotRow): StoredShareSnapshot {
     catalogVersion: row.catalog_version,
     createdAt: row.created_at,
   };
+}
+
+function storageObjectUrl(path: string): string {
+  const encoded = path.split("/").map(encodeURIComponent).join("/");
+  return `${env.SUPABASE_URL.replace(/\/$/, "")}/storage/v1/object/authenticated/pharmaguide/${encoded}`;
+}
+
+/** Resolve public fields from the exact immutable catalog release on-device. */
+export async function resolveCanonicalShareSnapshot(
+  request: ShareRequest
+): Promise<{ ok: true; value: ShareSnapshot } | { ok: false; error: string }> {
+  const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey || !env.SUPABASE_URL) {
+    return { ok: false, error: "Share storage is not configured." };
+  }
+  const shard = createHash("sha256").update(request.dsldId).digest("hex")[0];
+  const path = `v${request.catalogVersion}/share_index/${shard}.json`;
+
+  let response: Response;
+  try {
+    response = await fetch(storageObjectUrl(path), {
+      headers: {
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+        Accept: "application/json",
+      },
+      // Versioned release objects are immutable. Cache the small shard; never
+      // cache the POST or the mutable share-snapshot table.
+      cache: "force-cache",
+    });
+  } catch (error) {
+    log.error("share.catalog_network_error", {
+      message: error instanceof Error ? error.message : "unknown",
+    });
+    return { ok: false, error: "Could not reach the catalog release." };
+  }
+
+  if (!response.ok) {
+    log.warn("share.catalog_release_unavailable", {
+      status: response.status,
+      catalog_version: request.catalogVersion,
+    });
+    return { ok: false, error: "Catalog release is not available for sharing." };
+  }
+
+  const decoded = await response.json().catch(() => null);
+  const resolved = resolveShareSnapshotFromIndex(decoded, request);
+  if (!resolved.ok) {
+    log.error("share.catalog_contract_invalid", {
+      catalog_version: request.catalogVersion,
+      error: resolved.error,
+    });
+  }
+  return resolved;
 }
 
 /**
@@ -113,6 +169,7 @@ export async function createShareSnapshot(
           dsld_id: snapshot.dsldId,
           product_name: snapshot.productName,
           brand_name: snapshot.brandName,
+          catalog_disposition: snapshot.catalogDisposition,
           quality_score: snapshot.qualityScore,
           quality_tier: snapshot.qualityTier,
           score_confidence: snapshot.confidence,
@@ -167,25 +224,22 @@ export const getShareSnapshot = cache(async function getShareSnapshot(
 ): Promise<StoredShareSnapshot | null> {
   if (!SHARE_CODE_RE.test(code)) return null;
 
-  const readKey = env.SUPABASE_ANON_KEY;
-  if (!readKey || !env.SUPABASE_URL) {
+  const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey || !env.SUPABASE_URL) {
     log.error("share.read_not_configured", {});
     return null;
   }
 
   let response: Response;
   try {
-    response = await fetch(
-      restUrl(`${TABLE}?code=eq.${code}&select=${READ_COLUMNS}&limit=1`),
-      {
-        headers: {
-          apikey: readKey,
-          Authorization: `Bearer ${readKey}`,
-          Accept: "application/json",
-        },
-        next: { revalidate: 3600 },
-      }
-    );
+    response = await fetch(restUrl(`${TABLE}?code=eq.${code}&select=${READ_COLUMNS}&limit=1`), {
+      headers: {
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+        Accept: "application/json",
+      },
+      next: { revalidate: 3600 },
+    });
   } catch (error) {
     log.error("share.read_network_error", {
       message: error instanceof Error ? error.message : "unknown",
@@ -198,9 +252,7 @@ export const getShareSnapshot = cache(async function getShareSnapshot(
     return null;
   }
 
-  const rows = (await response.json().catch(() => null)) as
-    | SnapshotRow[]
-    | null;
+  const rows = (await response.json().catch(() => null)) as SnapshotRow[] | null;
   if (!Array.isArray(rows)) return null;
   const row = rows[0];
   return row ? rowToSnapshot(row) : null;

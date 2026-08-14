@@ -2,22 +2,14 @@
  * The public share contract — one shape, one validator, one brain.
  *
  * ─── WHAT THIS IS ──────────────────────────────────────────────────────────
- * Tapping Share on a product in the app POSTs an allowlisted payload here.
- * `/api/share` validates it against this module, mints a code, and writes one
- * row to `public_share_snapshots`. `/s/{code}` renders that row. Both routes
- * import from this file, so the thing we accept and the thing we display
- * cannot drift.
+ * Tapping Share posts only a DSLD id and the locally active catalog version.
+ * The server resolves every display field from the immutable share-index
+ * shard published with that pipeline release, then stores the resolved row.
  *
- * ─── WHY A SNAPSHOT, NOT A CATALOG LOOKUP ──────────────────────────────────
- * This website has no product data — the catalog is a 180k-row SQLite file
- * bundled into the app and a Supabase storage blob for the pipeline. Standing
- * up a public catalog API to serve share links would create a second source of
- * truth for scores that immediately starts drifting from the app.
- *
- * Instead we store what the sharer actually saw, stamped with the catalog
- * version they saw it in. The page can then say "checked on <date>" honestly.
- * A score recomputed next month does not silently rewrite what someone shared
- * last month, and nobody has to keep two scoring systems in sync.
+ * The stored snapshot remains immutable, but its content is not client
+ * authored. The release artifact is a projection of the same checksum-verified
+ * SQLite row the phone renders, so historical links stay honest without a
+ * second scorer or a public catalog API.
  *
  * ─── WHY THE FIELD LIST IS SO SHORT ────────────────────────────────────────
  * Everything absent here is absent on purpose.
@@ -47,15 +39,8 @@ import { QUALITY_TIER_IDS, type QualityTierId } from "./quality-score";
  *
  * Deliberately NOT on this list: anything derived from form quality
  * ("good ingredient forms", "well-absorbed forms", "premium formulation").
- * Those come from `bio_score` in the pipeline's ingredient quality map, where
- * an audit on 2026-08-13 found 117 of 271 forms rated "excellent" (bio_score
- * >= 12) carrying no evidence reference of any kind. Inside the app that is an
- * internal heuristic a user reads next to an explanation. On a page a stranger
- * opens, with no context and our name on it, it becomes a public claim we
- * cannot currently source.
- *
- * Add form-derived reasons here the day those citations close — not before.
- * The gate is the citation work in the pipeline repo, tracked separately.
+ * Form-derived reasons remain excluded because this card intentionally keeps
+ * its claims to compact, objectively checkable product facts.
  */
 export const HIGHLIGHT_ALLOWLIST = [
   "Third-Party Tested",
@@ -82,11 +67,48 @@ export const MAX_HIGHLIGHTS = 3;
 export const SHARE_CONFIDENCE_VALUES = ["Limited"] as const;
 export type ShareConfidence = (typeof SHARE_CONFIDENCE_VALUES)[number];
 
+export const CATALOG_DISPOSITIONS = ["scored", "not_scored", "blocked"] as const;
+export type CatalogDisposition = (typeof CATALOG_DISPOSITIONS)[number];
+
+export type ShareRequest = {
+  dsldId: string;
+  catalogVersion: string;
+};
+
+export function shareDispositionCopy(disposition: CatalogDisposition): {
+  title: string;
+  body: string;
+  description: string;
+} {
+  switch (disposition) {
+    case "blocked":
+      return {
+        title: "Blocked from scoring",
+        body: "PharmaGuide found a product-level safety issue and does not publish a quality score for this product. Open it in PharmaGuide for the full details.",
+        description:
+          "PharmaGuide blocked this product from quality scoring because of a catalog-level safety issue.",
+      };
+    case "not_scored":
+      return {
+        title: "Quality score not published",
+        body: "This product does not have a published quality score because its label data did not meet the scoring requirements. Open it in PharmaGuide for the full details.",
+        description: "This product does not have a published PharmaGuide quality score.",
+      };
+    case "scored":
+      return {
+        title: "Quality score published",
+        body: "This product has a published PharmaGuide quality score.",
+        description: "This product has a published PharmaGuide quality score.",
+      };
+  }
+}
+
 /** A validated snapshot, exactly as stored and exactly as rendered. */
 export type ShareSnapshot = {
   dsldId: string;
   productName: string;
   brandName: string | null;
+  catalogDisposition: CatalogDisposition;
   /**
    * 0–100, or null when the product is blocked or not scored.
    *
@@ -99,7 +121,7 @@ export type ShareSnapshot = {
   qualityTier: QualityTierId | null;
   confidence: ShareConfidence | null;
   highlights: ShareHighlight[];
-  catalogVersion: string | null;
+  catalogVersion: string;
 };
 
 /**
@@ -130,9 +152,7 @@ export function generateShareCode(): string {
   const limit = Math.floor(256 / CODE_ALPHABET.length) * CODE_ALPHABET.length;
   let out = "";
   while (out.length < SHARE_CODE_LENGTH) {
-    const bytes = crypto.getRandomValues(
-      new Uint8Array(SHARE_CODE_LENGTH - out.length)
-    );
+    const bytes = crypto.getRandomValues(new Uint8Array(SHARE_CODE_LENGTH - out.length));
     for (const byte of bytes) {
       if (byte >= limit) continue;
       out += CODE_ALPHABET[byte % CODE_ALPHABET.length];
@@ -141,9 +161,7 @@ export function generateShareCode(): string {
   return out;
 }
 
-export type ValidationResult =
-  | { ok: true; value: ShareSnapshot }
-  | { ok: false; error: string };
+export type ValidationResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
 function trimmedString(value: unknown): string | null {
   if (typeof value !== "string") return null;
@@ -152,111 +170,125 @@ function trimmedString(value: unknown): string | null {
 }
 
 /**
- * Validate an untrusted share payload.
- *
- * Written to fail closed on every axis. Unknown highlights are dropped rather
- * than rejected, so an app build that adds a trust tag we have not allowlisted
- * yet still shares successfully with the tags we do recognise — a partial card
- * beats a broken share sheet. Everything else is a hard error.
+ * Validate the only two values the app may author at the public boundary.
+ * Unknown keys are rejected so trusted product fields cannot quietly return.
  */
-export function validateShareSnapshot(raw: unknown): ValidationResult {
+export function validateShareRequest(raw: unknown): ValidationResult<ShareRequest> {
   if (typeof raw !== "object" || raw === null) {
     return { ok: false, error: "Body must be a JSON object." };
   }
   const body = raw as Record<string, unknown>;
+  const keys = Object.keys(body);
+  if (keys.some((key) => key !== "dsldId" && key !== "catalogVersion")) {
+    return { ok: false, error: "Body contains unsupported fields." };
+  }
 
   const dsldId = trimmedString(body.dsldId);
   if (!dsldId) return { ok: false, error: "dsldId is required." };
-  if (dsldId.length > 64) {
-    return { ok: false, error: "dsldId is too long." };
-  }
-
-  const productName = trimmedString(body.productName);
-  if (!productName) return { ok: false, error: "productName is required." };
-  if (productName.length > 200) {
-    return { ok: false, error: "productName is too long." };
-  }
-
-  const brandName = trimmedString(body.brandName);
-  if (brandName && brandName.length > 200) {
-    return { ok: false, error: "brandName is too long." };
-  }
-
-  // Score and tier are validated as a pair. Either the caller is sharing a
-  // scored product and supplies both, or it is sharing a blocked / not-scored
-  // one and supplies neither. A half-populated pair means the caller's own
-  // gating is broken, and guessing the missing half is how a blocked product
-  // acquires a score it was never given.
-  const hasScore = body.qualityScore !== null && body.qualityScore !== undefined;
-  const rawTier = trimmedString(body.qualityTier);
-
-  let qualityScore: number | null = null;
-  let qualityTier: QualityTierId | null = null;
-
-  if (hasScore) {
-    const score = Number(body.qualityScore);
-    if (!Number.isFinite(score) || score < 0 || score > 100) {
-      return { ok: false, error: "qualityScore must be between 0 and 100." };
-    }
-    if (!rawTier) {
-      return { ok: false, error: "qualityTier is required when qualityScore is present." };
-    }
-    const tier = rawTier.toLowerCase();
-    if (!(QUALITY_TIER_IDS as readonly string[]).includes(tier)) {
-      return { ok: false, error: `Unrecognised qualityTier: ${rawTier}` };
-    }
-    qualityScore = Math.round(score);
-    qualityTier = tier as QualityTierId;
-  } else if (rawTier) {
-    return { ok: false, error: "qualityTier requires qualityScore." };
-  }
-
-  let confidence: ShareConfidence | null = null;
-  const rawConfidence = trimmedString(body.confidence);
-  if (rawConfidence) {
-    const match = SHARE_CONFIDENCE_VALUES.find(
-      (v) => v.toLowerCase() === rawConfidence.toLowerCase()
-    );
-    if (!match) {
-      return { ok: false, error: `Unrecognised confidence: ${rawConfidence}` };
-    }
-    confidence = match;
-  }
-
-  // Unknown tags are dropped, not rejected — see the doc comment above.
-  // De-duplicated because the app builds this list from eight independent
-  // booleans and a future refactor could plausibly emit one twice.
-  let highlights: ShareHighlight[] = [];
-  if (body.highlights !== undefined && body.highlights !== null) {
-    if (!Array.isArray(body.highlights)) {
-      return { ok: false, error: "highlights must be an array." };
-    }
-    const seen = new Set<string>();
-    highlights = body.highlights
-      .map((h) => trimmedString(h))
-      .filter((h): h is string => h !== null)
-      .map((h) => HIGHLIGHT_ALLOWLIST.find((a) => a.toLowerCase() === h.toLowerCase()))
-      .filter((h): h is ShareHighlight => h !== undefined)
-      .filter((h) => (seen.has(h) ? false : (seen.add(h), true)))
-      .slice(0, MAX_HIGHLIGHTS);
+  if (!/^\d{1,64}$/.test(dsldId)) {
+    return { ok: false, error: "dsldId is invalid." };
   }
 
   const catalogVersion = trimmedString(body.catalogVersion);
-  if (catalogVersion && catalogVersion.length > 32) {
-    return { ok: false, error: "catalogVersion is too long." };
+  if (!catalogVersion || !/^\d{4}\.\d{2}\.\d{2}\.\d{6}$/.test(catalogVersion)) {
+    return { ok: false, error: "catalogVersion is invalid." };
+  }
+
+  return { ok: true, value: { dsldId, catalogVersion } };
+}
+
+/** Resolve and validate one product from an untrusted decoded release shard. */
+export function resolveShareSnapshotFromIndex(
+  rawIndex: unknown,
+  request: ShareRequest
+): ValidationResult<ShareSnapshot> {
+  if (typeof rawIndex !== "object" || rawIndex === null) {
+    return { ok: false, error: "Catalog share index is invalid." };
+  }
+  const index = rawIndex as Record<string, unknown>;
+  if (index.schemaVersion !== 1 || index.catalogVersion !== request.catalogVersion) {
+    return { ok: false, error: "Catalog share index version mismatch." };
+  }
+  if (typeof index.products !== "object" || index.products === null) {
+    return { ok: false, error: "Catalog share index has no products." };
+  }
+  const raw = (index.products as Record<string, unknown>)[request.dsldId];
+  if (typeof raw !== "object" || raw === null) {
+    return { ok: false, error: "Product is not available in this catalog release." };
+  }
+  const entry = raw as Record<string, unknown>;
+
+  const productName = trimmedString(entry.productName);
+  if (!productName || productName.length > 200) {
+    return { ok: false, error: "Catalog product name is invalid." };
+  }
+  const brandName = entry.brandName === null ? null : trimmedString(entry.brandName);
+  if (entry.brandName !== null && (!brandName || brandName.length > 200)) {
+    return { ok: false, error: "Catalog brand name is invalid." };
+  }
+  const disposition = trimmedString(entry.catalogDisposition);
+  if (!disposition || !(CATALOG_DISPOSITIONS as readonly string[]).includes(disposition)) {
+    return { ok: false, error: "Catalog disposition is invalid." };
+  }
+  const catalogDisposition = disposition as CatalogDisposition;
+
+  let qualityScore: number | null = null;
+  let qualityTier: QualityTierId | null = null;
+  if (catalogDisposition === "scored") {
+    if (
+      !Number.isInteger(entry.qualityScore) ||
+      (entry.qualityScore as number) < 0 ||
+      (entry.qualityScore as number) > 100
+    ) {
+      return { ok: false, error: "Catalog quality score is invalid." };
+    }
+    const tier = trimmedString(entry.qualityTier)?.toLowerCase();
+    if (!tier || !(QUALITY_TIER_IDS as readonly string[]).includes(tier)) {
+      return { ok: false, error: "Catalog quality tier is invalid." };
+    }
+    qualityScore = entry.qualityScore as number;
+    qualityTier = tier as QualityTierId;
+  } else if (entry.qualityScore !== null || entry.qualityTier !== null) {
+    return { ok: false, error: "Unscored catalog product contains a score." };
+  }
+
+  let confidence: ShareConfidence | null = null;
+  if (entry.confidence !== null) {
+    if (catalogDisposition !== "scored" || entry.confidence !== "Limited") {
+      return { ok: false, error: "Catalog confidence is invalid." };
+    }
+    confidence = "Limited";
+  }
+
+  if (!Array.isArray(entry.highlights) || entry.highlights.length > MAX_HIGHLIGHTS) {
+    return { ok: false, error: "Catalog highlights are invalid." };
+  }
+  const highlights = entry.highlights.filter(
+    (value): value is ShareHighlight =>
+      typeof value === "string" && (HIGHLIGHT_ALLOWLIST as readonly string[]).includes(value)
+  );
+  if (
+    highlights.length !== entry.highlights.length ||
+    new Set(highlights).size !== highlights.length
+  ) {
+    return { ok: false, error: "Catalog highlights contain unsupported values." };
+  }
+  if (catalogDisposition === "blocked" && highlights.length > 0) {
+    return { ok: false, error: "Blocked catalog product contains positive highlights." };
   }
 
   return {
     ok: true,
     value: {
-      dsldId,
+      dsldId: request.dsldId,
       productName,
       brandName,
+      catalogDisposition,
       qualityScore,
       qualityTier,
       confidence,
       highlights,
-      catalogVersion,
+      catalogVersion: request.catalogVersion,
     },
   };
 }

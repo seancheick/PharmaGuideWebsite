@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { timingSafeEqual } from "node:crypto";
-import { env, shareStorageConfigured } from "@/lib/env";
+import { shareStorageConfigured } from "@/lib/env";
 import { checkShareRateLimit } from "@/lib/rate-limit";
 import { log } from "@/lib/logger";
-import { validateShareSnapshot } from "@/lib/share-snapshot";
-import { createShareSnapshot } from "@/lib/share-store";
+import { validateShareRequest } from "@/lib/share-snapshot";
+import { createShareSnapshot, resolveCanonicalShareSnapshot } from "@/lib/share-store";
 import { site } from "@/lib/site";
 
 /**
@@ -21,13 +20,11 @@ import { site } from "@/lib/site";
  *
  *   1. Feature flag  — 503 when Supabase is unconfigured, so an unset key is a
  *                      disabled feature rather than a 500 in someone's face
- *   2. Shared secret — optional; see env.SHARE_API_KEY. Off by default so dev
- *                      and the current app build keep working
- *   3. Size cap      — bodies are read with a hard ceiling before parsing
- *   4. Rate limit    — 20/IP/10min via the existing Upstash sliding window
- *   5. Contract      — validated against share-snapshot.ts, which drops
- *                      non-allowlisted highlights and rejects a score without
- *                      its tier
+ *   2. Size cap      — bodies are read with a hard ceiling before parsing
+ *   3. Rate limit    — 20/IP/10min via the existing Upstash sliding window
+ *   4. Identity only — the client may send only dsldId + catalogVersion
+ *   5. Server truth  — every visible field resolves from that immutable
+ *                      pipeline-published release artifact
  *
  * There is no GET here on purpose. Reading a snapshot happens through the
  * server component at /s/[code]; exposing a JSON read endpoint would invite
@@ -35,27 +32,8 @@ import { site } from "@/lib/site";
  * code is the capability.
  */
 
-/** Generous for a payload of ~8 short strings; small enough to be no threat. */
-const MAX_BODY_BYTES = 4_000;
-
-/**
- * Constant-time secret check. Returns true when no secret is configured, so
- * the gate is opt-in and an unset key disables the check rather than locking
- * everyone out.
- *
- * Compared with `timingSafeEqual` over a length check: `===` on secrets leaks
- * how many leading characters were right through response timing. The length
- * comparison happens first because `timingSafeEqual` throws on mismatched
- * buffer lengths, and a length difference is not the part worth hiding.
- */
-function keyAccepted(provided: string | null): boolean {
-  const expected = env.SHARE_API_KEY;
-  if (expected === "") return true;
-  if (!provided) return false;
-  const a = Buffer.from(provided);
-  const b = Buffer.from(expected);
-  return a.length === b.length && timingSafeEqual(a, b);
-}
+/** Two short catalog identifiers; excess bytes are never useful. */
+const MAX_BODY_BYTES = 512;
 
 async function getClientIp(): Promise<string> {
   const h = await headers();
@@ -70,15 +48,7 @@ async function getClientIp(): Promise<string> {
 export async function POST(request: Request) {
   if (!shareStorageConfigured) {
     log.warn("share.disabled", { reason: "supabase_not_configured" });
-    return NextResponse.json(
-      { error: "Sharing is not available right now." },
-      { status: 503 }
-    );
-  }
-
-  if (!keyAccepted(request.headers.get("x-pharmaguide-key"))) {
-    log.warn("share.unauthorized", {});
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return NextResponse.json({ error: "Sharing is not available right now." }, { status: 503 });
   }
 
   const contentLength = request.headers.get("content-length");
@@ -95,9 +65,7 @@ export async function POST(request: Request) {
         status: 429,
         headers: limit.reset
           ? {
-              "Retry-After": String(
-                Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000))
-              ),
+              "Retry-After": String(Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000))),
             }
           : undefined,
       }
@@ -117,13 +85,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const parsed = validateShareSnapshot(raw);
+  const parsed = validateShareRequest(raw);
   if (!parsed.ok) {
     log.warn("share.rejected", { error: parsed.error });
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
-  const result = await createShareSnapshot(parsed.value);
+  const canonical = await resolveCanonicalShareSnapshot(parsed.value);
+  if (!canonical.ok) {
+    return NextResponse.json(
+      { error: "This catalog result is not available for sharing." },
+      { status: 422 }
+    );
+  }
+
+  const result = await createShareSnapshot(canonical.value);
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 502 });
   }
@@ -138,8 +114,9 @@ export async function POST(request: Request) {
   log.info("share.created", {
     code: result.code,
     dsld_id: parsed.value.dsldId,
-    scored: parsed.value.qualityScore !== null,
-    highlights: parsed.value.highlights.length,
+    disposition: canonical.value.catalogDisposition,
+    scored: canonical.value.qualityScore !== null,
+    highlights: canonical.value.highlights.length,
   });
 
   return NextResponse.json({ code: result.code, url }, { status: 201 });

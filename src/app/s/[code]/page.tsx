@@ -256,7 +256,7 @@ export default async function SharePage({ params }: PageProps) {
               {/* Explicit {" "} after the expression: the text node that
                   follows spans several lines, and JSX trims the leading
                   whitespace of a multi-line node — which silently rendered
-                  "180,000+supplements". The Hero's trust row has the same
+                  the count and "supplements" without a space. The Hero's trust row has the same
                   guard for the same reason. */}
               PharmaGuide checks {CATALOG_SIZE} supplements against your medications, conditions,
               and the rest of your stack — and tells you what interacts, what overlaps, and

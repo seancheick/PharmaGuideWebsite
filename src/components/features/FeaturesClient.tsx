@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { CATALOG_SIZE } from "@/lib/site";
 import {
   PILLARS,
   CLINICIAN_REPORT,
@@ -90,7 +91,7 @@ export function FeaturesClient() {
               variants={fadeUpItem}
               className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle"
             >
-              <span>180,000+ product catalog</span>
+              <span>{CATALOG_SIZE} product catalog</span>
               <span aria-hidden="true" className="text-border-strong">·</span>
               <span>Clinician-reviewed</span>
               <span aria-hidden="true" className="text-border-strong">·</span>

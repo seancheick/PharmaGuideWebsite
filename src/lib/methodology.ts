@@ -1,3 +1,5 @@
+import { CATALOG_SIZE } from "./site";
+
 /**
  * Methodology data — single source of truth for /methodology page.
  *
@@ -129,8 +131,8 @@ export const ENGINE_STAGES: readonly EngineStage[] = [
   {
     num: "01",
     title: "Catalog match",
-    body: "A scan or search resolves to a specific product in a 180,000+ item catalog that lives on your device — so identification happens in milliseconds, offline, without a round-trip to a server.",
-    detail: "180,000+ products · on-device · sub-10ms lookup",
+    body: `A scan or search resolves to a specific product in a ${CATALOG_SIZE} item catalog that lives on your device — so identification happens in milliseconds, offline, without a round-trip to a server.`,
+    detail: `${CATALOG_SIZE} products · on-device · sub-10ms lookup`,
   },
   {
     num: "02",

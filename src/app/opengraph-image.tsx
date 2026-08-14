@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { CATALOG_SIZE } from "@/lib/site";
 
 export const runtime = "edge";
 export const alt = "PharmaGuide — Supplement intelligence.";
@@ -127,7 +128,7 @@ export default async function OGImage() {
           }}
         >
           <span style={{ fontWeight: 500, color: "#181A1B" }}>
-            180,000+ products
+            {CATALOG_SIZE} products
           </span>
           <span style={{ color: "#D1CDC4" }}>·</span>
           <span>Evidence-graded</span>

@@ -1,6 +1,6 @@
 import { getAllPosts } from "@/lib/blog";
 import { CATEGORIES } from "@/lib/blog-types";
-import { site } from "@/lib/site";
+import { CATALOG_SIZE, site } from "@/lib/site";
 
 /**
  * /llms.txt — emerging standard for AI crawlers (Perplexity, ChatGPT,
@@ -39,7 +39,7 @@ export async function GET() {
   lines.push(`# ${site.name}`);
   lines.push("");
   lines.push(
-    `> ${site.description} On-device interaction analysis, evidence-graded by clinicians, across a 180,000+ product catalog.`
+    `> ${site.description} On-device interaction analysis, evidence-graded by clinicians, across a ${CATALOG_SIZE} product catalog.`
   );
   lines.push("");
 
@@ -115,7 +115,7 @@ export async function GET() {
     "- Sources: FDA, NIH Office of Dietary Supplements (ODS), Dietary Supplement Label Database (DSLD), DailyMed, PubMed, Cochrane Library, NCCIH"
   );
   lines.push(
-    "- 180,000+ product catalog reviewed by a licensed PharmD before each release"
+    `- ${CATALOG_SIZE} product catalog reviewed by a licensed PharmD before each release`
   );
   lines.push(
     "- Privacy-first architecture: AES-256 on-device, HIPAA-aligned design, no health-data sale ever"

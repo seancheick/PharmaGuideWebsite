@@ -5,7 +5,7 @@ import type { LegalDocument } from "./legal";
  * Voice rules applied throughout:
  *   • Second-person, plain English
  *   • No banned words ("AI-powered" → drop)
- *   • Real numbers (180,000+ products)
+ *   • Concrete, verifiable product claims
  *   • Restraint: no doom phrasing, no marketing inside legal copy
  *
  * Compliance baseline covered:

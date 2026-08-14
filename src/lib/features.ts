@@ -1,3 +1,5 @@
+import { CATALOG_SIZE } from "./site";
+
 /**
  * /features page — single source of truth for the 6-pillar capabilities
  * showcase. Data-driven so copy can be reviewed/refined without
@@ -356,7 +358,7 @@ export const CLINICIAN_REPORT = {
 
 export const BUILT_ON = [
   {
-    label: "180,000+ product catalog",
+    label: `${CATALOG_SIZE} product catalog`,
     detail: "Pre-loaded on your device. Sub-10ms lookup. Updates over the air.",
   },
   {

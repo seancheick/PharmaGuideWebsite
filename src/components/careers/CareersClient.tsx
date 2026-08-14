@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
-import { site } from "@/lib/site";
+import { CATALOG_SIZE, site } from "@/lib/site";
 
 /**
  * /careers — recruiting page.
@@ -47,7 +47,7 @@ const ROLES = [
   },
   {
     role: "Backend / Pipeline Engineer",
-    body: "TypeScript or Python. You'll work on the interaction-rules pipeline, OTA catalog updater, and the systems that keep the 180,000+ product catalog and the clinical rule set fresh.",
+    body: `TypeScript or Python. You'll work on the interaction-rules pipeline, OTA catalog updater, and the systems that keep the ${CATALOG_SIZE} product catalog and the clinical rule set fresh.`,
   },
   {
     role: "Clinical Pharmacist (PharmD)",

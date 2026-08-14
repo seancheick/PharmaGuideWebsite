@@ -3,7 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FeaturesClient } from "@/components/features/FeaturesClient";
 import { PILLARS } from "@/lib/features";
-import { site } from "@/lib/site";
+import { CATALOG_SIZE, site } from "@/lib/site";
 
 /**
  * /features — full capabilities showcase across 6 pillars.
@@ -19,8 +19,7 @@ import { site } from "@/lib/site";
 
 export const revalidate = 432000; // 5 days
 
-const description =
-  "Every PharmaGuide capability — medication depletion detection, full-stack interaction analysis, ingredient & quality transparency, personal fit, nutrient accumulation tracking, and live FDA recall monitoring. Built on a 180,000+ product on-device catalog reviewed by clinicians.";
+const description = `Every PharmaGuide capability — medication depletion detection, full-stack interaction analysis, ingredient & quality transparency, personal fit, nutrient accumulation tracking, and live FDA recall monitoring. Built on a ${CATALOG_SIZE} product on-device catalog reviewed by clinicians.`;
 
 export const metadata: Metadata = {
   title: "Features",

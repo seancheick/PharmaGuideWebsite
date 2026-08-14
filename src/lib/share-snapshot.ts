@@ -25,7 +25,19 @@
  * No form-quality or scoring-derived reasons — see HIGHLIGHT_ALLOWLIST.
  */
 
+import { createHash } from "node:crypto";
 import { QUALITY_TIER_IDS, type QualityTierId } from "./quality-score";
+
+export const SHARE_INDEX_SCHEMA_VERSION = 2;
+export const SHARE_INDEX_SHARD_PREFIX_LENGTH = 2;
+
+/** Map a product id to the immutable release shard published by the pipeline. */
+export function shareIndexShardForDsldId(dsldId: string): string {
+  return createHash("sha256")
+    .update(dsldId)
+    .digest("hex")
+    .slice(0, SHARE_INDEX_SHARD_PREFIX_LENGTH);
+}
 
 /**
  * The only highlights allowed onto a public page.
@@ -206,7 +218,11 @@ export function resolveShareSnapshotFromIndex(
     return { ok: false, error: "Catalog share index is invalid." };
   }
   const index = rawIndex as Record<string, unknown>;
-  if (index.schemaVersion !== 1 || index.catalogVersion !== request.catalogVersion) {
+  if (
+    index.schemaVersion !== SHARE_INDEX_SCHEMA_VERSION ||
+    index.shardPrefixLength !== SHARE_INDEX_SHARD_PREFIX_LENGTH ||
+    index.catalogVersion !== request.catalogVersion
+  ) {
     return { ok: false, error: "Catalog share index version mismatch." };
   }
   if (typeof index.products !== "object" || index.products === null) {

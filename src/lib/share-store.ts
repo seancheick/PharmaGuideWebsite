@@ -1,12 +1,12 @@
 import "server-only";
 import { cache } from "react";
-import { createHash } from "node:crypto";
 import { env } from "./env";
 import { log } from "./logger";
 import {
   SHARE_CODE_RE,
   generateShareCode,
   resolveShareSnapshotFromIndex,
+  shareIndexShardForDsldId,
   type CatalogDisposition,
   type ShareRequest,
   type ShareHighlight,
@@ -93,7 +93,7 @@ export async function resolveCanonicalShareSnapshot(
   if (!serviceKey || !env.SUPABASE_URL) {
     return { ok: false, error: "Share storage is not configured." };
   }
-  const shard = createHash("sha256").update(request.dsldId).digest("hex")[0];
+  const shard = shareIndexShardForDsldId(request.dsldId);
   const path = `v${request.catalogVersion}/share_index/${shard}.json`;
 
   let response: Response;

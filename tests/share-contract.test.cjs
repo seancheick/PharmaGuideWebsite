@@ -2,7 +2,10 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 const {
+  SHARE_INDEX_SCHEMA_VERSION,
+  SHARE_INDEX_SHARD_PREFIX_LENGTH,
   resolveShareSnapshotFromIndex,
+  shareIndexShardForDsldId,
   shareDispositionCopy,
   validateShareRequest,
 } = require("../.tmp/share-test-build/src/lib/share-snapshot.js");
@@ -31,10 +34,17 @@ test("share request rejects malformed catalog identities", () => {
   assert.equal(validateShareRequest({ dsldId: "1038", catalogVersion: "latest" }).ok, false);
 });
 
+test("share index uses the two-character release shard contract", () => {
+  assert.equal(SHARE_INDEX_SCHEMA_VERSION, 2);
+  assert.equal(SHARE_INDEX_SHARD_PREFIX_LENGTH, 2);
+  assert.equal(shareIndexShardForDsldId("1038"), "0c");
+});
+
 test("canonical release preserves blocked disposition without a score", () => {
   const result = resolveShareSnapshotFromIndex(
     {
-      schemaVersion: 1,
+      schemaVersion: SHARE_INDEX_SCHEMA_VERSION,
+      shardPrefixLength: SHARE_INDEX_SHARD_PREFIX_LENGTH,
       catalogVersion: request.catalogVersion,
       products: {
         1038: {
@@ -58,14 +68,20 @@ test("canonical release preserves blocked disposition without a score", () => {
 
 test("canonical release fails closed on version or disposition drift", () => {
   const wrongVersion = resolveShareSnapshotFromIndex(
-    { schemaVersion: 1, catalogVersion: "2026.08.12.000000", products: {} },
+    {
+      schemaVersion: SHARE_INDEX_SCHEMA_VERSION,
+      shardPrefixLength: SHARE_INDEX_SHARD_PREFIX_LENGTH,
+      catalogVersion: "2026.08.12.000000",
+      products: {},
+    },
     request
   );
   assert.equal(wrongVersion.ok, false);
 
   const invalidBlocked = resolveShareSnapshotFromIndex(
     {
-      schemaVersion: 1,
+      schemaVersion: SHARE_INDEX_SCHEMA_VERSION,
+      shardPrefixLength: SHARE_INDEX_SHARD_PREFIX_LENGTH,
       catalogVersion: request.catalogVersion,
       products: {
         1038: {
@@ -82,6 +98,20 @@ test("canonical release fails closed on version or disposition drift", () => {
     request
   );
   assert.equal(invalidBlocked.ok, false);
+});
+
+test("canonical release rejects the obsolete one-character shard contract", () => {
+  const result = resolveShareSnapshotFromIndex(
+    {
+      schemaVersion: 1,
+      shardPrefixLength: 1,
+      catalogVersion: request.catalogVersion,
+      products: {},
+    },
+    request
+  );
+
+  assert.equal(result.ok, false);
 });
 
 test("blocked public copy names a safety block, never incomplete label data", () => {

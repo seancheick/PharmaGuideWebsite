@@ -62,6 +62,8 @@ const ALLOWED_MDX_COMPONENTS = new Set([
   "Callout",
   "EvidencePill",
   "Source",
+  "Sources",
+  "Ref",
   "PostImage",
   "Illustration",
 ]);
@@ -374,8 +376,8 @@ function checkInternalLinks(content) {
 }
 
 function checkSourcesSection(content) {
-  if (!/^##\s+Sources?\b/im.test(content)) {
-    return [fail(`missing "## Sources" section at bottom of post`)];
+  if (!/^##\s+Sources?\b/im.test(content) && !/<Sources\s*>/m.test(content)) {
+    return [fail(`missing "## Sources" section or <Sources> component at bottom of post`)];
   }
   return [];
 }

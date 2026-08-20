@@ -1,7 +1,42 @@
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { MDXComponents } from "mdx/types";
 import { cn } from "@/lib/utils";
+
+/**
+ * Walks the Sources children tree, finds <li> elements, and adds
+ * id="source-N" based on their position (1-indexed) so <Ref n={N} />
+ * links scroll to the correct source.
+ */
+function SourcesList({ children }: { children: React.ReactNode }) {
+  let counter = 0;
+  const addIds = (node: React.ReactNode): React.ReactNode =>
+    React.Children.map(node, (child) => {
+      if (!React.isValidElement(child)) return child;
+      // If it's an <li>, stamp it with the next source id
+      if (child.type === "li") {
+        counter++;
+        return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
+          id: `source-${counter}`,
+        });
+      }
+      // If it has children (ol, ul, etc.), recurse
+      const props = child.props as Record<string, unknown>;
+      if (props.children) {
+        return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
+          children: addIds(props.children as React.ReactNode),
+        });
+      }
+      return child;
+    });
+
+  return (
+    <div className="border-t border-border px-5 pb-5 pt-4 sm:px-6 sm:pb-6 [&_a]:text-link [&_a]:underline [&_a]:decoration-link/60 [&_a]:underline-offset-[3px] [&_a:hover]:text-link-strong [&_a:hover]:decoration-link [&_li]:scroll-mt-24 [&_li]:text-body-sm [&_li]:leading-relaxed [&_li]:text-muted [&_ol]:mt-0 [&_ol]:gap-2 [&_ul]:mt-0 [&_ul]:gap-2">
+      {addIds(children)}
+    </div>
+  );
+}
 
 /**
  * Custom MDX components for blog posts.
@@ -264,11 +299,36 @@ export const mdxComponents: MDXComponents = {
         </svg>
         Sources
       </summary>
-      <div className="border-t border-border px-5 pb-5 pt-4 sm:px-6 sm:pb-6 [&_a]:text-link [&_a]:underline [&_a]:decoration-link/60 [&_a]:underline-offset-[3px] [&_a:hover]:text-link-strong [&_a:hover]:decoration-link [&_li]:text-body-sm [&_li]:leading-relaxed [&_li]:text-muted [&_ol]:mt-0 [&_ol]:gap-2 [&_ul]:mt-0 [&_ul]:gap-2">
-        {children}
-      </div>
+      <SourcesList>{children}</SourcesList>
     </details>
   ),
+
+  /**
+   * Superscript footnote reference — renders as a small clickable number
+   * that scrolls to the matching source in the <Sources> list.
+   *
+   * Usage in MDX:
+   *   Creatine may help with memory.<Ref n={1} />
+   *   Some evidence is mixed.<Ref n="5,6" />
+   */
+  Ref: ({ n }: { n: number | string }) => {
+    const nums = String(n).split(",").map((s) => s.trim());
+    return (
+      <sup className="ml-0.5 inline-flex gap-0.5">
+        {nums.map((num, i) => (
+          <a
+            key={num}
+            href={`#source-${num}`}
+            className="text-[10px] font-medium text-accent no-underline hover:text-link-strong hover:underline"
+            aria-label={`Source ${num}`}
+          >
+            {i > 0 && <span className="text-muted">,</span>}
+            [{num}]
+          </a>
+        ))}
+      </sup>
+    );
+  },
 
   /**
    * In-post image with optional caption.

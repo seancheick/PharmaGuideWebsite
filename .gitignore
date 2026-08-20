@@ -60,6 +60,7 @@ yarn-error.log*
 /lighthouse*.html
 
 # IDE local
+.claude/
 .cursor/
 .aider*
 .gstack/

@@ -158,13 +158,18 @@ export default function RootLayout({
             them. Lighthouse measured 300-354ms per origin on simulated slow
             4G across five hosts.
 
-            `preconnect` opens the connection for the two that always load;
-            `dns-prefetch` is the cheaper hint for Clarity's downstream hosts,
-            which are only contacted once its script decides to. Browsers cap
-            concurrent preconnects, so spending all five on preconnect would
-            crowd out the ones that matter. */}
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://scripts.clarity.ms" />
+            `dns-prefetch` only — deliberately NOT `preconnect`. Preconnect was
+            tried and measured worse: it performs the TLS handshake at parse
+            time, and on a throttled connection that competes for bandwidth
+            with the critical CSS and font. Four Lighthouse mobile runs held at
+            59-61 with preconnect against 66 without it. Google's guidance is
+            to preconnect only origins on the critical path, and analytics that
+            load after hydration are by definition not on it.
+
+            dns-prefetch resolves DNS without opening a socket, so it keeps
+            most of the saving at almost none of the cost. */}
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://scripts.clarity.ms" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <link rel="dns-prefetch" href="https://c.clarity.ms" />
         <link rel="dns-prefetch" href="https://www.clarity.ms" />

@@ -150,6 +150,24 @@ export default function RootLayout({
             src/app/icon1.tsx (192×192 PWA)
             — no manual <link> tags needed.                          */}
         <link rel="manifest" href="/manifest.webmanifest" />
+
+        {/* Analytics origins, warmed early.
+            GA and Clarity load post-hydration (afterInteractive / useEffect),
+            so they never block first paint — but the browser still pays a full
+            DNS + TCP + TLS handshake for each one at the moment it fetches
+            them. Lighthouse measured 300-354ms per origin on simulated slow
+            4G across five hosts.
+
+            `preconnect` opens the connection for the two that always load;
+            `dns-prefetch` is the cheaper hint for Clarity's downstream hosts,
+            which are only contacted once its script decides to. Browsers cap
+            concurrent preconnects, so spending all five on preconnect would
+            crowd out the ones that matter. */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://scripts.clarity.ms" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        <link rel="dns-prefetch" href="https://c.clarity.ms" />
+        <link rel="dns-prefetch" href="https://www.clarity.ms" />
         <script
           type="application/ld+json"
           // Schema.org Organization tag — boosts knowledge graph + GEO targeting

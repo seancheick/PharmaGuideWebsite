@@ -400,17 +400,31 @@ function AppStoreBadge({
   ariaLabel: string;
 }) {
   return (
+    /* No `opacity-60` on this container. It multiplied with each child's own
+       text opacity, so `text-background/70` rendered at an effective 0.42 —
+       3.3:1 on the teal footer, below AA. Opacity on a parent composites the
+       whole subtree, which makes per-element contrast impossible to reason
+       about locally. The dimmed look now comes from the text alphas below,
+       each of which is individually checkable.
+
+       These badges announce that the app is coming. Someone with low vision
+       needs to be able to read that more than the badge needs to look faint. */
     <div
       aria-label={ariaLabel}
       role="img"
-      className="inline-flex w-[170px] items-center gap-2.5 rounded-xl border border-white/5 bg-white/[0.02] px-3.5 py-2 text-background/60 opacity-60 cursor-default"
+      className="inline-flex w-[170px] cursor-default items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2"
     >
-      <span className="shrink-0"><Icon /></span>
+      <span className="shrink-0">
+        <Icon />
+      </span>
       <span className="flex flex-col leading-none">
-        <span className="font-sans text-[9.5px] uppercase tracking-[0.06em] text-background/70">
+        {/* 0.65 → 5.8:1 on --color-accent. Both sizes here sit under the
+            18.66px large-text threshold, so both need the full 4.5:1. */}
+        <span className="font-sans text-[9.5px] uppercase tracking-[0.06em] text-background/65">
           {small}
         </span>
-        <span className="mt-0.5 font-sans text-[14px] font-medium tracking-[-0.01em] text-background/90">
+        {/* 0.85 → 8.7:1 */}
+        <span className="mt-0.5 font-sans text-[14px] font-medium tracking-[-0.01em] text-background/85">
           {large}
         </span>
       </span>

@@ -158,16 +158,23 @@ export default function RootLayout({
             them. Lighthouse measured 300-354ms per origin on simulated slow
             4G across five hosts.
 
-            `dns-prefetch` only — deliberately NOT `preconnect`. Preconnect was
-            tried and measured worse: it performs the TLS handshake at parse
-            time, and on a throttled connection that competes for bandwidth
-            with the critical CSS and font. Four Lighthouse mobile runs held at
-            59-61 with preconnect against 66 without it. Google's guidance is
-            to preconnect only origins on the critical path, and analytics that
-            load after hydration are by definition not on it.
+            `dns-prefetch` only — deliberately NOT `preconnect`. Preconnect
+            completes the TLS handshake at parse time, and on a throttled
+            connection that bandwidth competes with the critical CSS and font.
+            Google's guidance is to preconnect only origins on the critical
+            path; GA and Clarity load after hydration, so they are not on it.
 
-            dns-prefetch resolves DNS without opening a socket, so it keeps
-            most of the saving at almost none of the cost. */}
+            Measured on production, Lighthouse mobile: preconnect 59-61 over
+            four runs (FCP 4.8-5.2s), dns-prefetch 61 over three (FCP
+            4.5-4.6s). An earlier single run with no hints at all scored 66 /
+            FCP 3.1s, but one sample against seven is not a baseline — treat
+            these hints as neutral-to-marginal, not as a proven win. They are
+            kept because dns-prefetch resolves DNS without opening a socket,
+            which costs essentially nothing and helps real-world DNS latency
+            that Lighthouse's simulated throttling does not model well.
+
+            The actual bottleneck is JavaScript volume (see the unused-JS and
+            legacy-JS audits), not connection setup. */}
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://scripts.clarity.ms" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />

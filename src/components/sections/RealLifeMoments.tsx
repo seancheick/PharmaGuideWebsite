@@ -3,6 +3,7 @@
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { fadeUpContainer, fadeUpItem } from "@/lib/tokens";
 import { MOMENTS, type Moment, type SeverityTier } from "@/lib/moments";
 import { cn } from "@/lib/utils";
@@ -25,10 +26,7 @@ import { cn } from "@/lib/utils";
  * Desktop: open card → 880px wide, insights aside visible at right.
  */
 
-const SEV_STYLES: Record<
-  SeverityTier,
-  { dot: string; text: string }
-> = {
+const SEV_STYLES: Record<SeverityTier, { dot: string; text: string }> = {
   monitor: { dot: "bg-severity-monitor", text: "text-severity-monitor" },
   caution: { dot: "bg-severity-caution", text: "text-severity-caution" },
   avoid: { dot: "bg-severity-avoid", text: "text-severity-avoid" },
@@ -176,8 +174,8 @@ export function RealLifeMoments() {
             variants={fadeUpItem}
             className="mt-6 max-w-prose text-body-lg leading-relaxed text-muted"
           >
-            From morning prescriptions to trending supplements, PharmaGuide
-            catches the combinations people usually miss.
+            From morning prescriptions to trending supplements, PharmaGuide catches the combinations
+            people usually miss.
           </motion.p>
         </motion.div>
       </div>
@@ -192,7 +190,7 @@ export function RealLifeMoments() {
         aria-label="Real-life moments"
         style={{ marginLeft: "var(--carousel-inset)" }}
         className={cn(
-          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden pr-5 pb-6 pt-2 sm:gap-4 sm:pr-8 md:mt-16 md:pr-10",
+          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden pb-6 pr-5 pt-2 sm:gap-4 sm:pr-8 md:mt-16 md:pr-10",
           // Carousel left-inset by viewport tier:
           //   mobile  20px     · sm 24px    · lg+  scales with viewport
           //
@@ -259,7 +257,7 @@ export function RealLifeMoments() {
               type="button"
               onClick={() => scrollByPage(-1)}
               aria-label="Previous moments"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-ink shadow-xs transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-surface-raised hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="focus-visible:outline-offset-3 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-ink shadow-xs transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-surface-raised hover:shadow-sm focus-visible:outline-2 focus-visible:outline-accent"
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                 <path
@@ -275,7 +273,7 @@ export function RealLifeMoments() {
               type="button"
               onClick={() => scrollByPage(1)}
               aria-label="Next moments"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-ink text-white shadow-xs transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+              className="focus-visible:outline-offset-3 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-ink text-white shadow-xs transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-sm focus-visible:outline-2 focus-visible:outline-accent"
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                 <path
@@ -387,7 +385,7 @@ const MomentCard = ({
           if (isOpen) onClose();
           else onOpen();
         }}
-        className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-ink shadow-md transition-transform duration-[500ms] ease-[cubic-bezier(0.32,0.72,0.24,1)] hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
+        className="focus-visible:outline-offset-3 absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-ink shadow-md transition-transform duration-[500ms] ease-[cubic-bezier(0.32,0.72,0.24,1)] hover:bg-white focus-visible:outline-2 focus-visible:outline-white"
       >
         <svg
           width="14"
@@ -399,12 +397,7 @@ const MomentCard = ({
             isOpen && "rotate-45"
           )}
         >
-          <path
-            d="M8 3v10M3 8h10"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
+          <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
       </button>
 
@@ -435,9 +428,9 @@ const MomentCard = ({
               <p className="text-body-sm leading-relaxed text-white/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]">
                 {moment.description}
               </p>
-              <a
+              <WaitlistLink
                 href="#waitlist"
-                onClick={(e) => e.stopPropagation()}
+                stopPropagation
                 className="inline-flex w-fit items-center gap-2 rounded-pill bg-white/95 px-5 py-2.5 text-body-sm font-medium text-ink shadow-md transition-[background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-white"
               >
                 {moment.learnMore}
@@ -450,7 +443,7 @@ const MomentCard = ({
                     strokeLinejoin="round"
                   />
                 </svg>
-              </a>
+              </WaitlistLink>
             </motion.div>
           )}
         </AnimatePresence>
@@ -467,17 +460,13 @@ const MomentCard = ({
               isOpen ? "max-w-[18ch] sm:max-w-[20ch]" : "max-w-[15ch]"
             )}
           >
-            {moment.title.lead}{" "}
-            <span className="italic">{moment.title.em}</span>
+            {moment.title.lead} <span className="italic">{moment.title.em}</span>
           </h3>
 
           {/* Preview chip — visible only on closed card */}
           {!isOpen && (
             <span className="inline-flex w-fit items-center gap-2 rounded-pill border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur-sm">
-              <span
-                aria-hidden="true"
-                className={cn("block h-1.5 w-1.5 rounded-full", sev.dot)}
-              />
+              <span aria-hidden="true" className={cn("block h-1.5 w-1.5 rounded-full", sev.dot)} />
               <span className="font-mono text-[10px] font-medium tracking-[0.08em] text-white/90">
                 {moment.preview}
               </span>
@@ -524,9 +513,7 @@ const MomentCard = ({
                       · Illustrative
                     </span>
                   </p>
-                  <p className="mt-2 text-[12px] leading-relaxed text-white/80">
-                    “{moment.quote}”
-                  </p>
+                  <p className="mt-2 text-[12px] leading-relaxed text-white/80">“{moment.quote}”</p>
                 </div>
               </div>
             </div>
@@ -579,13 +566,7 @@ MomentCard.displayName = "MomentCard";
  * title, description, member quote, and the PharmaGuide flag that's the
  * actual payoff. Slides up from the bottom; closes on × / backdrop / Esc.
  */
-const MomentSheet = ({
-  moment,
-  onClose,
-}: {
-  moment: Moment;
-  onClose: () => void;
-}) => {
+const MomentSheet = ({ moment, onClose }: { moment: Moment; onClose: () => void }) => {
   const sev = SEV_STYLES[moment.flag.severity];
 
   return (
@@ -647,7 +628,7 @@ const MomentSheet = ({
             type="button"
             aria-label="Close moment"
             onClick={onClose}
-            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-ink shadow-md focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-white"
+            className="focus-visible:outline-offset-3 absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-ink shadow-md focus-visible:outline-2 focus-visible:outline-white"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
@@ -661,20 +642,17 @@ const MomentSheet = ({
 
           {/* Title anchored over the photo */}
           <h3 className="absolute bottom-5 left-5 right-5 font-serif text-[clamp(1.6rem,7vw,2.1rem)] font-normal leading-[1.12] tracking-[-0.014em] text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
-            {moment.title.lead}{" "}
-            <span className="italic">{moment.title.em}</span>
+            {moment.title.lead} <span className="italic">{moment.title.em}</span>
           </h3>
         </div>
 
         {/* Scrollable content */}
         <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-5 py-6 text-white">
-          <p className="text-body leading-relaxed text-white/90">
-            {moment.description}
-          </p>
+          <p className="text-body leading-relaxed text-white/90">{moment.description}</p>
 
-          <a
+          <WaitlistLink
             href="#waitlist"
-            onClick={onClose}
+            onNavigate={onClose}
             className="inline-flex w-fit items-center gap-2 rounded-pill bg-white px-5 py-2.5 text-body-sm font-medium text-ink shadow-md"
           >
             {moment.learnMore}
@@ -687,7 +665,7 @@ const MomentSheet = ({
                 strokeLinejoin="round"
               />
             </svg>
-          </a>
+          </WaitlistLink>
 
           {/* Member quote */}
           <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-4">
@@ -711,9 +689,7 @@ const MomentSheet = ({
                     · Illustrative
                   </span>
                 </p>
-                <p className="mt-2 text-[13px] leading-relaxed text-white/80">
-                  “{moment.quote}”
-                </p>
+                <p className="mt-2 text-[13px] leading-relaxed text-white/80">“{moment.quote}”</p>
               </div>
             </div>
           </div>
@@ -721,10 +697,7 @@ const MomentSheet = ({
           {/* PharmaGuide flag — the payoff */}
           <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-4">
             <div className="flex items-center gap-2">
-              <span
-                aria-hidden="true"
-                className={cn("block h-1.5 w-1.5 rounded-full", sev.dot)}
-              />
+              <span aria-hidden="true" className={cn("block h-1.5 w-1.5 rounded-full", sev.dot)} />
               <span
                 className={cn(
                   "font-mono text-[9.5px] font-medium uppercase tracking-[0.12em]",

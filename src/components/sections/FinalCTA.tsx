@@ -87,8 +87,9 @@ export function FinalCTA() {
   return (
     <section
       id="waitlist"
+      tabIndex={-1}
       aria-labelledby="cta-heading"
-      className="relative section-y bg-background"
+      className="section-y relative scroll-mt-28 bg-background"
     >
       {/* Layered accent halo from upper-center */}
       <div
@@ -118,7 +119,7 @@ export function FinalCTA() {
           className="mx-auto grid max-w-5xl gap-12 md:grid-cols-[1.1fr_1fr] md:items-center md:gap-16 lg:gap-20"
         >
           {/* ─── LEFT COLUMN: headline + form ─── */}
-          <div className="flex flex-col items-center gap-7 text-center md:items-start md:text-left md:gap-8">
+          <div className="flex flex-col items-center gap-7 text-center md:items-start md:gap-8 md:text-left">
             {SHOW_SOCIAL_PROOF && (
               <motion.p
                 variants={fadeUpItem}
@@ -133,10 +134,7 @@ export function FinalCTA() {
               variants={fadeUpItem}
               className="text-balance text-display-lg leading-[1.06] text-ink"
             >
-              Join the{" "}
-              <span className="font-serif italic text-accent">
-                founding testers.
-              </span>
+              Join the <span className="font-serif italic text-accent">founding testers.</span>
             </motion.h2>
 
             {/* Recruiting collaborators, not collecting downloads. "Opening in
@@ -147,9 +145,9 @@ export function FinalCTA() {
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              We&apos;re adding the first group by hand this month. You get
-              early access and a direct line to us — we get to find the edge
-              cases before PharmaGuide opens to everyone.
+              We&apos;re adding the first group by hand this month. You get early access and a
+              direct line to us — we get to find the edge cases before PharmaGuide opens to
+              everyone.
             </motion.p>
 
             <motion.div variants={fadeUpItem} className="w-full max-w-lg">
@@ -196,7 +194,7 @@ export function FinalCTA() {
                     type="submit"
                     disabled={submitting}
                     className={cn(
-                      "mt-1 inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent",
+                      "focus-visible:outline-offset-3 mt-1 inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth focus-visible:outline-2 focus-visible:outline-accent",
                       submitting
                         ? "cursor-wait opacity-80"
                         : "hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow"
@@ -206,10 +204,7 @@ export function FinalCTA() {
                     {!submitting && <span aria-hidden="true">→</span>}
                   </button>
                   {error && (
-                    <p
-                      role="alert"
-                      className="mt-1 text-body-sm text-severity-avoid"
-                    >
+                    <p role="alert" className="mt-1 text-body-sm text-severity-avoid">
                       {error}
                     </p>
                   )}
@@ -219,9 +214,13 @@ export function FinalCTA() {
               {/* Trust note */}
               <p className="mt-4 text-body-sm text-muted">
                 Free during beta
-                <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
+                <span aria-hidden="true" className="mx-2 text-border-strong">
+                  ·
+                </span>
                 No credit card
-                <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
+                <span aria-hidden="true" className="mx-2 text-border-strong">
+                  ·
+                </span>
                 We never sell your health data
               </p>
             </motion.div>
@@ -232,10 +231,7 @@ export function FinalCTA() {
               flags <aside> inside <main> as a nested complementary
               landmark. The h3 + ul inside still gives screen readers
               a labeled list, no semantic loss.                      */}
-          <motion.div
-            variants={fadeUpItem}
-            className="relative w-full"
-          >
+          <motion.div variants={fadeUpItem} className="relative w-full">
             {/* Soft accent halo behind the preview block */}
             <div
               aria-hidden="true"
@@ -251,7 +247,7 @@ export function FinalCTA() {
                 {BETA_CAPABILITIES.map((cap) => (
                   <li key={cap.num} className="py-5 first:pt-6 last:pb-6">
                     <div className="flex items-baseline gap-3">
-                      <span className="font-mono text-[10px] font-medium tabular-nums uppercase tracking-[0.18em] text-accent">
+                      <span className="font-mono text-[10px] font-medium uppercase tabular-nums tracking-[0.18em] text-accent">
                         {cap.num}
                       </span>
                       <h3 className="font-serif text-h3 italic leading-snug text-ink">
@@ -305,7 +301,8 @@ function SuccessState() {
       </span>
       <p className="font-serif text-h3 italic text-ink">You&apos;re on the list.</p>
       <p className="text-body-sm text-muted">
-        We sent a confirmation to your inbox. Your wave opens through 2026 — we&apos;ll write again then.
+        We sent a confirmation to your inbox. Your wave opens through 2026 — we&apos;ll write again
+        then.
       </p>
     </motion.div>
   );

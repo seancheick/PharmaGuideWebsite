@@ -2,14 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { CATALOG_SIZE } from "@/lib/site";
-import {
-  PILLARS,
-  CLINICIAN_REPORT,
-  BUILT_ON,
-  BOUNDARIES,
-} from "@/lib/features";
+import { PILLARS, CLINICIAN_REPORT, BUILT_ON, BOUNDARIES } from "@/lib/features";
 import { Illustration } from "./Illustrations";
 
 /**
@@ -38,7 +34,7 @@ export function FeaturesClient() {
       {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="features-hero-heading"
-        className="relative pt-24 pb-section-y-sm overflow-hidden sm:pt-28 md:pt-32"
+        className="relative overflow-hidden pb-section-y-sm pt-24 sm:pt-28 md:pt-32"
       >
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div
@@ -71,19 +67,16 @@ export function FeaturesClient() {
               className="text-balance text-display-lg leading-[1.04] text-ink"
             >
               The supplement and medication co-pilot{" "}
-              <span className="font-serif italic text-accent">
-                you actually need.
-              </span>
+              <span className="font-serif italic text-accent">you actually need.</span>
             </motion.h1>
 
             <motion.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              Most apps check one bottle at a time. PharmaGuide reads your
-              full stack as a system — flagging interactions, depletions,
-              dose accumulation, recalls, and quality issues across every
-              supplement and medication you take.
+              Most apps check one bottle at a time. PharmaGuide reads your full stack as a system —
+              flagging interactions, depletions, dose accumulation, recalls, and quality issues
+              across every supplement and medication you take.
             </motion.p>
 
             {/* Tiny strength rail */}
@@ -92,11 +85,17 @@ export function FeaturesClient() {
               className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle"
             >
               <span>{CATALOG_SIZE} product catalog</span>
-              <span aria-hidden="true" className="text-border-strong">·</span>
+              <span aria-hidden="true" className="text-border-strong">
+                ·
+              </span>
               <span>Clinician-reviewed</span>
-              <span aria-hidden="true" className="text-border-strong">·</span>
+              <span aria-hidden="true" className="text-border-strong">
+                ·
+              </span>
               <span>Offline-first</span>
-              <span aria-hidden="true" className="text-border-strong">·</span>
+              <span aria-hidden="true" className="text-border-strong">
+                ·
+              </span>
               <span>Privacy by architecture</span>
             </motion.div>
           </motion.div>
@@ -104,10 +103,7 @@ export function FeaturesClient() {
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ PILLAR OVERVIEW ━━━━━━━━━━━━━━━━━━ */}
-      <section
-        aria-label="Capability overview"
-        className="relative pb-section-y-sm"
-      >
+      <section aria-label="Capability overview" className="relative pb-section-y-sm">
         <div className="container relative mx-auto">
           <motion.ul
             variants={{
@@ -129,7 +125,7 @@ export function FeaturesClient() {
               >
                 <a href={`#${p.id}`} className="block">
                   <div className="flex items-baseline gap-2.5">
-                    <span className="font-mono text-[10.5px] font-medium tabular-nums uppercase tracking-[0.18em] text-accent">
+                    <span className="font-mono text-[10.5px] font-medium uppercase tabular-nums tracking-[0.18em] text-accent">
                       {p.num}
                     </span>
                     <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
@@ -137,14 +133,11 @@ export function FeaturesClient() {
                     </span>
                   </div>
                   <p className="mt-2 font-serif text-h4 italic leading-snug text-ink">
-                    {p.titleLead}{" "}
-                    <span className="text-accent">{p.titleEm}</span>
+                    {p.titleLead} <span className="text-accent">{p.titleEm}</span>
                   </p>
                   {/* 12-15 word descriptor — gives information scent before
                       the reader has to scroll into the pillar deep-dive. */}
-                  <p className="mt-2.5 text-body-sm leading-relaxed text-muted">
-                    {p.overview}
-                  </p>
+                  <p className="mt-2.5 text-body-sm leading-relaxed text-muted">{p.overview}</p>
                 </a>
               </motion.li>
             ))}
@@ -175,12 +168,13 @@ export function FeaturesClient() {
               <span className="text-accent">&ldquo;is this combo risky?&rdquo;</span>
               <br />
               Stack Health asks{" "}
-              <span className="text-accent">&ldquo;how well does my stack work together?&rdquo;</span>
+              <span className="text-accent">
+                &ldquo;how well does my stack work together?&rdquo;
+              </span>
             </p>
             <p className="mx-auto mt-4 max-w-prose text-body-sm leading-relaxed text-muted">
-              You&apos;ll see both inside the app. They measure different
-              things on different units — we keep them visually separated so
-              they never blur into one number.
+              You&apos;ll see both inside the app. They measure different things on different units
+              — we keep them visually separated so they never blur into one number.
             </p>
           </motion.aside>
         </div>
@@ -195,7 +189,7 @@ export function FeaturesClient() {
             key={pillar.id}
             id={pillar.id}
             aria-labelledby={`${pillar.id}-heading`}
-            className={`relative section-y-sm scroll-mt-24 ${isShaded ? "bg-surface-raised/40" : ""}`}
+            className={`section-y-sm relative scroll-mt-24 ${isShaded ? "bg-surface-raised/40" : ""}`}
           >
             {isShaded && (
               <>
@@ -216,7 +210,7 @@ export function FeaturesClient() {
                   className="flex flex-col gap-5"
                 >
                   <motion.div variants={fadeUpItem} className="flex items-baseline gap-3">
-                    <span className="font-mono text-[11px] font-medium tabular-nums uppercase tracking-[0.18em] text-accent">
+                    <span className="font-mono text-[11px] font-medium uppercase tabular-nums tracking-[0.18em] text-accent">
                       {pillar.num}
                     </span>
                     <span className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
@@ -230,9 +224,7 @@ export function FeaturesClient() {
                     className="text-balance text-display-md leading-[1.08] text-ink"
                   >
                     {pillar.titleLead}{" "}
-                    <span className="font-serif italic text-accent">
-                      {pillar.titleEm}
-                    </span>
+                    <span className="font-serif italic text-accent">{pillar.titleEm}</span>
                   </motion.h2>
 
                   <motion.p
@@ -243,10 +235,7 @@ export function FeaturesClient() {
                   </motion.p>
 
                   {/* Capabilities */}
-                  <motion.ul
-                    variants={fadeUpItem}
-                    className="mt-2 flex flex-col gap-2.5"
-                  >
+                  <motion.ul variants={fadeUpItem} className="mt-2 flex flex-col gap-2.5">
                     {pillar.capabilities.map((cap, j) => (
                       <li
                         key={j}
@@ -306,7 +295,9 @@ export function FeaturesClient() {
                             {s.name}
                           </a>
                           {k < pillar.sources.length - 1 && (
-                            <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
+                            <span aria-hidden="true" className="mx-2 text-border-strong">
+                              ·
+                            </span>
                           )}
                         </span>
                       ))}
@@ -329,11 +320,9 @@ export function FeaturesClient() {
                           <li key={post.slug}>
                             <Link
                               href={`/blog/${post.slug}`}
-                              className="group inline-flex items-center gap-2 rounded-pill border border-border bg-surface px-4 py-2 text-body-sm leading-snug text-ink shadow-xs transition-[transform,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                              className="focus-visible:outline-offset-3 group inline-flex items-center gap-2 rounded-pill border border-border bg-surface px-4 py-2 text-body-sm leading-snug text-ink shadow-xs transition-[transform,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-accent"
                             >
-                              <span className="font-serif italic">
-                                {post.title}
-                              </span>
+                              <span className="font-serif italic">{post.title}</span>
                               <span
                                 aria-hidden="true"
                                 className="text-accent transition-transform duration-fast ease-smooth group-hover:translate-x-0.5"
@@ -361,7 +350,7 @@ export function FeaturesClient() {
       {/* ━━━━━━━━━━━━━━━━━━ CLINICIAN BONUS ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="clinician-heading"
-        className="relative section-y-sm bg-surface-raised/40"
+        className="section-y-sm relative bg-surface-raised/40"
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
@@ -414,10 +403,7 @@ export function FeaturesClient() {
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ BUILT ON ━━━━━━━━━━━━━━━━━━ */}
-      <section
-        aria-labelledby="built-on-heading"
-        className="relative section-y-sm"
-      >
+      <section aria-labelledby="built-on-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
           <motion.div
             variants={fadeUpContainer}
@@ -460,12 +446,8 @@ export function FeaturesClient() {
                 variants={fadeUpItem}
                 className="rounded-2xl border border-border bg-surface p-6 shadow-sm md:p-7"
               >
-                <p className="font-serif text-h3 italic leading-tight text-ink">
-                  {item.label}
-                </p>
-                <p className="mt-3 text-body-sm leading-relaxed text-muted">
-                  {item.detail}
-                </p>
+                <p className="font-serif text-h3 italic leading-tight text-ink">{item.label}</p>
+                <p className="mt-3 text-body-sm leading-relaxed text-muted">{item.detail}</p>
               </motion.li>
             ))}
           </motion.ul>
@@ -473,10 +455,7 @@ export function FeaturesClient() {
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ BOUNDARIES ━━━━━━━━━━━━━━━━━━ */}
-      <section
-        aria-labelledby="boundaries-heading"
-        className="relative pb-section-y-sm"
-      >
+      <section aria-labelledby="boundaries-heading" className="relative pb-section-y-sm">
         <div className="container relative mx-auto">
           <motion.div
             variants={fadeUpContainer}
@@ -520,9 +499,7 @@ export function FeaturesClient() {
                       strokeLinecap="round"
                     />
                   </svg>
-                  <span className="text-body-sm leading-snug text-ink">
-                    {item}
-                  </span>
+                  <span className="text-body-sm leading-snug text-ink">{item}</span>
                 </li>
               ))}
             </motion.ul>
@@ -533,7 +510,7 @@ export function FeaturesClient() {
       {/* ━━━━━━━━━━━━━━━━━━ CTA STRIP ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-label="Next steps"
-        className="relative section-y-sm border-t border-border bg-surface-subtle/40"
+        className="section-y-sm relative border-t border-border bg-surface-subtle/40"
       >
         <div className="container relative mx-auto">
           <motion.div
@@ -550,13 +527,10 @@ export function FeaturesClient() {
               Join the beta. Opening in waves through 2026.
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-5">
-              <Link
-                href="/#waitlist"
-                className="inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
-              >
+              <WaitlistLink className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent">
                 Join the beta
                 <span aria-hidden="true">→</span>
-              </Link>
+              </WaitlistLink>
               <Link
                 href="/methodology"
                 className="inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink"

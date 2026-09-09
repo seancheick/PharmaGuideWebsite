@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import {
   ADVISORY_TEAM,
@@ -39,7 +40,7 @@ export function MethodologyClient() {
       {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="meth-hero-heading"
-        className="relative pt-24 pb-section-y-sm overflow-hidden sm:pt-28 md:pt-32"
+        className="relative overflow-hidden pb-section-y-sm pt-24 sm:pt-28 md:pt-32"
       >
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div
@@ -72,28 +73,23 @@ export function MethodologyClient() {
               className="text-balance text-display-lg leading-[1.06] text-ink"
             >
               The science behind{" "}
-              <span className="font-serif italic text-accent">
-                the guidance.
-              </span>
+              <span className="font-serif italic text-accent">the guidance.</span>
             </motion.h1>
 
             <motion.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              How we collect, verify, and ship the interaction data that
-              powers PharmaGuide — including who reviews it, what AI does
-              and doesn&apos;t do, and where we draw the line.
+              How we collect, verify, and ship the interaction data that powers PharmaGuide —
+              including who reviews it, what AI does and doesn&apos;t do, and where we draw the
+              line.
             </motion.p>
           </motion.div>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ TRUST PILLARS ━━━━━━━━━━━━━━━━━━ */}
-      <section
-        aria-labelledby="meth-pillars-heading"
-        className="relative section-y-sm"
-      >
+      <section aria-labelledby="meth-pillars-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
           <motion.div
             variants={fadeUpContainer}
@@ -137,15 +133,11 @@ export function MethodologyClient() {
                 variants={fadeUpItem}
                 className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
               >
-                <span className="font-mono text-[11px] font-medium tabular-nums uppercase tracking-[0.18em] text-accent">
+                <span className="font-mono text-[11px] font-medium uppercase tabular-nums tracking-[0.18em] text-accent">
                   {`0${i + 1}`}
                 </span>
-                <h3 className="font-serif text-h2 italic leading-tight text-ink">
-                  {p.title}
-                </h3>
-                <p className="text-body-sm leading-relaxed text-muted">
-                  {p.body}
-                </p>
+                <h3 className="font-serif text-h2 italic leading-tight text-ink">{p.title}</h3>
+                <p className="text-body-sm leading-relaxed text-muted">{p.body}</p>
               </motion.li>
             ))}
           </motion.ul>
@@ -155,7 +147,7 @@ export function MethodologyClient() {
       {/* ━━━━━━━━━━━━━━━━━━ DATA SOURCES ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="meth-sources-heading"
-        className="relative section-y-sm bg-surface-raised/50"
+        className="section-y-sm relative bg-surface-raised/50"
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
@@ -180,8 +172,7 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              Four primary sources.{" "}
-              <span className="font-serif italic">No anonymous claims.</span>
+              Four primary sources. <span className="font-serif italic">No anonymous claims.</span>
             </motion.h2>
           </motion.div>
 
@@ -216,10 +207,7 @@ export function MethodologyClient() {
 
                 <ul className="flex flex-col gap-2 border-l-2 border-border-strong pl-4">
                   {source.items.map((item) => (
-                    <li
-                      key={item}
-                      className="text-body-sm leading-relaxed text-muted"
-                    >
+                    <li key={item} className="text-body-sm leading-relaxed text-muted">
                       {item}
                     </li>
                   ))}
@@ -239,8 +227,8 @@ export function MethodologyClient() {
             transition={transitions.ambient}
             className="mx-auto mt-10 max-w-2xl text-balance text-center font-serif text-body italic leading-relaxed text-muted md:mt-14"
           >
-            We do not access medical records, pharmacy systems, or any
-            personal health data outside what you put into the app.
+            We do not access medical records, pharmacy systems, or any personal health data outside
+            what you put into the app.
           </motion.p>
         </div>
       </section>
@@ -249,10 +237,7 @@ export function MethodologyClient() {
       {/* The runtime pipeline — the technical moat. Six stages from a
           scanned product to a Stack Health verdict. Each stage maps to a
           shipped capability documented on /features. */}
-      <section
-        aria-labelledby="meth-engine-heading"
-        className="relative section-y-sm"
-      >
+      <section aria-labelledby="meth-engine-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
           <motion.div
             variants={fadeUpContainer}
@@ -273,17 +258,15 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              From a scanned product{" "}
-              <span className="font-serif italic">to a verdict.</span>
+              From a scanned product <span className="font-serif italic">to a verdict.</span>
             </motion.h2>
 
             <motion.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              Every check runs through the same six-stage pipeline — most
-              of it on your device. Here&apos;s what happens between the
-              scan and the score.
+              Every check runs through the same six-stage pipeline — most of it on your device.
+              Here&apos;s what happens between the scan and the score.
             </motion.p>
           </motion.div>
 
@@ -315,9 +298,7 @@ export function MethodologyClient() {
                     {stage.title}
                   </h3>
                 </div>
-                <p className="text-body-sm leading-relaxed text-muted">
-                  {stage.body}
-                </p>
+                <p className="text-body-sm leading-relaxed text-muted">{stage.body}</p>
                 <p className="mt-1 border-t border-border pt-4 font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
                   {stage.detail}
                 </p>
@@ -337,16 +318,14 @@ export function MethodologyClient() {
               The six stages resolve to one verdict
             </p>
             <div className="flex flex-wrap items-center justify-center gap-2">
-              {["Optimized", "Solid", "Decent", "Needs review", "Unsafe"].map(
-                (label) => (
-                  <span
-                    key={label}
-                    className="inline-flex items-center rounded-pill border border-border bg-surface px-3 py-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-foreground/80"
-                  >
-                    {label}
-                  </span>
-                ),
-              )}
+              {["Optimized", "Solid", "Decent", "Needs review", "Unsafe"].map((label) => (
+                <span
+                  key={label}
+                  className="inline-flex items-center rounded-pill border border-border bg-surface px-3 py-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-foreground/80"
+                >
+                  {label}
+                </span>
+              ))}
             </div>
           </motion.div>
         </div>
@@ -360,7 +339,7 @@ export function MethodologyClient() {
           artifact so the page reads as evidence, not assertion. */}
       <section
         aria-labelledby="meth-specimen-heading"
-        className="relative section-y-sm bg-surface-raised/40"
+        className="section-y-sm relative bg-surface-raised/40"
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
@@ -385,17 +364,15 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              One real interaction,{" "}
-              <span className="font-serif italic">end to end.</span>
+              One real interaction, <span className="font-serif italic">end to end.</span>
             </motion.h2>
 
             <motion.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              The card below follows the same structure used by our
-              interaction-rules pipeline — same sources, same evidence
-              levels, same reviewer signature.
+              The card below follows the same structure used by our interaction-rules pipeline —
+              same sources, same evidence levels, same reviewer signature.
             </motion.p>
           </motion.div>
 
@@ -414,7 +391,10 @@ export function MethodologyClient() {
               </p>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                 <span className="inline-flex items-center gap-1.5 rounded-pill bg-severity-monitor/[0.08] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-severity-monitor">
-                  <span aria-hidden="true" className="block h-1.5 w-1.5 rounded-full bg-severity-monitor" />
+                  <span
+                    aria-hidden="true"
+                    className="block h-1.5 w-1.5 rounded-full bg-severity-monitor"
+                  />
                   Informational
                 </span>
                 <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
@@ -430,12 +410,10 @@ export function MethodologyClient() {
                   Mechanism
                 </p>
                 <p className="text-body leading-relaxed text-foreground/85">
-                  Statins inhibit HMG-CoA reductase, blocking not only
-                  cholesterol synthesis but also the mevalonate pathway used to
-                  synthesize CoQ10. Plasma and muscle CoQ10 levels are
-                  measurably reduced by statin therapy; CoQ10 depletion is
-                  proposed as a contributing mechanism to statin-induced
-                  myopathy.
+                  Statins inhibit HMG-CoA reductase, blocking not only cholesterol synthesis but
+                  also the mevalonate pathway used to synthesize CoQ10. Plasma and muscle CoQ10
+                  levels are measurably reduced by statin therapy; CoQ10 depletion is proposed as a
+                  contributing mechanism to statin-induced myopathy.
                 </p>
               </section>
 
@@ -445,9 +423,8 @@ export function MethodologyClient() {
                   Recommended action
                 </p>
                 <p className="text-body leading-relaxed text-foreground/85">
-                  CoQ10 is commonly discussed for statin-associated muscle
-                  symptoms. Ask your prescriber whether supplementation
-                  fits your situation.
+                  CoQ10 is commonly discussed for statin-associated muscle symptoms. Ask your
+                  prescriber whether supplementation fits your situation.
                 </p>
               </section>
 
@@ -468,7 +445,10 @@ export function MethodologyClient() {
                         PMID
                       </span>
                       <span className="font-mono tabular-nums">19528564</span>
-                      <span aria-hidden="true" className="opacity-0 transition-opacity duration-fast group-hover:opacity-100">
+                      <span
+                        aria-hidden="true"
+                        className="opacity-0 transition-opacity duration-fast group-hover:opacity-100"
+                      >
                         →
                       </span>
                     </a>
@@ -484,7 +464,10 @@ export function MethodologyClient() {
                         PMID
                       </span>
                       <span className="font-mono tabular-nums">12622602</span>
-                      <span aria-hidden="true" className="opacity-0 transition-opacity duration-fast group-hover:opacity-100">
+                      <span
+                        aria-hidden="true"
+                        className="opacity-0 transition-opacity duration-fast group-hover:opacity-100"
+                      >
                         →
                       </span>
                     </a>
@@ -517,10 +500,7 @@ export function MethodologyClient() {
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ 5-STEP PROCESS ━━━━━━━━━━━━━━━━━━ */}
-      <section
-        aria-labelledby="meth-process-heading"
-        className="relative section-y-sm"
-      >
+      <section aria-labelledby="meth-process-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
           <motion.div
             variants={fadeUpContainer}
@@ -541,8 +521,7 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              From source to verdict,{" "}
-              <span className="font-serif italic">every interaction.</span>
+              From source to verdict, <span className="font-serif italic">every interaction.</span>
             </motion.h2>
           </motion.div>
 
@@ -564,13 +543,13 @@ export function MethodologyClient() {
               <motion.li
                 key={step.num}
                 variants={fadeUpItem}
-                className="relative grid grid-cols-[auto_1fr] gap-x-6 pb-10 md:gap-x-10 md:pb-12 last:pb-0"
+                className="relative grid grid-cols-[auto_1fr] gap-x-6 pb-10 last:pb-0 md:gap-x-10 md:pb-12"
               >
                 {/* Vertical connector line — drawn only between items */}
                 {i < PROCESS_STEPS.length - 1 && (
                   <span
                     aria-hidden="true"
-                    className="absolute left-[19px] top-12 bottom-0 w-px bg-border-strong/60 md:left-[23px]"
+                    className="absolute bottom-0 left-[19px] top-12 w-px bg-border-strong/60 md:left-[23px]"
                   />
                 )}
                 {/* Numbered node */}
@@ -581,12 +560,8 @@ export function MethodologyClient() {
                 </div>
                 {/* Step content */}
                 <div className="min-w-0 pt-1.5">
-                  <h3 className="font-serif text-h3 italic leading-tight text-ink">
-                    {step.title}
-                  </h3>
-                  <p className="mt-3 text-body leading-relaxed text-muted">
-                    {step.body}
-                  </p>
+                  <h3 className="font-serif text-h3 italic leading-tight text-ink">{step.title}</h3>
+                  <p className="mt-3 text-body leading-relaxed text-muted">{step.body}</p>
                   {/* Optional metadata row */}
                   {(step.reviewer || step.output || step.schedule) && (
                     <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-border pt-4 font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
@@ -620,7 +595,7 @@ export function MethodologyClient() {
       {/* ━━━━━━━━━━━━━━━━━━ ADVISORY TEAM ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="meth-team-heading"
-        className="relative section-y-sm bg-surface-raised/50"
+        className="section-y-sm relative bg-surface-raised/50"
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
@@ -645,8 +620,7 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              Clinical review{" "}
-              <span className="font-serif italic">behind the guidance.</span>
+              Clinical review <span className="font-serif italic">behind the guidance.</span>
             </motion.h2>
           </motion.div>
 
@@ -687,17 +661,11 @@ export function MethodologyClient() {
                     </span>
                   )}
                   <div className="min-w-0">
-                    <p className="font-serif text-h3 italic leading-tight text-ink">
-                      {m.name}
-                    </p>
-                    <p className="font-mono text-eyebrow uppercase text-subtle">
-                      {m.title}
-                    </p>
+                    <p className="font-serif text-h3 italic leading-tight text-ink">{m.name}</p>
+                    <p className="font-mono text-eyebrow uppercase text-subtle">{m.title}</p>
                   </div>
                 </div>
-                <p className="text-body-sm leading-relaxed text-foreground/85">
-                  {m.credentials}
-                </p>
+                <p className="text-body-sm leading-relaxed text-foreground/85">{m.credentials}</p>
                 <p className="text-body-sm leading-relaxed text-muted">
                   <span className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
                     Focus ·{" "}
@@ -711,10 +679,7 @@ export function MethodologyClient() {
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ AI TRANSPARENCY ━━━━━━━━━━━━━━━━━━ */}
-      <section
-        aria-labelledby="meth-ai-heading"
-        className="relative section-y-sm"
-      >
+      <section aria-labelledby="meth-ai-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
           <motion.div
             variants={fadeUpContainer}
@@ -743,9 +708,8 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="max-w-prose text-body leading-relaxed text-muted"
             >
-              We use AI to scale the parts that benefit from scale. We use
-              clinicians for everything else. Here&apos;s exactly where the
-              line is.
+              We use AI to scale the parts that benefit from scale. We use clinicians for everything
+              else. Here&apos;s exactly where the line is.
             </motion.p>
           </motion.div>
 
@@ -824,7 +788,7 @@ export function MethodologyClient() {
       {/* ━━━━━━━━━━━━━━━━━━ SCOPE — IS / IS NOT ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="meth-scope-heading"
-        className="relative section-y-sm bg-surface-raised/50"
+        className="section-y-sm relative bg-surface-raised/50"
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
@@ -849,8 +813,7 @@ export function MethodologyClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              Built to inform.{" "}
-              <span className="font-serif italic">Not to replace.</span>
+              Built to inform. <span className="font-serif italic">Not to replace.</span>
             </motion.h2>
           </motion.div>
 
@@ -931,17 +894,14 @@ export function MethodologyClient() {
             transition={transitions.ambient}
             className="mx-auto mt-12 max-w-2xl text-balance text-center font-serif text-body-lg italic leading-relaxed text-ink md:mt-14"
           >
-            Always consult a qualified healthcare provider before starting,
-            stopping, or changing any supplement or medication.
+            Always consult a qualified healthcare provider before starting, stopping, or changing
+            any supplement or medication.
           </motion.p>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ CTA STRIP ━━━━━━━━━━━━━━━━━━ */}
-      <section
-        aria-label="Next steps"
-        className="relative section-y-sm"
-      >
+      <section aria-label="Next steps" className="section-y-sm relative">
         <div className="container relative mx-auto">
           <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center md:gap-6">
             <p className="font-serif text-h2 italic leading-tight text-ink">
@@ -951,16 +911,13 @@ export function MethodologyClient() {
               The methodology is the foundation. The product is the proof.
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-5">
-              <Link
-                href="/#waitlist"
-                className="inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
-              >
+              <WaitlistLink className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent">
                 Join the beta
                 <span aria-hidden="true">→</span>
-              </Link>
+              </WaitlistLink>
               <Link
                 href="/faq"
-                className="inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                className="focus-visible:outline-offset-3 inline-flex items-center gap-1.5 text-body-sm text-muted transition-colors duration-fast ease-smooth hover:text-ink focus-visible:outline-2 focus-visible:outline-accent"
               >
                 Read the FAQ
                 <span aria-hidden="true">→</span>

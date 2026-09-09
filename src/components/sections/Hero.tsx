@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PhoneMockup } from "@/components/hero/PhoneMockup";
+import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { CATALOG_SIZE } from "@/lib/site";
 
 /**
@@ -59,8 +60,8 @@ export function Hero() {
                 the trust pills. What the hero owes a first-time visitor is
                 the outcome, stated as decision support — not advice.   */}
             <p className="max-w-prose animate-fade-up text-body-xl text-muted">
-              Know whether this supplement is right for you — before it conflicts
-              with your medications, conditions, or existing stack.
+              Know whether this supplement is right for you — before it conflicts with your
+              medications, conditions, or existing stack.
             </p>
 
             <div className="flex animate-fade-up flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:80ms]">
@@ -81,8 +82,7 @@ export function Hero() {
                   <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                   <line x1="12" y1="22.08" x2="12" y2="12" />
                 </svg>
-                <span className="tnum font-medium text-ink">{CATALOG_SIZE}</span>{" "}
-                products
+                <span className="tnum font-medium text-ink">{CATALOG_SIZE}</span> products
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <svg
@@ -146,7 +146,7 @@ export function Hero() {
                 and #problem is the next section anyway.                */}
             <div className="animate-fade-up pt-2 [animation-delay:160ms]">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <Link
+                <WaitlistLink
                   href="#waitlist"
                   /* border-transparent so the filled and outlined pills share
                      a box model and line up to the pixel. */
@@ -154,14 +154,14 @@ export function Hero() {
                 >
                   Check my stack
                   <span aria-hidden="true">→</span>
-                </Link>
+                </WaitlistLink>
 
-                <Link
+                <WaitlistLink
                   href="#waitlist"
                   className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill border border-border bg-surface px-5 py-3 text-body-sm font-medium text-ink shadow-xs transition-[transform,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-accent"
                 >
                   Get early access
-                </Link>
+                </WaitlistLink>
               </div>
 
               {/* Sets expectation before the click, not after it. "Waitlist"

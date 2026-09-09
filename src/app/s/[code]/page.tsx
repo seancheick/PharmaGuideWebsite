@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { getShareSnapshot } from "@/lib/share-store";
 import { shareDispositionCopy } from "@/lib/share-snapshot";
 import { bandForTierId } from "@/lib/quality-score";
@@ -263,13 +264,13 @@ export default async function SharePage({ params }: PageProps) {
               what&apos;s redundant.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-              <Link
+              <WaitlistLink
                 href="/?utm_source=share-card&utm_medium=product-share&utm_campaign=app-share#waitlist"
                 className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill border border-transparent bg-accent px-5 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent"
               >
                 Check my stack
                 <span aria-hidden="true">→</span>
-              </Link>
+              </WaitlistLink>
               <Link
                 href="/how-it-works?utm_source=share-card&utm_medium=product-share&utm_campaign=app-share"
                 className="focus-visible:outline-offset-3 inline-flex items-center justify-center rounded-pill border border-border bg-surface px-5 py-3 text-body-sm font-medium text-ink shadow-xs transition-[transform,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-accent"

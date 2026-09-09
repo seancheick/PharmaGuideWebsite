@@ -10,6 +10,7 @@ import {
   useScroll,
 } from "framer-motion";
 import { Logo } from "@/components/shared/Logo";
+import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { nav, site } from "@/lib/site";
 import { transitions } from "@/lib/tokens";
 import { cn } from "@/lib/utils";
@@ -84,9 +85,7 @@ export function Header() {
           opacity: hidden && !reducedMotion ? 0.85 : 1,
         }}
         transition={
-          reducedMotion
-            ? { duration: 0 }
-            : { type: "spring", stiffness: 280, damping: 28 }
+          reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 280, damping: 28 }
         }
         className="fixed inset-x-0 top-3 z-[300] flex justify-center px-4 sm:top-5"
       >
@@ -96,9 +95,7 @@ export function Header() {
             // because 5 nav items at gap-7 was cramped. Pill still feels
             // tight and floating; just less squeezed.
             "flex w-full max-w-4xl items-center justify-between gap-6 rounded-[22px] border px-4 py-3 transition-all duration-500 ease-out",
-            scrolled
-              ? "glass shadow-xl shadow-black/10"
-              : "glass-frost shadow-none"
+            scrolled ? "glass shadow-xl shadow-black/10" : "glass-frost shadow-none"
           )}
         >
           {/* Wordmark */}
@@ -132,19 +129,20 @@ export function Header() {
 
           {/* CTA + mobile hamburger */}
           <div className="flex items-center gap-2">
-            <Link
-              href="/#waitlist"
+            <WaitlistLink
               className={cn(
                 "hidden items-center gap-1.5 rounded-pill bg-accent px-4 py-2 text-body-sm font-medium text-white shadow-xs",
                 "transition-[background-color,box-shadow,transform] duration-fast ease-smooth",
                 "hover:bg-accent-strong hover:shadow-glow",
-                "focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent",
+                "focus-visible:outline-offset-3 focus-visible:outline-2 focus-visible:outline-accent",
                 "lg:inline-flex"
               )}
             >
               Join the beta
-              <span aria-hidden="true" className="translate-y-[-0.5px]">→</span>
-            </Link>
+              <span aria-hidden="true" className="translate-y-[-0.5px]">
+                →
+              </span>
+            </WaitlistLink>
 
             <button
               ref={hamburgerRef}
@@ -156,7 +154,12 @@ export function Header() {
               className="rounded-pill p-2.5 text-ink transition-colors duration-fast ease-smooth hover:bg-surface-subtle lg:hidden"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path d="M3 6h14M3 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <path
+                  d="M3 6h14M3 14h14"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
           </div>
@@ -229,14 +232,13 @@ export function Header() {
                 }}
                 className="pt-8"
               >
-                <Link
-                  href="/#waitlist"
-                  onClick={() => setMenuOpen(false)}
+                <WaitlistLink
+                  onNavigate={() => setMenuOpen(false)}
                   className="inline-flex items-center gap-2 rounded-pill bg-accent px-6 py-3 text-body font-medium text-white shadow-sm"
                 >
                   Join the beta
                   <span aria-hidden="true">→</span>
-                </Link>
+                </WaitlistLink>
               </motion.div>
             </nav>
           </motion.div>

@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
+import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 
 /**
@@ -156,7 +156,7 @@ export function AboutClient() {
       {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="about-hero-heading"
-        className="relative pt-24 pb-section-y-sm overflow-hidden sm:pt-28 md:pt-32"
+        className="relative overflow-hidden pb-section-y-sm pt-24 sm:pt-28 md:pt-32"
       >
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div
@@ -189,19 +189,16 @@ export function AboutClient() {
               className="text-balance text-display-lg leading-[1.04] text-ink"
             >
               The supplement industry was built to sell.{" "}
-              <span className="font-serif italic text-accent">
-                Not always to protect you.
-              </span>
+              <span className="font-serif italic text-accent">Not always to protect you.</span>
             </motion.h1>
 
             <motion.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              Most dietary supplements enter the US market without FDA
-              pre-market safety testing. The catalog is enormous, the labels
-              are confusing, and when something gets recalled, you&apos;re
-              usually the last to find out.
+              Most dietary supplements enter the US market without FDA pre-market safety testing.
+              The catalog is enormous, the labels are confusing, and when something gets recalled,
+              you&apos;re usually the last to find out.
             </motion.p>
 
             <motion.p
@@ -217,7 +214,7 @@ export function AboutClient() {
       {/* ━━━━━━━━━━━━━━━━━━ 01 WHY WE BUILT IT (founder story) ━━━━━━━━ */}
       <section
         aria-labelledby="about-founder-heading"
-        className="relative section-y-sm bg-surface-raised/40"
+        className="section-y-sm relative bg-surface-raised/40"
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
@@ -241,8 +238,7 @@ export function AboutClient() {
               id="about-founder-heading"
               className="text-balance text-display-md text-ink"
             >
-              This started{" "}
-              <span className="font-serif italic">personal.</span>
+              This started <span className="font-serif italic">personal.</span>
             </motion.h2>
           </motion.div>
 
@@ -297,10 +293,7 @@ export function AboutClient() {
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ 02 INDUSTRY LIES ━━━━━━━━━━━━━━━━━━ */}
-      <section
-        aria-labelledby="about-lies-heading"
-        className="relative section-y-sm"
-      >
+      <section aria-labelledby="about-lies-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
           <motion.div
             variants={fadeUpContainer}
@@ -345,7 +338,10 @@ export function AboutClient() {
               >
                 {/* Red badge — the headline framing */}
                 <span className="inline-flex w-fit items-center gap-2 rounded-pill bg-severity-avoid/[0.08] px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-severity-avoid">
-                  <span aria-hidden="true" className="block h-1 w-1 rounded-full bg-severity-avoid" />
+                  <span
+                    aria-hidden="true"
+                    className="block h-1 w-1 rounded-full bg-severity-avoid"
+                  />
                   {item.badge}
                 </span>
 
@@ -376,8 +372,7 @@ export function AboutClient() {
                   rel={item.source.href.startsWith("/") ? undefined : "noopener noreferrer"}
                   className="mt-auto inline-flex items-center gap-1.5 font-mono text-eyebrow uppercase text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
                 >
-                  Source · {item.source.label}{" "}
-                  <span aria-hidden="true">→</span>
+                  Source · {item.source.label} <span aria-hidden="true">→</span>
                 </a>
               </motion.li>
             ))}
@@ -395,9 +390,8 @@ export function AboutClient() {
             transition={transitions.ambient}
             className="mx-auto mt-8 max-w-2xl text-balance text-center text-body-sm leading-relaxed text-subtle md:mt-10"
           >
-            The 23,000 figure is supplement-specific. Separately, the
-            homepage cites 4,100+ daily ER visits across all
-            medication-related events — a broader category that includes
+            The 23,000 figure is supplement-specific. Separately, the homepage cites 4,100+ daily ER
+            visits across all medication-related events — a broader category that includes
             prescription interactions.
           </motion.p>
         </div>
@@ -406,7 +400,7 @@ export function AboutClient() {
       {/* ━━━━━━━━━━━━━━━━━━ 03 THE GAP ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="about-gap-heading"
-        className="relative section-y-sm bg-surface-raised/40"
+        className="section-y-sm relative bg-surface-raised/40"
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
@@ -431,17 +425,15 @@ export function AboutClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              Two systems.{" "}
-              <span className="font-serif italic">Wildly different rules.</span>
+              Two systems. <span className="font-serif italic">Wildly different rules.</span>
             </motion.h2>
 
             <motion.p
               variants={fadeUpItem}
               className="max-w-prose text-body leading-relaxed text-muted"
             >
-              Compare what happens when a prescription drug is recalled vs.
-              when a supplement is recalled. The gap is the entire reason
-              PharmaGuide exists.
+              Compare what happens when a prescription drug is recalled vs. when a supplement is
+              recalled. The gap is the entire reason PharmaGuide exists.
             </motion.p>
           </motion.div>
 
@@ -540,10 +532,7 @@ export function AboutClient() {
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ 04 WHAT WE BELIEVE ━━━━━━━━━━━━━━━━━━ */}
-      <section
-        aria-labelledby="about-values-heading"
-        className="relative section-y-sm"
-      >
+      <section aria-labelledby="about-values-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
           <motion.div
             variants={fadeUpContainer}
@@ -564,8 +553,7 @@ export function AboutClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              Four principles.{" "}
-              <span className="font-serif italic">Non-negotiable.</span>
+              Four principles. <span className="font-serif italic">Non-negotiable.</span>
             </motion.h2>
           </motion.div>
 
@@ -587,15 +575,11 @@ export function AboutClient() {
                 variants={fadeUpItem}
                 className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
               >
-                <span className="font-mono text-[11px] font-medium tabular-nums uppercase tracking-[0.18em] text-accent">
+                <span className="font-mono text-[11px] font-medium uppercase tabular-nums tracking-[0.18em] text-accent">
                   {v.num}
                 </span>
-                <h3 className="font-serif text-h2 italic leading-tight text-ink">
-                  {v.title}
-                </h3>
-                <p className="text-body leading-relaxed text-muted">
-                  {v.body}
-                </p>
+                <h3 className="font-serif text-h2 italic leading-tight text-ink">{v.title}</h3>
+                <p className="text-body leading-relaxed text-muted">{v.body}</p>
               </motion.li>
             ))}
           </motion.ul>
@@ -605,7 +589,7 @@ export function AboutClient() {
       {/* ━━━━━━━━━━━━━━━━━━ 05 TEAM ━━━━━━━━━━━━━━━━━━ */}
       <section
         aria-labelledby="about-team-heading"
-        className="relative section-y-sm bg-surface-raised/40"
+        className="section-y-sm relative bg-surface-raised/40"
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
@@ -630,8 +614,7 @@ export function AboutClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              Small team.{" "}
-              <span className="font-serif italic text-accent">Sharp focus.</span>
+              Small team. <span className="font-serif italic text-accent">Sharp focus.</span>
             </motion.h2>
           </motion.div>
 
@@ -672,20 +655,14 @@ export function AboutClient() {
                     </span>
                   )}
                   <div className="min-w-0">
-                    <p className="font-serif text-h3 italic leading-tight text-ink">
-                      {m.name}
-                    </p>
-                    <p className="font-mono text-eyebrow uppercase text-subtle">
-                      {m.role}
-                    </p>
+                    <p className="font-serif text-h3 italic leading-tight text-ink">{m.name}</p>
+                    <p className="font-mono text-eyebrow uppercase text-subtle">{m.role}</p>
                   </div>
                 </div>
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-foreground/65">
                   {m.org}
                 </p>
-                <p className="text-body-sm leading-relaxed text-muted">
-                  {m.note}
-                </p>
+                <p className="text-body-sm leading-relaxed text-muted">{m.note}</p>
               </motion.li>
             ))}
           </motion.ul>
@@ -703,10 +680,7 @@ export function AboutClient() {
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ CTA ━━━━━━━━━━━━━━━━━━ */}
-      <section
-        aria-label="Join us"
-        className="relative section-y-sm"
-      >
+      <section aria-label="Join us" className="section-y-sm relative">
         <div className="container relative mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -720,22 +694,17 @@ export function AboutClient() {
             </p>
             <h2 className="text-balance text-display-md text-ink">
               Join us in building something{" "}
-              <span className="font-serif italic text-accent">
-                that actually matters.
-              </span>
+              <span className="font-serif italic text-accent">that actually matters.</span>
             </h2>
             <p className="max-w-prose text-body-lg leading-relaxed text-muted">
-              Opening in waves through 2026. Be among the first to use
-              PharmaGuide as we prepare for launch.
+              Opening in waves through 2026. Be among the first to use PharmaGuide as we prepare for
+              launch.
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-5">
-              <Link
-                href="/#waitlist"
-                className="inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
-              >
+              <WaitlistLink className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent">
                 Join the beta
                 <span aria-hidden="true">→</span>
-              </Link>
+              </WaitlistLink>
             </div>
           </motion.div>
         </div>

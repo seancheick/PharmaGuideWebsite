@@ -37,15 +37,30 @@
  *                                                 Needs review / Unsafe
  */
 
-/** The app's tier ids, lowercase, exactly as the pipeline ships them. */
+/**
+ * The app's tier ids, exactly as the pipeline ships them: the configured tier
+ * name, lower-cased, spaces as underscores. Renamed 2026-09-13 with the
+ * catalog ladder (Exceptional / Excellent / Very good / Good / Needs
+ * improvement / Poor); the ids catalogs shipped before that day are kept as
+ * aliases in `LEGACY_TIER_IDS` because share snapshots store the id they were
+ * created with.
+ */
 export const QUALITY_TIER_IDS = [
-  "elite",
+  "exceptional",
   "excellent",
-  "strong",
-  "acceptable",
-  "weak",
+  "very_good",
+  "good",
+  "needs_improvement",
   "poor",
 ] as const;
+
+/** Tier ids shipped before 2026-09-13, mapped to the band they now name. */
+export const LEGACY_TIER_IDS: Readonly<Record<string, QualityTierId>> = {
+  elite: "exceptional",
+  strong: "very_good",
+  acceptable: "good",
+  weak: "needs_improvement",
+};
 
 export type QualityTierId = (typeof QUALITY_TIER_IDS)[number];
 
@@ -68,9 +83,9 @@ export type QualityBand = {
 /** Ordered high → low. `qualityBand` returns the first band the score clears. */
 export const QUALITY_BANDS: readonly QualityBand[] = [
   {
-    id: "elite",
+    id: "exceptional",
     min: 95,
-    label: "Elite",
+    label: "Exceptional",
     textClass: "text-severity-safe",
     barClass: "bg-severity-safe",
   },
@@ -82,23 +97,23 @@ export const QUALITY_BANDS: readonly QualityBand[] = [
     barClass: "bg-severity-safe",
   },
   {
-    id: "strong",
+    id: "very_good",
     min: 80,
-    label: "Strong",
+    label: "Very good",
     textClass: "text-severity-safe",
     barClass: "bg-severity-safe",
   },
   {
-    id: "acceptable",
+    id: "good",
     min: 70,
-    label: "Acceptable",
+    label: "Good",
     textClass: "text-severity-monitor",
     barClass: "bg-severity-monitor",
   },
   {
-    id: "weak",
+    id: "needs_improvement",
     min: 55,
-    label: "Weak",
+    label: "Needs improvement",
     textClass: "text-severity-caution",
     barClass: "bg-severity-caution",
   },
@@ -137,6 +152,7 @@ export function qualityBand(score: number): QualityBand {
  * to show the number without a verdict, not to invent one.
  */
 export function bandForTierId(tierId: string): QualityBand | undefined {
-  const normalized = tierId.trim().toLowerCase();
-  return QUALITY_BANDS.find((b) => b.id === normalized);
+  const normalized = tierId.trim().toLowerCase().split(/\s+/).join("_");
+  const id = LEGACY_TIER_IDS[normalized] ?? normalized;
+  return QUALITY_BANDS.find((b) => b.id === id);
 }

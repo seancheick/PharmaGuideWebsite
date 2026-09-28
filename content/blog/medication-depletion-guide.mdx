@@ -1,12 +1,13 @@
 ---
 title: "What your medication might be quietly depleting"
-seoTitle: "Medication depletion: what to know"
-description: "Some common medications are associated with lower nutrient levels over time — including statins and CoQ10, metformin and B12, and PPIs and magnesium. Here's what the evidence shows for the most common prescriptions."
+seoTitle: "Medication nutrient depletion: what to know"
+description: "Some common medications are linked with lower nutrient levels over time, but the evidence is not equal across every drug class. Here's what is established, what is associated, and what to ask your clinician."
 slug: "medication-depletion-guide"
 category: "health-education"
 date: "2026-05-08"
-author: "Sean Cheick Baradji"
-reviewer: "Laurie Pham, PharmD"
+updated_at: "2026-09-28"
+author: "sean-cheick-baradji"
+reviewer: "laurie-pham"
 featured: true
 image: "/images/moments/medication.jpg"
 tags:
@@ -24,152 +25,238 @@ tags:
   ]
 ---
 
-If you take a daily prescription, there's a reasonable chance it's quietly drawing down a specific vitamin or mineral over months and years. **It's not a side effect in the dramatic sense.** You won't feel it the day you start the medication. You'll feel it eight months in, when your energy isn't quite what it used to be, or your hair is thinner, or your sleep is off — and you'll blame anything _but_ the prescription that's been working perfectly to manage what it was prescribed for.
+If you take a daily prescription, there is a reasonable chance it affects more than the condition it was prescribed for. Some medications can lower specific nutrient levels over time. Others are associated with nutrient changes, but the clinical significance is less certain.
 
-This is the gap most people miss. The prescription is doing its job. _And_ it's depleting something. Both can be true.
+That distinction matters. **Metformin and vitamin B12 is not the same kind of evidence as oral contraceptives and folate.** Long-term PPI use and magnesium is not the same claim as "PPIs deplete calcium." A useful medication-depletion guide should help you ask better questions, not make every association sound equally proven.
 
-The good news: this is well-documented in pharmacology. The depletion patterns for the most common medications are mapped, the mechanisms are understood, and the replenishment options are simple. It's just that nobody routinely tells you about them at the pharmacy counter — partly because there isn't time in a 7-minute primary care visit, and partly because the depletion is slow enough that it's nobody's _acute_ problem.
-
-This guide walks through five of the most common medication classes and the nutrients they affect. **The point isn't to scare you off your prescription.** The point is to know what to ask your doctor or pharmacist about, and to think about your supplement stack with the depletion in mind rather than ignoring it.
+This guide walks through five common medication classes and the nutrients most often discussed with each. **The point is not to scare you off your prescription.** The point is to know what to ask your doctor or pharmacist about, and to think about supplements in the context of medication, duration, symptoms, labs, and evidence quality.
 
 ## A note on what this is and isn't
 
 <Callout tone="info">
-  This is **educational information**, not medical advice. The depletion patterns described are
-  well-established in clinical pharmacology, but specific dosing and timing decisions should always
-  involve your healthcare provider — especially because depletion severity varies by individual,
-  dose, and duration.
+  This is **educational information**, not medical advice. The medication-nutrient patterns below
+  vary by individual, dose, duration, diet, kidney function, pregnancy plans, and other medications.
+  Specific testing, dosing, and timing decisions should involve your healthcare provider.
 </Callout>
 
-If you're taking any of the medications below and want to discuss replenishment, the conversation with your clinician is short: "I read that this medication can reduce levels of [nutrient]. Should I be supplementing, or should we test my levels?" That's it. They'll know. For the broader framing of how we evaluate evidence for these depletion patterns, see our [methodology page](/methodology/).
+If you are taking one of these medications long-term, a practical way to start the conversation is: "I read that this medication can affect [nutrient]. Based on my dose, duration, symptoms, and risk factors, should we check anything or change my supplement plan?" For the broader framing of how we grade evidence, see our [methodology page](/methodology/).
 
-<Illustration caption="5 common medication classes and the nutrients they deplete — at a glance">
-  <svg viewBox="0 0 780 380" role="img" aria-label="Matrix showing five medication classes and their associated nutrient depletions: statins deplete CoQ10, metformin depletes B12 and folate, PPIs deplete magnesium B12 and calcium, diuretics deplete potassium magnesium and thiamine, and oral contraceptives deplete folate B-vitamins and magnesium">
-    <title>Medication-nutrient depletion matrix</title>
-    <desc>Visual grid mapping statins, metformin, PPIs, diuretics, and oral contraceptives to the specific vitamins and minerals each class is documented to reduce over time.</desc>
+<Illustration caption="Medication-nutrient patterns are useful only when the evidence level is visible">
+  <svg viewBox="0 0 780 430" role="img" aria-label="Matrix showing five medication classes and nutrient patterns with evidence levels: statins and CoQ10, metformin and vitamin B12, PPIs and magnesium and B12, diuretics and potassium magnesium and conditional thiamine, and oral contraceptives with mixed evidence for B6 and other micronutrients">
+    <title>Medication-nutrient evidence matrix</title>
+    <desc>Visual grid mapping five common medication classes to nutrient effects, separated into established, associated, conditional, and mixed evidence.</desc>
     <style>{`
       .med { font-family: system-ui, sans-serif; font-size: 12px; fill: white; font-weight: 700; }
-      .nut { font-family: system-ui, sans-serif; font-size: 11px; fill: #1e293b; font-weight: 600; }
-      .mech { font-family: system-ui, sans-serif; font-size: 10px; fill: #64748b; }
-      .col-head { font-family: system-ui, sans-serif; font-size: 10px; fill: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
-      .dot { fill: #0d9488; }
-      .dot-mod { fill: #f59e0b; }
+      .small-med { font-family: system-ui, sans-serif; font-size: 9px; fill: white; opacity: 0.82; }
+      .label { font-family: system-ui, sans-serif; font-size: 11px; fill: #1e293b; font-weight: 650; }
+      .note { font-family: system-ui, sans-serif; font-size: 9.8px; fill: #64748b; }
+      .head { font-family: system-ui, sans-serif; font-size: 10px; fill: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+      .est { fill: #0d9488; }
+      .assoc { fill: #f59e0b; }
+      .cond { fill: #2563eb; }
+      .mixed { fill: #64748b; }
     `}</style>
-    <text x="200" y="20" className="col-head">CoQ10</text>
-    <text x="280" y="20" className="col-head">B12</text>
-    <text x="350" y="20" className="col-head">Folate</text>
-    <text x="430" y="20" className="col-head">Mg</text>
-    <text x="500" y="20" className="col-head">Ca</text>
-    <text x="560" y="20" className="col-head">K</text>
-    <text x="620" y="20" className="col-head">B1</text>
-    <text x="680" y="20" className="col-head">B6</text>
-    <line x1="10" y1="30" x2="760" y2="30" stroke="#e2e8f0" strokeWidth="1" />
-    <rect x="10" y="42" width="170" height="48" rx="8" fill="#0d9488" />
-    <text x="95" y="63" className="med" textAnchor="middle">Statins</text>
-    <text x="95" y="78" className="med" textAnchor="middle" style={{fontSize: '9px', opacity: 0.8}}>atorvastatin, simvastatin</text>
-    <circle cx="215" cy="66" r="10" className="dot" /><text x="215" y="70" className="med" textAnchor="middle" style={{fontSize: '10px'}}>●</text>
-    <rect x="10" y="100" width="170" height="48" rx="8" fill="#0d9488" />
-    <text x="95" y="121" className="med" textAnchor="middle">Metformin</text>
-    <text x="95" y="136" className="med" textAnchor="middle" style={{fontSize: '9px', opacity: 0.8}}>type 2 diabetes</text>
-    <circle cx="295" cy="124" r="10" className="dot" />
-    <circle cx="365" cy="124" r="10" className="dot-mod" />
-    <rect x="10" y="158" width="170" height="48" rx="8" fill="#0d9488" />
-    <text x="95" y="179" className="med" textAnchor="middle">PPIs</text>
-    <text x="95" y="194" className="med" textAnchor="middle" style={{fontSize: '9px', opacity: 0.8}}>omeprazole, pantoprazole</text>
-    <circle cx="295" cy="182" r="10" className="dot-mod" />
-    <circle cx="445" cy="182" r="10" className="dot" />
-    <circle cx="515" cy="182" r="10" className="dot-mod" />
-    <rect x="10" y="216" width="170" height="48" rx="8" fill="#0d9488" />
-    <text x="95" y="237" className="med" textAnchor="middle">Diuretics</text>
-    <text x="95" y="252" className="med" textAnchor="middle" style={{fontSize: '9px', opacity: 0.8}}>furosemide, HCTZ</text>
-    <circle cx="445" cy="240" r="10" className="dot" />
-    <circle cx="575" cy="240" r="10" className="dot" />
-    <circle cx="635" cy="240" r="10" className="dot-mod" />
-    <rect x="10" y="274" width="170" height="48" rx="8" fill="#0d9488" />
-    <text x="95" y="295" className="med" textAnchor="middle">Oral Contraceptives</text>
-    <text x="95" y="310" className="med" textAnchor="middle" style={{fontSize: '9px', opacity: 0.8}}>combined pill</text>
-    <circle cx="295" cy="298" r="10" className="dot-mod" />
-    <circle cx="365" cy="298" r="10" className="dot" />
-    <circle cx="445" cy="298" r="10" className="dot-mod" />
-    <circle cx="695" cy="298" r="10" className="dot-mod" />
-    <line x1="10" y1="340" x2="760" y2="340" stroke="#e2e8f0" strokeWidth="1" />
-    <circle cx="30" cy="362" r="8" className="dot" />
-    <text x="45" y="366" className="mech">Well-documented depletion</text>
-    <circle cx="250" cy="362" r="8" className="dot-mod" />
-    <text x="265" y="366" className="mech">Documented, less commonly screened</text>
+    <text x="20" y="28" className="head">Medication class</text>
+    <text x="220" y="28" className="head">Most defensible nutrient pattern</text>
+    <text x="525" y="28" className="head">Evidence posture</text>
+    <line x1="20" y1="42" x2="760" y2="42" stroke="#e2e8f0" strokeWidth="1" />
+
+    <rect x="20" y="62" width="160" height="54" rx="8" fill="#0f766e" />
+    <text x="100" y="84" className="med" textAnchor="middle">Statins</text>
+    <text x="100" y="101" className="small-med" textAnchor="middle">atorvastatin, simvastatin</text>
+    <text x="220" y="84" className="label">CoQ10 concentrations can fall</text>
+    <text x="220" y="103" className="note">Clinical benefit from CoQ10 supplements remains uncertain.</text>
+    <circle cx="540" cy="90" r="8" className="est" />
+    <text x="558" y="94" className="label">Established biochemical effect</text>
+
+    <rect x="20" y="132" width="160" height="54" rx="8" fill="#0f766e" />
+    <text x="100" y="154" className="med" textAnchor="middle">Metformin</text>
+    <text x="100" y="171" className="small-med" textAnchor="middle">type 2 diabetes treatment</text>
+    <text x="220" y="154" className="label">Vitamin B12</text>
+    <text x="220" y="173" className="note">Guidelines support periodic B12 assessment in long-term use.</text>
+    <circle cx="540" cy="160" r="8" className="est" />
+    <text x="558" y="164" className="label">Established and guideline-recognized</text>
+
+    <rect x="20" y="202" width="160" height="54" rx="8" fill="#0f766e" />
+    <text x="100" y="224" className="med" textAnchor="middle">PPIs</text>
+    <text x="100" y="241" className="small-med" textAnchor="middle">omeprazole, pantoprazole</text>
+    <text x="220" y="224" className="label">Magnesium; B12 with prolonged use</text>
+    <text x="220" y="243" className="note">Calcium/fracture concerns are associations, not a simple deficiency claim.</text>
+    <circle cx="540" cy="226" r="8" className="est" />
+    <text x="558" y="230" className="label">Magnesium established</text>
+    <circle cx="540" cy="248" r="8" className="assoc" />
+    <text x="558" y="252" className="label">B12/calcium context-dependent</text>
+
+    <rect x="20" y="272" width="160" height="54" rx="8" fill="#0f766e" />
+    <text x="100" y="294" className="med" textAnchor="middle">Loop/thiazide diuretics</text>
+    <text x="100" y="311" className="small-med" textAnchor="middle">furosemide, HCTZ</text>
+    <text x="220" y="294" className="label">Potassium and magnesium</text>
+    <text x="220" y="313" className="note">Thiamine is most relevant with chronic/high-dose loop use in heart failure.</text>
+    <circle cx="540" cy="296" r="8" className="est" />
+    <text x="558" y="300" className="label">Electrolytes established</text>
+    <circle cx="540" cy="318" r="8" className="cond" />
+    <text x="558" y="322" className="label">Thiamine conditional</text>
+
+    <rect x="20" y="342" width="160" height="54" rx="8" fill="#0f766e" />
+    <text x="100" y="364" className="med" textAnchor="middle">Oral contraceptives</text>
+    <text x="100" y="381" className="small-med" textAnchor="middle">combined pill</text>
+    <text x="220" y="364" className="label">B6 and other micronutrients investigated</text>
+    <text x="220" y="383" className="note">Folate intake matters for pregnancy planning, regardless of pill use.</text>
+    <circle cx="540" cy="370" r="8" className="mixed" />
+    <text x="558" y="374" className="label">Mixed/limited clinical significance</text>
+
+    <line x1="20" y1="410" x2="760" y2="410" stroke="#e2e8f0" strokeWidth="1" />
+    <circle cx="38" cy="424" r="6" className="est" /><text x="50" y="427" className="note">Established</text>
+    <circle cx="140" cy="424" r="6" className="assoc" /><text x="152" y="427" className="note">Associated</text>
+    <circle cx="248" cy="424" r="6" className="cond" /><text x="260" y="427" className="note">Conditional</text>
+    <circle cx="360" cy="424" r="6" className="mixed" /><text x="372" y="427" className="note">Mixed/limited</text>
+
   </svg>
 </Illustration>
 
 ## Do statins deplete CoQ10?
 
-Statins (atorvastatin, simvastatin, rosuvastatin, pravastatin) work by inhibiting an enzyme called HMG-CoA reductase, which the liver uses to make cholesterol. The catch: that same enzyme is upstream of the body's production of [coenzyme Q10](https://www.nccih.nih.gov/health/coenzyme-q10), a critical molecule in cellular energy production. Block the cholesterol pathway, and you also dial down CoQ10 synthesis.
+Statins (atorvastatin, simvastatin, rosuvastatin, pravastatin) work by inhibiting HMG-CoA reductase, an enzyme upstream of cholesterol production. That same pathway also contributes to the body's production of [coenzyme Q10](https://www.nccih.nih.gov/health/coenzyme-q10), a molecule involved in cellular energy production.
 
-**Why it matters.** CoQ10 is concentrated in tissues that work hardest — heart, skeletal muscle, brain, kidneys. The clinical signal that overlaps with statin-related muscle complaints (myalgia, weakness, fatigue) has been studied for two decades. The literature is mixed on whether CoQ10 supplementation reliably _reverses_ statin-associated muscle symptoms in everyone, but the depletion itself is well-documented.
+**What is established.** Statins can lower CoQ10 concentrations. That biochemical effect is plausible and documented. <EvidencePill level="Established" />
 
-**Common context.** Some reviews and clinical discussions mention CoQ10 as a possible trial for persistent statin-associated muscle symptoms, but major cholesterol guidance does not treat it as routine care. (For the full evidence breakdown, including the trials that support and contradict supplementation, see our [deep dive on statins and CoQ10](/blog/statins-and-coq10).)
+**What is not established.** Lower CoQ10 does not automatically mean CoQ10 supplementation reliably fixes statin-associated muscle symptoms. NCCIH summarizes the clinical evidence as not supporting CoQ10 for statin-related muscle pain overall, even though individual trials and meta-analyses have not all pointed the same way.
 
-**What to ask about.** Some studies use 100–200 mg/day of CoQ10 (or ubiquinol), usually with food for absorption. Whether it fits you depends on symptoms, medication plan, and clinician input.
+That distinction is central: **a documented biochemical effect does not automatically mean a supplement has a proven clinical benefit.**
 
-**Source:** [NIH NCCIH — CoQ10](https://www.nccih.nih.gov/health/coenzyme-q10)
+**What to ask about.** If you have muscle aches, weakness, or exercise intolerance after starting or increasing a statin, ask your clinician to evaluate the symptom pattern and rule out other causes. CoQ10 is sometimes discussed as a low-risk trial, often around 100-200 mg/day with food, but it is not routine statin care. For the full evidence breakdown, see our [deep dive on statins and CoQ10](/blog/statins-and-coq10).
+
+<Source>NIH NCCIH — [Coenzyme Q10](https://www.nccih.nih.gov/health/coenzyme-q10)</Source>
 
 ## Does metformin lower vitamin B12?
 
-Metformin is the most-prescribed first-line type-2 diabetes medication in the United States. It also has a well-documented effect on [vitamin B12 absorption](https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/) — specifically, it reduces the calcium-dependent uptake of B12 in the small intestine. Long-term users (think years, not months) develop measurable B12 deficiencies more frequently than people not on metformin.
+Metformin is one of the strongest medication-nutrient examples in this guide. It has a well-documented effect on [vitamin B12](https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/) status, likely involving impaired calcium-dependent uptake of the intrinsic-factor-B12 complex in the small intestine. Long-term users develop measurable B12 deficiency more often than people not taking metformin.
 
-Folate (vitamin B9) often follows the same pattern, though by a different mechanism.
+**Why it matters.** B12 deficiency can present as fatigue, neuropathy (tingling in the feet and hands), cognitive fog, and in advanced cases anemia. The overlap with diabetic neuropathy is clinically important: numbness or tingling may be attributed to diabetes itself when B12 should also be checked.
 
-**Why it matters.** B12 deficiency presents as fatigue, neuropathy (tingling in feet and hands), cognitive fog, and in advanced cases anemia. The cruel irony: peripheral neuropathy from B12 deficiency can be misattributed to diabetes itself, since diabetic neuropathy presents similarly. This is why some endocrinologists routinely test B12 levels in long-term metformin patients.
+**What to ask about.** The American Diabetes Association's 2026 Standards recommend considering periodic B12 assessment in people receiving long-term metformin therapy, especially when anemia or peripheral neuropathy is present. If you have taken metformin for years and have not had B12 checked recently, that is a specific, evidence-aligned conversation.
 
-**What to ask about.** Methylcobalamin (the bioactive form of B12) is commonly discussed, often paired with methylfolate. Dosing depends on your levels and clinician guidance. _If you're on metformin and haven't had B12 levels checked in 2+ years, that's the conversation._
-
-**Source:** [DailyMed — Metformin labeling](https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=metformin) · [NIH ODS — Vitamin B12](https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/)
+<Source>
+  ADA Standards of Care in Diabetes — [2026 Standards
+  hub](https://professional.diabetes.org/standards-of-care) · NIH ODS — [Vitamin
+  B12](https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/) · DailyMed — [metformin
+  labeling](https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=metformin)
+</Source>
 
 ## Do PPIs cause magnesium and B12 deficiency?
 
-Proton pump inhibitors — omeprazole, pantoprazole, esomeprazole, lansoprazole — suppress stomach acid production. That's the entire point; they treat reflux, ulcers, and esophageal irritation by reducing acid. **The trade-off** is that several nutrients require gastric acid for absorption: vitamin B12 (released from food protein by acid), [magnesium](https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/) (acid-dependent uptake), and calcium (acid-soluble forms).
+Proton pump inhibitors (PPIs) like omeprazole, pantoprazole, esomeprazole, and lansoprazole suppress stomach acid production. That is why they work for reflux, ulcers, and esophageal irritation. With prolonged use, they can also affect nutrients that depend on gastric acidity or intestinal handling.
 
-**Why it matters.** Long-term PPI use has been associated in clinical literature with magnesium deficiency, B12 deficiency, and a measurable shift in calcium absorption. The FDA has issued specific safety communications about PPI-related magnesium deficiency for users on these medications more than a year.
+**Magnesium is the strongest claim.** Current PPI labeling recognizes hypomagnesemia with prolonged PPI use. Cases have occurred after at least three months, but most were reported after a year or more. Clinicians may consider magnesium monitoring before and during prolonged therapy, especially when a person also takes digoxin or drugs that can lower magnesium, such as diuretics. <EvidencePill level="Established" />
 
-**Common context.** PPIs are some of the most over-prescribed medications in modern medicine; many people take them for years for symptoms that could be addressed at the lifestyle level. If you're on a PPI long-term, the conversation with your clinician about whether you still need it is worth having — separate from the depletion question.
+**B12 is reasonable but more contextual.** Acid helps release B12 from food protein, so prolonged acid suppression can contribute to lower B12 status in some people, especially with other risk factors.
 
-**What to ask about.** Magnesium glycinate, B12 (see above), and calcium citrate (the form that doesn't require acid for absorption) are commonly discussed for long-term PPI users. Dosing should reflect your diet, labs, and clinician guidance.
+**Calcium needs softer language.** Long-term or high-dose PPI therapy has been associated with fracture concerns and altered calcium handling, but that is not the same as saying PPIs straightforwardly "deplete calcium." If calcium is discussed, it should be framed around bone risk, dietary intake, calcium form, and whether the PPI is still needed.
 
-**Source:** [FDA Safety Communication: PPIs and low magnesium](https://www.fda.gov/drugs/drug-safety-and-availability) · [NIH ODS — Magnesium](https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/)
+**What to ask about.** Ask whether you still need the PPI at the current dose and duration, and whether magnesium or B12 testing makes sense based on your symptoms and risk factors.
+
+<Source>
+  DailyMed — [omeprazole
+  labeling](https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=omeprazole) · NIH ODS —
+  [Magnesium](https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/)
+</Source>
 
 ## What do diuretics deplete?
 
-Loop diuretics (furosemide, torsemide, bumetanide) and thiazide diuretics (hydrochlorothiazide, chlorthalidone) are workhorses in hypertension and heart failure management. They work by promoting urinary excretion of sodium and water — and several other nutrients are excreted along with the sodium, including potassium, magnesium, and thiamine (vitamin B1).
+"Diuretics" is too broad to treat as one uniform nutrient-depletion category. Loop diuretics (furosemide, torsemide, bumetanide) and thiazide or thiazide-like diuretics (hydrochlorothiazide, chlorthalidone) both increase urinary fluid and electrolyte losses, but their patterns and monitoring needs are not identical.
 
-**Why it matters.** Potassium depletion is the most clinically dangerous because it can affect heart rhythm; this is why many people on loop diuretics are also told to take a potassium supplement or are prescribed a "potassium-sparing" diuretic alongside. Magnesium depletion is also common but routinely under-screened. Thiamine deficiency from chronic diuretic use is documented enough that some heart-failure guidelines specifically address it.
+**Loop and thiazide diuretics: potassium and magnesium.** Potassium and magnesium abnormalities are the most clinically important nutrient-related issues here. Low potassium can affect heart rhythm. Magnesium matters for muscle, nerve, and cardiac function, and it can interact with potassium balance. <EvidencePill level="Established" />
 
-**Typical replenishment.** Driven by your clinician based on labs — potassium and magnesium especially shouldn't be self-supplemented in significant amounts when you're on a diuretic. Thiamine replenishment is generally safer to discuss casually.
+**Chronic high-dose loop diuretics: possible thiamine.** Thiamine (vitamin B1) depletion is most often discussed in people with heart failure receiving chronic or high-dose loop diuretics, especially furosemide. The literature describes variable rates, so this is better framed as a conditional risk than as a universal diuretic effect. <EvidencePill level="Conditional" />
 
-**Source:** [NIH ODS — Magnesium, Potassium fact sheets](https://ods.od.nih.gov/) · [DailyMed — diuretic labeling](https://dailymed.nlm.nih.gov/)
+**What to ask about.** Ask about medication-specific monitoring: potassium, kidney function, and magnesium when appropriate. Do not start potassium or high-dose magnesium on your own if you take a diuretic.
+
+<Source>
+  DailyMed — [furosemide
+  labeling](https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=furosemide) · PubMed —
+  [furosemide and thiamine status review](https://pubmed.ncbi.nlm.nih.gov/26899752/)
+</Source>
 
 ## Does birth control deplete vitamins?
 
-Combined oral contraceptives (the "pill") contain estrogen plus a progestin and have been associated in clinical literature with reduced levels of several B vitamins (especially folate, B6, B12, and riboflavin), and sometimes magnesium and zinc. The mechanisms are partly metabolic — estrogen affects the liver enzymes that handle some of these nutrients — and partly absorption-related.
+Combined oral contraceptives (the "pill") have been studied for possible effects on folate, vitamin B6, vitamin B12, and other micronutrients. This is the section where evidence language matters most.
 
-**Why it matters.** Folate is the most clinically meaningful, especially for anyone who might become pregnant — folate deficiency in early pregnancy (often before pregnancy is recognized) is the textbook risk factor for neural tube defects. This is part of why prenatal vitamins exist and why many family-medicine guidelines recommend folate supplementation in women of reproductive age, regardless of contraception status.
+Older studies often reported lower nutrient levels in oral-contraceptive users, but many were conducted when estrogen doses were higher than in current products. A detailed review of modern oral contraceptives concluded that available data did not support a clear negative effect on folate status, while the signal for vitamin B6 was more credible. Functional B12 status was not clearly affected. Other reviews have reported broader nutrient changes, which is exactly why this should be treated as mixed evidence rather than a straightforward depletion relationship. <EvidencePill level="Mixed" />
 
-**What to ask about.** Folate status is worth discussing, especially for anyone who may become pregnant. Broader B-vitamin or magnesium supplementation should be based on diet, labs, symptoms, and clinician guidance.
+**Why folate still matters.** People who could become pregnant should meet recommended folate intake regardless of contraceptive use, because adequate folate before and early in pregnancy lowers neural tube defect risk. That is a pregnancy-prevention-and-planning point, not proof that modern oral contraceptives meaningfully deplete folate.
 
-**Source:** [PubMed — oral contraceptives and B vitamins](https://pubmed.ncbi.nlm.nih.gov/?term=oral+contraceptive+B+vitamin+depletion) · [NIH ODS — Folate](https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/)
+**What to ask about.** There is no standard "birth-control nutrient-depletion panel." If you have fatigue, mood changes, headaches, cravings, dietary restrictions, heavy bleeding, or pregnancy plans, discuss targeted testing or supplementation with your clinician.
+
+<Source>
+  PubMed — [Wilson et al., oral contraceptives and folate/B6/B12
+  status](https://pubmed.ncbi.nlm.nih.gov/21967158/) · NIH ODS —
+  [Folate](https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/)
+</Source>
+
+<Illustration caption="A simple timeline for checking, monitoring, and taking action">
+  <svg viewBox="0 0 780 300" role="img" aria-label="Timeline for medication nutrient depletion: start with medication-specific baseline questions, watch gradual symptoms, repeat relevant labs based on medication duration risk factors symptoms and clinician guidance, then adjust with the healthcare team">
+    <title>Medication nutrient depletion timeline</title>
+    <desc>Four-step timeline showing how to check baseline risk, monitor gradual symptoms, repeat relevant labs based on clinical context, and adjust medication or supplementation with clinician guidance.</desc>
+    <style>{`
+      .title { font-family: system-ui, sans-serif; font-size: 18px; fill: #0f172a; font-weight: 750; }
+      .sub { font-family: system-ui, sans-serif; font-size: 11.5px; fill: #64748b; }
+      .step { font-family: system-ui, sans-serif; font-size: 13px; fill: #0f172a; font-weight: 700; }
+      .body { font-family: system-ui, sans-serif; font-size: 11px; fill: #334155; }
+      .num { font-family: system-ui, sans-serif; font-size: 14px; fill: white; font-weight: 800; }
+    `}</style>
+    <text x="30" y="34" className="title">Medication Nutrient Depletion</text>
+    <text x="30" y="54" className="sub">A simple timeline to check, monitor, and take action without turning every association into a diagnosis.</text>
+    <line x1="92" y1="134" x2="690" y2="134" stroke="#99f6e4" strokeWidth="8" strokeLinecap="round" />
+
+    <circle cx="110" cy="134" r="22" fill="#0d9488" />
+    <text x="110" y="139" className="num" textAnchor="middle">1</text>
+    <rect x="30" y="174" width="160" height="82" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="110" y="198" className="step" textAnchor="middle">At start</text>
+    <text x="110" y="218" className="body" textAnchor="middle">Ask what this medication</text>
+    <text x="110" y="235" className="body" textAnchor="middle">commonly affects and whether</text>
+    <text x="110" y="252" className="body" textAnchor="middle">baseline labs make sense.</text>
+
+    <circle cx="300" cy="134" r="22" fill="#0d9488" />
+    <text x="300" y="139" className="num" textAnchor="middle">2</text>
+    <rect x="220" y="174" width="160" height="82" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="300" y="198" className="step" textAnchor="middle">Months to years</text>
+    <text x="300" y="218" className="body" textAnchor="middle">Watch gradual symptoms:</text>
+    <text x="300" y="235" className="body" textAnchor="middle">fatigue, cramps, tingling,</text>
+    <text x="300" y="252" className="body" textAnchor="middle">weakness, or brain fog.</text>
+
+    <circle cx="490" cy="134" r="22" fill="#0d9488" />
+    <text x="490" y="139" className="num" textAnchor="middle">3</text>
+    <rect x="410" y="174" width="160" height="82" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="490" y="198" className="step" textAnchor="middle">Follow-up</text>
+    <text x="490" y="218" className="body" textAnchor="middle">Repeat relevant labs based</text>
+    <text x="490" y="235" className="body" textAnchor="middle">on medication, duration, risk,</text>
+    <text x="490" y="252" className="body" textAnchor="middle">symptoms, and guidance.</text>
+
+    <circle cx="680" cy="134" r="22" fill="#0d9488" />
+    <text x="680" y="139" className="num" textAnchor="middle">4</text>
+    <rect x="600" y="174" width="150" height="82" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="675" y="198" className="step" textAnchor="middle">Action</text>
+    <text x="675" y="218" className="body" textAnchor="middle">Adjust medication, diet,</text>
+    <text x="675" y="235" className="body" textAnchor="middle">or supplements with your</text>
+    <text x="675" y="252" className="body" textAnchor="middle">healthcare team.</text>
+
+  </svg>
+</Illustration>
 
 ## What should you do about medication nutrient depletion?
 
 Three takeaways:
 
-**1. If you take any of these medications long-term, get your levels checked.** B12, vitamin D, magnesium, ferritin (iron stores), and basic electrolytes are inexpensive blood tests. Most insurance plans cover them. Your doctor can run them at your next visit if you ask.
+**1. Ask for medication-specific monitoring, not a generic micronutrient panel.** Metformin points most clearly to B12. Long-term or higher-risk PPI use points most clearly to magnesium, sometimes B12. Diuretics point to potassium, kidney function, and magnesium when appropriate. Statins point to evaluating muscle symptoms, not routine CoQ10 testing. Oral contraceptives do not imply a standard nutrient-depletion lab panel.
 
-**2. Don't self-supplement potassium or aggressively self-supplement magnesium if you're on a diuretic.** Those are conversations with your clinician — the wrong dose can cause arrhythmias.
+**2. Do not self-supplement potassium or aggressively self-supplement magnesium if you are on a diuretic.** Those are clinician-guided decisions because the wrong dose can create cardiac risk.
 
-**3. For the others (B12 with metformin, CoQ10 with statins, B-complex with the pill), supplementation is generally low-risk and worth a conversation with your pharmacist.** (If you're on a GLP-1 medication, the depletion picture is different — [see our GLP-1 nutrient gap guide](/blog/glp1-supplements-nutrient-gaps).) Most pharmacists will give you a straight answer in five minutes if you ask at the counter.
+**3. Treat supplements as evidence-specific tools, not automatic fixes.** B12 replacement for documented low B12 on metformin is a different decision than trying CoQ10 for statin muscle symptoms or taking a B-complex because you use oral contraception. The better question is: "What is the evidence level, what is my risk, and what would we measure?"
 
-This is the kind of cross-checking PharmaGuide does when you add a medication to your stack — see [how it works](/#how-it-works) — it surfaces documented depletion patterns and discussion points, with clinical review built into the process.
+This is the kind of cross-checking PharmaGuide does when you add a medication to your stack: it surfaces documented depletion patterns, evidence level, and clinician discussion points. If you are on a GLP-1 medication, the nutrient picture is different; see our [GLP-1 nutrient gap guide](/blog/glp1-supplements-nutrient-gaps).
 
 <Callout tone="accent">
-**Reading this on PharmaGuide.io?** When you join the beta, supported medications prompt a depletion check — including the patterns above and more, with clinical review built in.
+**Reading this on PharmaGuide.io?** When you join the beta, supported medications prompt a depletion check — including evidence level, monitoring prompts, and clinical review.
 
 [Join the beta →](/#waitlist)
 
@@ -179,25 +266,28 @@ This is the kind of cross-checking PharmaGuide does when you add a medication to
 
 ### Which medications cause nutrient depletion?
 
-The most common are statins (CoQ10), metformin (vitamin B12 and folate), proton pump inhibitors like omeprazole (magnesium, B12, calcium), loop and thiazide diuretics (potassium, magnesium, thiamine), and combined oral contraceptives (folate, B6, B12).
+The most established examples in this guide are metformin and vitamin B12, prolonged PPI use and magnesium, and loop/thiazide diuretics with potassium and magnesium abnormalities. Statins can lower CoQ10 concentrations, but the clinical benefit of supplementation is uncertain. Oral contraceptive nutrient effects are mixed and should not be presented as a simple depletion claim.
 
 ### How do I know if my medication is depleting a nutrient?
 
-Ask your clinician for bloodwork. B12, vitamin D, magnesium, ferritin, and a basic metabolic panel are inexpensive tests. If you've been on any of these medications for more than a year and haven't been tested, it's worth requesting.
+Ask your clinician for medication-specific monitoring. Examples include B12 for long-term metformin use, magnesium for prolonged or higher-risk PPI use, and potassium/kidney function for diuretics. Symptoms can guide the conversation, but labs and clinical context matter.
 
 ### Can I just take a multivitamin to cover medication depletion?
 
-A multivitamin can help as a baseline, but it won't cover everything — particularly potassium (which multivitamins contain in trivial amounts) or CoQ10 (which isn't in most multivitamins). Targeted supplementation based on labs is more effective than a blanket approach.
+A multivitamin can help as a general baseline, but it does not solve every medication-specific issue. It will not meaningfully address potassium replacement, may not contain CoQ10, and may not correct a true B12 deficiency. Targeted decisions based on risk, symptoms, and labs are more defensible than a blanket approach.
 
-### Should I stop my medication if it's causing a deficiency?
+### Should I stop my medication if it is causing a deficiency?
 
-No. The medication is treating a condition that matters. The right response is to monitor and replenish the depleted nutrient, not to stop the prescription. Discuss any concerns with your prescriber.
+No. The medication is treating a condition that matters. The usual response is to monitor, confirm, and address the nutrient issue while preserving appropriate prescription treatment. Discuss any concerns with your prescriber before changing or stopping a medication.
 
-<Sources>
+## Sources
+
+- American Diabetes Association — [Standards of Care in Diabetes](https://professional.diabetes.org/standards-of-care)
 - NIH NCCIH — [Coenzyme Q10](https://www.nccih.nih.gov/health/coenzyme-q10)
 - NIH Office of Dietary Supplements — [Vitamin B12](https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/)
 - NIH Office of Dietary Supplements — [Magnesium](https://ods.od.nih.gov/factsheets/Magnesium-HealthProfessional/)
 - NIH Office of Dietary Supplements — [Folate](https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/)
-- DailyMed (FDA-curated drug labeling) — [search any medication](https://dailymed.nlm.nih.gov/)
-- PubMed — [drug-nutrient depletion meta-analyses](https://pubmed.ncbi.nlm.nih.gov/?term=drug+nutrient+depletion)
-</Sources>
+- DailyMed — [omeprazole labeling](https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=omeprazole)
+- DailyMed — [FDA-curated drug labeling](https://dailymed.nlm.nih.gov/)
+- Wilson SMC, et al. (2011). [Oral contraceptive use: impact on folate, vitamin B6, and vitamin B12 status](https://pubmed.ncbi.nlm.nih.gov/21967158/). _Nutrition Reviews._
+- Katta N, et al. (2016). [Does long-term furosemide therapy cause thiamine deficiency in patients with heart failure?](https://pubmed.ncbi.nlm.nih.gov/26899752/). _American Journal of Medicine._

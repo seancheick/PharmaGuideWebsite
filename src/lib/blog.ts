@@ -6,6 +6,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import readingTime from "reading-time";
 import type { BlogPost } from "./blog-types";
+import { findPerson, type PersonId } from "./people";
 
 /**
  * Server-only blog data layer — reads MDX files from /content/blog at
@@ -24,8 +25,10 @@ import type { BlogPost } from "./blog-types";
  *   slug: "medication-depletion-guide"        (optional)
  *   category: "health-education"              (matches CATEGORIES.id)
  *   date: "2026-05-08"
- *   author: "Sean Cheick Baradji"
- *   reviewer: "Laurie Pham, PharmD"           (optional)
+ *   updated_at: "2026-06-24"                  (optional — last substantive edit)
+ *   author: "sean-cheick-baradji"             (lib/people.ts id or name)
+ *   reviewer: "laurie-pham"                   (optional, same rule)
+ *   reviewed_at: "2026-06-24"                 (optional — reviewer sign-off)
  *   featured: false                           (sets the editor's pick)
  *   image: "/blog/...."                       (optional hero image)
  *   tags: ["statins", "metformin", ...]
@@ -35,6 +38,21 @@ import type { BlogPost } from "./blog-types";
  */
 
 const BLOG_DIR = path.join(process.cwd(), "content", "blog");
+
+/**
+ * A byline is a claim about a real person. If the frontmatter names someone
+ * who isn't in lib/people.ts, stop the build rather than publish a name we
+ * can't link to a profile or credential.
+ */
+function resolvePersonId(value: unknown, field: string, filename: string): PersonId {
+  const person = typeof value === "string" ? findPerson(value) : undefined;
+  if (!person) {
+    throw new Error(
+      `content/blog/${filename}: ${field} "${String(value)}" is not in src/lib/people.ts`
+    );
+  }
+  return person.id;
+}
 
 /**
  * Read all posts from /content/blog. Returns posts sorted newest-first.
@@ -79,9 +97,12 @@ export function getAllPosts(): BlogPost[] {
       description: (data.description as string) ?? "",
       category: (data.category as string) ?? "health-education",
       date: (data.date as string) ?? new Date().toISOString().slice(0, 10),
-      updatedAt: data.updatedAt as string | undefined,
-      author: (data.author as string) ?? "PharmaGuide",
-      reviewer: data.reviewer as string | undefined,
+      updatedAt: (data.updated_at ?? data.updatedAt) as string | undefined,
+      authorId: resolvePersonId(data.author, "author", filename),
+      reviewerId: data.reviewer
+        ? resolvePersonId(data.reviewer, "reviewer", filename)
+        : undefined,
+      reviewedAt: (data.reviewed_at ?? data.reviewedAt) as string | undefined,
       featured: Boolean(data.featured),
       image: data.image as string | undefined,
       tags: data.tags as string[] | undefined,
@@ -123,5 +144,7 @@ export {
   CATEGORIES,
   formatBlogDate,
   getCategory,
+  postModified,
+  toCardPost,
 } from "./blog-types";
-export type { BlogCategory, BlogPost } from "./blog-types";
+export type { BlogCardPost, BlogCategory, BlogPost } from "./blog-types";

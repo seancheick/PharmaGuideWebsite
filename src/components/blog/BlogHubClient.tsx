@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { fadeUpContainer, fadeUpItem } from "@/lib/tokens";
-import type { BlogPost, BlogCategory } from "@/lib/blog-types";
+import type { BlogCardPost, BlogCategory } from "@/lib/blog-types";
+import { PEOPLE, displayName } from "@/lib/people";
 import { BlogCard } from "./BlogCard";
 import { BlogFeaturedCard } from "./BlogFeaturedCard";
 import { BlogListItem } from "./BlogListItem";
@@ -40,8 +41,8 @@ const POSTS_PER_PAGE = 12;
 const VIEW_STORAGE_KEY = "pg-blog-view";
 
 interface BlogHubClientProps {
-  posts: BlogPost[];
-  featured: BlogPost | undefined;
+  posts: BlogCardPost[];
+  featured: BlogCardPost | undefined;
   categories: readonly BlogCategory[];
 }
 
@@ -82,7 +83,7 @@ export function BlogHubClient({
         const haystack = [
           p.title,
           p.description,
-          p.author,
+          displayName(PEOPLE[p.authorId]),
           ...(p.tags ?? []),
           categories.find((c) => c.id === p.category)?.label ?? "",
         ]
@@ -175,14 +176,14 @@ export function BlogHubClient({
           className="relative pb-12 md:pb-16"
         >
           <div className="container relative mx-auto">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
               className="mx-auto max-w-6xl"
             >
               <BlogFeaturedCard post={featured} />
-            </motion.div>
+            </m.div>
           </div>
         </section>
       )}
@@ -225,7 +226,7 @@ export function BlogHubClient({
                 }
               />
             ) : view === "grid" ? (
-              <motion.ul
+              <m.ul
                 key={`grid-${activeCategory}-${query}-${safePage}`}
                 variants={{
                   hidden: {},
@@ -236,13 +237,13 @@ export function BlogHubClient({
                 className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7"
               >
                 {visible.map((post) => (
-                  <motion.li key={post.slug} variants={fadeUpItem}>
+                  <m.li key={post.slug} variants={fadeUpItem}>
                     <BlogCard post={post} />
-                  </motion.li>
+                  </m.li>
                 ))}
-              </motion.ul>
+              </m.ul>
             ) : (
-              <motion.ul
+              <m.ul
                 key={`list-${activeCategory}-${query}-${safePage}`}
                 variants={{
                   hidden: {},
@@ -253,11 +254,11 @@ export function BlogHubClient({
                 className="flex flex-col gap-3"
               >
                 {visible.map((post) => (
-                  <motion.li key={post.slug} variants={fadeUpItem}>
+                  <m.li key={post.slug} variants={fadeUpItem}>
                     <BlogListItem post={post} />
-                  </motion.li>
+                  </m.li>
                 ))}
-              </motion.ul>
+              </m.ul>
             )}
 
             {/* Pagination — only when there's more than one page */}
@@ -318,19 +319,19 @@ function EmptyState({
   category?: string;
 }) {
   return (
-    <motion.div
+    <m.div
       variants={fadeUpContainer}
       initial="hidden"
       animate="visible"
       className="mx-auto max-w-2xl text-center"
     >
-      <motion.p
+      <m.p
         variants={fadeUpItem}
         className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-subtle"
       >
         Nothing yet
-      </motion.p>
-      <motion.h2
+      </m.p>
+      <m.h2
         variants={fadeUpItem}
         className="mt-4 text-balance font-serif text-h2 italic leading-tight text-ink"
       >
@@ -339,14 +340,14 @@ function EmptyState({
           : category
             ? `Nothing in ${category} yet.`
             : "More content coming soon."}
-      </motion.h2>
-      <motion.p
+      </m.h2>
+      <m.p
         variants={fadeUpItem}
         className="mx-auto mt-4 max-w-prose text-body leading-relaxed text-muted"
       >
         We&apos;re publishing regularly — sign up for the newsletter
         below and the next dispatch lands in your inbox.
-      </motion.p>
-    </motion.div>
+      </m.p>
+    </m.div>
   );
 }

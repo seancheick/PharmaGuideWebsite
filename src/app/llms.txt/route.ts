@@ -1,137 +1,92 @@
-import { getAllPosts } from "@/lib/blog";
-import { CATEGORIES } from "@/lib/blog-types";
-import { CATALOG_SIZE, site } from "@/lib/site";
+import { CATEGORIES, getAllPosts, getCategory, postModified } from "@/lib/blog";
+import { FAQ_ITEMS } from "@/lib/faq";
+import { PAGES, PAGE_KEYS } from "@/lib/pages";
+import { CLINICIANS, PEOPLE, displayName } from "@/lib/people";
+import { absoluteUrl } from "@/lib/schema";
+import { site } from "@/lib/site";
 
 /**
- * /llms.txt — emerging standard for AI crawlers (Perplexity, ChatGPT,
- * Claude, Google AI Overviews, etc.) to discover authoritative content
- * quickly without parsing the full HTML.
+ * /llms.txt — a Markdown index of the site for AI tools (llmstxt.org).
  *
- * Spec: https://llmstxt.org (proposed by Answer.ai, Sep 2024)
+ * Google has said it ignores llms.txt (Search Central, June 2026); some
+ * other AI tools read it. It costs nothing to keep, so it stays — but it
+ * is generated entirely from the page registry, people registry and blog
+ * so it can never say something the site itself doesn't.
  *
- * Format: a single Markdown file at /llms.txt with:
- *   1. Site name (H1)
- *   2. Brief site description (blockquote)
- *   3. Optional sections (H2) listing key URLs as Markdown links,
- *      each with a one-line description
- *
- * AI tools fetch this once per session and use it to know:
- *   • What this site is authoritative about
- *   • Which pages are the highest-quality entry points
- *   • Where to find more depth on specific topics
- *
- * For PharmaGuide's "be the source of truth" SEO/AEO ambition,
- * llms.txt is a low-effort, high-value addition — most sites don't
- * have one yet, so being early gives us a citation edge.
+ * Node runtime: getAllPosts() reads /content/blog via node:fs.
  */
 
-// Node runtime (default) — required because we call getAllPosts()
-// which reads the /content/blog directory via node:fs. Edge runtime
-// would error with "Native module not found: node:fs".
 export const revalidate = 432000; // 5 days
+
+function pageLines(section: "product" | "trust"): string[] {
+  return PAGE_KEYS.filter((key) => PAGES[key].llms?.section === section).map((key) => {
+    const p = PAGES[key];
+    const summary =
+      key === "faq" ? `${FAQ_ITEMS.length} questions — ${p.llms!.summary}` : p.llms!.summary;
+    return `- [${p.label}](${absoluteUrl(p.path)}): ${summary}`;
+  });
+}
 
 export async function GET() {
   const posts = getAllPosts();
 
-  const lines: string[] = [];
+  const lines: string[] = [
+    `# ${site.name}`,
+    "",
+    `> ${site.description} Interaction analysis runs on-device.`,
+    "",
+    "## About PharmaGuide",
+    "",
+    ...pageLines("product"),
+    "",
+    "## Trust and policies",
+    "",
+    ...pageLines("trust"),
+    "",
+  ];
 
-  // ─── Header ────────────────────────────────────────────────────
-  lines.push(`# ${site.name}`);
-  lines.push("");
-  lines.push(
-    `> ${site.description} On-device interaction analysis, evidence-graded by clinicians, across a ${CATALOG_SIZE} product catalog.`
-  );
-  lines.push("");
-
-  // ─── Core pages ────────────────────────────────────────────────
-  lines.push("## About PharmaGuide");
-  lines.push("");
-  lines.push(
-    `- [Home](${site.url}/): What PharmaGuide is and why it exists`
-  );
-  lines.push(
-    `- [Features](${site.url}/features): Six product pillars — interactions, medication-nutrient depletions, ingredient & quality transparency, personal fit, nutrient accumulation tracking, and live FDA recall monitoring`
-  );
-  lines.push(
-    `- [Methodology](${site.url}/methodology): How we source, verify, and ship interaction data — the four primary sources (FDA, NIH, PubMed, professional clinical references), the five-step verification process, the medical advisory team`
-  );
-  lines.push(
-    `- [FAQ](${site.url}/faq): Eleven questions covering what it is, privacy, accuracy, evidence, pricing, special populations, and launch timing`
-  );
-  lines.push("");
-
-  // ─── Trust + legal ─────────────────────────────────────────────
-  lines.push("## Trust and policies");
-  lines.push("");
-  lines.push(
-    `- [Privacy Policy](${site.url}/privacy): What we collect, why, and how to control it. Health data stays on-device, never on our servers`
-  );
-  lines.push(
-    `- [Terms of Service](${site.url}/terms): Eligibility, medical disclaimer, acceptable use. Educational tool, not a substitute for medical advice`
-  );
-  lines.push(
-    `- [HIPAA Statement](${site.url}/hipaa): Where HIPAA actually applies, why we use the Security Rule as a design baseline, what the Healthcare Pros tier will cover`
-  );
-  lines.push(
-    `- [Accessibility](${site.url}/accessibility): WCAG 2.2 AA target, what's in place, what's still owed`
-  );
-  lines.push("");
-
-  // ─── Blog (dynamic) ────────────────────────────────────────────
   if (posts.length > 0) {
-    lines.push("## Articles");
-    lines.push("");
     lines.push(
-      "Evidence-based guides on supplement interactions, medication-nutrient depletion, ingredient quality, and FDA recalls. Reviewed by licensed clinicians."
+      "## Articles",
+      "",
+      "Evidence-based guides on supplement interactions, medication-nutrient depletion, ingredient quality, and FDA recalls. Each lists its author, publication and update dates, and — where a clinician reviewed it — the reviewer.",
+      ""
     );
-    lines.push("");
-
     for (const post of posts) {
-      const cat = CATEGORIES.find((c) => c.id === post.category);
-      const tags = post.tags ? ` · Tags: ${post.tags.slice(0, 5).join(", ")}` : "";
-      const reviewer = post.reviewer ? ` · Reviewed by ${post.reviewer}` : "";
-      lines.push(
-        `- [${post.title}](${site.url}/blog/${post.slug}): ${post.description}${cat ? ` · ${cat.label}` : ""}${reviewer}${tags}`
-      );
+      const parts = [post.description];
+      const cat = getCategory(post.category);
+      if (cat) parts.push(cat.label);
+      parts.push(`By ${displayName(PEOPLE[post.authorId])}`);
+      if (post.reviewerId) parts.push(`Reviewed by ${displayName(PEOPLE[post.reviewerId])}`);
+      parts.push(`Updated ${postModified(post)}`);
+      lines.push(`- [${post.title}](${absoluteUrl(`/blog/${post.slug}`)}): ${parts.join(" · ")}`);
     }
     lines.push("");
   }
 
-  // ─── Categories (topic clusters for crawler discovery) ─────────
-  lines.push("## Topics we cover");
-  lines.push("");
-  for (const cat of CATEGORIES) {
-    lines.push(`- **${cat.label}**: ${cat.description}`);
-  }
-  lines.push("");
-
-  // ─── Authority signals ─────────────────────────────────────────
-  lines.push("## Authority signals");
-  lines.push("");
+  lines.push("## Topics we cover", "");
+  for (const cat of CATEGORIES) lines.push(`- **${cat.label}**: ${cat.description}`);
   lines.push(
-    "- Reviewed by licensed clinicians: Laurie Pham, PharmD (Doctor of Pharmacy) and Miriam Farez, NP (Nurse Practitioner)"
+    "",
+    "## Clinical reviewers",
+    "",
+    ...CLINICIANS.map(
+      (p) => `- [${displayName(p)}](${absoluteUrl(`/about#${p.id}`)}): ${p.jobTitle} — ${p.bio}`
+    ),
+    "",
+    "## Sources",
+    "",
+    "- FDA, NIH Office of Dietary Supplements (ODS), Dietary Supplement Label Database (DSLD), DailyMed, PubMed, Cochrane Library, NCCIH",
+    "",
+    "## Contact",
+    "",
+    `- Email: ${site.email}`,
+    `- Press: ${site.pressEmail}`,
+    `- Location: ${site.city}`,
+    ""
   );
-  lines.push(
-    "- Sources: FDA, NIH Office of Dietary Supplements (ODS), Dietary Supplement Label Database (DSLD), DailyMed, PubMed, Cochrane Library, NCCIH"
-  );
-  lines.push(
-    `- ${CATALOG_SIZE} product catalog reviewed by a licensed PharmD before each release`
-  );
-  lines.push(
-    "- Privacy-first architecture: AES-256 on-device, HIPAA-aligned design, no health-data sale ever"
-  );
-  lines.push("");
 
-  // ─── Contact ──────────────────────────────────────────────────
-  lines.push("## Contact");
-  lines.push("");
-  lines.push(`- Email: ${site.email}`);
-  lines.push(`- Location: ${site.city}`);
-  lines.push("");
-
-  const body = lines.join("\n");
-
-  return new Response(body, {
+  return new Response(lines.join("\n"), {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "public, max-age=432000, s-maxage=432000",

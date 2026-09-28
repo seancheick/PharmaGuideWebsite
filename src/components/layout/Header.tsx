@@ -2,13 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-} from "framer-motion";
+import { AnimatePresence, m, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 import { Logo } from "@/components/shared/Logo";
 import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { nav, site } from "@/lib/site";
@@ -78,7 +72,7 @@ export function Header() {
 
   return (
     <>
-      <motion.header
+      <m.header
         initial={false}
         animate={{
           y: slideY,
@@ -164,12 +158,12 @@ export function Header() {
             </button>
           </div>
         </div>
-      </motion.header>
+      </m.header>
 
       {/* Mobile overlay menu */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
+          <m.div
             id="mobile-menu"
             role="dialog"
             aria-modal="true"
@@ -204,7 +198,7 @@ export function Header() {
 
             <nav aria-label="Mobile main" className="flex flex-col gap-5 px-7 pt-8">
               {nav.map((item, i) => (
-                <motion.div
+                <m.div
                   key={item.href}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -220,10 +214,10 @@ export function Header() {
                   >
                     {item.label}
                   </Link>
-                </motion.div>
+                </m.div>
               ))}
 
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
@@ -239,9 +233,9 @@ export function Header() {
                   Join the beta
                   <span aria-hidden="true">→</span>
                 </WaitlistLink>
-              </motion.div>
+              </m.div>
             </nav>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

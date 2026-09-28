@@ -1,17 +1,18 @@
-import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FAQClient } from "@/components/faq/FAQClient";
 import { NewsletterCTA } from "@/components/faq/NewsletterCTA";
 import { RelatedLinks } from "@/components/shared/RelatedLinks";
-import { FAQ_ITEMS } from "@/lib/faq";
-import { site } from "@/lib/site";
+import { FAQ_ITEMS, faqPlainText } from "@/lib/faq";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { pageMetadata, pageSchema } from "@/lib/pages";
 
 /**
  * /faq — Frequently Asked Questions page.
  *
- * Server-rendered with full metadata + FAQPage JSON-LD for Google rich
- * results. The interactive accordion is the only client island.
+ * Server-rendered. The page itself is an FAQPage node (lib/pages.ts)
+ * whose questions match the visible accordion word for word. The
+ * interactive accordion is the only client island.
  *
  * Layout:
  *   • Compact hero (mono eyebrow + italic-serif punchline + 1 subhead)
@@ -28,90 +29,21 @@ import { site } from "@/lib/site";
 
 export const revalidate = 432000; // 5 days
 
-export const metadata: Metadata = {
-  title: "FAQ",
-  description:
-    "Frequently asked questions about PharmaGuide — what it is, how it works, privacy, evidence, and when it ships.",
-  alternates: {
-    canonical: `${site.url}/faq`,
-  },
-  openGraph: {
-    title: "FAQ",
-    description:
-      "Frequently asked questions about PharmaGuide — what it is, how it works, privacy, evidence, and when it ships.",
-    url: `${site.url}/faq`,
-    siteName: site.name,
-    locale: site.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "FAQ",
-    description:
-      "Frequently asked questions about PharmaGuide — what it is, how it works, privacy, evidence, and when it ships.",
-  },
-};
+export const metadata = pageMetadata("faq");
 
 export default function FAQPage() {
-  // FAQPage JSON-LD — Google rich-result eligibility for expandable
-  // Q&A snippets in search.
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQ_ITEMS.map((item) => ({
-      "@type": "Question",
-      name: item.q,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.a,
-      },
-    })),
-  };
-
-  // Breadcrumb JSON-LD — helps Google show breadcrumb trails in
-  // search results AND signals page hierarchy to AI crawlers.
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: site.url,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "FAQ",
-        item: `${site.url}/faq`,
-      },
-    ],
-  };
-
-  // WebPage schema — gives crawlers a clean structured anchor for
-  // the page itself (separate from the embedded FAQPage entity).
-  const webPageJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": `${site.url}/faq#webpage`,
-    url: `${site.url}/faq`,
-    name: "FAQ",
-    description:
-      "Frequently asked questions about PharmaGuide — what it is, how it works, privacy, evidence, and when it ships.",
-    isPartOf: {
-      "@type": "WebSite",
-      "@id": `${site.url}#website`,
-      name: site.name,
-      url: site.url,
+  // Answers are rendered on the page (FAQClient keeps every panel in the
+  // DOM), so this markup describes visible content. Google no longer shows
+  // FAQ rich results (May 2026); the markup stays for other consumers.
+  const schema = pageSchema("faq", {
+    extra: {
+      mainEntity: FAQ_ITEMS.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: faqPlainText(item) },
+      })),
     },
-    inLanguage: site.lang,
-    breadcrumb: { "@id": `${site.url}/faq#breadcrumb` },
-    primaryImageOfPage: {
-      "@type": "ImageObject",
-      url: `${site.url}/opengraph-image`,
-    },
-  };
+  });
 
   return (
     <>
@@ -195,7 +127,7 @@ export default function FAQPage() {
               label: "Blog",
               title: "Long-form guides",
               description:
-                "Every claim cited. Every post reviewed by a clinical pharmacist before it ships.",
+                "Every claim cited and dated. Clinically reviewed posts name the clinician who checked them.",
               href: "/blog",
             },
           ]}
@@ -211,30 +143,7 @@ export default function FAQPage() {
         <NewsletterCTA />
       </main>
       <Footer />
-
-      {/* Structured data for Google + AI crawlers.
-          - FAQPage: rich-result eligibility for expandable Q&A
-          - BreadcrumbList: search-result breadcrumb trail
-          - WebPage: clean page-level entity
-          Emitted as separate <script> tags (Google's preference). */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        id="breadcrumb-schema"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            ...breadcrumbJsonLd,
-            "@id": `${site.url}/faq#breadcrumb`,
-          }),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
-      />
+      <JsonLd nodes={schema} />
     </>
   );
 }

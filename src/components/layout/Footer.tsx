@@ -6,6 +6,7 @@ import {
   footerTrustBadges,
   site,
 } from "@/lib/site";
+import { LEAD_REVIEWER, displayName } from "@/lib/people";
 import { BackToTop } from "./BackToTop";
 
 /**
@@ -131,9 +132,9 @@ const TRUST_ICON_MAP = {
 } as const;
 
 const SOCIAL_LINKS = [
-  { label: "X (Twitter)", href: "https://x.com/pharmaguideai", Icon: IconX },
-  { label: "LinkedIn", href: "https://www.linkedin.com/company/pharmaguideai", Icon: IconLinkedIn },
-  { label: "Instagram", href: "https://www.instagram.com/pharmaguide.ai", Icon: IconInstagram },
+  { label: "X (Twitter)", href: site.social.x, Icon: IconX },
+  { label: "LinkedIn", href: site.social.linkedin, Icon: IconLinkedIn },
+  { label: "Instagram", href: site.social.instagram, Icon: IconInstagram },
 ] as const;
 
 export function Footer() {
@@ -310,11 +311,11 @@ export function Footer() {
                 <time dateTime={lastReviewed} className="text-background/70">
                   {lastReviewed}
                 </time>{" "}
-                <span className="mx-1 text-white/15">·</span> by Laurie Pham, PharmD
+                <span className="mx-1 text-white/15">·</span> by {displayName(LEAD_REVIEWER)}
               </p>
               <div className="flex items-center gap-4">
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-background/60">
-                  © {year} {site.name} Inc.
+                  © {year} {site.legalName}
                 </p>
                 <span className="text-white/15">·</span>
                 <Link

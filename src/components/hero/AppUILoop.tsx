@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { transitions } from "@/lib/tokens";
 import { cn } from "@/lib/utils";
 
@@ -146,7 +146,7 @@ export function AppUILoop({ searchText, resultFor, stack, showVerdict = false }:
       <div className="px-4">
         <AnimatePresence>
           {resultFor && (
-            <motion.div
+            <m.div
               key={resultFor}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
@@ -163,7 +163,7 @@ export function AppUILoop({ searchText, resultFor, stack, showVerdict = false }:
                 </span>
               </div>
               <p className="mt-0.5 text-[10.5px] text-muted">Found in catalog</p>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>
@@ -172,7 +172,7 @@ export function AppUILoop({ searchText, resultFor, stack, showVerdict = false }:
       <div className="px-4 pt-3">
         <AnimatePresence>
           {stack.length > 0 && (
-            <motion.div
+            <m.div
               key="stack"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -185,7 +185,7 @@ export function AppUILoop({ searchText, resultFor, stack, showVerdict = false }:
               <div className="mt-1.5 space-y-1.5">
                 <AnimatePresence>
                   {stack.map((item) => (
-                    <motion.div
+                    <m.div
                       key={item.id}
                       layout
                       initial={{ opacity: 0, y: 8, scale: 0.98 }}
@@ -201,11 +201,11 @@ export function AppUILoop({ searchText, resultFor, stack, showVerdict = false }:
                       <span className="font-mono text-[9.5px] uppercase tracking-wider text-subtle">
                         {item.dose}
                       </span>
-                    </motion.div>
+                    </m.div>
                   ))}
                 </AnimatePresence>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>
@@ -214,7 +214,7 @@ export function AppUILoop({ searchText, resultFor, stack, showVerdict = false }:
       <div className="px-4 pt-2">
         <AnimatePresence>
           {showVerdict && (
-            <motion.div
+            <m.div
               key="verdict"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
@@ -236,7 +236,7 @@ export function AppUILoop({ searchText, resultFor, stack, showVerdict = false }:
               <p className="mt-1 text-[10.5px] leading-snug text-muted">
                 Separate doses by at least 4 hours
               </p>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>

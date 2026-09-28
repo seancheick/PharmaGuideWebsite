@@ -1,9 +1,9 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { m } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
 import { fadeUpContainer, fadeUpItem } from "@/lib/tokens";
-import { FAQ_GROUPS, FAQ_ITEMS, type FAQGroup } from "@/lib/faq";
+import { FAQ_GROUPS, FAQ_ITEMS, faqPlainText, type FAQGroup } from "@/lib/faq";
 import { cn } from "@/lib/utils";
 
 /**
@@ -27,6 +27,14 @@ import { cn } from "@/lib/utils";
  * stay rendered as labels so users see WHERE matches live.
  *
  * Multi-open by default — users can keep multiple answers visible.
+ *
+ * Every answer is always in the DOM. Collapsed panels are 0fr grid rows
+ * (animated with the site's emphasized ease) and `inert`, so they're
+ * hidden from keyboard and screen readers but still indexed by Google
+ * and readable by AI crawlers that don't run JavaScript. The previous
+ * version mounted an answer only on click, so no crawler ever saw one.
+ *
+ * Deep links: /faq#faq-product-P01 opens and scrolls to that question.
  */
 
 const GROUP_PREFIX: Record<FAQGroup, string> = {
@@ -38,6 +46,25 @@ const GROUP_PREFIX: Record<FAQGroup, string> = {
 export function FAQClient() {
   const [openSet, setOpenSet] = useState<Set<string>>(new Set());
   const [query, setQuery] = useState("");
+
+  // Open the question named in the URL hash — on arrival (shared deep
+  // link) and whenever the hash changes in-page.
+  useEffect(() => {
+    const openFromHash = () => {
+      const key = window.location.hash.replace(/^#faq-/, "");
+      if (!key) return;
+      setOpenSet((prev) => new Set(prev).add(key));
+      document.getElementById(`faq-${key}`)?.scrollIntoView({ block: "start" });
+    };
+    // A timer, not requestAnimationFrame: rAF never fires in a background
+    // tab, so a link opened in one would arrive with its answer closed.
+    const timer = window.setTimeout(openFromHash, 0);
+    window.addEventListener("hashchange", openFromHash);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("hashchange", openFromHash);
+    };
+  }, []);
 
   const normalized = query.trim().toLowerCase();
 
@@ -53,7 +80,7 @@ export function FAQClient() {
         ? items.filter(
             (it) =>
               it.q.toLowerCase().includes(normalized) ||
-              it.a.toLowerCase().includes(normalized)
+              faqPlainText(it).toLowerCase().includes(normalized)
           )
         : items;
       return { ...g, items: filtered };
@@ -72,7 +99,7 @@ export function FAQClient() {
   };
 
   return (
-    <motion.div
+    <m.div
       variants={fadeUpContainer}
       initial="hidden"
       whileInView="visible"
@@ -82,7 +109,7 @@ export function FAQClient() {
       {/* Search bar — sticks just below the page header at lg+ so the
           filter stays reachable as users scroll into Privacy and
           Launch sections. */}
-      <motion.div
+      <m.div
         variants={fadeUpItem}
         className="z-10 -mx-4 mb-8 bg-background/80 px-4 py-3 backdrop-blur-md md:sticky md:top-24"
       >
@@ -117,7 +144,7 @@ export function FAQClient() {
             {totalMatches} match{totalMatches === 1 ? "" : "es"} for &ldquo;{query}&rdquo;
           </p>
         )}
-      </motion.div>
+      </m.div>
 
       {grouped.map((group, gIdx) => {
         if (group.items.length === 0 && normalized) return null;
@@ -147,7 +174,12 @@ export function FAQClient() {
                 const buttonId = `faq-q-${key}`;
                 const panelId = `faq-a-${key}`;
                 return (
-                  <motion.li key={key} variants={fadeUpItem} className="group">
+                  <m.li
+                    key={key}
+                    id={`faq-${key}`}
+                    variants={fadeUpItem}
+                    className="group scroll-mt-40"
+                  >
             {/* h2 (not h3) — page hero is h1, so questions need to be
                 h2 to keep heading order proper for screen readers and
                 axe-core. Visual size unchanged.                       */}
@@ -181,29 +213,28 @@ export function FAQClient() {
                       </button>
                     </h2>
 
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <motion.section
-                          key="panel"
-                          id={panelId}
-                          role="region"
-                          aria-labelledby={buttonId}
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{
-                            height: { duration: 0.32, ease: [0.32, 0.72, 0, 1] },
-                            opacity: { duration: 0.22, ease: [0.32, 0.72, 0, 1] },
-                          }}
-                          className="overflow-hidden"
-                        >
-                          <div className="max-w-prose pb-7 pr-10 text-body leading-[1.65] text-muted">
-                            {renderInline(item.body)}
-                          </div>
-                        </motion.section>
+                    <div
+                      id={panelId}
+                      role="region"
+                      aria-labelledby={buttonId}
+                      inert={!isOpen}
+                      className={cn(
+                        "grid transition-[grid-template-rows] duration-[380ms] ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
+                        isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                       )}
-                    </AnimatePresence>
-                  </motion.li>
+                    >
+                      <div className="overflow-hidden">
+                        <div
+                          className={cn(
+                            "max-w-prose pb-7 pr-10 text-body leading-[1.65] text-muted transition-[opacity,transform] duration-[380ms] ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
+                            isOpen ? "translate-y-0 opacity-100" : "-translate-y-1.5 opacity-0"
+                          )}
+                        >
+                          {renderInline(item.body)}
+                        </div>
+                      </div>
+                    </div>
+                  </m.li>
                 );
               })}
             </ul>
@@ -217,7 +248,7 @@ export function FAQClient() {
           No matches for &ldquo;{query}&rdquo;. Try fewer or different terms.
         </p>
       )}
-    </motion.div>
+    </m.div>
   );
 }
 

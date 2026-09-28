@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, m } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { WaitlistLink } from "@/components/shared/WaitlistLink";
@@ -146,21 +146,21 @@ export function RealLifeMoments() {
     >
       {/* Header */}
       <div className="container mx-auto">
-        <motion.div
+        <m.div
           variants={fadeUpContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
           className="max-w-3xl"
         >
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
           >
             Built for real life
-          </motion.p>
+          </m.p>
 
-          <motion.h2
+          <m.h2
             id="moments-heading"
             variants={fadeUpItem}
             className="mt-5 text-balance text-display-lg text-ink"
@@ -168,16 +168,16 @@ export function RealLifeMoments() {
             The moments people don&apos;t realize
             <br />
             <span className="font-serif italic text-accent">they need this.</span>
-          </motion.h2>
+          </m.h2>
 
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="mt-6 max-w-prose text-body-lg leading-relaxed text-muted"
           >
             From morning prescriptions to trending supplements, PharmaGuide catches the combinations
             people usually miss.
-          </motion.p>
-        </motion.div>
+          </m.p>
+        </m.div>
       </div>
 
       {/* Carousel rail — margin-left positions the first card at the
@@ -316,7 +316,7 @@ const MomentCard = ({
   };
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       layout
       transition={{ duration: 0.7, ease: [0.32, 0.72, 0.24, 1] }}
@@ -413,7 +413,7 @@ const MomentCard = ({
             the insights aside on desktop. */}
         <AnimatePresence>
           {isOpen && (
-            <motion.div
+            <m.div
               key="detail"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -444,7 +444,7 @@ const MomentCard = ({
                   />
                 </svg>
               </WaitlistLink>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
 
@@ -479,7 +479,7 @@ const MomentCard = ({
           Two glass cards: member quote + PharmaGuide flag. */}
       <AnimatePresence>
         {isOpen && (
-          <motion.aside
+          <m.aside
             key="insights"
             initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
@@ -549,10 +549,10 @@ const MomentCard = ({
                 </span>
               </div>
             </div>
-          </motion.aside>
+          </m.aside>
         )}
       </AnimatePresence>
-    </motion.div>
+    </m.div>
   );
 };
 MomentCard.displayName = "MomentCard";
@@ -570,7 +570,7 @@ const MomentSheet = ({ moment, onClose }: { moment: Moment; onClose: () => void 
   const sev = SEV_STYLES[moment.flag.severity];
 
   return (
-    <motion.div
+    <m.div
       // z above the fixed Header (z-300) and its mobile menu (z-400) so the
       // full-screen sheet covers the bar and its close × is tappable.
       className="fixed inset-0 z-[500] md:hidden"
@@ -592,7 +592,7 @@ const MomentSheet = ({ moment, onClose }: { moment: Moment; onClose: () => void 
       />
 
       {/* Sheet — slides up, covers the viewport */}
-      <motion.div
+      <m.div
         initial={{ y: "100%" }}
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
@@ -723,8 +723,8 @@ const MomentSheet = ({ moment, onClose }: { moment: Moment; onClose: () => void 
             </div>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 };
 MomentSheet.displayName = "MomentSheet";

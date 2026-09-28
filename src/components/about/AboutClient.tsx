@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { WaitlistLink } from "@/components/shared/WaitlistLink";
+import { FOUNDER, TEAM, displayName } from "@/lib/people";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 
 /**
@@ -108,32 +109,7 @@ const VALUES = [
   },
 ];
 
-const TEAM = [
-  {
-    initials: "SC",
-    photo: "/team/sean-cheick.webp",
-    name: "Sean Cheick Baradji",
-    role: "Founder & CEO",
-    org: "B&Br Technology · Boston, MA",
-    note: "Built PharmaGuide after watching family members navigate medication and supplement complexity without the tools to do it safely.",
-  },
-  {
-    initials: "LP",
-    photo: "/team/laurie-pham.webp",
-    name: "Laurie Pham, PharmD",
-    role: "Doctor of Pharmacy · Clinical Review",
-    org: "15+ years pharmacovigilance",
-    note: "Reviews interaction guidance before release. Owns the clinical accuracy bar — drug-supplement, supplement-supplement, and dose-summation reasoning.",
-  },
-  {
-    initials: "MF",
-    photo: "/team/miriam-farez.webp",
-    name: "Miriam Farez, NP",
-    role: "Nurse Practitioner · Patient-Education Review",
-    org: "Integrative health practice",
-    note: "Patient-education review. Reads every post and warning from a healthcare-provider angle: is this clear, accessible, and actionable?",
-  },
-];
+// Team cards read lib/people.ts — the same records the bylines and schema use.
 
 // Tiny inline-bold renderer so quotes can have **emphasis** without
 // a full markdown dependency. Same pattern used in FAQClient + LegalPage.
@@ -170,44 +146,44 @@ export function AboutClient() {
         </div>
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             animate="visible"
             className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center md:gap-9"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               About
-            </motion.p>
+            </m.p>
 
-            <motion.h1
+            <m.h1
               id="about-hero-heading"
               variants={fadeUpItem}
               className="text-balance text-display-lg leading-[1.04] text-ink"
             >
               The supplement industry was built to sell.{" "}
               <span className="font-serif italic text-accent">Not always to protect you.</span>
-            </motion.h1>
+            </m.h1>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
               Most dietary supplements enter the US market without FDA pre-market safety testing.
               The catalog is enormous, the labels are confusing, and when something gets recalled,
               you&apos;re usually the last to find out.
-            </motion.p>
+            </m.p>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose font-serif text-h3 italic leading-snug text-ink"
             >
               We built PharmaGuide because this shouldn&apos;t be normal.
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
         </div>
       </section>
 
@@ -220,29 +196,29 @@ export function AboutClient() {
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               01 · Why we built it
-            </motion.p>
-            <motion.h2
+            </m.p>
+            <m.h2
               variants={fadeUpItem}
               id="about-founder-heading"
               className="text-balance text-display-md text-ink"
             >
               This started <span className="font-serif italic">personal.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -255,7 +231,7 @@ export function AboutClient() {
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
             {FOUNDER_STORY.map((story) => (
-              <motion.li
+              <m.li
                 key={story.quote}
                 variants={fadeUpItem}
                 className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
@@ -266,11 +242,11 @@ export function AboutClient() {
                 <p className="text-body leading-relaxed text-muted">
                   {renderInlineBold(story.body)}
                 </p>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -278,47 +254,47 @@ export function AboutClient() {
             className="mx-auto mt-10 flex items-center justify-center gap-3 md:mt-12"
           >
             <Image
-              src="/team/sean-cheick.webp"
-              alt="Sean Cheick Baradji"
+              src={FOUNDER.photo}
+              alt={FOUNDER.name}
               width={64}
               height={64}
               quality={95}
               className="h-8 w-8 rounded-full object-cover ring-1 ring-border"
             />
             <p className="font-mono text-eyebrow uppercase text-subtle">
-              Sean Cheick Baradji, Founder &amp; CEO
+              {FOUNDER.name}, {FOUNDER.role}
             </p>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ 02 INDUSTRY LIES ━━━━━━━━━━━━━━━━━━ */}
       <section aria-labelledby="about-lies-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               02 · What supplement labels don&apos;t always make clear
-            </motion.p>
-            <motion.h2
+            </m.p>
+            <m.h2
               variants={fadeUpItem}
               id="about-lies-heading"
               className="text-balance text-display-md text-ink"
             >
               Four common assumptions.{" "}
               <span className="font-serif italic">Worth a closer look.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -331,7 +307,7 @@ export function AboutClient() {
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
             {INDUSTRY_LIES.map((item) => (
-              <motion.li
+              <m.li
                 key={item.lie}
                 variants={fadeUpItem}
                 className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
@@ -374,16 +350,16 @@ export function AboutClient() {
                 >
                   Source · {item.source.label} <span aria-hidden="true">→</span>
                 </a>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
 
           {/* Stat disambiguation — the homepage cites 4,100 daily ER
               visits across all drug-related events; this page cites
               23,000 yearly from supplements specifically. A skeptic
               doing the math would notice; we name the difference
               explicitly so the page reads as honest, not loose. */}
-          <motion.p
+          <m.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -393,7 +369,7 @@ export function AboutClient() {
             The 23,000 figure is supplement-specific. Separately, the homepage cites 4,100+ daily ER
             visits across all medication-related events — a broader category that includes
             prescription interactions.
-          </motion.p>
+          </m.p>
         </div>
       </section>
 
@@ -406,38 +382,38 @@ export function AboutClient() {
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               03 · The gap we&apos;re closing
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="about-gap-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               Two systems. <span className="font-serif italic">Wildly different rules.</span>
-            </motion.h2>
+            </m.h2>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body leading-relaxed text-muted"
             >
               Compare what happens when a prescription drug is recalled vs. when a supplement is
               recalled. The gap is the entire reason PharmaGuide exists.
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
 
-          <motion.div
+          <m.div
             variants={{
               hidden: {},
               visible: {
@@ -450,7 +426,7 @@ export function AboutClient() {
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
             {/* Drugs — what works */}
-            <motion.div
+            <m.div
               variants={fadeUpItem}
               className="rounded-2xl border border-severity-safe/30 bg-severity-safe/[0.04] p-7 shadow-sm md:p-8"
             >
@@ -476,10 +452,10 @@ export function AboutClient() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </m.div>
 
             {/* Supplements — what's broken */}
-            <motion.div
+            <m.div
               variants={fadeUpItem}
               className="rounded-2xl border border-severity-avoid/30 bg-severity-avoid/[0.04] p-7 shadow-sm md:p-8"
             >
@@ -516,10 +492,10 @@ export function AboutClient() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
-          <motion.p
+          <m.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -527,37 +503,37 @@ export function AboutClient() {
             className="mx-auto mt-12 max-w-2xl text-balance text-center font-serif text-body-lg italic leading-relaxed text-ink md:mt-14"
           >
             We built PharmaGuide to close this gap.
-          </motion.p>
+          </m.p>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ 04 WHAT WE BELIEVE ━━━━━━━━━━━━━━━━━━ */}
       <section aria-labelledby="about-values-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               04 · What we believe
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="about-values-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               Four principles. <span className="font-serif italic">Non-negotiable.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -570,7 +546,7 @@ export function AboutClient() {
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
             {VALUES.map((v) => (
-              <motion.li
+              <m.li
                 key={v.num}
                 variants={fadeUpItem}
                 className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
@@ -580,45 +556,46 @@ export function AboutClient() {
                 </span>
                 <h3 className="font-serif text-h2 italic leading-tight text-ink">{v.title}</h3>
                 <p className="text-body leading-relaxed text-muted">{v.body}</p>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ 05 TEAM ━━━━━━━━━━━━━━━━━━ */}
       <section
+        id="team"
         aria-labelledby="about-team-heading"
-        className="section-y-sm relative bg-surface-raised/40"
+        className="section-y-sm relative scroll-mt-24 bg-surface-raised/40"
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               05 · The team
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="about-team-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               Small team. <span className="font-serif italic text-accent">Sharp focus.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -630,17 +607,18 @@ export function AboutClient() {
             viewport={{ once: true, margin: "-10%" }}
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-3 md:gap-6"
           >
-            {TEAM.map((m, i) => (
-              <motion.li
-                key={m.name}
+            {TEAM.map((person, i) => (
+              <m.li
+                key={person.id}
+                id={person.id}
                 variants={fadeUpItem}
-                className={`flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8 ${i === 0 ? "md:col-span-3 lg:col-span-1" : ""}`}
+                className={`flex scroll-mt-28 flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm transition-[border-color,box-shadow] duration-slow ease-smooth target:border-accent/40 target:shadow-glow md:p-8 ${i === 0 ? "md:col-span-3 lg:col-span-1" : ""}`}
               >
                 <div className="flex items-center gap-4">
-                  {m.photo ? (
+                  {person.photo ? (
                     <Image
-                      src={m.photo}
-                      alt={m.name}
+                      src={person.photo}
+                      alt={person.name}
                       width={112}
                       height={112}
                       quality={95}
@@ -651,23 +629,23 @@ export function AboutClient() {
                       aria-hidden="true"
                       className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent text-background"
                     >
-                      <span className="font-serif text-h3 italic">{m.initials}</span>
+                      <span className="font-serif text-h3 italic">{person.initials}</span>
                     </span>
                   )}
                   <div className="min-w-0">
-                    <p className="font-serif text-h3 italic leading-tight text-ink">{m.name}</p>
-                    <p className="font-mono text-eyebrow uppercase text-subtle">{m.role}</p>
+                    <p className="font-serif text-h3 italic leading-tight text-ink">{displayName(person)}</p>
+                    <p className="font-mono text-eyebrow uppercase text-subtle">{person.role}</p>
                   </div>
                 </div>
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-foreground/65">
-                  {m.org}
+                  {person.context}
                 </p>
-                <p className="text-body-sm leading-relaxed text-muted">{m.note}</p>
-              </motion.li>
+                <p className="text-body-sm leading-relaxed text-muted">{person.bio}</p>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
 
-          <motion.p
+          <m.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -675,14 +653,14 @@ export function AboutClient() {
             className="mx-auto mt-10 max-w-2xl text-balance text-center font-serif text-body-lg italic leading-relaxed text-ink md:mt-14"
           >
             Boston · Cambridge medical ecosystem.
-          </motion.p>
+          </m.p>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ CTA ━━━━━━━━━━━━━━━━━━ */}
       <section aria-label="Join us" className="section-y-sm relative">
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
@@ -706,7 +684,7 @@ export function AboutClient() {
                 <span aria-hidden="true">→</span>
               </WaitlistLink>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </section>
     </div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import type { BlogPost } from "@/lib/blog-types";
+import type { BlogCardPost } from "@/lib/blog-types";
 import { formatBlogDate, getCategory } from "@/lib/blog-types";
+import { PEOPLE, displayName } from "@/lib/people";
 import { BlogCardCover } from "./BlogCardCover";
 
 /**
@@ -19,7 +20,7 @@ import { BlogCardCover } from "./BlogCardCover";
  * accent. Image scales 1.04 (handled by BlogCardCover's group-hover).
  */
 
-export function BlogListItem({ post }: { post: BlogPost }) {
+export function BlogListItem({ post }: { post: BlogCardPost }) {
   const cat = getCategory(post.category);
 
   return (
@@ -63,7 +64,7 @@ export function BlogListItem({ post }: { post: BlogPost }) {
 
         {/* Meta strip — author + read time */}
         <div className="flex items-center gap-3 pt-1 text-body-sm text-muted">
-          <span className="text-foreground/85">{post.author}</span>
+          <span className="text-foreground/85">{displayName(PEOPLE[post.authorId])}</span>
           <span aria-hidden="true" className="text-border-strong">·</span>
           <span className="font-mono text-[10.5px] uppercase tracking-[0.12em]">
             {post.readTime}

@@ -1,103 +1,33 @@
 import type { MetadataRoute } from "next";
-import { getAllPosts } from "@/lib/blog";
+import { getAllPosts, postModified } from "@/lib/blog";
+import { PAGE_KEYS, pageSitemapEntry } from "@/lib/pages";
 import { site } from "@/lib/site";
 
 /**
- * Auto-generated sitemap.xml. Add static routes manually below;
- * blog posts are added dynamically by reading /content/blog at
- * build time via getAllPosts.
+ * /sitemap.xml — every registered page (lib/pages.ts) plus every post.
  *
- * Lives at /sitemap.xml — referenced from robots.ts.
+ * `lastmod` is only emitted when we know a real content date. Stamping
+ * every URL with the build time (the old behaviour) makes the dates
+ * useless, and Google stops trusting a site's lastmod altogether — which
+ * would hide the updates that matter, like a revised article.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const posts = getAllPosts();
+  const latestPost = posts.map(postModified).sort().at(-1);
 
-  // Dynamic blog post entries — one per .mdx file in /content/blog
-  const blogPostEntries: MetadataRoute.Sitemap = getAllPosts().map((post) => ({
+  const pages = PAGE_KEYS.map((key) =>
+    // Home and the blog hub list the newest articles, so they change
+    // when an article does.
+    pageSitemapEntry(key, key === "home" || key === "blog" ? latestPost : undefined)
+  );
+
+  const articles: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${site.url}/blog/${post.slug}`,
-    lastModified: new Date(post.date),
+    lastModified: new Date(postModified(post)),
     changeFrequency: "monthly",
-    priority: 0.6,
+    priority: 0.7,
+    ...(post.image ? { images: [`${site.url}${post.image}`] } : {}),
   }));
 
-  return [
-    {
-      url: site.url,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `${site.url}/features`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.95,
-    },
-    {
-      url: `${site.url}/methodology`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${site.url}/about`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${site.url}/careers`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${site.url}/press`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${site.url}/blog`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    ...blogPostEntries,
-    {
-      url: `${site.url}/faq`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${site.url}/privacy`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${site.url}/terms`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${site.url}/hipaa`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${site.url}/accessibility`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    // Future routes will be added here:
-    // { url: `${site.url}/how-it-works`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    // { url: `${site.url}/methodology`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    // { url: `${site.url}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    // { url: `${site.url}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
-  ];
+  return [...pages, ...articles];
 }

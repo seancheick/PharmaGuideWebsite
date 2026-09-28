@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NewsletterCTA } from "@/components/faq/NewsletterCTA";
 import { BlogHubClient } from "@/components/blog/BlogHubClient";
 import { EditorialStandards } from "@/components/blog/EditorialStandards";
-import { CATEGORIES, getAllPosts, getFeaturedPost } from "@/lib/blog";
-import { site } from "@/lib/site";
+import { CATEGORIES, getAllPosts, getFeaturedPost, toCardPost } from "@/lib/blog";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { pageMetadata, pageSchema } from "@/lib/pages";
+import { absoluteUrl } from "@/lib/schema";
 
 /**
  * /blog — the hub.
@@ -25,86 +26,24 @@ import { site } from "@/lib/site";
 
 export const revalidate = 432000; // 5 days
 
-const description =
-  "Evidence-based guides on supplement interactions, medication-nutrient depletion, ingredient quality, and the recalls that don't make headlines. Reviewed by licensed clinicians.";
-
-export const metadata: Metadata = {
-  title: "Blog",
-  description,
-  alternates: { canonical: `${site.url}/blog` },
-  openGraph: {
-    title: `Blog · ${site.name}`,
-    description,
-    url: `${site.url}/blog`,
-    siteName: site.name,
-    locale: site.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `Blog · ${site.name}`,
-    description,
-  },
-};
+export const metadata = pageMetadata("blog");
 
 export default function BlogHubPage() {
   const posts = getAllPosts();
   const featured = getFeaturedPost();
-
-  // Blog schema — gives crawlers a structured anchor for the hub
-  const blogJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Blog",
-    "@id": `${site.url}/blog#blog`,
-    name: "PharmaGuide Blog",
-    description,
-    url: `${site.url}/blog`,
-    inLanguage: site.lang,
-    publisher: {
-      "@type": "Organization",
-      name: site.name,
-      url: site.url,
-      logo: {
-        "@type": "ImageObject",
-        url: `${site.url}/icon2.png`,
+  const schema = pageSchema("blog", {
+    extra: {
+      mainEntity: {
+        "@type": "ItemList",
+        itemListElement: posts.map((p, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          url: absoluteUrl(`/blog/${p.slug}`),
+          name: p.title,
+        })),
       },
     },
-    blogPost: posts.map((p) => ({
-      "@type": "BlogPosting",
-      "@id": `${site.url}/blog/${p.slug}`,
-      headline: p.title,
-      description: p.description,
-      url: `${site.url}/blog/${p.slug}`,
-      datePublished: p.date,
-      dateModified: p.updatedAt ?? p.date,
-      author: { "@type": "Person", name: p.author },
-      ...(p.reviewer
-        ? {
-            reviewedBy: { "@type": "Person", name: p.reviewer },
-          }
-        : {}),
-    })),
-  };
-
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "@id": `${site.url}/blog#breadcrumb`,
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: site.url,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Blog",
-        item: `${site.url}/blog`,
-      },
-    ],
-  };
+  });
 
   return (
     <>
@@ -158,8 +97,8 @@ export default function BlogHubPage() {
 
         {/* Hub interactive area (featured + filter + grid) */}
         <BlogHubClient
-          posts={posts}
-          featured={featured}
+          posts={posts.map(toCardPost)}
+          featured={featured && toCardPost(featured)}
           categories={CATEGORIES}
         />
 
@@ -172,16 +111,7 @@ export default function BlogHubPage() {
         <NewsletterCTA />
       </main>
       <Footer />
-
-      {/* Structured data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd nodes={schema} />
     </>
   );
 }

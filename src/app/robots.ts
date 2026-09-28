@@ -35,7 +35,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/preview/"],
       },
     ],
+    // No `host:` line — that directive was Yandex-only and is obsolete.
     sitemap: `${site.url}/sitemap.xml`,
-    host: site.url,
   };
 }

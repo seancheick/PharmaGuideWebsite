@@ -1,107 +1,56 @@
-# SEO + GEO Checklist
+# SEO + AI-search system
 
-> Goal: Rank for high-intent supplement-interaction queries. Be discoverable
-> in AI answer engines (Google AI Overviews, Perplexity, ChatGPT search).
+> Goal: rank for high-intent supplement-interaction queries and be citable by
+> AI answer engines (Google AI Overviews / AI Mode, ChatGPT search, Perplexity,
+> Claude). Last audited 2026-09-28.
 
-## ✅ Foundation (done in Phase 0)
+## One system — where each fact lives
 
-- [x] `metadataBase` URL configured
-- [x] Title template (`%s · PharmaGuide`)
-- [x] Description with primary keywords
-- [x] Keywords field
-- [x] OpenGraph (type: website, locale, image, title, description)
-- [x] Twitter card (summary_large_image)
-- [x] Robots directives (index, follow, max-image-preview: large)
-- [x] Canonical URL (`/`)
-- [x] `sitemap.ts` auto-generates `/sitemap.xml`
-- [x] `robots.ts` auto-generates `/robots.txt`
-- [x] `manifest.ts` for PWA / Add to Home
-- [x] JSON-LD Organization schema in layout
-- [x] `lang="en"` on `<html>`
-- [x] Theme color metadata for browser chrome
+| Fact | Owner | Read by |
+|---|---|---|
+| Company facts (name, legal name, parent company, founding, address, emails, socials) | `src/lib/site.ts` | footer, press, Organization schema, llms.txt |
+| People (founder, clinicians: credentials, bios, photos) | `src/lib/people.ts` | About, Press, Methodology, blog bylines, ClinicianBadge, Person schema, llms.txt, OG cards |
+| Static pages (title, description, share-card copy, sitemap priority, llms summary) | `src/lib/pages.ts` | `pageMetadata()`, `pageSchema()`, `/og/page/[key]`, sitemap, llms.txt |
+| Metadata (title, canonical, OG/Twitter incl. images, RSS link) | `src/lib/seo.ts` `buildMetadata()` | every route |
+| Structured data | `src/lib/schema.ts` | root layout emits Organization + WebSite + Persons once; pages emit WebPage + breadcrumb + their own entity and reference the rest by `@id` |
+| Share images | `src/lib/og.tsx` | `/og/page/[key]`, `/og/post/[slug]` (static at build) |
+| FAQ answers | `src/lib/faq.ts` (`body`; `faqPlainText()` derives the schema text) | FAQ page + FAQPage schema |
 
-## 🔜 Per-page metadata
+## Adding things
 
-When adding new routes, ensure each page exports its own `metadata`:
+- **New page:** add an entry to `PAGES` in `src/lib/pages.ts`, then in the route
+  `export const metadata = pageMetadata("key")` and render
+  `<JsonLd nodes={pageSchema("key")} />`. Share card, sitemap and llms.txt follow.
+- **New article:** `author` / `reviewer` in frontmatter must be a
+  `src/lib/people.ts` id (or name) — unknown names fail the build. Set
+  `updated_at` on every substantive edit and `reviewed_at` when a clinician signs off.
+- **New person:** add them to `PEOPLE`; their `/about#id` card and Person node appear.
 
-- [ ] `/how-it-works`
-- [ ] `/methodology`
-- [ ] `/about`
-- [ ] `/blog`
-- [ ] `/faq` (with FAQPage schema)
-- [ ] Each blog post (with Article schema)
+## Rules
 
-## 🔜 Structured data (JSON-LD)
+- Titles lead with the search phrase; descriptions ≤160 characters.
+- Never mark up content that isn't visible (FAQ answers stay in the DOM).
+- `reviewedBy` / `lastReviewed` go on the WebPage (`MedicalWebPage`) node — not on BlogPosting.
+- `lastmod` only from real content dates — never the build time.
+- Don't claim review on content that wasn't reviewed ("every article reviewed" was false once).
+- Keep AI crawlers allowed (robots `*`); keep Vercel's "AI Bots" firewall rule off — Deny blocks AI search bots too.
 
-- [x] Organization (in root layout)
-- [ ] WebSite schema with SearchAction
-- [ ] FAQPage schema on `/faq`
-- [ ] Article schema on each blog post
-- [ ] BreadcrumbList where applicable
-- [ ] Product schema (later, if applicable)
+## Done
 
-## 🔜 GEO-readiness (AI answer engines)
+- [x] Per-page metadata, canonical, OG + Twitter images on every page (was 1 of 15)
+- [x] Organization (legalName, parentOrganization, founder, contactPoint, sameAs), WebSite, Person
+- [x] MedicalWebPage + BlogPosting (image, author, reviewer, dates), BreadcrumbList, FAQPage, AboutPage, CollectionPage
+- [x] FAQ answers server-rendered (were click-only; 0 of 11 indexable)
+- [x] Visible "Updated" dates + `dateModified`; sitemap real `lastmod`
+- [x] RSS at `/blog/feed.xml`, linked from every page
+- [x] llms.txt generated from the registries
+- [x] Homepage links to the latest articles
+- [x] Framer Motion loaded async via `LazyMotion` (`m.*` only; `strict` guards it)
+- [x] www → apex redirect (Vercel domain setting)
 
-GEO = Generative Engine Optimization. To get cited by AI answer engines:
+## Owner actions (dashboards)
 
-- [ ] Clear, concise factual statements (not marketing fluff)
-- [ ] Specific numbers and dates (NOT "thousands of...", DO "180,000+ products")
-- [ ] Cite sources (FDA, NIH, PubMed) where claims are made
-- [ ] Define your terms clearly (what is FitScore? what is "interaction"?)
-- [ ] Use semantic HTML headings (`<h1>` → `<h6>`) hierarchically
-- [ ] Add `<dl>`, `<dt>`, `<dd>` for definitional content
-- [ ] Avoid burying facts inside images — text first
-- [ ] Include "About this site" / "About this content" sections
-- [ ] Last-updated dates on content pages
-
-## 🔜 Performance for SEO (Core Web Vitals)
-
-These directly impact ranking. See `05-performance-checklist.md` for details.
-
-- [ ] LCP < 2.5s
-- [ ] CLS < 0.1
-- [ ] INP < 200ms
-- [ ] FCP < 1.8s
-
-## 🔜 Pre-launch verification
-
-- [ ] Submit `/sitemap.xml` to Google Search Console
-- [ ] Submit `/sitemap.xml` to Bing Webmaster Tools
-- [ ] Verify domain ownership in both
-- [ ] Set canonical domain (with vs without www)
-- [ ] HTTPS enforced (Vercel default)
-- [ ] HSTS header (consider adding)
-- [ ] Test rich results: https://search.google.com/test/rich-results
-- [ ] Test mobile-friendliness: https://search.google.com/test/mobile-friendly
-- [ ] Run Lighthouse SEO audit (target 100)
-
-## 🔜 Image SEO
-
-- [ ] Every `<Image>` has descriptive `alt` text
-- [ ] `priority` flag on hero/above-fold images only
-- [ ] `loading="lazy"` on below-fold (Next.js default)
-- [ ] Use AVIF/WebP via next/image (configured)
-- [ ] Image filenames: `chronic-conditions-card.jpg`, not `IMG_1234.jpg`
-
-## 🔜 Internal linking strategy
-
-- [ ] Footer links to all top pages
-- [ ] Hero secondary CTA anchors to Problem section (already specced)
-- [ ] FAQ link from CTA to `/faq`
-- [ ] Blog posts cross-link to relevant other posts
-- [ ] Methodology page links to research sources
-
-## 🔜 Long-tail keyword targets
-
-Primary keywords to optimize content for over time:
-
-- "supplement drug interaction checker"
-- "magnesium and levothyroxine"
-- "supplement interaction app"
-- "drug supplement interaction database"
-- "evidence-based supplement guide"
-- "supplement timing optimization"
-- "[medication name] supplement interactions"
-- "[supplement name] drug interactions"
-
-The blog is the primary vehicle for ranking on these. Each post = one cluster.
+- [ ] Search Console: Page indexing report → request indexing for missing URLs; submit sitemap
+- [ ] Search Console → Settings → Search generative AI: confirm "Include"; watch the Generative AI performance report
+- [ ] Bing Webmaster Tools: import from Search Console, submit sitemap (Bing feeds Copilot, DuckDuckGo, Yahoo)
+- [ ] Test a page in https://search.google.com/test/rich-results after each deploy

@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { useState } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { cn } from "@/lib/utils";
@@ -235,21 +235,21 @@ export function InteractionLadder() {
     >
       <div className="container relative mx-auto">
         {/* Header */}
-        <motion.div
+        <m.div
           variants={fadeUpContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
           className="mx-auto flex max-w-3xl flex-col items-center gap-7 text-center md:gap-9"
         >
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
           >
             The ladder
-          </motion.p>
+          </m.p>
 
-          <motion.h2
+          <m.h2
             id="ladder-heading"
             variants={fadeUpItem}
             className="text-display-lg text-ink"
@@ -257,9 +257,9 @@ export function InteractionLadder() {
             Not just warnings.
             <br />
             <span className="font-serif italic text-accent">Reasoning.</span>
-          </motion.h2>
+          </m.h2>
 
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="max-w-prose text-body-xl text-muted"
           >
@@ -269,11 +269,11 @@ export function InteractionLadder() {
               <span className="hidden md:inline">Hover or tap a tier.</span>
               <span className="md:hidden">Tap a tier below.</span>
             </span>
-          </motion.p>
-        </motion.div>
+          </m.p>
+        </m.div>
 
         {/* Connected tier ladder + detail panel */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10%" }}
@@ -366,7 +366,7 @@ export function InteractionLadder() {
             className="border-t border-border bg-surface-raised p-6 sm:p-8 md:p-10"
           >
             <AnimatePresence mode="wait">
-              <motion.div
+              <m.div
                 key={active.id}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -441,13 +441,13 @@ export function InteractionLadder() {
                     </p>
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             </AnimatePresence>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Honesty note — quiet editorial caption */}
-        <motion.p
+        <m.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-10%" }}
@@ -455,7 +455,7 @@ export function InteractionLadder() {
           className="mt-8 text-center font-serif text-body italic text-muted"
         >
           When evidence is incomplete, we say so directly.
-        </motion.p>
+        </m.p>
       </div>
     </section>
   );

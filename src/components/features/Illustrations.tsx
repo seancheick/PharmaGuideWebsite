@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import type { IllustrationKey } from "@/lib/features";
 
 /**
@@ -38,7 +38,7 @@ const stagger = {
 
 function DepletionIllustration() {
   return (
-    <motion.div
+    <m.div
       variants={stagger}
       initial="hidden"
       whileInView="visible"
@@ -53,7 +53,7 @@ function DepletionIllustration() {
 
       <div className="relative flex h-full flex-col gap-4">
         {/* Top: medication card */}
-        <motion.div variants={reveal}>
+        <m.div variants={reveal}>
           <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-subtle">
             Medication added
           </p>
@@ -73,10 +73,10 @@ function DepletionIllustration() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Connector — depletion arrow */}
-        <motion.div
+        <m.div
           variants={reveal}
           className="flex items-center gap-2 pl-4"
         >
@@ -87,10 +87,10 @@ function DepletionIllustration() {
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="text-severity-monitor" aria-hidden="true">
             <path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-        </motion.div>
+        </m.div>
 
         {/* Bottom: depleted nutrients + replenishment */}
-        <motion.div variants={reveal} className="flex flex-1 flex-col gap-2">
+        <m.div variants={reveal} className="flex flex-1 flex-col gap-2">
           {[
             { name: "Vitamin B12", note: "absorption reduced" },
             { name: "Folate", note: "long-term draw-down" },
@@ -110,17 +110,17 @@ function DepletionIllustration() {
               </span>
             </div>
           ))}
-        </motion.div>
+        </m.div>
 
         {/* Footer hint */}
-        <motion.p
+        <m.p
           variants={reveal}
           className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle"
         >
           ↘ replenishment suggested · discuss with clinician
-        </motion.p>
+        </m.p>
       </div>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -381,19 +381,19 @@ function AccumulationIllustration() {
           </p>
         </div>
         <ul className="flex flex-1 flex-col justify-around gap-3">
-          {meters.map((m) => {
-            const pct = Math.min(150, (m.val / m.ul) * 100);
-            const tone = m.over ? "bg-severity-avoid" : "bg-severity-safe";
-            const txt = m.over ? "text-severity-avoid" : "text-severity-safe";
+          {meters.map((meter) => {
+            const pct = Math.min(150, (meter.val / meter.ul) * 100);
+            const tone = meter.over ? "bg-severity-avoid" : "bg-severity-safe";
+            const txt = meter.over ? "text-severity-avoid" : "text-severity-safe";
             return (
-              <li key={m.name} className="flex flex-col gap-1.5">
+              <li key={meter.name} className="flex flex-col gap-1.5">
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="font-serif text-[13px] italic text-ink">
-                    {m.name}
+                    {meter.name}
                   </span>
                   <span className={`font-mono text-[11px] tabular-nums ${txt}`}>
-                    {m.val}
-                    <span className="text-subtle"> / {m.ul} {m.unit}</span>
+                    {meter.val}
+                    <span className="text-subtle"> / {meter.ul} {meter.unit}</span>
                   </span>
                 </div>
                 <div className="relative h-[5px] overflow-hidden rounded-full bg-border">

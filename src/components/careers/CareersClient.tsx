@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { CATALOG_SIZE, site } from "@/lib/site";
 
@@ -82,20 +82,20 @@ export function CareersClient() {
         </div>
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             animate="visible"
             className="mx-auto flex max-w-3xl flex-col items-center gap-7 text-center md:gap-9"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               Careers
-            </motion.p>
+            </m.p>
 
-            <motion.h1
+            <m.h1
               variants={fadeUpItem}
               id="careers-hero-heading"
               className="text-balance text-display-lg leading-[1.04] text-ink"
@@ -104,19 +104,19 @@ export function CareersClient() {
               <span className="font-serif italic text-accent">
                 prevents harm.
               </span>
-            </motion.h1>
+            </m.h1>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
               A focused team building the first interaction engine that covers
               depletions, dose accumulation, and real-time recalls — all
               on-device. Early stage. Direct clinical impact. No theater.
-            </motion.p>
+            </m.p>
 
             {/* Honest framing — we're not always actively hiring */}
-            <motion.div
+            <m.div
               variants={fadeUpItem}
               className="mt-2 inline-flex items-center gap-2.5 rounded-pill border border-border bg-surface-raised/60 px-4 py-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-foreground/80"
             >
@@ -125,8 +125,8 @@ export function CareersClient() {
                 className="block h-1.5 w-1.5 rounded-full bg-severity-monitor"
               />
               Not actively hiring · Always reading inbound
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </section>
 
@@ -139,30 +139,30 @@ export function CareersClient() {
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               01 · Why work here
-            </motion.p>
-            <motion.h2
+            </m.p>
+            <m.h2
               variants={fadeUpItem}
               id="careers-why-heading"
               className="text-balance text-display-md text-ink"
             >
               Four reasons this work{" "}
               <span className="font-serif italic">actually matters.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -175,7 +175,7 @@ export function CareersClient() {
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
             {WHY.map((w) => (
-              <motion.li
+              <m.li
                 key={w.num}
                 variants={fadeUpItem}
                 className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
@@ -187,9 +187,9 @@ export function CareersClient() {
                   {w.title}
                 </h3>
                 <p className="text-body leading-relaxed text-muted">{w.body}</p>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
         </div>
       </section>
 
@@ -199,38 +199,38 @@ export function CareersClient() {
         className="relative section-y-sm"
       >
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               02 · Roles we&apos;d jump on
-            </motion.p>
-            <motion.h2
+            </m.p>
+            <m.h2
               variants={fadeUpItem}
               id="careers-roles-heading"
               className="text-balance text-display-md text-ink"
             >
               The right person for any of these{" "}
               <span className="font-serif italic">won&apos;t wait long.</span>
-            </motion.h2>
-            <motion.p
+            </m.h2>
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body leading-relaxed text-muted"
             >
               These aren&apos;t open reqs. They&apos;re the shapes of people we
               would prioritize hiring. If you read one of them and recognize
               yourself, write to us.
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -243,7 +243,7 @@ export function CareersClient() {
             className="mx-auto mt-12 grid max-w-5xl gap-4 md:mt-14 md:grid-cols-2 md:gap-5"
           >
             {ROLES.map((r) => (
-              <motion.li
+              <m.li
                 key={r.role}
                 variants={fadeUpItem}
                 className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-6 shadow-sm md:p-7"
@@ -254,9 +254,9 @@ export function CareersClient() {
                 <p className="text-body-sm leading-relaxed text-muted">
                   {r.body}
                 </p>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
         </div>
       </section>
 
@@ -297,7 +297,7 @@ export function CareersClient() {
         className="relative section-y-sm border-t border-border bg-surface-subtle/40"
       >
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
@@ -321,7 +321,7 @@ export function CareersClient() {
             <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
               {site.city} · Remote-friendly for the right person
             </p>
-          </motion.div>
+          </m.div>
         </div>
       </section>
     </main>

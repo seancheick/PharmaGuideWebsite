@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useState } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { joinBetaWaitlist } from "@/app/actions/subscribe";
@@ -111,7 +111,7 @@ export function FinalCTA() {
       />
 
       <div className="container relative mx-auto">
-        <motion.div
+        <m.div
           variants={fadeUpContainer}
           initial="hidden"
           whileInView="visible"
@@ -121,36 +121,36 @@ export function FinalCTA() {
           {/* ─── LEFT COLUMN: headline + form ─── */}
           <div className="flex flex-col items-center gap-7 text-center md:items-start md:gap-8 md:text-left">
             {SHOW_SOCIAL_PROOF && (
-              <motion.p
+              <m.p
                 variants={fadeUpItem}
                 className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/65"
               >
                 Joining 1,200+ early members
-              </motion.p>
+              </m.p>
             )}
 
-            <motion.h2
+            <m.h2
               id="cta-heading"
               variants={fadeUpItem}
               className="text-balance text-display-lg leading-[1.06] text-ink"
             >
               Join the <span className="font-serif italic text-accent">founding testers.</span>
-            </motion.h2>
+            </m.h2>
 
             {/* Recruiting collaborators, not collecting downloads. "Opening in
                 waves" described a queue; the first group is being added by
                 hand this month, and saying what we want back from them is
                 what makes a clinician or a serious stack-keeper reply. */}
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
               We&apos;re adding the first group by hand this month. You get early access and a
               direct line to us — we get to find the edge cases before PharmaGuide opens to
               everyone.
-            </motion.p>
+            </m.p>
 
-            <motion.div variants={fadeUpItem} className="w-full max-w-lg">
+            <m.div variants={fadeUpItem} className="w-full max-w-lg">
               {submitted ? (
                 <SuccessState />
               ) : (
@@ -223,15 +223,15 @@ export function FinalCTA() {
                 </span>
                 We never sell your health data
               </p>
-            </motion.div>
+            </m.div>
           </div>
 
           {/* ─── RIGHT COLUMN: Inside the beta preview ─── */}
-          {/* Was <motion.aside> — switched to <motion.div> because axe
+          {/* Was <m.aside> — switched to <m.div> because axe
               flags <aside> inside <main> as a nested complementary
               landmark. The h3 + ul inside still gives screen readers
               a labeled list, no semantic loss.                      */}
-          <motion.div variants={fadeUpItem} className="relative w-full">
+          <m.div variants={fadeUpItem} className="relative w-full">
             {/* Soft accent halo behind the preview block */}
             <div
               aria-hidden="true"
@@ -265,8 +265,8 @@ export function FinalCTA() {
                 + everything that ships at launch
               </p>
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       </div>
     </section>
   );
@@ -274,7 +274,7 @@ export function FinalCTA() {
 
 function SuccessState() {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={transitions.reveal}
@@ -304,6 +304,6 @@ function SuccessState() {
         We sent a confirmation to your inbox. Your wave opens through 2026 — we&apos;ll write again
         then.
       </p>
-    </motion.div>
+    </m.div>
   );
 }

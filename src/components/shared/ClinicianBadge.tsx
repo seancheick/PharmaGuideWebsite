@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { displayName, profilePath, type Person } from "@/lib/people";
 import { cn } from "@/lib/utils";
 
 /**
@@ -15,51 +16,29 @@ import { cn } from "@/lib/utils";
  *     ring-1 fallback
  *   • Inline-flex layout: avatar · stack(name, role)
  *   • Name in text-body-sm font-medium, role in text-overline mono caps
- *   • Optional `as="link"` wraps the whole badge in a Link to
- *     /about#team so a reader can click through to the clinician's
- *     section (until per-clinician profile pages exist)
+ *   • Links to the person's card on /about (profilePath) — the same URL
+ *     the JSON-LD uses as their profile. Pass href={null} for no link.
+ *   • Data comes from lib/people.ts; this file only renders it.
  *
  * Variant `inline` is even smaller (28×28 avatar, single line name+role
  * on one row) for use inside ribbons / source strips.
  */
 
-export type Clinician = {
-  name: string;
-  photo: string;
-  /** Mono-caps role line (e.g. "DOCTOR OF PHARMACY") */
-  role: string;
-  /** Falls back to initials in a teal disc if photo missing */
-  initials?: string;
-};
-
-export const CLINICIANS = {
-  laurie: {
-    name: "Laurie Pham, PharmD",
-    photo: "/team/laurie-pham.webp",
-    role: "Doctor of Pharmacy",
-    initials: "LP",
-  },
-  miriam: {
-    name: "Miriam Farez, NP",
-    photo: "/team/miriam-farez.webp",
-    role: "Nurse Practitioner",
-    initials: "MF",
-  },
-} as const satisfies Record<string, Clinician>;
-
 export function ClinicianBadge({
   clinician,
   size = "sm",
-  href = "/about#team",
+  href,
   className,
 }: {
-  clinician: Clinician;
+  clinician: Person;
   size?: "sm" | "md" | "inline";
   /** Set to null to render without a link */
   href?: string | null;
   className?: string;
 }) {
   const avatarSize = size === "md" ? 36 : size === "inline" ? 28 : 32;
+  const name = displayName(clinician);
+  const link = href === undefined ? profilePath(clinician) : href;
 
   const content = (
     <span
@@ -72,7 +51,7 @@ export function ClinicianBadge({
       {clinician.photo ? (
         <Image
           src={clinician.photo}
-          alt={clinician.name}
+          alt=""
           // 2x natural width so retina screens get a crisp downscale
           // rather than upscaling a too-small source variant.
           width={avatarSize * 2}
@@ -97,26 +76,26 @@ export function ClinicianBadge({
         <span className="text-body-sm leading-tight text-ink">
           {clinician.name}
           <span className="ml-1.5 font-mono text-overline uppercase text-subtle">
-            {clinician.role}
+            {clinician.credential ?? clinician.jobTitle}
           </span>
         </span>
       ) : (
         <span className="flex min-w-0 flex-col leading-tight">
           <span className="text-body-sm font-medium text-ink">
-            {clinician.name}
+            {name}
           </span>
           <span className="font-mono text-overline uppercase text-subtle">
-            {clinician.role}
+            {clinician.jobTitle}
           </span>
         </span>
       )}
     </span>
   );
 
-  if (href) {
+  if (link) {
     return (
       <Link
-        href={href}
+        href={link}
         className="inline-flex transition-opacity duration-fast ease-smooth hover:opacity-80"
       >
         {content}

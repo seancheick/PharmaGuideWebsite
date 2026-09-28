@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 
 /**
@@ -80,39 +80,39 @@ export function BeyondInteractions() {
 
       <div className="container relative mx-auto">
         {/* Header */}
-        <motion.div
+        <m.div
           variants={fadeUpContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
           className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
         >
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
           >
             Beyond interactions
-          </motion.p>
+          </m.p>
 
-          <motion.h2
+          <m.h2
             id="beyond-heading"
             variants={fadeUpItem}
             className="text-balance text-display-lg leading-[1.06] text-ink"
           >
             Interactions are <span className="font-serif italic text-accent">just the start.</span>
-          </motion.h2>
+          </m.h2>
 
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="max-w-prose text-body-lg leading-relaxed text-muted"
           >
             PharmaGuide checks the full picture: interactions, nutrient depletion, dose overlap,
             ingredient quality, personal fit, and recall alerts.
-          </motion.p>
-        </motion.div>
+          </m.p>
+        </m.div>
 
         {/* Capability grid */}
-        <motion.ul
+        <m.ul
           variants={{
             hidden: {},
             visible: {
@@ -125,7 +125,7 @@ export function BeyondInteractions() {
           className="mx-auto mt-14 grid max-w-6xl gap-4 sm:grid-cols-2 md:mt-20 lg:grid-cols-3"
         >
           {CAPABILITIES.map((cap) => (
-            <motion.li key={cap.num} variants={fadeUpItem} className="group">
+            <m.li key={cap.num} variants={fadeUpItem} className="group">
               <Link
                 href={cap.href}
                 className="focus-visible:outline-offset-3 flex h-full flex-col gap-3 rounded-2xl border border-border bg-surface p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-1 hover:border-border-strong hover:shadow-md focus-visible:outline-2 focus-visible:outline-accent md:p-7"
@@ -148,15 +148,15 @@ export function BeyondInteractions() {
                   </span>
                 </span>
               </Link>
-            </motion.li>
+            </m.li>
           ))}
-        </motion.ul>
+        </m.ul>
 
         {/* Footer links — primary pill to /features (depth) +
             secondary link to /blog (long-form reading). Two separate
             paths for two different appetites: skim deep-dives vs.
             read evidence-graded guides. */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-10%" }}
@@ -189,7 +189,7 @@ export function BeyondInteractions() {
               →
             </span>
           </Link>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

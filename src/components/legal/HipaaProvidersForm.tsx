@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { requestProvidersAccess } from "@/app/actions/subscribe";
 import { isValidEmail } from "@/lib/validation";
 import { transitions } from "@/lib/tokens";
@@ -73,7 +73,7 @@ export function HipaaProvidersForm() {
 
   if (submitted) {
     return (
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={transitions.reveal}
@@ -90,7 +90,7 @@ export function HipaaProvidersForm() {
           confirmation thread and a human will respond within 5 business
           days.
         </p>
-      </motion.div>
+      </m.div>
     );
   }
 

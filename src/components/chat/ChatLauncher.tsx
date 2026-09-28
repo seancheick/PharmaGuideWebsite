@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { transitions } from "@/lib/tokens";
 import { cn } from "@/lib/utils";
@@ -220,9 +220,9 @@ export function ChatLauncher() {
           body: JSON.stringify({
             message: trimmed,
             history: nextHistory
-              .filter((m) => !m.error)
+              .filter((msg) => !msg.error)
               .slice(-HISTORY_SEND_LIMIT)
-              .map((m) => ({ role: m.role, content: m.content })),
+              .map((msg) => ({ role: msg.role, content: msg.content })),
             // Echo back the opaque conversation state from the prior
             // turn so the upstream remembers patient context. Omitted
             // on the very first turn (state is null).
@@ -322,7 +322,7 @@ export function ChatLauncher() {
       {/* ━━━━━━━━━━━━━━━━━━ LAUNCHER ━━━━━━━━━━━━━━━━━━ */}
       <AnimatePresence>
         {revealed && !isOpen && (
-          <motion.button
+          <m.button
             ref={launcherRef}
             type="button"
             initial={reducedMotion ? false : { opacity: 0, y: 8 }}
@@ -344,7 +344,7 @@ export function ChatLauncher() {
             </span>
             <span className="hidden sm:inline">Ask PharmaGuide AI</span>
             <span className="sm:hidden">Ask</span>
-          </motion.button>
+          </m.button>
         )}
       </AnimatePresence>
 
@@ -355,7 +355,7 @@ export function ChatLauncher() {
             {/* Mobile backdrop — full-bleed cover so the panel reads
                 as a dedicated surface on small screens. Desktop has
                 no backdrop (the panel sits as a floating card).      */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -365,7 +365,7 @@ export function ChatLauncher() {
               className="fixed inset-0 z-[260] bg-background/60 backdrop-blur-sm md:hidden"
             />
 
-            <motion.div
+            <m.div
               role="dialog"
               aria-modal="true"
               aria-label="Chat with PharmaGuide AI"
@@ -436,8 +436,8 @@ export function ChatLauncher() {
                   <Welcome onPick={(q) => void send(q)} />
                 ) : (
                   <ul className="flex flex-col gap-3.5">
-                    {messages.map((m) => (
-                      <MessageBubble key={m.id} message={m} />
+                    {messages.map((msg) => (
+                      <MessageBubble key={msg.id} message={msg} />
                     ))}
                     {isLoading && (
                       <li className="flex justify-start">
@@ -490,7 +490,7 @@ export function ChatLauncher() {
               <p className="border-t border-border/60 bg-surface px-4 py-2 text-center text-[10.5px] leading-snug text-subtle">
                 Educational only · not a substitute for professional medical advice.
               </p>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
@@ -746,7 +746,7 @@ function FormattedReply({ text }: { text: string }) {
 
 function Dot({ delay }: { delay: number }) {
   return (
-    <motion.span
+    <m.span
       aria-hidden="true"
       className="block h-1.5 w-1.5 rounded-full bg-muted"
       animate={{ opacity: [0.3, 1, 0.3] }}

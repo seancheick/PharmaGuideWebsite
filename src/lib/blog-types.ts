@@ -12,6 +12,8 @@
  * which re-exports everything here PLUS the fs-based loaders.
  */
 
+import type { PersonId } from "./people";
+
 export interface BlogCategory {
   id: string;
   label: string;
@@ -72,9 +74,13 @@ export interface BlogPost {
   description: string;
   category: string;
   date: string;
+  /** Last substantive edit. Drives dateModified, the visible "Updated" date and the sitemap. */
   updatedAt?: string;
-  author: string;
-  reviewer?: string;
+  /** Resolved against lib/people.ts at load time — unknown names fail the build. */
+  authorId: PersonId;
+  reviewerId?: PersonId;
+  /** Date the reviewer signed off. Only rendered/marked up when present. */
+  reviewedAt?: string;
   featured?: boolean;
   image?: string;
   tags?: string[];
@@ -97,4 +103,24 @@ export function formatBlogDate(iso: string): string {
     day: "numeric",
     timeZone: "UTC",
   });
+}
+
+/**
+ * What every post list renders (hub grid, featured card, list rows,
+ * homepage). Client components get this shape, never a full BlogPost —
+ * otherwise every article's MDX body ships to the browser.
+ */
+export type BlogCardPost = Pick<
+  BlogPost,
+  "slug" | "title" | "description" | "category" | "date" | "readTime" | "image" | "authorId" | "tags"
+>;
+
+export function toCardPost(post: BlogPost): BlogCardPost {
+  const { slug, title, description, category, date, readTime, image, authorId, tags } = post;
+  return { slug, title, description, category, date, readTime, image, authorId, tags };
+}
+
+/** The date a post was last substantively changed. */
+export function postModified(post: Pick<BlogPost, "date" | "updatedAt">): string {
+  return post.updatedAt ?? post.date;
 }

@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FeaturesClient } from "@/components/features/FeaturesClient";
 import { PILLARS } from "@/lib/features";
-import { CATALOG_SIZE, site } from "@/lib/site";
+import { site } from "@/lib/site";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { PAGES, pageMetadata, pageSchema } from "@/lib/pages";
+import { absoluteUrl, ref, schemaId } from "@/lib/schema";
 
 /**
  * /features — full capabilities showcase across 6 pillars.
@@ -19,99 +21,48 @@ import { CATALOG_SIZE, site } from "@/lib/site";
 
 export const revalidate = 432000; // 5 days
 
-const description = `Every PharmaGuide capability — medication depletion detection, full-stack interaction analysis, ingredient & quality transparency, personal fit, nutrient accumulation tracking, and live FDA recall monitoring. Built on a ${CATALOG_SIZE} product on-device catalog reviewed by clinicians.`;
+export const metadata = pageMetadata("features");
 
-export const metadata: Metadata = {
-  title: "Features",
-  description,
-  alternates: { canonical: `${site.url}/features` },
-  openGraph: {
-    title: "Features",
-    description,
-    url: `${site.url}/features`,
-    siteName: site.name,
-    locale: site.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Features",
-    description,
-  },
-};
+const softwareId = `${absoluteUrl("/features")}#software`;
 
 export default function FeaturesPage() {
-  // SoftwareApplication schema — the most authoritative structured
-  // data type for a consumer health/wellness app. Lists every pillar
-  // as a featureList entry so search engines + AI crawlers can answer
-  // "what does PharmaGuide do?" directly.
-  const softwareJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "@id": `${site.url}/features#software`,
-    name: site.name,
-    applicationCategory: "HealthApplication",
-    applicationSubCategory: "Medication & Supplement Safety",
-    operatingSystem: "iOS, Android",
-    description,
-    url: `${site.url}/features`,
-    featureList: PILLARS.map((p) => `${p.titleLead} ${p.titleEm}`).join(" · "),
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-      description: "Free during beta",
-    },
-    publisher: {
-      "@type": "Organization",
+  const schema = [
+    ...pageSchema("features", { mainEntity: softwareId }),
+    {
+      "@type": "SoftwareApplication",
+      "@id": softwareId,
       name: site.name,
-      url: site.url,
-      logo: {
-        "@type": "ImageObject",
-        url: `${site.url}/icon2.png`,
+      applicationCategory: "HealthApplication",
+      applicationSubCategory: "Medication & Supplement Safety",
+      operatingSystem: "iOS, Android",
+      description: PAGES.features.description,
+      url: absoluteUrl("/features"),
+      featureList: PILLARS.map((p) => `${p.titleLead} ${p.titleEm}`),
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+        description: "Free during beta",
       },
+      publisher: ref(schemaId.organization),
     },
-  };
-
-  // ItemList schema for the 6 pillars — additional structured data
-  // signal that crawlers can use to understand each capability.
-  const itemListJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "@id": `${site.url}/features#capabilities`,
-    name: "PharmaGuide capabilities",
-    numberOfItems: PILLARS.length,
-    itemListElement: PILLARS.map((p, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      item: {
-        "@type": "Thing",
-        "@id": `${site.url}/features#${p.id}`,
-        name: `${p.titleLead} ${p.titleEm}`,
-        description: p.intro,
-      },
-    })),
-  };
-
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "@id": `${site.url}/features#breadcrumb`,
-    itemListElement: [
-      {
+    {
+      "@type": "ItemList",
+      "@id": `${absoluteUrl("/features")}#capabilities`,
+      name: "PharmaGuide capabilities",
+      numberOfItems: PILLARS.length,
+      itemListElement: PILLARS.map((p, i) => ({
         "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: site.url,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Features",
-        item: `${site.url}/features`,
-      },
-    ],
-  };
+        position: i + 1,
+        item: {
+          "@type": "Thing",
+          "@id": `${absoluteUrl("/features")}#${p.id}`,
+          name: `${p.titleLead} ${p.titleEm}`,
+          description: p.intro,
+        },
+      })),
+    },
+  ];
 
   return (
     <>
@@ -119,18 +70,7 @@ export default function FeaturesPage() {
       <FeaturesClient />
       <Footer />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd nodes={schema} />
     </>
   );
 }

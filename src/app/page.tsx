@@ -9,6 +9,11 @@ import { BeyondInteractions } from "@/components/sections/BeyondInteractions";
 import { RealLifeMoments } from "@/components/sections/RealLifeMoments";
 import { YourFit } from "@/components/sections/YourFit";
 import { FinalCTA } from "@/components/sections/FinalCTA";
+import { LatestResearch } from "@/components/sections/LatestResearch";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { getAllPosts, toCardPost } from "@/lib/blog";
+import { pageMetadata, pageSchema } from "@/lib/pages";
+import { schemaId } from "@/lib/schema";
 
 /**
  * Homepage — 9 sections after dropping TrustBlock.
@@ -16,7 +21,7 @@ import { FinalCTA } from "@/components/sections/FinalCTA";
  * TrustBlock ("How we think — Built to explain uncertainty…") was removed
  * because its content overlapped the Infrastructure Strip and the new
  * footer's trust-badges + disclaimer bars. The credentials line
- * (Cross-referenced with FDA · NIH · PubMed · DSLD + Laurie Pham, PharmD) was
+ * (Cross-referenced with FDA · NIH · PubMed · DSLD + the lead reviewer) was
  * folded into HowItWorks as a single statement line. The "we don't"
  * restraint promises live in the footer's trust-badges bar now.
  *
@@ -26,7 +31,11 @@ import { FinalCTA } from "@/components/sections/FinalCTA";
  */
 export const revalidate = 432000; // 5 days, in seconds
 
+export const metadata = pageMetadata("home");
+
 export default function Home() {
+  const latest = getAllPosts().slice(0, 3).map(toCardPost);
+
   return (
     <>
       <Header />
@@ -43,9 +52,11 @@ export default function Home() {
         <BeyondInteractions />
         <RealLifeMoments />
         <YourFit />
+        <LatestResearch posts={latest} />
         <FinalCTA />
       </main>
       <Footer />
+      <JsonLd nodes={pageSchema("home", { mainEntity: schemaId.organization })} />
     </>
   );
 }

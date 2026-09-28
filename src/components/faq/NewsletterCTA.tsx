@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useState } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { subscribeToNewsletter } from "@/app/actions/subscribe";
@@ -80,31 +80,31 @@ export function NewsletterCTA() {
       />
 
       <div className="container relative mx-auto">
-        <motion.div
+        <m.div
           variants={fadeUpContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
           className="mx-auto flex max-w-2xl flex-col items-center gap-7 text-center md:gap-9"
         >
-          <motion.h2
+          <m.h2
             id="newsletter-heading"
             variants={fadeUpItem}
             className="text-balance text-display-lg leading-[1.06] text-ink"
           >
             Stay in{" "}
             <span className="font-serif italic">the loop.</span>
-          </motion.h2>
+          </m.h2>
 
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="max-w-prose text-body-lg leading-relaxed text-muted"
           >
             Latest research, supplement recalls, interaction updates, and the
             health industry&apos;s signal — distilled. One email, no noise.
-          </motion.p>
+          </m.p>
 
-          <motion.div variants={fadeUpItem} className="w-full max-w-lg">
+          <m.div variants={fadeUpItem} className="w-full max-w-lg">
             {submitted ? (
               <SuccessState />
             ) : (
@@ -175,11 +175,11 @@ export function NewsletterCTA() {
               <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
               Unsubscribe anytime
             </p>
-          </motion.div>
+          </m.div>
 
           {/* Tiny help line — replaces the standalone "Can't find
               your answer?" strip with an inline contact link */}
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="text-body-sm text-muted"
           >
@@ -190,8 +190,8 @@ export function NewsletterCTA() {
             >
               info@pharmaguide.io
             </a>
-          </motion.p>
-        </motion.div>
+          </m.p>
+        </m.div>
       </div>
     </section>
   );
@@ -199,7 +199,7 @@ export function NewsletterCTA() {
 
 function SuccessState() {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={transitions.reveal}
@@ -228,6 +228,6 @@ function SuccessState() {
       <p className="text-body-sm text-muted">
         Watch your inbox — first dispatch arrives soon.
       </p>
-    </motion.div>
+    </m.div>
   );
 }

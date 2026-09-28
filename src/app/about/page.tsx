@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { AboutClient } from "@/components/about/AboutClient";
 import { RelatedLinks } from "@/components/shared/RelatedLinks";
-import { site } from "@/lib/site";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { pageMetadata, pageSchema } from "@/lib/pages";
+import { schemaId } from "@/lib/schema";
 
 /**
  * /about — refreshed from the legacy WordPress version.
@@ -18,89 +19,10 @@ import { site } from "@/lib/site";
 
 export const revalidate = 432000; // 5 days
 
-const description =
-  "Why PharmaGuide exists, what we believe, and who builds it. The supplement industry was built to sell, not to protect you. We're closing that gap.";
-
-export const metadata: Metadata = {
-  title: "About",
-  description,
-  alternates: { canonical: `${site.url}/about` },
-  openGraph: {
-    title: "About",
-    description,
-    url: `${site.url}/about`,
-    siteName: site.name,
-    locale: site.locale,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "About",
-    description,
-  },
-};
+export const metadata = pageMetadata("about");
 
 export default function AboutPage() {
-  // AboutPage + organization context
-  const aboutJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "AboutPage",
-    "@id": `${site.url}/about#aboutpage`,
-    name: "About PharmaGuide",
-    description,
-    url: `${site.url}/about`,
-    inLanguage: site.lang,
-    mainEntity: {
-      "@type": "Organization",
-      "@id": `${site.url}#organization`,
-      name: site.name,
-      url: site.url,
-      foundingDate: "2025",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Boston",
-        addressRegion: "MA",
-        addressCountry: site.country,
-      },
-      founder: {
-        "@type": "Person",
-        name: "Sean Cheick Baradji",
-        jobTitle: "Founder & CEO",
-      },
-      employee: [
-        {
-          "@type": "Person",
-          name: "Laurie Pham, PharmD",
-          jobTitle: "Doctor of Pharmacy · Clinical Review",
-        },
-        {
-          "@type": "Person",
-          name: "Miriam Farez, NP",
-          jobTitle: "Nurse Practitioner · Patient-Education Review",
-        },
-      ],
-    },
-  };
-
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "@id": `${site.url}/about#breadcrumb`,
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: site.url,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "About",
-        item: `${site.url}/about`,
-      },
-    ],
-  };
+  const schema = pageSchema("about", { mainEntity: schemaId.organization });
 
   return (
     <>
@@ -138,14 +60,7 @@ export default function AboutPage() {
       </main>
       <Footer />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd nodes={schema} />
     </>
   );
 }

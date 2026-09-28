@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { WaitlistLink } from "@/components/shared/WaitlistLink";
+import { LEAD_REVIEWER, displayName, profilePath } from "@/lib/people";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import {
   ADVISORY_TEAM,
@@ -54,68 +55,68 @@ export function MethodologyClient() {
         </div>
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             animate="visible"
             className="mx-auto flex max-w-3xl flex-col items-center gap-7 text-center md:gap-9"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               Methodology
-            </motion.p>
+            </m.p>
 
-            <motion.h1
+            <m.h1
               id="meth-hero-heading"
               variants={fadeUpItem}
               className="text-balance text-display-lg leading-[1.06] text-ink"
             >
               The science behind{" "}
               <span className="font-serif italic text-accent">the guidance.</span>
-            </motion.h1>
+            </m.h1>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
               How we collect, verify, and ship the interaction data that powers PharmaGuide —
               including who reviews it, what AI does and doesn&apos;t do, and where we draw the
               line.
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ TRUST PILLARS ━━━━━━━━━━━━━━━━━━ */}
       <section aria-labelledby="meth-pillars-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               01 · Why methodology matters
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="meth-pillars-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               In a market full of opinions,{" "}
               <span className="font-serif italic">we show our work.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -128,7 +129,7 @@ export function MethodologyClient() {
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-3 md:gap-6"
           >
             {TRUST_PILLARS.map((p, i) => (
-              <motion.li
+              <m.li
                 key={p.title}
                 variants={fadeUpItem}
                 className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
@@ -138,9 +139,9 @@ export function MethodologyClient() {
                 </span>
                 <h3 className="font-serif text-h2 italic leading-tight text-ink">{p.title}</h3>
                 <p className="text-body-sm leading-relaxed text-muted">{p.body}</p>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
         </div>
       </section>
 
@@ -153,30 +154,30 @@ export function MethodologyClient() {
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               02 · Where our data comes from
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="meth-sources-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               Four primary sources. <span className="font-serif italic">No anonymous claims.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -189,7 +190,7 @@ export function MethodologyClient() {
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
             {DATA_SOURCES.map((source) => (
-              <motion.li
+              <m.li
                 key={source.name}
                 variants={fadeUpItem}
                 className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
@@ -216,11 +217,11 @@ export function MethodologyClient() {
                 <p className="mt-1 border-t border-border pt-4 font-mono text-[11px] uppercase tracking-[0.12em] text-subtle">
                   {source.use}
                 </p>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
 
-          <motion.p
+          <m.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -229,7 +230,7 @@ export function MethodologyClient() {
           >
             We do not access medical records, pharmacy systems, or any personal health data outside
             what you put into the app.
-          </motion.p>
+          </m.p>
         </div>
       </section>
 
@@ -239,38 +240,38 @@ export function MethodologyClient() {
           shipped capability documented on /features. */}
       <section aria-labelledby="meth-engine-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               03 · How the engine works
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="meth-engine-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               From a scanned product <span className="font-serif italic">to a verdict.</span>
-            </motion.h2>
+            </m.h2>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
               Every check runs through the same six-stage pipeline — most of it on your device.
               Here&apos;s what happens between the scan and the score.
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
 
-          <motion.ol
+          <m.ol
             variants={{
               hidden: {},
               visible: {
@@ -283,7 +284,7 @@ export function MethodologyClient() {
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
             {ENGINE_STAGES.map((stage) => (
-              <motion.li
+              <m.li
                 key={stage.num}
                 variants={fadeUpItem}
                 className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
@@ -302,12 +303,12 @@ export function MethodologyClient() {
                 <p className="mt-1 border-t border-border pt-4 font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
                   {stage.detail}
                 </p>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ol>
+          </m.ol>
 
           {/* Closing: the pipeline resolves to the Stack Health verdict */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -327,7 +328,7 @@ export function MethodologyClient() {
                 </span>
               ))}
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
@@ -345,38 +346,38 @@ export function MethodologyClient() {
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               See it in action
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="meth-specimen-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               One real interaction, <span className="font-serif italic">end to end.</span>
-            </motion.h2>
+            </m.h2>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
               The card below follows the same structure used by our interaction-rules pipeline —
               same sources, same evidence levels, same reviewer signature.
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
 
-          <motion.article
+          <m.article
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -478,14 +479,14 @@ export function MethodologyClient() {
               {/* Reviewer + version footer */}
               <footer className="flex flex-col gap-2 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
-                  Reviewed by <span className="text-foreground/85">Laurie Pham, PharmD</span>
+                  Reviewed by <span className="text-foreground/85">{displayName(LEAD_REVIEWER)}</span>
                 </p>
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
                   Schema v6.1 · DB sync 2026-05-06
                 </p>
               </footer>
             </div>
-          </motion.article>
+          </m.article>
 
           <p className="mx-auto mt-6 max-w-3xl text-center text-body-sm leading-relaxed text-muted md:mt-8">
             Want the deeper read?{" "}
@@ -502,32 +503,32 @@ export function MethodologyClient() {
       {/* ━━━━━━━━━━━━━━━━━━ 5-STEP PROCESS ━━━━━━━━━━━━━━━━━━ */}
       <section aria-labelledby="meth-process-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               04 · How we verify content
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="meth-process-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               From source to verdict, <span className="font-serif italic">every interaction.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
           {/* Vertical timeline — left rail with numbered nodes,
               right column with step content. */}
-          <motion.ol
+          <m.ol
             variants={{
               hidden: {},
               visible: {
@@ -540,7 +541,7 @@ export function MethodologyClient() {
             className="mx-auto mt-12 max-w-3xl md:mt-16"
           >
             {PROCESS_STEPS.map((step, i) => (
-              <motion.li
+              <m.li
                 key={step.num}
                 variants={fadeUpItem}
                 className="relative grid grid-cols-[auto_1fr] gap-x-6 pb-10 last:pb-0 md:gap-x-10 md:pb-12"
@@ -568,7 +569,12 @@ export function MethodologyClient() {
                       {step.reviewer && (
                         <span>
                           <span className="text-foreground/55">Reviewer · </span>
-                          <span className="text-foreground/85">{step.reviewer}</span>
+                          <Link
+                            href={profilePath(step.reviewer)}
+                            className="text-foreground/85 underline decoration-foreground/25 underline-offset-[3px] transition-colors duration-fast ease-smooth hover:text-link hover:decoration-link/60"
+                          >
+                            {displayName(step.reviewer)}
+                          </Link>
                         </span>
                       )}
                       {step.output && (
@@ -586,9 +592,9 @@ export function MethodologyClient() {
                     </div>
                   )}
                 </div>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ol>
+          </m.ol>
         </div>
       </section>
 
@@ -601,30 +607,30 @@ export function MethodologyClient() {
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               05 · Medical advisory team
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="meth-team-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               Clinical review <span className="font-serif italic">behind the guidance.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -636,17 +642,17 @@ export function MethodologyClient() {
             viewport={{ once: true, margin: "-10%" }}
             className="mx-auto mt-12 grid max-w-3xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
-            {ADVISORY_TEAM.map((m) => (
-              <motion.li
-                key={m.name}
+            {ADVISORY_TEAM.map((person) => (
+              <m.li
+                key={person.id}
                 variants={fadeUpItem}
                 className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
               >
                 <div className="flex items-center gap-4">
-                  {m.photo ? (
+                  {person.photo ? (
                     <Image
-                      src={m.photo}
-                      alt={m.name}
+                      src={person.photo}
+                      alt={person.name}
                       width={112}
                       height={112}
                       quality={95}
@@ -657,63 +663,63 @@ export function MethodologyClient() {
                       aria-hidden="true"
                       className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent text-background"
                     >
-                      <span className="font-serif text-h3 italic">{m.initials}</span>
+                      <span className="font-serif text-h3 italic">{person.initials}</span>
                     </span>
                   )}
                   <div className="min-w-0">
-                    <p className="font-serif text-h3 italic leading-tight text-ink">{m.name}</p>
-                    <p className="font-mono text-eyebrow uppercase text-subtle">{m.title}</p>
+                    <p className="font-serif text-h3 italic leading-tight text-ink">{displayName(person)}</p>
+                    <p className="font-mono text-eyebrow uppercase text-subtle">{person.jobTitle}</p>
                   </div>
                 </div>
-                <p className="text-body-sm leading-relaxed text-foreground/85">{m.credentials}</p>
+                <p className="text-body-sm leading-relaxed text-foreground/85">{person.credential} · {person.context}</p>
                 <p className="text-body-sm leading-relaxed text-muted">
                   <span className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
                     Focus ·{" "}
                   </span>
-                  {m.focus}
+                  {person.focus}
                 </p>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ AI TRANSPARENCY ━━━━━━━━━━━━━━━━━━ */}
       <section aria-labelledby="meth-ai-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               06 · AI transparency
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="meth-ai-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               AI does some of the work.{" "}
               <span className="font-serif italic">Humans do the rest.</span>
-            </motion.h2>
+            </m.h2>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body leading-relaxed text-muted"
             >
               We use AI to scale the parts that benefit from scale. We use clinicians for everything
               else. Here&apos;s exactly where the line is.
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
 
-          <motion.div
+          <m.div
             variants={{
               hidden: {},
               visible: {
@@ -725,7 +731,7 @@ export function MethodologyClient() {
             viewport={{ once: true, margin: "-10%" }}
             className="mx-auto mt-12 grid max-w-4xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
-            <motion.div
+            <m.div
               variants={fadeUpItem}
               className="rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
             >
@@ -746,9 +752,9 @@ export function MethodologyClient() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               variants={fadeUpItem}
               className="rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
             >
@@ -780,8 +786,8 @@ export function MethodologyClient() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </section>
 
@@ -794,30 +800,30 @@ export function MethodologyClient() {
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               07 · Limitations and scope
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="meth-scope-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               Built to inform. <span className="font-serif italic">Not to replace.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.div
+          <m.div
             variants={{
               hidden: {},
               visible: {
@@ -829,7 +835,7 @@ export function MethodologyClient() {
             viewport={{ once: true, margin: "-10%" }}
             className="mx-auto mt-12 grid max-w-4xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
-            <motion.div
+            <m.div
               variants={fadeUpItem}
               className="rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
             >
@@ -850,9 +856,9 @@ export function MethodologyClient() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               variants={fadeUpItem}
               className="rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
             >
@@ -884,10 +890,10 @@ export function MethodologyClient() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
-          <motion.p
+          <m.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -896,7 +902,7 @@ export function MethodologyClient() {
           >
             Always consult a qualified healthcare provider before starting, stopping, or changing
             any supplement or medication.
-          </motion.p>
+          </m.p>
         </div>
       </section>
 

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
+import { LEAD_REVIEWER, displayName } from "@/lib/people";
 import { useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { qualityBand } from "@/lib/quality-score";
@@ -29,7 +30,7 @@ import { cn } from "@/lib/utils";
  * (bg-surface-subtle) so it reads as a "screen inside the card."
  *
  * The credentials line at the bottom (FDA · NIH · PubMed · DSLD +
- * Laurie Pham, PharmD + Catalog updated weekly) was folded in from the
+ * lead reviewer + Catalog updated weekly) was folded in from the
  * removed TrustBlock and ties off the trust angle.
  */
 
@@ -69,40 +70,40 @@ export function HowItWorks() {
 
       <div className="container relative mx-auto">
         {/* Header */}
-        <motion.div
+        <m.div
           variants={fadeUpContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
           className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
         >
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
           >
             How it works
-          </motion.p>
+          </m.p>
 
-          <motion.h2
+          <m.h2
             id="how-heading"
             variants={fadeUpItem}
             className="text-balance text-display-lg text-ink"
           >
             Three beats.{" "}
             <span className="font-serif italic text-accent">No guesswork.</span>
-          </motion.h2>
+          </m.h2>
 
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="max-w-prose text-body-lg leading-relaxed text-muted"
           >
             From scan to verdict — find the product, check it against your stack,
             and understand what to do next.
-          </motion.p>
-        </motion.div>
+          </m.p>
+        </m.div>
 
         {/* Step cards — premium 3-card grid */}
-        <motion.ol
+        <m.ol
           variants={{
             hidden: {},
             visible: {
@@ -115,7 +116,7 @@ export function HowItWorks() {
           className="mt-14 grid gap-8 md:mt-20 md:grid-cols-3 md:gap-6 lg:gap-8"
         >
           {STEPS.map((step) => (
-            <motion.li
+            <m.li
               key={step.num}
               variants={fadeUpItem}
               className="group flex min-h-[480px] flex-col rounded-2xl border border-border bg-surface p-7 shadow-md transition-[transform,box-shadow] duration-slow ease-emphasized hover:-translate-y-1 hover:shadow-xl md:p-8"
@@ -139,15 +140,15 @@ export function HowItWorks() {
                 {step.visual === "crossref" && <CrossRefVisual />}
                 {step.visual === "yourfit" && <YourFitVisual />}
               </div>
-            </motion.li>
+            </m.li>
           ))}
-        </motion.ol>
+        </m.ol>
 
         {/* Credentials block — now a clickable hand-off to /methodology
             where the full sourcing + verification process lives. The
             block stays a quiet trust signal visually; the hover state
             cues that there's more depth one click away.              */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10%" }}
@@ -170,7 +171,7 @@ export function HowItWorks() {
             </p>
             <p className="text-body-sm leading-relaxed text-muted">
               Reviewed by{" "}
-              <span className="text-ink">Laurie Pham, PharmD</span>
+              <span className="text-ink">{displayName(LEAD_REVIEWER)}</span>
               <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
               Catalog updated weekly
             </p>
@@ -184,7 +185,7 @@ export function HowItWorks() {
               </span>
             </p>
           </Link>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );
@@ -357,7 +358,7 @@ function YourFitVisual() {
           <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-subtle">
             Quality
           </span>
-          <motion.span
+          <m.span
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.32, 0.72, 0, 1] }}
@@ -369,10 +370,10 @@ function YourFitVisual() {
             className={`font-serif text-display-sm italic leading-none tabular-nums ${D3_BAND.textClass}`}
           >
             {D3_SCORE}
-          </motion.span>
+          </m.span>
         </div>
         <div className="mt-3 h-[5px] overflow-hidden rounded-full bg-border">
-          <motion.div
+          <m.div
             className={cn("h-full rounded-full", D3_BAND.barClass)}
             initial={{ width: "0%" }}
             animate={inView ? { width: `${D3_SCORE}%` } : {}}
@@ -385,7 +386,7 @@ function YourFitVisual() {
       </div>
 
       {/* Reasoning chips — concrete proof beneath the score */}
-      <motion.ul
+      <m.ul
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}
         transition={{ duration: 0.5, delay: 0.8, ease: [0.32, 0.72, 0, 1] }}
@@ -402,7 +403,7 @@ function YourFitVisual() {
             </li>
           )
         )}
-      </motion.ul>
+      </m.ul>
     </div>
   );
 }

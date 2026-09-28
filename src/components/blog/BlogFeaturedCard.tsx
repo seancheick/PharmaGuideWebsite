@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { BlogPost } from "@/lib/blog-types";
+import type { BlogCardPost } from "@/lib/blog-types";
 import { formatBlogDate, getCategory } from "@/lib/blog-types";
 import { BlogCardCover } from "./BlogCardCover";
 
@@ -21,7 +21,7 @@ import { BlogCardCover } from "./BlogCardCover";
  * Hover same as grid cards — card lifts, shadow deepens, image scales.
  */
 
-export function BlogFeaturedCard({ post }: { post: BlogPost }) {
+export function BlogFeaturedCard({ post }: { post: BlogCardPost }) {
   const cat = getCategory(post.category);
 
   return (

@@ -4,8 +4,10 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 /**
  * Google Analytics 4 — page views + event tracking.
- * Uses next/script with afterInteractive strategy so it doesn't
- * block page load (loads after hydration). No-ops if GA_ID is missing.
+ * `lazyOnload` loads it in browser idle time after the page is done.
+ * `afterInteractive` also emitted a high-priority <link rel=preload> for
+ * gtag.js in <head>, which competed with CSS and fonts for bandwidth on
+ * slow mobile connections. No-ops if GA_ID is missing.
  */
 export function GoogleAnalytics() {
   if (!GA_ID) return null;
@@ -14,9 +16,9 @@ export function GoogleAnalytics() {
     <>
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
-      <Script id="ga-init" strategy="afterInteractive">
+      <Script id="ga-init" strategy="lazyOnload">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}

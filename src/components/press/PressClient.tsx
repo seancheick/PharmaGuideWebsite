@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { FOUNDER, LEAD_REVIEWER, PEOPLE, TEAM, displayName } from "@/lib/people";
 import { CATALOG_SIZE, site } from "@/lib/site";
 
 /**
@@ -25,47 +26,25 @@ import { CATALOG_SIZE, site } from "@/lib/site";
  */
 
 const FACTS = [
-  { label: "Founded", value: "2025" },
+  { label: "Founded", value: site.foundingDate },
   { label: "Headquarters", value: "Boston, MA · USA" },
-  { label: "Founder & CEO", value: "Sean Cheick Baradji" },
-  { label: "Parent company", value: "B&Br Technology" },
+  { label: "Founder & CEO", value: FOUNDER.name },
+  { label: "Parent company", value: site.parentCompany },
   { label: "Catalog scale", value: `${CATALOG_SIZE} products` },
   { label: "Clinical review", value: "Licensed PharmD + NP" },
   { label: "Launch", value: "Opening in waves through 2026" },
   { label: "Categories", value: "Health · Medical · Lifestyle" },
 ];
 
-const LEADERSHIP = [
-  {
-    initials: "SC",
-    photo: "/team/sean-cheick.webp",
-    name: "Sean Cheick Baradji",
-    role: "Founder & CEO",
-    bio: "Built PharmaGuide after watching family members navigate medication and supplement complexity without the tools to do it safely. Based in Boston.",
-  },
-  {
-    initials: "LP",
-    photo: "/team/laurie-pham.webp",
-    name: "Laurie Pham, PharmD",
-    role: "Doctor of Pharmacy · Clinical Review",
-    bio: "Leads clinical accuracy review across drug-supplement interactions, depletion mappings, and dose-summation reasoning. 15+ years pharmacovigilance.",
-  },
-  {
-    initials: "MF",
-    photo: "/team/miriam-farez.webp",
-    name: "Miriam Farez, NP",
-    role: "Nurse Practitioner · Patient-Education Review",
-    bio: "Patient-education review. Reads every interaction warning + post from a healthcare-provider angle: clarity, accessibility, action.",
-  },
-];
+// Leadership cards read lib/people.ts (TEAM) — same records as /about.
 
 const BOILERPLATE = {
   oneLiner:
     "PharmaGuide is a clinician-reviewed supplement and medication safety platform with on-device interaction analysis, evidence-graded by clinicians.",
   paragraph:
-    `PharmaGuide is the supplement and medication co-pilot for people who want to understand what they actually take. The mobile apps (iOS + Android) read your full stack as a system — flagging interactions, medication-nutrient depletions, dose accumulation, FDA recalls, and ingredient quality across a ${CATALOG_SIZE} product on-device catalog. Every interaction is reviewed by a licensed clinical pharmacist before it ships. The architecture is privacy-first: your stack and conditions never leave your device. Founded 2025 in Boston by Sean Cheick Baradji. Opening in waves through 2026.`,
+    `PharmaGuide is the supplement and medication co-pilot for people who want to understand what they actually take. The mobile apps (iOS + Android) read your full stack as a system — flagging interactions, medication-nutrient depletions, dose accumulation, FDA recalls, and ingredient quality across a ${CATALOG_SIZE} product on-device catalog. Every interaction is reviewed by a licensed clinical pharmacist before it ships. The architecture is privacy-first: your stack and conditions never leave your device. Founded ${site.foundingDate} in Boston by ${FOUNDER.name}. Opening in waves through 2026.`,
   longer:
-    `Most consumer health apps check one supplement at a time. PharmaGuide reads the full stack — multi-way interactions, dose accumulation across products, timing conflicts, and the depletion patterns of common prescriptions (statins → CoQ10, metformin → B12 + folate, PPIs → magnesium + B12). Live FDA recall monitoring surfaces alerts on the products you actually scanned. A 4-pillar PG Score evaluates ingredient quality, safety + purity, evidence + research, and brand trust — including the proprietary blends most apps can't decompose. The catalog covers ${CATALOG_SIZE} products and is reviewed continuously by Laurie Pham, PharmD (Clinical Pharmacist) and Miriam Farez, NP (Nurse Practitioner). All computation runs on-device with AES-256 encryption locally; no health data is uploaded to PharmaGuide servers. The architecture is HIPAA-aligned. Founded in 2025 by Sean Cheick Baradji and B&Br Technology, headquartered in Boston, MA. Mobile apps open in waves through 2026.`,
+    `Most consumer health apps check one supplement at a time. PharmaGuide reads the full stack — multi-way interactions, dose accumulation across products, timing conflicts, and the depletion patterns of common prescriptions (statins → CoQ10, metformin → B12 + folate, PPIs → magnesium + B12). Live FDA recall monitoring surfaces alerts on the products you actually scanned. A 4-pillar PG Score evaluates ingredient quality, safety + purity, evidence + research, and brand trust — including the proprietary blends most apps can't decompose. The catalog covers ${CATALOG_SIZE} products and is reviewed continuously by ${displayName(LEAD_REVIEWER)} (Clinical Pharmacist) and ${displayName(PEOPLE["miriam-farez"])} (Nurse Practitioner). All computation runs on-device with AES-256 encryption locally; no health data is uploaded to PharmaGuide servers. The architecture is HIPAA-aligned. Founded in ${site.foundingDate} by ${FOUNDER.name} and ${site.parentCompany}, headquartered in Boston, MA. Mobile apps open in waves through 2026.`,
 };
 
 export function PressClient() {
@@ -84,20 +63,20 @@ export function PressClient() {
         </div>
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             animate="visible"
             className="mx-auto flex max-w-3xl flex-col items-center gap-7 text-center md:gap-9"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               Press &amp; Media
-            </motion.p>
+            </m.p>
 
-            <motion.h1
+            <m.h1
               id="press-hero-heading"
               variants={fadeUpItem}
               className="text-balance text-display-lg leading-[1.06] text-ink"
@@ -106,9 +85,9 @@ export function PressClient() {
               <span className="font-serif italic text-accent">
                 in one place.
               </span>
-            </motion.h1>
+            </m.h1>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
@@ -116,21 +95,21 @@ export function PressClient() {
               the press contact. If you&apos;re writing about PharmaGuide and
               need something we haven&apos;t included, email us — we respond
               within one business day.
-            </motion.p>
+            </m.p>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-[11px] uppercase tracking-[0.14em] text-foreground/80"
             >
               Press contact ·{" "}
               <a
-                href="mailto:press@pharmaguide.io"
+                href={`mailto:${site.pressEmail}`}
                 className="text-link underline decoration-link/60 underline-offset-[3px] hover:text-link-strong hover:decoration-link"
               >
-                press@pharmaguide.io
+                {site.pressEmail}
               </a>
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
         </div>
       </section>
 
@@ -143,28 +122,28 @@ export function PressClient() {
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto max-w-5xl"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               Quick facts
-            </motion.p>
-            <motion.h2
+            </m.p>
+            <m.h2
               variants={fadeUpItem}
               id="press-facts-heading"
               className="mt-4 text-balance text-display-md text-ink"
             >
               The numbers and the names.
-            </motion.h2>
+            </m.h2>
 
-            <motion.dl
+            <m.dl
               variants={fadeUpItem}
               className="mt-12 grid gap-x-10 gap-y-6 border-y border-border py-8 sm:grid-cols-2 md:mt-14 md:py-10 lg:grid-cols-3"
             >
@@ -178,8 +157,8 @@ export function PressClient() {
                   </dd>
                 </div>
               ))}
-            </motion.dl>
-          </motion.div>
+            </m.dl>
+          </m.div>
         </div>
       </section>
 
@@ -190,28 +169,28 @@ export function PressClient() {
       >
         <div className="container relative mx-auto">
           <div className="mx-auto max-w-4xl">
-            <motion.div
+            <m.div
               variants={fadeUpContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-15%" }}
               className="flex flex-col items-start gap-3"
             >
-              <motion.p
+              <m.p
                 variants={fadeUpItem}
                 className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
               >
                 Boilerplate
-              </motion.p>
-              <motion.h2
+              </m.p>
+              <m.h2
                 variants={fadeUpItem}
                 id="press-boilerplate-heading"
                 className="text-balance text-display-md text-ink"
               >
                 Three lengths.{" "}
                 <span className="font-serif italic">Pick what you need.</span>
-              </motion.h2>
-            </motion.div>
+              </m.h2>
+            </m.div>
 
             <div className="mt-12 flex flex-col gap-6 md:mt-14">
               <BoilerplateBlock label="One-liner" text={BOILERPLATE.oneLiner} />
@@ -231,30 +210,30 @@ export function PressClient() {
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               Leadership &amp; clinical oversight
-            </motion.p>
-            <motion.h2
+            </m.p>
+            <m.h2
               variants={fadeUpItem}
               id="press-leadership-heading"
               className="text-balance text-display-md text-ink"
             >
               Names + bios for{" "}
               <span className="font-serif italic">attribution.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -266,16 +245,16 @@ export function PressClient() {
             viewport={{ once: true, margin: "-10%" }}
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-3 md:gap-6"
           >
-            {LEADERSHIP.map((m) => (
-              <motion.li
-                key={m.name}
+            {TEAM.map((person) => (
+              <m.li
+                key={person.id}
                 variants={fadeUpItem}
                 className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
               >
                 <div className="flex items-center gap-4">
                   <Image
-                    src={m.photo}
-                    alt={m.name}
+                    src={person.photo}
+                    alt={person.name}
                     width={96}
                     height={96}
                     quality={95}
@@ -283,19 +262,22 @@ export function PressClient() {
                   />
                   <div className="min-w-0">
                     <p className="font-serif text-h3 italic leading-tight text-ink">
-                      {m.name}
+                      {displayName(person)}
                     </p>
                     <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
-                      {m.role}
+                      {person.role}
                     </p>
                   </div>
                 </div>
-                <p className="text-body-sm leading-relaxed text-muted">
-                  {m.bio}
+                <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-foreground/65">
+                  {person.context}
                 </p>
-              </motion.li>
+                <p className="text-body-sm leading-relaxed text-muted">
+                  {person.bio}
+                </p>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
         </div>
       </section>
 
@@ -306,28 +288,28 @@ export function PressClient() {
       >
         <div className="container relative mx-auto">
           <div className="mx-auto max-w-4xl">
-            <motion.div
+            <m.div
               variants={fadeUpContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-15%" }}
               className="flex flex-col gap-3"
             >
-              <motion.p
+              <m.p
                 variants={fadeUpItem}
                 className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
               >
                 Brand assets
-              </motion.p>
-              <motion.h2
+              </m.p>
+              <m.h2
                 variants={fadeUpItem}
                 id="press-assets-heading"
                 className="text-balance text-display-md text-ink"
               >
                 Logo, screenshots,{" "}
                 <span className="font-serif italic">brand colors.</span>
-              </motion.h2>
-            </motion.div>
+              </m.h2>
+            </m.div>
 
             <div className="mt-12 grid gap-4 md:mt-14 md:grid-cols-2">
               <AssetCard
@@ -402,27 +384,27 @@ export function PressClient() {
 
         <div className="container relative mx-auto">
           <div className="mx-auto max-w-4xl">
-            <motion.div
+            <m.div
               variants={fadeUpContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-15%" }}
               className="flex flex-col gap-3"
             >
-              <motion.p
+              <m.p
                 variants={fadeUpItem}
                 className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
               >
                 Brand usage
-              </motion.p>
-              <motion.h2
+              </m.p>
+              <m.h2
                 variants={fadeUpItem}
                 id="press-usage-heading"
                 className="text-balance text-display-md text-ink"
               >
                 How to write our name + a few rules.
-              </motion.h2>
-            </motion.div>
+              </m.h2>
+            </m.div>
 
             <ul className="mt-10 flex flex-col gap-3 md:mt-12">
               {[
@@ -475,7 +457,7 @@ export function PressClient() {
         className="relative section-y-sm border-t border-border"
       >
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
@@ -488,10 +470,10 @@ export function PressClient() {
             <p className="max-w-prose text-body-lg leading-relaxed text-muted">
               Email{" "}
               <a
-                href="mailto:press@pharmaguide.io"
+                href={`mailto:${site.pressEmail}`}
                 className="text-link underline decoration-link/60 underline-offset-[3px] hover:text-link-strong hover:decoration-link"
               >
-                press@pharmaguide.io
+                {site.pressEmail}
               </a>{" "}
               — we respond within one business day. Founder availability for
               interviews is real and reasonable; just give us 48 hours&apos;
@@ -504,7 +486,7 @@ export function PressClient() {
               Read more about us
               <span aria-hidden="true">→</span>
             </Link>
-          </motion.div>
+          </m.div>
         </div>
       </section>
     </main>
@@ -521,7 +503,7 @@ function BoilerplateBlock({
   text: string;
 }) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
@@ -534,7 +516,7 @@ function BoilerplateBlock({
       <p className="mt-4 text-body leading-relaxed text-foreground/85">
         {text}
       </p>
-    </motion.div>
+    </m.div>
   );
 }
 

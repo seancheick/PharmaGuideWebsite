@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { transitions } from "@/lib/tokens";
 
 /**
@@ -22,7 +22,7 @@ export function InfrastructureStrip() {
       aria-label="Platform principles"
       className="relative border-y border-border/60 bg-surface-subtle/30"
     >
-      <motion.div
+      <m.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: "-15%" }}
@@ -40,7 +40,7 @@ export function InfrastructureStrip() {
           </span>
           <span>Health data never leaves your device</span>
         </p>
-      </motion.div>
+      </m.div>
     </section>
   );
 }

@@ -9,13 +9,25 @@ import { NewsletterCTA } from "@/components/faq/NewsletterCTA";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogShare } from "@/components/blog/BlogShare";
 import { mdxComponents } from "@/components/blog/MdxComponents";
+import { ClinicianBadge } from "@/components/shared/ClinicianBadge";
+import { JsonLd } from "@/components/shared/JsonLd";
 import {
   formatBlogDate,
   getAllPosts,
   getCategory,
   getPostBySlug,
   getRelatedPosts,
+  postModified,
 } from "@/lib/blog";
+import { PEOPLE, displayName, profilePath } from "@/lib/people";
+import {
+  absoluteUrl,
+  breadcrumbNode,
+  ref,
+  schemaId,
+  webPageNode,
+} from "@/lib/schema";
+import { buildMetadata, ogImagePath } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 /**
@@ -46,30 +58,20 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) return { title: "Post not found" };
-  const metadataTitle = post.seoTitle ?? post.title;
 
-  return {
-    title: metadataTitle,
+  return buildMetadata({
+    title: post.seoTitle ?? post.title,
     description: post.description,
-    alternates: { canonical: `${site.url}/blog/${post.slug}` },
-    openGraph: {
-      title: post.title,
-      description: post.description,
-      url: `${site.url}/blog/${post.slug}`,
-      siteName: site.name,
-      locale: site.locale,
-      type: "article",
+    path: `/blog/${post.slug}`,
+    image: { path: ogImagePath.post(post.slug), alt: post.title },
+    article: {
       publishedTime: post.date,
-      modifiedTime: post.updatedAt ?? post.date,
-      authors: [post.author],
-      ...(post.tags ? { tags: post.tags } : {}),
+      modifiedTime: postModified(post),
+      authors: [absoluteUrl(profilePath(PEOPLE[post.authorId]))],
+      section: getCategory(post.category)?.label,
+      tags: post.tags,
     },
-    twitter: {
-      card: "summary_large_image",
-      title: metadataTitle,
-      description: post.description,
-    },
-  };
+  });
 }
 
 export default async function BlogPostPage({
@@ -84,71 +86,56 @@ export default async function BlogPostPage({
   const category = getCategory(post.category);
   const related = getRelatedPosts(post, 3);
 
-  // BlogPosting + Breadcrumb JSON-LD
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "@id": `${site.url}/blog/${post.slug}#article`,
-    headline: post.title,
-    description: post.description,
-    url: `${site.url}/blog/${post.slug}`,
-    datePublished: post.date,
-    dateModified: post.updatedAt ?? post.date,
-    inLanguage: site.lang,
-    wordCount: post.wordCount,
-    author: {
-      "@type": "Person",
-      name: post.author,
-    },
-    ...(post.reviewer
-      ? {
-          reviewedBy: {
-            "@type": "Person",
-            name: post.reviewer,
-          },
-        }
-      : {}),
-    publisher: {
-      "@type": "Organization",
-      name: site.name,
-      url: site.url,
-      logo: {
-        "@type": "ImageObject",
-        url: `${site.url}/icon2.png`,
-      },
-    },
-    mainEntityOfPage: `${site.url}/blog/${post.slug}`,
-    ...(post.tags ? { keywords: post.tags.join(", ") } : {}),
-    ...(category
-      ? { articleSection: category.label }
-      : {}),
-  };
+  const author = PEOPLE[post.authorId];
+  const reviewer = post.reviewerId ? PEOPLE[post.reviewerId] : undefined;
+  const modified = postModified(post);
+  const path = `/blog/${post.slug}`;
+  const articleId = `${absoluteUrl(path)}#article`;
 
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "@id": `${site.url}/blog/${post.slug}#breadcrumb`,
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: site.url,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Blog",
-        item: `${site.url}/blog`,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: post.title,
-        item: `${site.url}/blog/${post.slug}`,
-      },
-    ],
-  };
+  // MedicalWebPage carries the clinical review (schema.org defines
+  // reviewedBy/lastReviewed on WebPage); the BlogPosting is its main
+  // entity. Author and reviewer point at the Person nodes the root layout
+  // emits from lib/people.ts.
+  const schema = [
+    webPageNode({
+      path,
+      name: post.seoTitle ?? post.title,
+      description: post.description,
+      type: "MedicalWebPage",
+      image: ogImagePath.post(post.slug),
+      datePublished: post.date,
+      dateModified: modified,
+      reviewedBy: reviewer,
+      lastReviewed: post.reviewedAt,
+      mainEntity: articleId,
+    }),
+    {
+      "@type": "BlogPosting",
+      "@id": articleId,
+      headline: post.title,
+      description: post.description,
+      url: absoluteUrl(path),
+      image: [
+        ...(post.image ? [absoluteUrl(post.image)] : []),
+        absoluteUrl(ogImagePath.post(post.slug)),
+      ],
+      datePublished: post.date,
+      dateModified: modified,
+      author: ref(schemaId.person(author)),
+      publisher: ref(schemaId.organization),
+      mainEntityOfPage: ref(schemaId.webpage(path)),
+      isPartOf: ref(schemaId.webpage("/blog")),
+      inLanguage: site.lang,
+      wordCount: post.wordCount,
+      ...(post.tags ? { keywords: post.tags.join(", ") } : {}),
+      ...(category ? { articleSection: category.label } : {}),
+    },
+    breadcrumbNode(path, [
+      { name: "Home", path: "/" },
+      { name: "Blog", path: "/blog" },
+      { name: post.title, path },
+    ]),
+  ];
 
   return (
     <>
@@ -198,30 +185,65 @@ export default async function BlogPostPage({
                 {post.description}
               </p>
 
-              {/* Meta strip — author + date + read time */}
+              {/* Meta strip — author + dates + read time */}
               <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-border pt-6 font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle md:mt-12">
                 <span>
-                  By <span className="text-foreground/85">{post.author}</span>
+                  By{" "}
+                  <Link
+                    href={profilePath(author)}
+                    className="text-foreground/85 underline decoration-foreground/25 underline-offset-[3px] transition-colors duration-fast ease-smooth hover:text-link hover:decoration-link/60"
+                  >
+                    {displayName(author)}
+                  </Link>
                 </span>
-                {post.reviewer && (
+                <span aria-hidden="true" className="text-border-strong">·</span>
+                <span>
+                  Published <time dateTime={post.date}>{formatBlogDate(post.date)}</time>
+                </span>
+                {modified !== post.date && (
                   <>
                     <span aria-hidden="true" className="text-border-strong">·</span>
-                    <span>
-                      Reviewed by{" "}
-                      <Link
-                        href="/about/"
-                        className="text-foreground/85 underline decoration-foreground/30 underline-offset-[3px] transition-colors hover:text-link hover:decoration-link/60"
-                      >
-                        {post.reviewer}
-                      </Link>
+                    <span className="text-foreground/85">
+                      Updated <time dateTime={modified}>{formatBlogDate(modified)}</time>
                     </span>
                   </>
                 )}
                 <span aria-hidden="true" className="text-border-strong">·</span>
-                <time dateTime={post.date}>{formatBlogDate(post.date)}</time>
-                <span aria-hidden="true" className="text-border-strong">·</span>
                 <span>{post.readTime}</span>
               </div>
+
+              {/* Clinical review — who checked this, linked to their
+                  credentials. Only rendered when a reviewer signed off. */}
+              {reviewer && (
+                <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-2xl border border-border bg-surface/70 px-4 py-3 shadow-xs backdrop-blur-sm sm:inline-flex">
+                  <span className="inline-flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent">
+                    <svg
+                      aria-hidden="true"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      className="shrink-0"
+                    >
+                      <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.3" />
+                      <path
+                        d="M5 8.2l2 2L11 6"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    Clinically reviewed
+                    {post.reviewedAt && (
+                      <time dateTime={post.reviewedAt} className="text-subtle">
+                        {formatBlogDate(post.reviewedAt)}
+                      </time>
+                    )}
+                  </span>
+                  <ClinicianBadge clinician={reviewer} />
+                </div>
+              )}
 
               {/* Share rail — compact horizontal row directly under the
                   byline. Client island (clipboard API needs JS); rest
@@ -298,15 +320,7 @@ export default async function BlogPostPage({
       </main>
       <Footer />
 
-      {/* Structured data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
+      <JsonLd nodes={schema} />
     </>
   );
 }

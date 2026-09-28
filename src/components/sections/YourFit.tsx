@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { qualityBand } from "@/lib/quality-score";
@@ -84,21 +84,21 @@ export function YourFit() {
       <div className="container relative mx-auto">
         <div className="grid items-center gap-14 md:grid-cols-[1.05fr_1fr] md:gap-16 lg:gap-20">
           {/* Left column — copy */}
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="flex flex-col gap-7 md:gap-9"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               Your Fit
-            </motion.p>
+            </m.p>
 
-            <motion.h2
+            <m.h2
               id="your-fit-heading"
               variants={fadeUpItem}
               className="text-balance text-display-lg text-ink"
@@ -108,30 +108,30 @@ export function YourFit() {
               <span className="font-serif italic text-accent">
                 right for you.
               </span>
-            </motion.h2>
+            </m.h2>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
               PharmaGuide gives you two reads on every product — objective
               quality, and personal fit.
-            </motion.p>
+            </m.p>
 
             {/* Callback to the Problem section's thesis. The shape of the
                 site closes here: label vs combination, quality vs fit. */}
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose font-serif text-h3 italic leading-snug text-ink"
             >
               Quality is what&apos;s in the bottle.
               <br />
               Fit is everything around it.
-            </motion.p>
+            </m.p>
 
             {/* Hand-off to the Features deep-dive — for visitors who
                 want to know exactly how the score and fit are computed. */}
-            <motion.div variants={fadeUpItem}>
+            <m.div variants={fadeUpItem}>
               <Link
                 href="/features#ingredient-transparency"
                 className="group inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-link underline decoration-link/60 underline-offset-[3px] transition-[color,text-decoration-color] duration-fast ease-smooth hover:text-link-strong hover:decoration-link"
@@ -144,12 +144,12 @@ export function YourFit() {
                   →
                 </span>
               </Link>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
           {/* Right column — dual-assessment card */}
           <div ref={cardRef} className="flex justify-center md:justify-end">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 16 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={transitions.reveal}
@@ -200,7 +200,7 @@ export function YourFit() {
                       so a lower demo score would shift the bar to the
                       monitor/caution tone automatically. */}
                   <div className="mt-3 h-[6px] overflow-hidden rounded-full bg-border">
-                    <motion.div
+                    <m.div
                       className={cn("h-full rounded-full", BAND.barClass)}
                       initial={{ width: "0%" }}
                       animate={inView ? { width: `${TARGET_SCORE}%` } : {}}
@@ -208,7 +208,7 @@ export function YourFit() {
                     />
                   </div>
 
-                  <motion.p
+                  <m.p
                     initial={{ opacity: 0 }}
                     animate={inView ? { opacity: 1 } : {}}
                     transition={{ duration: 0.4, delay: 1.0, ease: [0.32, 0.72, 0, 1] }}
@@ -218,11 +218,11 @@ export function YourFit() {
                       {BAND.label} quality
                     </span>
                     {" · "}3rd-party tested · clean ingredient list
-                  </motion.p>
+                  </m.p>
                 </div>
 
                 {/* Divider — draws in horizontally */}
-                <motion.div
+                <m.div
                   initial={{ scaleX: 0 }}
                   animate={inView ? { scaleX: 1 } : {}}
                   transition={{ duration: 0.5, delay: 1.4, ease: [0.32, 0.72, 0, 1] }}
@@ -236,7 +236,7 @@ export function YourFit() {
                     Your Fit
                   </span>
 
-                  <motion.div
+                  <m.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.5, delay: 1.6, ease: [0.32, 0.72, 0, 1] }}
@@ -249,10 +249,10 @@ export function YourFit() {
                     <span className="font-serif text-h3 italic leading-none text-severity-safe">
                       Good fit
                     </span>
-                  </motion.div>
+                  </m.div>
 
                   {/* Notes — stagger in last */}
-                  <motion.ul
+                  <m.ul
                     initial="hidden"
                     animate={inView ? "visible" : "hidden"}
                     variants={{
@@ -273,20 +273,20 @@ export function YourFit() {
                     <NoteItem dotClass="bg-severity-safe">
                       No high-risk conflicts detected
                     </NoteItem>
-                  </motion.ul>
+                  </m.ul>
                 </div>
 
                 {/* Footer — tiny attribution line that mirrors the in-app feel */}
-                <motion.p
+                <m.p
                   initial={{ opacity: 0 }}
                   animate={inView ? { opacity: 1 } : {}}
                   transition={{ duration: 0.4, delay: 2.5 }}
                   className="mt-6 border-t border-border pt-4 font-mono text-[10px] uppercase tracking-[0.12em] text-subtle"
                 >
                   Personalized to your stack · updates when your stack changes
-                </motion.p>
+                </m.p>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </div>
       </div>
@@ -302,7 +302,7 @@ function NoteItem({
   dotClass: string;
 }) {
   return (
-    <motion.li
+    <m.li
       variants={{
         hidden: { opacity: 0, y: 6 },
         visible: { opacity: 1, y: 0 },
@@ -315,6 +315,6 @@ function NoteItem({
         className={cn("mt-[7px] block h-1 w-1 shrink-0 rounded-full", dotClass)}
       />
       <span>{children}</span>
-    </motion.li>
+    </m.li>
   );
 }

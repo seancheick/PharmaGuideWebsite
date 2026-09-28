@@ -16,15 +16,29 @@ export const CATALOG_SIZE = "180,000+";
 
 export const site = {
   name: "PharmaGuide",
+  /** Registered entity. The footer copyright and Organization schema read this. */
+  legalName: "PharmaGuide Inc.",
+  /** Parent company — schema.org `parentOrganization`, not an alternate name. */
+  parentCompany: "B&Br Technology",
+  foundingDate: "2025",
   tagline: "Supplement intelligence.",
-  description: `See how your supplements, medications, and timing work together — not one bottle at a time. Cross-referenced catalog of ${CATALOG_SIZE} products with evidence-graded interaction analysis.`,
+  // ≤160 chars so search snippets don't truncate it (was 180).
+  description: `See how your supplements, medications, and timing work together — not one bottle at a time. Evidence-graded interaction checks across ${CATALOG_SIZE} products.`,
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://pharmaguide.io",
   locale: "en_US",
   lang: "en-US",
   country: "US",
   email: "info@pharmaguide.io",
+  pressEmail: "press@pharmaguide.io",
   city: "Boston, MA",
+  address: { locality: "Boston", region: "MA" },
   twitter: "@pharmaguideai",
+  /** Official profiles — footer icons and schema.org `sameAs` both read this. */
+  social: {
+    x: "https://x.com/pharmaguideai",
+    linkedin: "https://www.linkedin.com/company/pharmaguideai",
+    instagram: "https://www.instagram.com/pharmaguide.ai",
+  },
 } as const;
 
 /**

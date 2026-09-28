@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { BlogPost, BlogCategory } from "@/lib/blog-types";
+import type { BlogCardPost, BlogCategory } from "@/lib/blog-types";
 import { getCategory } from "@/lib/blog-types";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
  */
 
 interface BlogCardCoverProps {
-  post: BlogPost;
+  post: BlogCardPost;
   /** Sizes hint for next/image. Default tuned for the 3-col grid. */
   sizes?: string;
   /** Extra classes for the wrapper (e.g. group-hover scale). */
@@ -84,7 +84,7 @@ function FallbackArt({
   post,
   category,
 }: {
-  post: BlogPost;
+  post: BlogCardPost;
   category: BlogCategory | undefined;
 }) {
   // Deterministic seed from slug — produces a number 0-99 for offset

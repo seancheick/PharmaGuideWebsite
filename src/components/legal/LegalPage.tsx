@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { fadeUpContainer, fadeUpItem } from "@/lib/tokens";
 import { type LegalDocument, formatLegalDate } from "@/lib/legal";
 import { site } from "@/lib/site";
@@ -96,20 +96,20 @@ export function LegalPage({
         </div>
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             animate="visible"
             className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               {doc.eyebrow}
-            </motion.p>
+            </m.p>
 
-            <motion.h1
+            <m.h1
               id="legal-hero-heading"
               variants={fadeUpItem}
               className="text-balance text-display-lg leading-[1.08] text-ink"
@@ -118,16 +118,16 @@ export function LegalPage({
               <span className="font-serif italic text-accent">
                 {doc.titleEm}
               </span>
-            </motion.h1>
+            </m.h1>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
               {doc.subhead}
-            </motion.p>
+            </m.p>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-[11px] uppercase tracking-[0.14em] text-subtle"
             >
@@ -135,8 +135,8 @@ export function LegalPage({
               <time dateTime={doc.lastUpdated} className="text-foreground/65">
                 {formatLegalDate(doc.lastUpdated)}
               </time>
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
         </div>
       </section>
 

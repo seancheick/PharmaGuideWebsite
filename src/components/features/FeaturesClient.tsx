@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { CATALOG_SIZE } from "@/lib/site";
@@ -48,39 +48,39 @@ export function FeaturesClient() {
         </div>
 
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             animate="visible"
             className="mx-auto flex max-w-3xl flex-col items-center gap-7 text-center md:gap-9"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               Features
-            </motion.p>
+            </m.p>
 
-            <motion.h1
+            <m.h1
               id="features-hero-heading"
               variants={fadeUpItem}
               className="text-balance text-display-lg leading-[1.04] text-ink"
             >
               The supplement and medication co-pilot{" "}
               <span className="font-serif italic text-accent">you actually need.</span>
-            </motion.h1>
+            </m.h1>
 
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
               Most apps check one bottle at a time. PharmaGuide reads your full stack as a system —
               flagging interactions, depletions, dose accumulation, recalls, and quality issues
               across every supplement and medication you take.
-            </motion.p>
+            </m.p>
 
             {/* Tiny strength rail */}
-            <motion.div
+            <m.div
               variants={fadeUpItem}
               className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle"
             >
@@ -97,15 +97,15 @@ export function FeaturesClient() {
                 ·
               </span>
               <span>Privacy by architecture</span>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ PILLAR OVERVIEW ━━━━━━━━━━━━━━━━━━ */}
       <section aria-label="Capability overview" className="relative pb-section-y-sm">
         <div className="container relative mx-auto">
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -118,7 +118,7 @@ export function FeaturesClient() {
             className="mx-auto grid max-w-5xl gap-3 md:grid-cols-2 md:gap-4"
           >
             {PILLARS.map((p) => (
-              <motion.li
+              <m.li
                 key={p.id}
                 variants={fadeUpItem}
                 className="rounded-xl border border-border bg-surface px-5 py-5 transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
@@ -139,9 +139,9 @@ export function FeaturesClient() {
                       the reader has to scroll into the pillar deep-dive. */}
                   <p className="mt-2.5 text-body-sm leading-relaxed text-muted">{p.overview}</p>
                 </a>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
 
           {/* Two-scales explainer — a frequent point of confusion in the
               beta. The interaction-tier scale (Contraindicated → Avoid →
@@ -152,7 +152,7 @@ export function FeaturesClient() {
               Same words ("safety") but different units of measurement;
               spelling that out here prevents the comparison in the user's
               head from going wrong by the time they reach Pillar 2. */}
-          <motion.aside
+          <m.aside
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -176,7 +176,7 @@ export function FeaturesClient() {
               You&apos;ll see both inside the app. They measure different things on different units
               — we keep them visually separated so they never blur into one number.
             </p>
-          </motion.aside>
+          </m.aside>
         </div>
       </section>
 
@@ -202,40 +202,40 @@ export function FeaturesClient() {
                 className={`mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2 md:gap-14 lg:gap-20 ${reverse ? "md:[&>*:first-child]:order-2" : ""}`}
               >
                 {/* COPY column */}
-                <motion.div
+                <m.div
                   variants={fadeUpContainer}
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, margin: "-10%" }}
                   className="flex flex-col gap-5"
                 >
-                  <motion.div variants={fadeUpItem} className="flex items-baseline gap-3">
+                  <m.div variants={fadeUpItem} className="flex items-baseline gap-3">
                     <span className="font-mono text-[11px] font-medium uppercase tabular-nums tracking-[0.18em] text-accent">
                       {pillar.num}
                     </span>
                     <span className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
                       {pillar.eyebrow}
                     </span>
-                  </motion.div>
+                  </m.div>
 
-                  <motion.h2
+                  <m.h2
                     id={`${pillar.id}-heading`}
                     variants={fadeUpItem}
                     className="text-balance text-display-md leading-[1.08] text-ink"
                   >
                     {pillar.titleLead}{" "}
                     <span className="font-serif italic text-accent">{pillar.titleEm}</span>
-                  </motion.h2>
+                  </m.h2>
 
-                  <motion.p
+                  <m.p
                     variants={fadeUpItem}
                     className="max-w-prose text-body-lg leading-relaxed text-muted"
                   >
                     {pillar.intro}
-                  </motion.p>
+                  </m.p>
 
                   {/* Capabilities */}
-                  <motion.ul variants={fadeUpItem} className="mt-2 flex flex-col gap-2.5">
+                  <m.ul variants={fadeUpItem} className="mt-2 flex flex-col gap-2.5">
                     {pillar.capabilities.map((cap, j) => (
                       <li
                         key={j}
@@ -248,11 +248,11 @@ export function FeaturesClient() {
                         <span>{renderInline(cap)}</span>
                       </li>
                     ))}
-                  </motion.ul>
+                  </m.ul>
 
                   {/* Examples */}
                   {pillar.examples.length > 0 && (
-                    <motion.div
+                    <m.div
                       variants={fadeUpItem}
                       className="mt-3 rounded-xl border border-border bg-surface/80 p-5 backdrop-blur-sm"
                     >
@@ -274,12 +274,12 @@ export function FeaturesClient() {
                           </li>
                         ))}
                       </ul>
-                    </motion.div>
+                    </m.div>
                   )}
 
                   {/* External sources */}
                   {pillar.sources.length > 0 && (
-                    <motion.p
+                    <m.p
                       variants={fadeUpItem}
                       className="mt-1 font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle"
                     >
@@ -301,7 +301,7 @@ export function FeaturesClient() {
                           )}
                         </span>
                       ))}
-                    </motion.p>
+                    </m.p>
                   )}
 
                   {/* "From the blog" — appears only when relatedPosts
@@ -311,7 +311,7 @@ export function FeaturesClient() {
                       src/lib/features.ts. See docs/10-blog-system-guide.md
                       "Cross-link maintenance" for the full strategy. */}
                   {pillar.relatedPosts && pillar.relatedPosts.length > 0 && (
-                    <motion.div variants={fadeUpItem} className="mt-2 flex flex-col gap-2.5">
+                    <m.div variants={fadeUpItem} className="mt-2 flex flex-col gap-2.5">
                       <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-accent">
                         From the blog
                       </p>
@@ -333,9 +333,9 @@ export function FeaturesClient() {
                           </li>
                         ))}
                       </ul>
-                    </motion.div>
+                    </m.div>
                   )}
-                </motion.div>
+                </m.div>
 
                 {/* ILLUSTRATION column */}
                 <div className="w-full">
@@ -355,33 +355,33 @@ export function FeaturesClient() {
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center md:gap-6"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               {CLINICIAN_REPORT.eyebrow}
-            </motion.p>
-            <motion.h2
+            </m.p>
+            <m.h2
               id="clinician-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               <span className="font-serif italic">{CLINICIAN_REPORT.title}</span>
-            </motion.h2>
-            <motion.p
+            </m.h2>
+            <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
               {CLINICIAN_REPORT.body}
-            </motion.p>
-            <motion.ul
+            </m.p>
+            <m.ul
               variants={fadeUpItem}
               className="mt-2 flex flex-col gap-2 text-left sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-2"
             >
@@ -397,38 +397,38 @@ export function FeaturesClient() {
                   <span>{b}</span>
                 </li>
               ))}
-            </motion.ul>
-          </motion.div>
+            </m.ul>
+          </m.div>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ BUILT ON ━━━━━━━━━━━━━━━━━━ */}
       <section aria-labelledby="built-on-heading" className="section-y-sm relative">
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center md:gap-6"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
               The foundation
-            </motion.p>
-            <motion.h2
+            </m.p>
+            <m.h2
               id="built-on-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
               Built on what makes the rest possible.{" "}
               <span className="font-serif italic">By design.</span>
-            </motion.h2>
-          </motion.div>
+            </m.h2>
+          </m.div>
 
-          <motion.ul
+          <m.ul
             variants={{
               hidden: {},
               visible: {
@@ -441,36 +441,36 @@ export function FeaturesClient() {
             className="mx-auto mt-12 grid max-w-5xl gap-5 md:mt-14 md:grid-cols-2 md:gap-6"
           >
             {BUILT_ON.map((item) => (
-              <motion.li
+              <m.li
                 key={item.label}
                 variants={fadeUpItem}
                 className="rounded-2xl border border-border bg-surface p-6 shadow-sm md:p-7"
               >
                 <p className="font-serif text-h3 italic leading-tight text-ink">{item.label}</p>
                 <p className="mt-3 text-body-sm leading-relaxed text-muted">{item.detail}</p>
-              </motion.li>
+              </m.li>
             ))}
-          </motion.ul>
+          </m.ul>
         </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━ BOUNDARIES ━━━━━━━━━━━━━━━━━━ */}
       <section aria-labelledby="boundaries-heading" className="relative pb-section-y-sm">
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             variants={fadeUpContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-15%" }}
             className="mx-auto max-w-4xl text-center"
           >
-            <motion.p
+            <m.p
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-subtle"
             >
               {BOUNDARIES.title}
-            </motion.p>
-            <motion.ul
+            </m.p>
+            <m.ul
               variants={fadeUpItem}
               className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4"
             >
@@ -502,8 +502,8 @@ export function FeaturesClient() {
                   <span className="text-body-sm leading-snug text-ink">{item}</span>
                 </li>
               ))}
-            </motion.ul>
-          </motion.div>
+            </m.ul>
+          </m.div>
         </div>
       </section>
 
@@ -513,7 +513,7 @@ export function FeaturesClient() {
         className="section-y-sm relative border-t border-border bg-surface-subtle/40"
       >
         <div className="container relative mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
@@ -539,7 +539,7 @@ export function FeaturesClient() {
                 <span aria-hidden="true">→</span>
               </Link>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </section>
     </main>

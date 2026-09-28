@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { ADE_ER_VISITS } from "@/lib/claims";
@@ -127,25 +127,25 @@ export function Problem() {
 
       <div className="container relative mx-auto">
         {/* Block 1 — eyebrow + headline */}
-        <motion.div
+        <m.div
           variants={fadeUpContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
           className="mx-auto flex max-w-4xl flex-col items-center gap-10 text-center md:gap-12"
         >
-          <motion.p
+          <m.p
             variants={fadeUpItem}
             className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
           >
             The problem
-          </motion.p>
+          </m.p>
 
           {/* Headline — text-balance + soft md-only break so mobile wraps
               naturally (3 tight lines instead of 4 forced by a <br />).
               Two-tone treatment: first clause in ink, second in accent
               flows as one paragraph instead of two stacked sentences.   */}
-          <motion.h2
+          <m.h2
             variants={fadeUpItem}
             className="text-balance text-display-lg leading-[1.08] text-ink"
           >
@@ -153,13 +153,13 @@ export function Problem() {
             <span className="text-accent">
               Not what happens with your other bottles.
             </span>
-          </motion.h2>
-        </motion.div>
+          </m.h2>
+        </m.div>
 
         {/* Block 2 — three statements with two-tone hierarchy.
             Wider container + per-statement max so statement 2 can fit on
             two visual lines on desktop (lead + tail). */}
-        <motion.div
+        <m.div
           variants={statementsContainer}
           initial="hidden"
           whileInView="visible"
@@ -167,16 +167,16 @@ export function Problem() {
           className="mx-auto mt-20 grid max-w-6xl gap-12 md:mt-24 md:grid-cols-3 md:gap-12 lg:gap-16"
         >
           {STATEMENTS.map((s, i) => (
-            <motion.p
+            <m.p
               key={i}
               variants={fadeUpItem}
               className="mx-auto max-w-[300px] text-balance text-h3 leading-snug md:mx-0 md:max-w-none"
             >
               <span className="text-ink">{s.lead}</span>{" "}
               <span className="text-muted">{s.tail}</span>
-            </motion.p>
+            </m.p>
           ))}
-        </motion.div>
+        </m.div>
 
         {/* Block 2.5 — CDC stat callout. Quantifies the abstract problem
             with a real, sourced number. Sans tabular-nums for the figure
@@ -184,7 +184,7 @@ export function Problem() {
             moments elsewhere in this section). The empowerment line is
             kept sans (not italic) so we don't stack three italic moments
             in one section. */}
-        <motion.figure
+        <m.figure
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-12%" }}
@@ -254,12 +254,12 @@ export function Problem() {
             <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
             Not all interactions require emergency care
           </figcaption>
-        </motion.figure>
+        </m.figure>
 
         {/* Block 3 — closing thesis (smaller, tighter, subtler scale-up).
             Margin tightened from mt-24/28 → mt-16/20 so the thesis reads as
             the natural conclusion of the stat block, not a separate beat.  */}
-        <motion.p
+        <m.p
           initial={{ opacity: 0, y: 12, scale: 0.985 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-20%" }}
@@ -269,7 +269,7 @@ export function Problem() {
           Because interactions happen between products
           <br className="hidden md:inline" />{" "}
           — not in isolation.
-        </motion.p>
+        </m.p>
       </div>
     </section>
   );

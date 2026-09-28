@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { transitions } from "@/lib/tokens";
 import { AppUILoop, ITEMS, type StackItem, type ItemKey } from "./AppUILoop";
@@ -130,7 +130,7 @@ export function PhoneMockup() {
       {/* Tilt wrapper — desktop only */}
       <div className="relative md:translate-y-[-8px] md:rotate-[2.5deg]">
         {/* Float wrapper — gentle continuous Y oscillation */}
-        <motion.div
+        <m.div
           initial={{ y: 0 }}
           animate={reducedMotion ? {} : { y: [-4, 4, -4] }}
           transition={{
@@ -167,7 +167,7 @@ export function PhoneMockup() {
             {/* Soft halo behind the floating interaction card — appears with it */}
             <AnimatePresence>
               {showInteraction && (
-                <motion.div
+                <m.div
                   key="halo"
                   aria-hidden="true"
                   initial={{ opacity: 0 }}
@@ -189,7 +189,7 @@ export function PhoneMockup() {
                 The signature "important info emerging" moment. */}
             <AnimatePresence>
               {showInteraction && (
-                <motion.div
+                <m.div
                   key="interaction"
                   initial={{ y: 24, opacity: 0, scale: 0.96 }}
                   animate={{ y: 0, opacity: 1, scale: 1 }}
@@ -236,7 +236,7 @@ export function PhoneMockup() {
                     </span>
                     <span className="text-[10.5px] font-medium text-muted">Limited</span>
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
 
@@ -244,7 +244,7 @@ export function PhoneMockup() {
                 interaction card so the two feel like one motion family */}
             <AnimatePresence>
               {showFitTag && (
-                <motion.div
+                <m.div
                   key="fit"
                   initial={{ y: 22, opacity: 0, scale: 0.96 }}
                   animate={{ y: 0, opacity: 1, scale: 1 }}
@@ -276,11 +276,11 @@ export function PhoneMockup() {
                   <span className="font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-subtle">
                     For You
                   </span>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

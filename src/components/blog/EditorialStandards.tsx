@@ -1,5 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
+import { ClinicianBadge } from "@/components/shared/ClinicianBadge";
+import { CLINICIANS } from "@/lib/people";
 
 /**
  * EditorialStandards — compact footer strip on /blog.
@@ -16,14 +16,9 @@ import Link from "next/link";
 
 const STANDARDS = [
   "Evidence-based",
-  "Expert reviewed",
+  "Clinician review named",
   "Regularly updated",
   "Editorially independent",
-] as const;
-
-const REVIEWERS = [
-  { initials: "LP", photo: "/team/laurie-pham.webp", name: "Laurie Pham", title: "PharmD" },
-  { initials: "MF", photo: "/team/miriam-farez.webp", name: "Miriam Farez", title: "NP" },
 ] as const;
 
 export function EditorialStandards() {
@@ -43,8 +38,9 @@ export function EditorialStandards() {
               Editorial standards
             </p>
             <p className="text-body leading-snug text-ink">
-              Every article reviewed by licensed clinicians, sourced from
-              peer-reviewed literature, and updated when evidence changes.
+              Sourced from peer-reviewed literature and primary sources,
+              dated, and updated when evidence changes. Articles with
+              clinical review name the clinician who checked them.
             </p>
             <ul className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-[10.5px] uppercase tracking-[0.12em] text-subtle">
               {STANDARDS.map((s, i) => (
@@ -59,29 +55,15 @@ export function EditorialStandards() {
           {/* Right — reviewer chips */}
           <div className="flex flex-wrap items-center gap-3 md:gap-4">
             <span className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
-              Reviewed by
+              Clinical reviewers
             </span>
-            {REVIEWERS.map((r) => (
-              <Link
-                key={r.name}
-                href="/about#team"
-                className="inline-flex items-center gap-2.5 rounded-pill border border-border bg-surface px-3 py-1.5 shadow-xs transition-colors duration-fast ease-smooth hover:border-border-strong"
-              >
-                <Image
-                  src={r.photo}
-                  alt={r.name}
-                  width={56}
-                  height={56}
-                  quality={95}
-                  className="h-7 w-7 shrink-0 rounded-full object-cover"
-                />
-                <span className="text-body-sm leading-tight text-ink">
-                  {r.name}
-                  <span className="ml-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-subtle">
-                    {r.title}
-                  </span>
-                </span>
-              </Link>
+            {CLINICIANS.map((person) => (
+              <ClinicianBadge
+                key={person.id}
+                clinician={person}
+                size="inline"
+                className="rounded-pill border border-border bg-surface px-3 py-1.5 shadow-xs"
+              />
             ))}
           </div>
         </div>

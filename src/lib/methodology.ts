@@ -1,3 +1,4 @@
+import { CLINICIANS, PEOPLE, type Person } from "./people";
 import { CATALOG_SIZE } from "./site";
 
 /**
@@ -13,6 +14,7 @@ import { CATALOG_SIZE } from "./site";
  *   4. Two-person medical advisory team
  *   5. AI transparency split (does / does not)
  */
+
 
 export interface TrustPillar {
   title: string;
@@ -38,22 +40,9 @@ export interface ProcessStep {
   num: string;
   title: string;
   body: string;
-  reviewer?: string;
+  reviewer?: Person;
   output?: string;
   schedule?: string;
-}
-
-export interface AdvisoryMember {
-  name: string;
-  title: string;
-  credentials: string;
-  focus: string;
-  initials: string;
-  /**
-   * Path to the clinician's portrait under /public. Optional so future
-   * members can ship without a photo and fall back to an initials disc.
-   */
-  photo?: string;
 }
 
 export const TRUST_PILLARS: readonly TrustPillar[] = [
@@ -182,13 +171,13 @@ export const PROCESS_STEPS: readonly ProcessStep[] = [
     num: "03",
     title: "Pharmacist verification",
     body: "A licensed clinical pharmacist reviews interaction guidance before it ships — checking the science, the framing, and the recommendation against current practice standards.",
-    reviewer: "Laurie Pham, PharmD",
+    reviewer: PEOPLE["laurie-pham"],
   },
   {
     num: "04",
     title: "Clinical advisory review",
     body: "A second reviewer reads from the patient-education angle: is the language clear, the framing accessible, the safety context unambiguous?",
-    reviewer: "Miriam Farez, NP",
+    reviewer: PEOPLE["miriam-farez"],
   },
   {
     num: "05",
@@ -198,24 +187,8 @@ export const PROCESS_STEPS: readonly ProcessStep[] = [
   },
 ];
 
-export const ADVISORY_TEAM: readonly AdvisoryMember[] = [
-  {
-    name: "Laurie Pham, PharmD",
-    title: "Doctor of Pharmacy",
-    credentials: "PharmD · 15+ years clinical pharmacy",
-    focus: "Drug-supplement interactions · pharmacovigilance · clinical accuracy review",
-    initials: "LP",
-    photo: "/team/laurie-pham.webp",
-  },
-  {
-    name: "Miriam Farez, NP",
-    title: "Nurse Practitioner",
-    credentials: "NP · integrative health practice",
-    focus: "Patient education · integrative health · content accessibility",
-    initials: "MF",
-    photo: "/team/miriam-farez.webp",
-  },
-];
+/** The clinicians who review — records live in lib/people.ts. */
+export const ADVISORY_TEAM: readonly Person[] = CLINICIANS;
 
 export const AI_DOES: readonly string[] = [
   "Process and structure data from multiple sources",

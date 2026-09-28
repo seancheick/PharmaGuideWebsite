@@ -46,7 +46,7 @@
 - [x] llms.txt generated from the registries
 - [x] Homepage links to the latest articles
 - [x] Framer Motion loaded async via `LazyMotion` (`m.*` only; `strict` guards it)
-- [x] www → apex redirect (Vercel domain setting)
+- [x] www → apex 308 redirect (host rule in `next.config.ts`; the Vercel API connector cannot edit an existing domain)
 
 ## Owner actions (dashboards)
 

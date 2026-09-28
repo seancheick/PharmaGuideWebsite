@@ -57,11 +57,30 @@ const nextConfig: NextConfig = {
       { source: "/pharmacy", utmSource: "pharmacy-counter", campaign: "counter-cards-2026" },
       { source: "/gym", utmSource: "gym-counter", campaign: "counter-cards-2026" },
     ];
-    return printed.map(({ source, utmSource, campaign }) => ({
+    const printRedirects = printed.map(({ source, utmSource, campaign }) => ({
       source,
       destination: `${PRINT_DESTINATION}?utm_source=${utmSource}&utm_medium=qr&utm_campaign=${campaign}`,
       permanent: false,
     }));
+
+    // One canonical host. www.pharmaguide.io is attached to the Vercel
+    // project and was serving a full duplicate of the site (HTTP 200);
+    // canonical tags are only a hint and many AI crawlers ignore them.
+    // Permanent (308) is right here — unlike the print links, this
+    // destination never changes.
+    const apex = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://pharmaguide.io");
+    const hostRedirects = apex.hostname.includes(".") && !apex.hostname.startsWith("www.")
+      ? [
+          {
+            source: "/:path*",
+            has: [{ type: "host" as const, value: `www.${apex.hostname}` }],
+            destination: `${apex.origin}/:path*`,
+            permanent: true,
+          },
+        ]
+      : [];
+
+    return [...hostRedirects, ...printRedirects];
   },
 
   // Security + SEO friendly headers

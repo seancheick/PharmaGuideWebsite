@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const repoRoot = path.resolve(__dirname, "..");
 const srcRoot = path.join(repoRoot, "src");
-const catalogSource = path.join(srcRoot, "lib", "site.ts");
+const sourceDefinition = path.join(srcRoot, "lib", "site.ts");
 
 function sourceFiles(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -15,14 +15,23 @@ function sourceFiles(directory) {
   });
 }
 
-test("the launch catalog claim remains 180,000+ and is single-sourced", () => {
-  const catalogDefinition = fs.readFileSync(catalogSource, "utf8");
-  assert.match(catalogDefinition, /CATALOG_SIZE\s*=\s*["']180,000\+["']/);
+// The public number is the size of NIH's Dietary Supplement Label Database,
+// the catalog's source — not a count of PharmaGuide products (2026-10-01).
+test("the label-source claim is NIH's 200,000+ and is single-sourced", () => {
+  const definition = fs.readFileSync(sourceDefinition, "utf8");
+  assert.match(definition, /SOURCE_LABEL_COUNT\s*=\s*["']200,000\+["']/);
 
-  const duplicateClaims = sourceFiles(srcRoot)
-    .filter((filePath) => filePath !== catalogSource)
-    .filter((filePath) => fs.readFileSync(filePath, "utf8").includes("180,000+"))
+  const others = sourceFiles(srcRoot).filter((filePath) => filePath !== sourceDefinition);
+  const duplicates = others
+    .filter((filePath) => fs.readFileSync(filePath, "utf8").includes("200,000+"))
     .map((filePath) => path.relative(repoRoot, filePath));
+  assert.deepEqual(duplicates, []);
+});
 
-  assert.deepEqual(duplicateClaims, []);
+test("no page claims a 180,000+ product catalog", () => {
+  const offenders = sourceFiles(srcRoot)
+    .filter((filePath) => filePath !== sourceDefinition)
+    .filter((filePath) => fs.readFileSync(filePath, "utf8").includes("180,000"))
+    .map((filePath) => path.relative(repoRoot, filePath));
+  assert.deepEqual(offenders, []);
 });

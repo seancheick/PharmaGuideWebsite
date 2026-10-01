@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { ImageResponse } from "next/og";
 import { OG_SIZE } from "./seo";
-import { CATALOG_SIZE } from "./site";
+import { SOURCE_LABEL_COUNT } from "./site";
 
 /**
  * Share-card renderer — the one design behind every og:image and
@@ -56,7 +56,7 @@ function headlineSize(chars: number): number {
   return 50;
 }
 
-export const DEFAULT_FOOTNOTE = `${CATALOG_SIZE} products · Evidence-graded · Clinician-informed`;
+export const DEFAULT_FOOTNOTE = `Sourced from ${SOURCE_LABEL_COUNT} NIH labels · Evidence-graded · Clinician-informed`;
 
 export function renderOgCard(card: OgCard): ImageResponse {
   const size = headlineSize(card.headline.length + (card.accent?.length ?? 0));

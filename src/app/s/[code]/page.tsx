@@ -5,7 +5,7 @@ import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { getShareSnapshot } from "@/lib/share-store";
 import { shareDispositionCopy } from "@/lib/share-snapshot";
 import { bandForTierId } from "@/lib/quality-score";
-import { CATALOG_SIZE, site } from "@/lib/site";
+import { site } from "@/lib/site";
 
 /**
  * /s/[code] — the public page behind a shared product link.
@@ -254,12 +254,7 @@ export default async function SharePage({ params }: PageProps) {
               Run this against <span className="font-serif italic text-accent">your</span> stack.
             </h2>
             <p className="max-w-prose text-body leading-relaxed text-muted">
-              {/* Explicit {" "} after the expression: the text node that
-                  follows spans several lines, and JSX trims the leading
-                  whitespace of a multi-line node — which silently rendered
-                  the count and "supplements" without a space. The Hero's trust row has the same
-                  guard for the same reason. */}
-              PharmaGuide checks {CATALOG_SIZE} supplements against your medications, conditions,
+              PharmaGuide checks supplements against your medications, conditions,
               and the rest of your stack — and tells you what interacts, what overlaps, and
               what&apos;s redundant.
             </p>

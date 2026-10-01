@@ -5,7 +5,7 @@ import { useState } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { joinBetaWaitlist } from "@/app/actions/subscribe";
 import { isValidEmail } from "@/lib/validation";
-import { CATALOG_SIZE } from "@/lib/site";
+import { SOURCE_LABEL_COUNT } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -35,7 +35,7 @@ const BETA_CAPABILITIES = [
   {
     num: "01",
     title: "Scan & search",
-    body: `${CATALOG_SIZE} product catalog, pre-loaded on your device. Sub-10ms lookup, even offline.`,
+    body: `Product catalog sourced from NIH's ${SOURCE_LABEL_COUNT} supplement labels, pre-loaded on your device. Sub-10ms lookup, even offline.`,
   },
   {
     num: "02",

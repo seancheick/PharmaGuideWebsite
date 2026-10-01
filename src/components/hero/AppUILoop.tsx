@@ -220,16 +220,16 @@ export function AppUILoop({ searchText, resultFor, stack, showVerdict = false }:
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ ...transitions.reveal, duration: 0.35 }}
-              className="rounded-lg border border-severity-monitor/25 bg-severity-monitor/[0.06] px-3 py-2"
+              className="rounded-lg border border-severity-caution/25 bg-severity-caution/[0.06] px-3 py-2"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-severity-monitor">
+                <span className="font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-severity-caution">
                   Timing issue found
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="block h-1 w-1 rounded-full bg-severity-monitor" />
-                  <span className="font-mono text-[9px] font-medium uppercase tracking-[0.06em] text-severity-monitor">
-                    Monitor
+                  <span className="block h-1 w-1 rounded-full bg-severity-caution" />
+                  <span className="font-mono text-[9px] font-medium uppercase tracking-[0.06em] text-severity-caution">
+                    Caution
                   </span>
                 </span>
               </div>

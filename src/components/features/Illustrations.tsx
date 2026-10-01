@@ -69,7 +69,7 @@ function DepletionIllustration() {
                 Metformin
               </p>
               <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-subtle">
-                Hypoglycemic · long-term use
+                Type 2 diabetes · long-term use
               </p>
             </div>
           </div>
@@ -82,7 +82,7 @@ function DepletionIllustration() {
         >
           <span aria-hidden="true" className="block h-6 w-px bg-border-strong" />
           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-severity-monitor">
-            depletes
+            can lower
           </span>
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="text-severity-monitor" aria-hidden="true">
             <path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -92,8 +92,7 @@ function DepletionIllustration() {
         {/* Bottom: depleted nutrients + replenishment */}
         <m.div variants={reveal} className="flex flex-1 flex-col gap-2">
           {[
-            { name: "Vitamin B12", note: "absorption reduced" },
-            { name: "Folate", note: "long-term draw-down" },
+            { name: "Vitamin B12", note: "lower with long-term use" },
           ].map((n) => (
             <div
               key={n.name}
@@ -158,13 +157,13 @@ function StackIllustration() {
         <path
           d="M260,60 Q200,150 160,200"
           fill="none"
-          className="text-severity-monitor"
+          className="text-severity-caution"
           stroke="currentColor"
           strokeWidth="1.6"
           strokeLinecap="round"
           opacity="0.85"
         />
-        <circle r="3.5" className="text-severity-monitor" fill="currentColor">
+        <circle r="3.5" className="text-severity-caution" fill="currentColor">
           <animateMotion dur="3.4s" repeatCount="indefinite" path="M260,60 Q200,150 160,200" />
           <animate attributeName="opacity" values="0;1;1;0" dur="3.4s" repeatCount="indefinite" />
         </circle>
@@ -172,7 +171,7 @@ function StackIllustration() {
         {/* Nodes */}
         {[
           { cx: 60, cy: 60, label: "Magnesium", glyph: "Mg" },
-          { cx: 260, cy: 60, label: "Caffeine", glyph: "Ca" },
+          { cx: 260, cy: 60, label: "Calcium", glyph: "Ca" },
           { cx: 160, cy: 200, label: "Levothyroxine", glyph: "Rx" },
           { cx: 30, cy: 180, label: "Vitamin D", glyph: "D" },
           { cx: 290, cy: 180, label: "Iron", glyph: "Fe" },
@@ -321,8 +320,8 @@ function FitIllustration() {
         <ul className="flex flex-col gap-2">
           {[
             { t: "Magnesium glycinate · evening", v: "Good fit", tone: "safe" as const },
-            { t: "St. John's Wort", v: "Avoid · SSRI", tone: "avoid" as const },
-            { t: "High-dose vitamin A", v: "Avoid · pregnancy", tone: "avoid" as const },
+            { t: "St. John's Wort", v: "Contraindicated · SSRI", tone: "avoid" as const },
+            { t: "Vitamin A over 10,000 IU", v: "Contraindicated · pregnancy", tone: "avoid" as const },
             { t: "Iron + multi", v: "Caution · timing", tone: "caution" as const },
           ].map((row) => {
             const dot =

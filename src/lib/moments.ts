@@ -98,7 +98,7 @@ export const MOMENTS: readonly Moment[] = [
     title: { lead: "Pregnancy changes", em: "more than your routine" },
     description: "Some ingredients become more important. Others suddenly matter a lot more.",
     learnMore: "Learn about pregnancy safety",
-    preview: "Caution · High-dose Vitamin A",
+    preview: "Contraindicated · Vitamin A over 10,000 IU",
     image: "/images/moments/pregnancy.jpg",
     imageAlt:
       "Pregnant woman in a white linen blouse cradling her bump in soft natural window light.",
@@ -110,13 +110,13 @@ export const MOMENTS: readonly Moment[] = [
     },
     quote: "I thought if it was sold over the counter, it had to be safe.",
     flag: {
-      name: "High-dose Vitamin A",
-      severity: "caution",
-      severityLabel: "Caution · 1st trimester",
+      name: "Preformed vitamin A above 10,000 IU/day",
+      severity: "contraindicated",
+      severityLabel: "Contraindicated · pregnancy",
       description:
-        "High-dose preformed vitamin A may not be appropriate during early pregnancy. Check the exact form and amount with your clinician before continuing.",
-      metaLeft: "Trimester 1",
-      metaRight: "Review before use",
+        "Excess preformed vitamin A (retinol and retinyl esters) in pregnancy is linked to birth-defect risk. Above 10,000 IU a day it's flagged as contraindicated; lower amounts get a caution. Beta-carotene isn't covered by this limit.",
+      metaLeft: "Threshold",
+      metaRight: "10,000 IU / day",
     },
   },
 
@@ -128,7 +128,7 @@ export const MOMENTS: readonly Moment[] = [
     description:
       "Most interaction problems don't start with a supplement. They start when something new enters the stack.",
     learnMore: "Learn about prescription transitions",
-    preview: "Avoid · St. John's Wort + Sertraline",
+    preview: "Contraindicated · St. John's Wort + Sertraline",
     image: "/images/moments/medication.jpg",
     imageAlt:
       "Open palm holding a mix of different-colored pills and capsules against a dark background.",
@@ -142,12 +142,12 @@ export const MOMENTS: readonly Moment[] = [
       "My pharmacist caught it three days later. PharmaGuide caught it before I left the clinic.",
     flag: {
       name: "St. John's Wort + Sertraline",
-      severity: "avoid",
-      severityLabel: "Avoid",
+      severity: "contraindicated",
+      severityLabel: "Contraindicated",
       description:
-        "Co-administration has been associated with serotonin syndrome. Onset within 48 hours of starting both has been documented.",
+        "St. John's wort raises serotonin activity. With an SSRI such as sertraline, the combination can cause serotonin syndrome, which can be life-threatening.",
       metaLeft: "Severity",
-      metaRight: "Discuss with MD",
+      metaRight: "Do not combine",
     },
   },
 
@@ -156,9 +156,9 @@ export const MOMENTS: readonly Moment[] = [
     id: "gym-stack",
     category: "Performance",
     title: { lead: "Your gym stack,", em: "all together" },
-    description: "Pre-workout. Hydration. Recovery. Sleep. Individually they looked fine.",
-    learnMore: "Learn about stimulant stacking",
-    preview: "Caution · Combined caffeine load",
+    description: "Pre-workout. Recovery. Pain relief. Individually they looked fine.",
+    learnMore: "Learn about recovery stacks",
+    preview: "Monitor · Turmeric + Ibuprofen",
     image: "/images/moments/performance.jpg",
     imageAlt:
       "Athletic man running on a treadmill in a bright gym, wearing a PharmaGuide wristband.",
@@ -168,15 +168,15 @@ export const MOMENTS: readonly Moment[] = [
       avatar:
         "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=160&q=80&auto=format&fit=crop",
     },
-    quote: "Three supplements later, I was accidentally over 600 mg of caffeine a day.",
+    quote: "Turmeric for recovery, ibuprofen for my knees. I never thought about them together.",
     flag: {
-      name: "Combined caffeine load",
-      severity: "caution",
-      severityLabel: "Caution",
+      name: "Turmeric + Ibuprofen",
+      severity: "monitor",
+      severityLabel: "Monitor",
       description:
-        "Three pre-workout-adjacent ingredients added up to roughly 600 mg caffeine-equivalent — above the 400 mg daily threshold for most adults.",
-      metaLeft: "Caffeine-equiv.",
-      metaRight: "≈ 600 mg / day",
+        "Curcumin acts on some of the same pathways as NSAIDs like ibuprofen, so together they may add to stomach irritation and bleeding risk. Watch for stomach pain or dark stools, and take the NSAID with food.",
+      metaLeft: "Watch for",
+      metaRight: "GI symptoms",
     },
   },
 
@@ -266,7 +266,7 @@ export const MOMENTS: readonly Moment[] = [
       severity: "avoid",
       severityLabel: "Active recall",
       description:
-        "FDA recalled this product for containing undeclared sildenafil — a prescription drug that can dangerously lower blood pressure when combined with nitrates. If you'd scanned it, your stack flags the recall immediately.",
+        "FDA recalled this product for containing undeclared sildenafil — a prescription drug that can dangerously lower blood pressure when combined with nitrates. If it's in your stack, PharmaGuide flags the recall.",
       metaLeft: "FDA status",
       metaRight: "Active recall",
     },
@@ -281,7 +281,7 @@ export const MOMENTS: readonly Moment[] = [
     description:
       "The same capsule can be fine for one person and risky for another. Your conditions and medications change the math — quietly.",
     learnMore: "Learn about condition-aware checks",
-    preview: "Caution · Potassium + kidney profile",
+    preview: "Avoid · Potassium + kidney disease",
     image: "/images/moments/condition.jpg",
     imageAlt:
       "A middle-aged person at a kitchen table holding a single supplement capsule, a row of prescription bottles and a glass of water nearby, considering it carefully in soft morning light.",
@@ -295,10 +295,10 @@ export const MOMENTS: readonly Moment[] = [
       "Nobody flagged that a potassium supplement was a problem with my kidney condition and my blood-pressure medication.",
     flag: {
       name: "Potassium + ACE inhibitor",
-      severity: "caution",
-      severityLabel: "Condition flag",
+      severity: "avoid",
+      severityLabel: "Avoid · your profile",
       description:
-        "With reduced kidney function and an ACE inhibitor, added potassium raises the risk of hyperkalemia — a dangerous rise in blood potassium. Surfaced because all three are in your profile.",
+        "Reduced kidney function clears potassium poorly, and an ACE inhibitor raises it further, so added potassium risks hyperkalemia — a dangerous rise in blood potassium. Surfaced because all three are in your profile.",
       metaLeft: "Risk",
       metaRight: "Hyperkalemia",
     },

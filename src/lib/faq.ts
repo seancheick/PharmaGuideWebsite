@@ -19,7 +19,7 @@
  * with React.createElement to preserve them safely.
  */
 
-import { CATALOG_SIZE } from "./site";
+import { SOURCE_LABEL_COUNT } from "./site";
 
 export type FAQGroup = "product" | "privacy" | "launch";
 
@@ -73,7 +73,7 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "product",
     q: "Does it work offline?",
-    body: `**Yes.** The full **${CATALOG_SIZE} product catalog** is pre-loaded on your device. Scanning, search, interaction checks, and stack analysis all run locally — works in pharmacies, on flights, anywhere with one bar of signal. Only optional features that pull live citations need an internet connection.`,
+    body: `**Yes.** The **product catalog** is pre-loaded on your device. Scanning, search, interaction checks, and stack analysis all run locally — works in pharmacies, on flights, anywhere with one bar of signal. Only optional features that pull live citations need an internet connection.`,
   },
   {
     group: "launch",
@@ -88,7 +88,7 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "product",
     q: "What if my supplement isn't in your database?",
-    body: `The catalog covers **${CATALOG_SIZE} products** and grows weekly. If yours isn't there, snap a photo of the label and submit it — most submissions get added within a few days. Your contribution helps the next person looking up the same product.`,
+    body: `The catalog is sourced from **NIH's ${SOURCE_LABEL_COUNT} supplement labels** and grows weekly. If yours isn't there, snap a photo of the label and submit it — most submissions get added within a few days. Your contribution helps the next person looking up the same product.`,
   },
   {
     group: "privacy",

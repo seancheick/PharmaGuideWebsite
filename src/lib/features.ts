@@ -1,4 +1,4 @@
-import { CATALOG_SIZE } from "./site";
+import { SOURCE_LABEL_COUNT } from "./site";
 
 /**
  * /features page — single source of truth for the 6-pillar capabilities
@@ -100,11 +100,6 @@ export const PILLARS: readonly FeaturePillar[] = [
     ],
     examples: [
       {
-        trigger: "Statin (atorvastatin, simvastatin)",
-        result:
-          "**CoQ10** — blood levels may fall; whether supplements help muscle symptoms is uncertain",
-      },
-      {
         trigger: "Metformin",
         result: "**Vitamin B12** — lower levels more likely with long-term, higher-dose use",
       },
@@ -148,7 +143,7 @@ export const PILLARS: readonly FeaturePillar[] = [
     illustration: "stack",
     capabilities: [
       "Multi-way analysis — interactions between any pair AND beyond",
-      "Cross-product dose summation — three caffeine products at 80 mg each won't slip past 200 mg/day",
+      "Cross-product dose summation — zinc from three products is added up and checked against the 40 mg/day upper limit",
       "Stack Health verdict: **Optimized · Solid · Decent · Needs review · Unsafe**",
       "Timing conflicts surfaced (e.g. calcium ↔ levothyroxine 4-hour separation)",
     ],
@@ -158,8 +153,8 @@ export const PILLARS: readonly FeaturePillar[] = [
         result: "**Triple-counted** — combined dose flagged against tolerable upper intake",
       },
       {
-        trigger: "Pre-workout + green tea extract + dark chocolate squares",
-        result: "**~340 mg caffeine** — 70% above 200 mg/day general guidance",
+        trigger: "Fish oil + turmeric + warfarin",
+        result: "**Two bleeding-risk flags** — fish oil and turmeric each add to warfarin's effect; review with your prescriber",
       },
       {
         trigger: "Iron supplement + calcium-rich multi + thyroid medication",
@@ -240,19 +235,19 @@ export const PILLARS: readonly FeaturePillar[] = [
     examples: [
       {
         trigger: "St. John's Wort + sertraline + 'mood support' goal",
-        result: "**Avoid** — serotonin syndrome risk; review with a clinician",
+        result: "**Contraindicated** — serotonin syndrome risk; do not combine",
       },
       {
         trigger: "Potassium + ACE inhibitor + 'kidney disease' profile",
-        result: "**Flag** — combined hyperkalemia risk; surfaced because all three are in your profile",
+        result: "**Avoid** — hyperkalemia risk with reduced kidney function; surfaced because all three are in your profile",
       },
       {
-        trigger: "High-dose vitamin A + 'pregnancy' profile flag",
-        result: "**Caution** — high-dose preformed vitamin A may not be appropriate; review before use",
+        trigger: "Vitamin A over 10,000 IU + 'pregnancy' profile flag",
+        result: "**Contraindicated** above 10,000 IU/day of preformed vitamin A; caution below that",
       },
       {
-        trigger: "Niacin + active statin therapy",
-        result: "**Monitor** — interaction with certain hypoglycemic profiles",
+        trigger: "High-dose niacin (1 g/day or more) + statin",
+        result: "**Caution** — watch for muscle pain or weakness; tell your prescriber",
       },
     ],
     sources: [
@@ -282,7 +277,7 @@ export const PILLARS: readonly FeaturePillar[] = [
     examples: [
       {
         trigger: "Multi + dedicated vitamin D + cod liver oil",
-        result: "**~6,000 IU vitamin D/day** — approaching adult UL of 4,000 IU",
+        result: "**~6,000 IU vitamin D/day** — above the adult UL of 4,000 IU",
       },
       {
         trigger: "Multi + zinc lozenges + zinc-forward immune blend",
@@ -290,7 +285,7 @@ export const PILLARS: readonly FeaturePillar[] = [
       },
       {
         trigger: "Iron supplement + iron-fortified multi",
-        result: "**~80 mg iron** — past UL of 45 mg; oxidative stress risk",
+        result: "**~80 mg iron** — past the 45 mg UL; stomach upset and constipation come first",
       },
     ],
     sources: [
@@ -349,8 +344,8 @@ export const CLINICIAN_REPORT = {
 
 export const BUILT_ON = [
   {
-    label: `${CATALOG_SIZE} product catalog`,
-    detail: "Pre-loaded on your device. Sub-10ms lookup. Updates over the air.",
+    label: `Sourced from ${SOURCE_LABEL_COUNT} NIH labels`,
+    detail: "Catalog pre-loaded on your device. Sub-10ms lookup. Updates over the air.",
   },
   {
     label: "Offline-first",

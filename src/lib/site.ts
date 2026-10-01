@@ -4,15 +4,15 @@
  */
 
 /**
- * Catalog size, as shown to visitors.
+ * Size of the label source, as shown to visitors — single-sourced here.
  *
- * Hoisted out of `site` so the description below can interpolate it: this
- * number was hardcoded in four separate places (this description, the hero
- * trust row, the beta capability list, and the share landing page), which is
- * three chances for it to disagree with itself the first time the catalog
- * grows. Update here, everywhere follows.
+ * This is the size of NIH's Dietary Supplement Label Database (200,000+
+ * on- and off-market labels, per NIH ODS), the database PharmaGuide's
+ * catalog is sourced from. It is NOT the size of the app's normalized
+ * catalog, so copy says "sourced from", never "N products" (2026-10-01:
+ * the old "180,000+ products" claim described neither number).
  */
-export const CATALOG_SIZE = "180,000+";
+export const SOURCE_LABEL_COUNT = "200,000+";
 
 export const site = {
   name: "PharmaGuide",
@@ -23,7 +23,7 @@ export const site = {
   foundingDate: "2025",
   tagline: "Supplement intelligence.",
   // ≤160 chars so search snippets don't truncate it (was 180).
-  description: `See how your supplements, medications, and timing work together — not one bottle at a time. Evidence-graded interaction checks across ${CATALOG_SIZE} products.`,
+  description: `See how your supplements, medications, and timing work together — not one bottle at a time. Evidence-graded, sourced from NIH's ${SOURCE_LABEL_COUNT}-label database.`,
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://pharmaguide.io",
   locale: "en_US",
   lang: "en-US",

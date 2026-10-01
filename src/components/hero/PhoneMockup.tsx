@@ -208,16 +208,16 @@ export function PhoneMockup() {
                         Magnesium <span className="text-muted">+</span> thyroid medication
                       </p>
                     </div>
-                    <span className="inline-flex shrink-0 items-center gap-1 rounded-pill bg-severity-monitor/10 px-2 py-0.5">
-                      <span className="block h-1 w-1 rounded-full bg-severity-monitor" />
-                      <span className="font-mono text-[9.5px] font-medium uppercase tracking-[0.06em] text-severity-monitor">
-                        Monitor
+                    <span className="inline-flex shrink-0 items-center gap-1 rounded-pill bg-severity-caution/10 px-2 py-0.5">
+                      <span className="block h-1 w-1 rounded-full bg-severity-caution" />
+                      <span className="font-mono text-[9.5px] font-medium uppercase tracking-[0.06em] text-severity-caution">
+                        Caution
                       </span>
                     </span>
                   </div>
 
                   <p className="mt-2.5 text-[11.5px] leading-snug text-muted">
-                    Magnesium may chelate levothyroxine and reduce absorption when taken
+                    Magnesium can reduce levothyroxine absorption when the two are taken
                     together.
                   </p>
 
@@ -234,7 +234,7 @@ export function PhoneMockup() {
                     <span className="font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-subtle">
                       Evidence
                     </span>
-                    <span className="text-[10.5px] font-medium text-muted">Limited</span>
+                    <span className="text-[10.5px] font-medium text-muted">Probable</span>
                   </div>
                 </m.div>
               )}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { m } from "framer-motion";
 import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
-import { CATALOG_SIZE } from "@/lib/site";
+import { SOURCE_LABEL_COUNT } from "@/lib/site";
 import { PILLARS, CLINICIAN_REPORT, BUILT_ON, BOUNDARIES } from "@/lib/features";
 import { Illustration } from "./Illustrations";
 
@@ -84,7 +84,7 @@ export function FeaturesClient() {
               variants={fadeUpItem}
               className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle"
             >
-              <span>{CATALOG_SIZE} product catalog</span>
+              <span>Sourced from {SOURCE_LABEL_COUNT} NIH labels</span>
               <span aria-hidden="true" className="text-border-strong">
                 ·
               </span>

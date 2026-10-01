@@ -5,7 +5,7 @@ import Link from "next/link";
 import { m } from "framer-motion";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { FOUNDER, LEAD_REVIEWER, PEOPLE, TEAM, displayName } from "@/lib/people";
-import { CATALOG_SIZE, site } from "@/lib/site";
+import { SOURCE_LABEL_COUNT, site } from "@/lib/site";
 
 /**
  * /press — Press & Media page.
@@ -30,7 +30,7 @@ const FACTS = [
   { label: "Headquarters", value: "Boston, MA · USA" },
   { label: "Founder & CEO", value: FOUNDER.name },
   { label: "Parent company", value: site.parentCompany },
-  { label: "Catalog scale", value: `${CATALOG_SIZE} products` },
+  { label: "Label source", value: `NIH DSLD · ${SOURCE_LABEL_COUNT} labels` },
   { label: "Clinical review", value: "Licensed PharmD + NP" },
   { label: "Launch", value: "Opening in waves through 2026" },
   { label: "Categories", value: "Health · Medical · Lifestyle" },
@@ -42,9 +42,9 @@ const BOILERPLATE = {
   oneLiner:
     "PharmaGuide is a clinician-reviewed supplement and medication safety platform with on-device interaction analysis, evidence-graded by clinicians.",
   paragraph:
-    `PharmaGuide is the supplement and medication co-pilot for people who want to understand what they actually take. The mobile apps (iOS + Android) read your full stack as a system — flagging interactions, medication-nutrient depletions, dose accumulation, FDA recalls, and ingredient quality across a ${CATALOG_SIZE} product on-device catalog. Every interaction is reviewed by a licensed clinical pharmacist before it ships. The architecture is privacy-first: medications, conditions and health profiles never leave the device. Founded ${site.foundingDate} in Boston by ${FOUNDER.name}. Opening in waves through 2026.`,
+    `PharmaGuide is the supplement and medication co-pilot for people who want to understand what they actually take. The mobile apps (iOS + Android) read your full stack as a system — flagging interactions, medication-nutrient depletions, dose accumulation, FDA recalls, and ingredient quality across an on-device product catalog sourced from NIH's ${SOURCE_LABEL_COUNT} supplement labels. Every interaction is reviewed by a licensed clinical pharmacist before it ships. The architecture is privacy-first: medications, conditions and health profiles never leave the device. Founded ${site.foundingDate} in Boston by ${FOUNDER.name}. Opening in waves through 2026.`,
   longer:
-    `Most consumer health apps check one supplement at a time. PharmaGuide reads the full stack — multi-way interactions, dose accumulation across products, timing conflicts, and the depletion patterns of common prescriptions (statins → CoQ10, metformin → B12, PPIs → iron). Live FDA recall monitoring surfaces alerts on the products you actually scanned. A PG Score out of 100 evaluates six parts — formulation, dose, evidence, transparency, verification, and safety and hygiene — and reads proprietary blends exactly as disclosed, never guessing hidden amounts. The catalog covers ${CATALOG_SIZE} products and is reviewed continuously by ${displayName(LEAD_REVIEWER)} (Clinical Pharmacist) and ${displayName(PEOPLE["miriam-farez"])} (Nurse Practitioner). Interaction analysis runs on-device, and medications, conditions and health profiles stay on the user's phone; a signed-in user's supplement list is backed up to their account. The architecture is HIPAA-aligned. Founded in ${site.foundingDate} by ${FOUNDER.name} and ${site.parentCompany}, headquartered in Boston, MA. Mobile apps open in waves through 2026.`,
+    `Most consumer health apps check one supplement at a time. PharmaGuide reads the full stack — multi-way interactions, dose accumulation across products, timing conflicts, and the depletion patterns of common prescriptions (statins → CoQ10, metformin → B12, PPIs → iron). Live FDA recall monitoring surfaces alerts on the products you actually scanned. A PG Score out of 100 evaluates six parts — formulation, dose, evidence, transparency, verification, and safety and hygiene — and reads proprietary blends exactly as disclosed, never guessing hidden amounts. The catalog is sourced from NIH's Dietary Supplement Label Database (${SOURCE_LABEL_COUNT} labels) and is reviewed continuously by ${displayName(LEAD_REVIEWER)} (Clinical Pharmacist) and ${displayName(PEOPLE["miriam-farez"])} (Nurse Practitioner). Interaction analysis runs on-device, and medications, conditions and health profiles stay on the user's phone; a signed-in user's supplement list is backed up to their account. The architecture is HIPAA-aligned. Founded in ${site.foundingDate} by ${FOUNDER.name} and ${site.parentCompany}, headquartered in Boston, MA. Mobile apps open in waves through 2026.`,
 };
 
 export function PressClient() {

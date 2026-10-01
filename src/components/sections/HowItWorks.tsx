@@ -6,7 +6,7 @@ import { LEAD_REVIEWER, displayName } from "@/lib/people";
 import { useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { qualityBand } from "@/lib/quality-score";
-import { CATALOG_SIZE } from "@/lib/site";
+import { SOURCE_LABEL_COUNT } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -243,7 +243,7 @@ function CatalogVisual() {
 
       {/* Footer note — emphasizes scale */}
       <div className="mt-auto flex items-center justify-between gap-2 border-t border-border pt-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
-        <span>{CATALOG_SIZE} products</span>
+        <span>From {SOURCE_LABEL_COUNT} NIH labels</span>
         <span>on-device · no cloud</span>
       </div>
     </div>

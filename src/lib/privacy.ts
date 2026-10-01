@@ -13,26 +13,28 @@ import type { LegalDocument } from "./legal";
  *   data subject rights, retention, third-parties, children,
  *   security measures, contact + complaint paths.
  *
- * IMPORTANT: this page reflects the privacy-first architecture we
- * actually build — most personal health data stays on-device, never
- * leaves the user's phone. Edits to the product's data flow MUST
- * be reflected here.
+ * IMPORTANT: this page reflects the data flow the app actually has
+ * (verified against the app code 2026-10-01): the health profile,
+ * conditions and medications stay on the phone; a signed-in user's
+ * supplement list is backed up to their account; medication search
+ * text goes to NIH RxNorm. Edits to the product's data flow MUST be
+ * reflected here.
  */
 
 export const PRIVACY_DOC: LegalDocument = {
   eyebrow: "Privacy Policy",
-  titleLead: "We don't want your health data.",
-  titleEm: "Period.",
+  titleLead: "Your health details stay on your phone.",
+  titleEm: "By design.",
   subhead:
-    "Your supplement stack and conditions stay on your device. This page explains exactly what we do collect, why, and how to control it.",
-  lastUpdated: "2026-05-08",
+    "Your health profile, conditions and medications stay on your device. This page explains exactly what we do collect, why, and how to control it.",
+  lastUpdated: "2026-10-01",
   summary: {
     title: "The short version",
     points: [
-      "Your **health profile and stack** never leave your device. Encrypted locally with AES-256.",
-      "We collect a **minimal account email** and basic usage analytics — that's it.",
+      "Your **health profile, conditions and medications** are stored only on your device, and interaction checks run there too.",
+      "If you create an account, we keep your **email** and a **backup of the supplement products in your stack** so you can restore it. Without an account, your stack stays on your device.",
       "We **never sell** your data. We don't share it with advertisers, brokers, or insurance companies.",
-      "You can **export or delete** everything we have on you, anytime, with one tap.",
+      "You can **delete your account** and the data we hold at any time. A full in-app data export is on the way.",
       "Children under 13 may not use PharmaGuide. We comply with COPPA, CCPA/CPRA, and GDPR.",
     ],
   },
@@ -41,7 +43,7 @@ export const PRIVACY_DOC: LegalDocument = {
       id: "introduction",
       num: "1",
       title: "Introduction",
-      body: `PharmaGuide is built around a simple privacy principle: the most sensitive information about your health should stay on your device. We can't be careless with data we never have.
+      body: `PharmaGuide is built around a simple privacy principle: the most sensitive information about your health should stay on your device. We keep only what a feature needs, and we tell you exactly what that is.
 
 This policy explains what we collect, what we don't, why, and the rights you have over the data we do hold. It covers the PharmaGuide mobile apps (iOS and Android), the website at [pharmaguide.io](https://pharmaguide.io), and any related services.
 
@@ -55,7 +57,13 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
 
 **Information collected automatically:** standard server logs (IP address, device type, app version, crash reports). Used to keep the service running and diagnose bugs. We don't tie these logs to your identity longer than 30 days.
 
-**What we do NOT collect from your device:** your supplement stack, the medications you take, your conditions, your age, your goals, your scan history, your interaction warnings, or any health-related profile data. All of that lives in an encrypted local database on your phone. We can't read it. We've never read it.
+**If you create an account:** we back up the supplement products in your stack (the product name and catalog ID, the ingredient identifiers we use for checks, and when you added or removed it) so you can restore your stack. Doses, schedules, notes and medications are not included. Without an account, your stack is not sent to us.
+
+**When you search for a medication:** the name you type is sent to the U.S. National Library of Medicine's RxNorm service (rxnav.nlm.nih.gov) to identify the medication. We do not attach your account to that request, and the medication you select is stored only on your device.
+
+**When you choose to submit a product:** the photos and details you submit for a product we don't have yet are sent to us for review.
+
+**What we do NOT collect from your device:** the medications you take, your conditions, your age, your goals, your allergies, your scan history, your interaction warnings, or any other health-related profile data. All of that is stored only on your phone.
 
 **What we do NOT collect from you ever:** social security number, government ID, financial account numbers, biometric data, precise location.`,
     },
@@ -76,10 +84,10 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
       num: "4",
       title: "Storage and security",
       body: `**Where data lives:**
-On-device (encrypted, AES-256): your full supplement stack, medications, conditions, profile, scan history, interaction history, FitScore inputs.
-On our servers (encrypted in transit and at rest): your email, account metadata, anonymized usage logs.
+On your device (protected by your phone's built-in storage encryption): your full supplement stack, medications, conditions, profile, scan history and interaction history.
+On our servers (encrypted in transit and at rest): your email, account metadata, the supplement backup described above if you have an account, product submissions you send, and anonymized usage logs.
 
-**Security measures:** TLS 1.3 in transit, AES-256 at rest, hardware-backed keystore for on-device secrets, scoped service-account access for our servers, regular security audits, and a coordinated disclosure policy at [security@pharmaguide.io](mailto:security@pharmaguide.io).
+**Security measures:** encryption in transit and at rest on our servers, the platform's secure keystore for sign-in credentials on your device, scoped service-account access for our servers, regular security audits, and a coordinated disclosure policy at [security@pharmaguide.io](mailto:security@pharmaguide.io).
 
 **Data retention:** server-side data is retained as long as your account is active. When you delete your account, we permanently remove your account record and email within 30 days. On-device data is wiped immediately when you uninstall the app or tap "delete all my data" in settings.`,
     },
@@ -87,7 +95,7 @@ On our servers (encrypted in transit and at rest): your email, account metadata,
       id: "sharing",
       num: "5",
       title: "Who we share with",
-      body: `**Service providers:** the small number of vendors we use (email delivery, app hosting, error monitoring) only see what they need to do their job. None of them see your health data because we don't have it. All vendors are bound by data-processing agreements aligned with GDPR / CCPA standards.
+      body: `**Service providers:** the small number of vendors we use (email delivery, app hosting, error monitoring) only see what they need to do their job. None of them receive your medications, conditions or health profile, because those never leave your device. All vendors are bound by data-processing agreements aligned with GDPR / CCPA standards.
 
 **Legal requirements:** we will disclose information when legally required (court order, subpoena, lawful request from a regulator) and we will tell you about the request unless legally barred from doing so.
 

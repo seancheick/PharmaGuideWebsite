@@ -63,7 +63,7 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "privacy",
     q: "Is my health data actually private?",
-    body: "**Yes.** Your stack and health context are designed to stay on your device. We use AES-256 encryption locally and never upload your personal health data to our servers. The architecture is HIPAA-aligned. We do not sell health data.",
+    body: "**Yes.** Your medications, conditions and health profile are stored only on your device, and interaction checks run there. If you create an account, we back up the supplement products in your stack so you can restore it — never your medications or conditions. The architecture is HIPAA-aligned. We do not sell health data.",
   },
   {
     group: "product",

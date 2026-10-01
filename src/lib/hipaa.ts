@@ -20,13 +20,13 @@ export const HIPAA_DOC: LegalDocument = {
   titleEm: "Honest about the rest.",
   subhead:
     "How PharmaGuide thinks about health-data protection — what's HIPAA-aligned, what's beyond HIPAA, and where the line actually sits.",
-  lastUpdated: "2026-05-08",
+  lastUpdated: "2026-10-01",
   summary: {
     title: "The short version",
     points: [
       "HIPAA primarily applies to **covered entities** (providers, payers, clearinghouses) and their business associates. PharmaGuide consumer apps are usually outside that scope — a fact most apps quietly bury.",
-      "We design **as if** HIPAA's Security Rule applies — AES-256 encryption, access control, audit logging, breach response within 72 hours.",
-      "Your health data **stays on your device**. We can't look at it, leak it, or be subpoenaed for it because we don't have it.",
+      "We design **as if** HIPAA's Security Rule applies — encryption, access control, audit logging, breach response within 72 hours.",
+      "Your **medications, conditions and health profile stay on your device**. They never reach our servers, so we cannot look at them, leak them or be compelled to produce them.",
       "If/when **PharmaGuide for Healthcare Pros** ships, that product will operate as a HIPAA business associate with full BAA support.",
     ],
   },
@@ -49,7 +49,7 @@ We are telling you this directly because the industry standard is to wave the HI
 
 What that means in practice:
 
-**Encryption** — AES-256 on-device for your stack and conditions, TLS 1.3 in transit for the minimal account data we hold.
+**Encryption** — your on-device data is protected by your phone's built-in storage encryption; the account data we hold is encrypted in transit and at rest.
 
 **Access control** — scoped service accounts. Engineers cannot read individual user data. There is no admin "look up Sean's stack" panel.
 
@@ -63,22 +63,22 @@ What that means in practice:
       id: "on-device",
       num: "3",
       title: "Why on-device data changes the equation",
-      body: `The most sensitive things you put into PharmaGuide — your supplement stack, your medications, your conditions, your scan history, your interaction history — live in an encrypted local database on your phone.
+      body: `The most sensitive things you put into PharmaGuide — your medications, your conditions, your health profile, your scan history, your interaction history — live in a local database on your phone, protected by your phone's built-in storage encryption. Interaction checks run on the device.
 
-We do not sync this to our servers. We do not have a copy. There is no warehouse where someone could go look up your data, no breach scope where it could be exfiltrated, no subpoena scenario where we could be compelled to produce it.
+We do not sync these to our servers and we do not have a copy, so there is nothing of them on our side to look up, expose or be compelled to produce.
 
-This is not a marketing claim. It's the architecture. Read the [Privacy Policy](/privacy) for the exact data inventory.
+One thing does reach us, only if you create an account: a backup of the supplement products in your stack, so you can restore it. It does not include your medications, conditions, doses or schedules. Read the [Privacy Policy](/privacy) for the exact data inventory.
 
-By extension, much of the surface that HIPAA worries about — disclosure of PHI to third parties, audit trails of PHI access, BAAs with downstream vendors — is moot for us because the data isn't ours to disclose, audit, or share.`,
+By extension, much of the surface that HIPAA worries about — disclosure of PHI to third parties, audit trails of PHI access, BAAs with downstream vendors — is far smaller for us, because the most sensitive data never leaves your device.`,
     },
     {
       id: "what-we-do-hold",
       num: "4",
       title: "What we do hold (and how it's protected)",
-      body: `On our servers we hold your **email address** (required for account auth), **anonymized usage logs** (server logs, crash reports, aggregated analytics), and **opt-in newsletter subscription records**.
+      body: `On our servers we hold your **email address** (required for account auth), the **supplement backup** if you have an account, **product submissions** you choose to send, **anonymized usage logs** (server logs, crash reports, aggregated analytics), and **opt-in newsletter subscription records**.
 
 For these:
-- Encrypted at rest (AES-256) and in transit (TLS 1.3)
+- Encrypted at rest and in transit
 - Access logged at the database level
 - Retained only as long as your account is active, deleted within 30 days of account deletion
 - Vendors handling any of this (email delivery, hosting) sign data-processing agreements aligned with GDPR Article 28 and CCPA's service-provider standard

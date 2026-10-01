@@ -154,14 +154,14 @@ export const PAGES: Record<PageKey, PageEntry> = {
   privacy: {
     path: "/privacy",
     title: "Privacy Policy",
-    description: `What PharmaGuide collects, why, and how to control it. Your supplement stack and conditions stay on your device. Updated ${formatLegalDate(PRIVACY_DOC.lastUpdated)}.`,
+    description: `What PharmaGuide collects, why, and how to control it. Your medications and conditions stay on your device. Updated ${formatLegalDate(PRIVACY_DOC.lastUpdated)}.`,
     label: "Privacy",
     lastModified: PRIVACY_DOC.lastUpdated,
-    og: { eyebrow: "Privacy policy", headline: "Your health data", accent: "stays on your device." },
+    og: { eyebrow: "Privacy policy", headline: "Your health details", accent: "stay on your device." },
     sitemap: { priority: 0.5, changeFrequency: "yearly" },
     llms: {
       section: "trust",
-      summary: "What we collect, why, and how to control it. Health data stays on-device, never on our servers",
+      summary: "What we collect, why, and how to control it. Medications, conditions and health profile stay on-device, never on our servers",
     },
   },
   terms: {

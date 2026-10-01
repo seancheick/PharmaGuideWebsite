@@ -14,7 +14,7 @@ import { BackToTop } from "./BackToTop";
  *
  * Layered structure (top to bottom):
  *   1. Main grid     — Brand · Product · Company · Legal · App-store column
- *   2. Trust bar     — HIPAA / AES-256 / Offline-First / No Data Selling
+ *   2. Trust bar     — HIPAA-aligned / Encrypted in transit / Offline-First / No Data Selling
  *   3. Disclaimer    — warning icon + medical-disclaimer line
  *   4. Bottom bar    — Last reviewed · © · Sitemap
  *   + Floating back-to-top button (client island)

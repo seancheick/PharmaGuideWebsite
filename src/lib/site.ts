@@ -112,8 +112,8 @@ export const footerNav = {
  * an inline SVG inside the Footer component.
  */
 export const footerTrustBadges = [
-  { label: "HIPAA Compliant", icon: "shield-check" },
-  { label: "AES-256 Encrypted", icon: "lock" },
+  { label: "HIPAA-Aligned Design", icon: "shield-check" },
+  { label: "Encrypted in Transit", icon: "lock" },
   { label: "Offline-First", icon: "clock" },
   { label: "No Data Selling", icon: "globe" },
 ] as const;

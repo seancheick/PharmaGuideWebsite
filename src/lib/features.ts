@@ -139,12 +139,12 @@ export const PILLARS: readonly FeaturePillar[] = [
     overview:
       "Multi-way interactions, cross-product dose summation, timing conflicts — your stack analyzed together.",
     intro:
-      "Most apps check one bottle at a time. PharmaGuide reads your stack as a system — multi-way interactions, dose overlap across products, and the timing conflicts that don't show up in any single label. The result is a Stack Health verdict you can act on.",
+      "Most apps check one bottle at a time. PharmaGuide reads your stack as a system — multi-way interactions, dose overlap across products, and the timing conflicts that don't show up in any single label. The result is a stack status you can act on.",
     illustration: "stack",
     capabilities: [
       "Multi-way analysis — interactions between any pair AND beyond",
       "Cross-product dose summation — zinc from three products is added up and checked against the 40 mg/day upper limit",
-      "Stack Health verdict: **Optimized · Solid · Decent · Needs review · Unsafe**",
+      "Stack status that leads with your most serious finding and counts what needs review",
       "Timing conflicts surfaced (e.g. calcium ↔ levothyroxine 4-hour separation)",
     ],
     examples: [

@@ -264,13 +264,13 @@ const CROSS_REFS = [
     severity: "contraindicated" as const,
   },
   {
-    name: "Grapefruit ↔ simvastatin",
-    label: "Avoid",
-    severity: "avoid" as const,
+    name: "Calcium ↔ levothyroxine",
+    label: "Caution · space 4h",
+    severity: "caution" as const,
   },
   {
-    name: "Magnesium ↔ lithium",
-    label: "Monitor · space 2h",
+    name: "Garlic ↔ warfarin",
+    label: "Monitor",
     severity: "monitor" as const,
   },
 ];

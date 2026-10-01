@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { m } from "framer-motion";
 import { WaitlistLink } from "@/components/shared/WaitlistLink";
-import { LEAD_REVIEWER, displayName, profilePath } from "@/lib/people";
+import { displayName, profilePath } from "@/lib/people";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import {
   ADVISORY_TEAM,
@@ -34,6 +34,15 @@ import {
  * All sections animate in with the same fadeUpContainer/Item pattern
  * used elsewhere on the site.
  */
+
+// The citations on pipeline record DEP_STATINS_COQ10 (medication_depletions.json),
+// including the pooled analyses that disagree on whether CoQ10 helps.
+const COQ10_SPECIMEN_SOURCES = [
+  { pmid: "26192349", label: "Banach 2015 · statins lower plasma CoQ10 (meta-analysis)" },
+  { pmid: "8463436", label: "Ghirlanda 1993 · placebo-controlled trial" },
+  { pmid: "30371340", label: "Qu 2018 · reports symptom improvement" },
+  { pmid: "32179207", label: "Kennedy 2020 · finds no benefit" },
+] as const;
 
 export function MethodologyClient() {
   return (
@@ -396,7 +405,7 @@ export function MethodologyClient() {
                     aria-hidden="true"
                     className="block h-1.5 w-1.5 rounded-full bg-severity-monitor"
                   />
-                  Informational
+                  Good to know
                 </span>
                 <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
                   Evidence · <span className="text-foreground/85">Established</span>
@@ -411,10 +420,11 @@ export function MethodologyClient() {
                   Mechanism
                 </p>
                 <p className="text-body leading-relaxed text-foreground/85">
-                  Statins inhibit HMG-CoA reductase, blocking not only cholesterol synthesis but
-                  also the mevalonate pathway used to synthesize CoQ10. Plasma and muscle CoQ10
-                  levels are measurably reduced by statin therapy; CoQ10 depletion is proposed as a
-                  contributing mechanism to statin-induced myopathy.
+                  Statins inhibit HMG-CoA reductase, the same early step of the mevalonate pathway
+                  the body uses to make CoQ10. Placebo-controlled trials, pooled in a meta-analysis,
+                  show statin therapy lowers CoQ10 measured in blood. Whether that causes the muscle
+                  symptoms some people report is not established, and trials of CoQ10 supplements
+                  disagree.
                 </p>
               </section>
 
@@ -424,65 +434,51 @@ export function MethodologyClient() {
                   Recommended action
                 </p>
                 <p className="text-body leading-relaxed text-foreground/85">
-                  CoQ10 is commonly discussed for statin-associated muscle symptoms. Ask your
-                  prescriber whether supplementation fits your situation.
+                  Statins can lower circulating CoQ10 levels. It is uncertain whether this
+                  contributes to muscle symptoms or whether CoQ10 supplements consistently help.
+                  Discuss persistent muscle symptoms with your prescriber, and do not stop a statin
+                  on your own.
                 </p>
               </section>
 
-              {/* Sources — real PubMed IDs from the pipeline record */}
+              {/* Sources — the PubMed IDs on pipeline record DEP_STATINS_COQ10 */}
               <section className="flex flex-col gap-2.5 border-t border-border pt-5">
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
-                  Sources (2)
+                  Sources ({COQ10_SPECIMEN_SOURCES.length})
                 </p>
                 <ul className="flex flex-col gap-2">
-                  <li>
-                    <a
-                      href="https://pubmed.ncbi.nlm.nih.gov/19528564/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group inline-flex items-baseline gap-2 text-body-sm leading-relaxed text-foreground/85 transition-colors duration-fast ease-smooth hover:text-accent"
-                    >
-                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
-                        PMID
-                      </span>
-                      <span className="font-mono tabular-nums">19528564</span>
-                      <span
-                        aria-hidden="true"
-                        className="opacity-0 transition-opacity duration-fast group-hover:opacity-100"
+                  {COQ10_SPECIMEN_SOURCES.map((source) => (
+                    <li key={source.pmid}>
+                      <a
+                        href={`https://pubmed.ncbi.nlm.nih.gov/${source.pmid}/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group inline-flex items-baseline gap-2 text-body-sm leading-relaxed text-foreground/85 transition-colors duration-fast ease-smooth hover:text-accent"
                       >
-                        →
-                      </span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://pubmed.ncbi.nlm.nih.gov/12622602/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group inline-flex items-baseline gap-2 text-body-sm leading-relaxed text-foreground/85 transition-colors duration-fast ease-smooth hover:text-accent"
-                    >
-                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
-                        PMID
-                      </span>
-                      <span className="font-mono tabular-nums">12622602</span>
-                      <span
-                        aria-hidden="true"
-                        className="opacity-0 transition-opacity duration-fast group-hover:opacity-100"
-                      >
-                        →
-                      </span>
-                    </a>
-                  </li>
+                        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
+                          PMID
+                        </span>
+                        <span className="font-mono tabular-nums">{source.pmid}</span>
+                        <span className="text-subtle">{source.label}</span>
+                        <span
+                          aria-hidden="true"
+                          className="opacity-0 transition-opacity duration-fast group-hover:opacity-100"
+                        >
+                          →
+                        </span>
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </section>
 
               {/* Reviewer + version footer */}
               <footer className="flex flex-col gap-2 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
-                  Reviewed by <span className="text-foreground/85">{displayName(LEAD_REVIEWER)}</span>
+                  Approved by <span className="text-foreground/85">PharmaGuide Clinical Team</span>
                 </p>
                 <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
-                  Schema v6.1 · DB sync 2026-05-06
+                  Approved 2026-07-27
                 </p>
               </footer>
             </div>

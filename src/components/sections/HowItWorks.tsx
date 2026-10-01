@@ -269,7 +269,7 @@ const CROSS_REFS = [
     severity: "avoid" as const,
   },
   {
-    name: "Magnesium ↔ metformin",
+    name: "Magnesium ↔ lithium",
     label: "Monitor · space 2h",
     severity: "monitor" as const,
   },

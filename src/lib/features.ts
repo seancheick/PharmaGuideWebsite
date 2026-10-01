@@ -6,7 +6,7 @@ import { CATALOG_SIZE } from "./site";
  * touching the layout component.
  *
  * External-source links sprinkled throughout each pillar so the page
- * has real authority signals for crawlers (FDA, NIH ODS, DSLD, FAERS,
+ * has real authority signals for crawlers (FDA, NIH ODS, DSLD,
  * PubMed, Cochrane, NCCIH, DailyMed). Each external link uses the
  * inline-markdown link syntax `[text](url)` parsed by FeaturesClient.
  *
@@ -70,8 +70,6 @@ export interface FeaturePillar {
 // ─── External authority URL constants (used across pillars) ──────────
 const FDA_RECALLS = "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts";
 const FDA_SUPPLEMENTS = "https://www.fda.gov/food/dietary-supplements";
-const FAERS =
-  "https://www.fda.gov/drugs/drug-approvals-and-databases/fda-adverse-event-reporting-system-faers-database";
 const NIH_ODS = "https://ods.od.nih.gov";
 const DSLD = "https://dsld.od.nih.gov";
 const PUBMED = "https://pubmed.ncbi.nlm.nih.gov";
@@ -92,34 +90,31 @@ export const PILLARS: readonly FeaturePillar[] = [
     overview:
       "Maps supported prescriptions to the vitamins and minerals they may draw down over time.",
     intro:
-      "Some common prescriptions are associated with lower levels of specific vitamins and minerals over months and years — for example, metformin and B12, or PPIs and magnesium absorption. We map supported medications to the nutrients they may deplete, and surface what to consider discussing with your clinician.",
+      "Some common prescriptions are associated with lower levels of specific vitamins and minerals over months and years — for example, long-term metformin and vitamin B12. We map supported medications to the nutrients they may affect, and surface what to consider discussing with your clinician. A lower level is not a diagnosis, and it does not by itself mean you need a supplement.",
     illustration: "depletion",
     capabilities: [
       "Add a medication → see which nutrients may be affected",
-      "Evidence-graded depletion mappings from published research",
-      "Replenishment suggestions you can discuss with your clinician",
+      "Evidence-graded mappings from published research; mappings still under review are not shown",
+      "Questions you can bring to your clinician — never a prescription",
       "Updated as new pharmacology research is published",
     ],
     examples: [
       {
         trigger: "Statin (atorvastatin, simvastatin)",
-        result: "**CoQ10** — supplementation discussed in cardiology guidelines",
+        result:
+          "**CoQ10** — blood levels may fall; whether supplements help muscle symptoms is uncertain",
       },
       {
         trigger: "Metformin",
-        result: "**Vitamin B12** + **Folate** — depletion well-documented over long-term use",
+        result: "**Vitamin B12** — lower levels more likely with long-term, higher-dose use",
       },
       {
         trigger: "PPI (omeprazole, pantoprazole)",
-        result: "**Magnesium**, **Vitamin B12**, **Calcium** absorption reduced",
+        result: "**Iron** status and **calcium** carbonate absorption with long-term use",
       },
       {
         trigger: "Loop diuretic (furosemide)",
-        result: "**Potassium**, **Magnesium**, **Thiamine** lost in urine",
-      },
-      {
-        trigger: "Combined oral contraceptive",
-        result: "**B-complex** + **Folate** + **Magnesium** routinely depleted",
+        result: "**Calcium** and **Thiamine** — more lost in urine with long-term use",
       },
     ],
     sources: [
@@ -185,22 +180,22 @@ export const PILLARS: readonly FeaturePillar[] = [
     titleLead: "Active and inactive ingredients.",
     titleEm: "Including the ones most apps skip.",
     overview:
-      "Active and inactive ingredients parsed, proprietary blends decomposed, 4-pillar PG Score per product.",
+      "Active and inactive ingredients parsed, proprietary blends read as disclosed, six-part PG Score per product.",
     intro:
-      "We parse the active ingredients AND the inactive ones — fillers, binders, allergens, and the proprietary blends most apps skip because the math is hard. Every product gets a 4-pillar PG Score so you can compare brands on substance, not packaging.",
+      "We parse the active ingredients AND the inactive ones — fillers, binders, allergens, and the proprietary blends most apps skip. Every product gets a PG Score out of 100 across six parts, so you can compare brands on substance, not packaging.",
     illustration: "transparency",
     capabilities: [
       "Active and inactive ingredients parsed — fillers, allergens, excipients",
-      "Proprietary-blend dose decomposition — most apps can't read these; we can",
+      "Proprietary blends read as printed — the total and the ingredients inside, with undisclosed amounts marked unknown, never guessed",
       "Probiotic strain + CFU and prebiotic fiber checks — strains named, live counts and fiber type verified, not just 'blend'",
-      "PG Score across 4 pillars: ingredient quality, safety & purity, evidence, brand trust",
-      "Third-party testing flags (USP, NSF, Informed Sport) where verifiable",
+      "PG Score across six parts: Formulation 20, Dose 20, Evidence 20, Transparency 15, Verification 15, Safety & Hygiene 10",
+      "Third-party certifications (USP, NSF, Informed Sport) earn full credit only when confirmed in the certifier's registry; a label claim alone counts for less",
     ],
     examples: [
       {
         trigger: '"Energy Blend 850mg" with no per-ingredient dose',
         result:
-          "**Decomposed** — we estimate per-ingredient ranges and flag what's hidden",
+          "**Amounts not disclosed** — ingredients inside still get checked for interactions; dose-based conclusions are marked limited",
       },
       {
         trigger: '"50 billion CFU probiotic" with strains unnamed',
@@ -312,33 +307,29 @@ export const PILLARS: readonly FeaturePillar[] = [
     titleLead: "When the FDA pulls something,",
     titleEm: "you find out.",
     overview:
-      "FDA recall monitoring and adverse-event signal awareness on the products you actually scanned.",
+      "FDA recall and banned-ingredient monitoring for dietary supplements.",
     intro:
-      "The FDA recalls dietary supplements regularly — adulterated formulations, undeclared pharmaceuticals, contamination, mislabeling. Most users never hear about it. PharmaGuide monitors active recalls and FDA Adverse Event Reporting System (FAERS) signals so a product in your stack doesn't quietly become unsafe without you noticing.",
+      "The FDA recalls dietary supplements regularly — adulterated formulations, undeclared pharmaceuticals, contamination, mislabeling. Most users never hear about it. PharmaGuide checks products against FDA recalls and banned or adulterant ingredients, so a product in your stack doesn't quietly become unsafe without you noticing.",
     illustration: "recalls",
     capabilities: [
-      "FDA recall monitoring across dietary supplements and medications",
-      "FAERS-linked safety signals — adverse event reports surfaced in-app",
-      "Lot-level recall checking when manufacturers publish lot data",
+      "FDA recall monitoring for dietary supplements",
+      "Banned and adulterant ingredients flagged with the reason and the FDA source",
+      "Recalled products stay findable — a scan shows the recall instead of \"not found\"",
       "FDA warning letter awareness for flagged brands",
     ],
     examples: [
       {
         trigger: "Brand X recalled for undeclared sildenafil",
-        result: "**Stack alert** — flagged immediately if you've scanned that product",
+        result: "**Stack alert** — flagged if that product is in your stack",
       },
       {
-        trigger: "Manufacturing recall by lot number 2026-AC-0814",
-        result: "**Lot match** — your bottle's lot triggers the warning, others don't",
-      },
-      {
-        trigger: "FAERS adverse event cluster on a kratom product",
-        result: "**Potential safety signal** — surfaced for review with appropriate context",
+        trigger: "Product containing a banned ingredient",
+        result: "**Blocked** — no score shown, just the reason and the source",
       },
     ],
     sources: [
       { name: "FDA Recalls, Market Withdrawals & Safety Alerts", url: FDA_RECALLS },
-      { name: "FDA Adverse Event Reporting System (FAERS)", url: FAERS },
+      { name: "FDA dietary supplements", url: FDA_SUPPLEMENTS },
     ],
   },
 ];

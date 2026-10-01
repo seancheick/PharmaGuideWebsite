@@ -101,7 +101,7 @@ export function Hero() {
                   <path d="M15.5 11h-7l-1 9h9l-1-9z" />
                   <circle cx="12" cy="15" r="1.5" />
                 </svg>
-                FDA · NIH · PubMed verified
+                Cross-referenced with FDA, NIH and PubMed
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <svg

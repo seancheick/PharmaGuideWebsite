@@ -38,7 +38,7 @@ export function InfrastructureStrip() {
           <span aria-hidden="true" className="hidden text-border-strong sm:mx-4 sm:inline">
             ·
           </span>
-          <span>Health data never leaves your device</span>
+          <span>Your health profile is stored on your device</span>
         </p>
       </m.div>
     </section>

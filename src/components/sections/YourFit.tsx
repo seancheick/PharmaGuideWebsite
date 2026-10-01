@@ -12,7 +12,8 @@ import { cn } from "@/lib/utils";
  *
  * Was originally "FitScore" — renamed because the assessment is no longer
  * purely numerical. PharmaGuide does TWO reads on every product:
- *   1. Quality (numerical) — the product itself: evidence, purity, testing.
+ *   1. Quality (numerical) — the product itself: six parts scored from the
+ *      label, the evidence and verified certifications (not lab testing).
  *   2. Your Fit (qualitative) — how it lands for THIS person's stack:
  *      Excellent / Good / Limited / Needs review / Not recommended.
  *

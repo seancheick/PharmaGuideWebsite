@@ -65,18 +65,18 @@ export const DATA_SOURCES: readonly DataSource[] = [
     badge: "FDA",
     name: "FDA Resources",
     items: [
-      "Dietary Supplement Label Database (DSLD)",
-      "Adverse Event Reporting System (FAERS)",
-      "Warning letters and safety alerts",
+      "Recalls, market withdrawals and safety alerts",
+      "Warning letters and import alerts",
       "Current Good Manufacturing Practice (cGMP) records",
     ],
-    use: "Product identification · safety alerts · manufacturing disclosures",
+    use: "Recalls · safety alerts · manufacturing disclosures",
   },
   {
     badge: "NIH",
     name: "NIH Resources",
     items: [
       "Office of Dietary Supplements (ODS)",
+      "Dietary Supplement Label Database (DSLD)",
       "National Center for Complementary and Integrative Health (NCCIH)",
       "DailyMed (drug labeling)",
       "Dietary Supplement Ingredient Database",
@@ -126,8 +126,8 @@ export const ENGINE_STAGES: readonly EngineStage[] = [
   {
     num: "02",
     title: "Ingredient normalization",
-    body: "Active and inactive ingredients are parsed and mapped to canonical identities — and proprietary blends are decomposed into estimated per-ingredient ranges, the step most apps skip because the label hides the math.",
-    detail: "Actives + inactives · proprietary-blend decomposition",
+    body: "Active and inactive ingredients are parsed and mapped to canonical identities — and proprietary blends are read exactly as printed: the blend total and the ingredients inside are known, the undisclosed amounts stay unknown and are never estimated.",
+    detail: "Actives + inactives · proprietary blends as disclosed",
   },
   {
     num: "03",
@@ -150,8 +150,8 @@ export const ENGINE_STAGES: readonly EngineStage[] = [
   {
     num: "06",
     title: "Recall & safety sync",
-    body: "The products you've scanned are checked against active FDA recalls and adverse-event signals, so a bottle in your stack doesn't quietly become unsafe without you hearing about it.",
-    detail: "FDA recalls · FAERS signals · lot-level when published",
+    body: "The products in your stack are checked against FDA recalls and banned or adulterant ingredients, so a bottle in your stack doesn't quietly become unsafe without you hearing about it.",
+    detail: "FDA recalls · banned and adulterant ingredients",
   },
 ];
 

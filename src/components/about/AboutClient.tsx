@@ -58,7 +58,7 @@ const INDUSTRY_LIES = [
     badge: "The fairy-dusting deception",
     lie: "Proprietary Blend",
     truth:
-      'Companies use "proprietary blends" to list ingredients without disclosing individual amounts. **The label may not reveal the exact dose of each active ingredient** — and legally, it doesn\'t have to. PharmaGuide decomposes these blends and estimates per-ingredient ranges.',
+      'Companies use "proprietary blends" to list ingredients without disclosing individual amounts. **The label may not reveal the exact dose of each active ingredient** — and legally, it doesn\'t have to. PharmaGuide still checks the ingredients listed inside the blend for interactions, and marks dose-based conclusions as limited instead of guessing the hidden amounts.',
     source: {
       label: "Learn more · Ingredient & Quality Transparency",
       href: "/features#ingredient-transparency",

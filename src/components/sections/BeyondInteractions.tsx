@@ -54,7 +54,7 @@ const CAPABILITIES = [
   {
     num: "06",
     title: "Recall + safety alerts",
-    body: "Surfaces recalls, safety concerns, and adverse-event signals.",
+    body: "Surfaces FDA recalls and banned or adulterant ingredients.",
     href: "/features#recall-safety",
   },
 ] as const;

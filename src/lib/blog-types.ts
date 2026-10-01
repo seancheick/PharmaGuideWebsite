@@ -59,7 +59,7 @@ export const CATEGORIES: readonly BlogCategory[] = [
     label: "Safety Alerts",
     shortLabel: "Alerts",
     description:
-      "FDA recalls, FAERS adverse-event signals, contamination findings, and warnings on dangerous combinations.",
+      "FDA recalls, adverse-event reports, contamination findings, and warnings on dangerous combinations.",
   },
 ];
 

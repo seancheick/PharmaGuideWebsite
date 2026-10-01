@@ -250,11 +250,11 @@ function TransparencyIllustration() {
           </ul>
         </div>
 
-        {/* Proprietary blend — decomposed */}
+        {/* Proprietary blend — read as disclosed; member amounts stay unknown */}
         <div className="rounded-xl border border-severity-caution/30 bg-severity-caution/[0.06] p-4">
           <div className="flex items-center justify-between">
             <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.16em] text-severity-caution">
-              Proprietary blend · decomposed
+              Proprietary blend · as disclosed
             </p>
             <span className="font-mono text-[9.5px] uppercase tracking-[0.12em] text-severity-caution">
               850 mg
@@ -263,15 +263,15 @@ function TransparencyIllustration() {
           <ul className="mt-2 space-y-1 text-[12.5px] text-foreground/80">
             <li className="flex items-baseline justify-between">
               <span>Ashwagandha root</span>
-              <span className="font-mono text-[10.5px] text-subtle">~ 400 mg est.</span>
+              <span className="font-mono text-[10.5px] text-subtle">not disclosed</span>
             </li>
             <li className="flex items-baseline justify-between">
               <span>Rhodiola</span>
-              <span className="font-mono text-[10.5px] text-subtle">~ 300 mg est.</span>
+              <span className="font-mono text-[10.5px] text-subtle">not disclosed</span>
             </li>
             <li className="flex items-baseline justify-between">
               <span>Holy basil</span>
-              <span className="font-mono text-[10.5px] text-subtle">~ 150 mg est.</span>
+              <span className="font-mono text-[10.5px] text-subtle">not disclosed</span>
             </li>
           </ul>
         </div>
@@ -447,18 +447,18 @@ function RecallsIllustration() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-severity-caution/30 bg-severity-caution/[0.06] p-4">
+        <div className="rounded-xl border border-severity-contraindicated/35 bg-severity-contraindicated/[0.06] p-4">
           <div className="flex items-start gap-2.5">
-            <span aria-hidden="true" className="mt-1 block h-1.5 w-1.5 shrink-0 rounded-full bg-severity-caution" />
+            <span aria-hidden="true" className="mt-1 block h-1.5 w-1.5 shrink-0 rounded-full bg-severity-contraindicated" />
             <div className="min-w-0 flex-1">
-              <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] text-severity-caution">
-                FAERS signal · monitoring
+              <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] text-severity-contraindicated">
+                Banned ingredient · blocked
               </p>
               <p className="mt-1 font-serif text-[14px] italic leading-tight text-ink">
-                Kratom — adverse-event cluster
+                Kratom leaf — not lawful as a supplement
               </p>
               <p className="mt-1 text-[11.5px] text-muted">
-                Watching · FDA response pending
+                No score shown · reason and FDA source listed
               </p>
             </div>
           </div>

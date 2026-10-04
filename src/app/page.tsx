@@ -7,7 +7,6 @@ import { HowItWorks } from "@/components/sections/HowItWorks";
 import { InteractionLadder } from "@/components/sections/InteractionLadder";
 import { BeyondInteractions } from "@/components/sections/BeyondInteractions";
 import { RealLifeMoments } from "@/components/sections/RealLifeMoments";
-import { YourFit } from "@/components/sections/YourFit";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { LatestResearch } from "@/components/sections/LatestResearch";
 import { JsonLd } from "@/components/shared/JsonLd";
@@ -16,7 +15,8 @@ import { pageMetadata, pageSchema } from "@/lib/pages";
 import { schemaId } from "@/lib/schema";
 
 /**
- * Homepage — 9 sections after dropping TrustBlock.
+ * Homepage — 8 sections after dropping TrustBlock and folding the Your Fit
+ * section into How It Works step 3 (2026-10-04).
  *
  * TrustBlock ("How we think — Built to explain uncertainty…") was removed
  * because its content overlapped the Infrastructure Strip and the new
@@ -51,7 +51,6 @@ export default function Home() {
         <InteractionLadder />
         <BeyondInteractions />
         <RealLifeMoments />
-        <YourFit />
         <LatestResearch posts={latest} />
         <FinalCTA />
       </main>

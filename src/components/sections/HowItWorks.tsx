@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { m, useInView } from "framer-motion";
+import { m, useInView, useReducedMotion } from "framer-motion";
 import { LEAD_REVIEWER, displayName } from "@/lib/people";
 import { useRef } from "react";
-import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { ease, fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { DEMO_PRODUCTS } from "@/lib/demo-products";
 import { qualityBand } from "@/lib/quality-score";
 import { SOURCE_LABEL_COUNT } from "@/lib/site";
@@ -17,9 +17,9 @@ import { cn } from "@/lib/utils";
  *   01  Local catalog with sub-10ms lookup timings — proves "offline-first"
  *   02  Cross-reference rows with the 5-tier verdict labels — proves
  *       "every supplement checked against every other item, on-device"
- *   03  Your Fit card — qualitative verdict + supporting notes; mirrors
- *       the YourFit section's pattern (no numerical FitScore — that
- *       framing was retired in favor of qualitative + dual-read).
+ *   03  Two reads on one product — Quality (scored) above Your Fit
+ *       (qualitative; no numerical FitScore). This card absorbed the
+ *       standalone Your Fit section on 2026-10-04.
  *
  * The visuals are NOT decoration — they're miniature versions of the actual
  * app output. Concrete > abstract. The reference for this rebuild was the
@@ -50,8 +50,8 @@ const STEPS = [
   },
   {
     num: "03",
-    title: "Get a clear verdict.",
-    body: "See the quality score, interaction flags, evidence level, and reasoning behind every recommendation — in plain language.",
+    title: "Get two reads, not one.",
+    body: "Quality is what's in the bottle. Your fit is everything around it — your medications, conditions, and stack. Every flag shows its evidence and reasoning in plain language.",
     visual: "yourfit" as const,
   },
 ] as const;
@@ -341,88 +341,112 @@ function CrossRefVisual() {
   );
 }
 
-// ─── Step 3 — Quality score (single read) ────────────────────────────
-// Was the full dual-read (Quality + Your Fit) — duplicated the YourFit
-// section's exclusive punchline a few sections down. Trimmed to the
-// Quality half on a DIFFERENT product (Vitamin D3 5000 IU) so this card
-// teaches "a verdict exists with reasoning"; the YourFit section then
-// teaches "fit is different from quality" on Magnesium Glycinate
-// without repeating the same artifact. Two surfaces, two jobs.
+// ─── Step 3 — Two reads: Quality, then Your Fit ──────────────────────
+// This card used to show Quality alone (on a Vitamin D3), and a separate
+// Your Fit section further down showed the dual read. Merged 2026-10-04:
+// one card, one product, both reads — the page lost a full-height section
+// and the visitor still meets the idea that matters most, that a high
+// score and a good fit are different answers.
+//
+// The product is the hero phone's magnesium (lib/demo-products.ts), so
+// the page shows one product with one score everywhere. The fit line is
+// the hero's finding: excellent product, one timing change for someone
+// on levothyroxine. Number, bar and verdict share the score's band.
 
-// The Vitamin D3 card is a real catalog record (lib/demo-products.ts).
-// Score, verdict, certification and every chip come from that record —
-// the chips are shown only when the record supports them.
-const D3 = DEMO_PRODUCTS.vitaminD;
-const D3_SCORE = D3.score;
-const D3_BAND = qualityBand(D3_SCORE);
-const D3_CHIPS = [
-  D3.thirdPartyTested && "3rd-party tested",
-  D3.noHarmfulAdditives && "No harmful additives",
-  D3.noWarnings && "No safety flags",
-].filter((chip): chip is string => Boolean(chip));
+const PRODUCT = DEMO_PRODUCTS.magnesium;
+const BAND = qualityBand(PRODUCT.score);
 
 function YourFitVisual() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-15%" });
+  const reducedMotion = useReducedMotion();
+  // Reduced motion renders the finished card; otherwise each beat waits
+  // for the card to scroll into view.
+  const show = reducedMotion || inView;
+  const reveal = (delay: number) => ({
+    initial: reducedMotion ? false : { opacity: 0, y: 4 },
+    animate: show ? { opacity: 1, y: 0 } : {},
+    transition: { duration: 0.45, delay, ease: ease.emphasized },
+  });
 
   return (
-    <div ref={ref} className="flex h-[280px] flex-col justify-center gap-5 p-5">
-      {/* Product label — different from the YourFit section's product */}
-      <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.16em] text-subtle">
-        {D3.name} · {D3.dose}
+    <div ref={ref} className="flex h-[280px] flex-col justify-center p-5">
+      <p className="font-mono text-[9.5px] font-medium uppercase leading-snug tracking-[0.16em] text-subtle">
+        {PRODUCT.name} · {PRODUCT.dose}
       </p>
 
-      {/* QUALITY — the only read this card shows */}
-      <div>
+      {/* Read 1 — Quality: the product itself */}
+      <div className="mt-4">
         <div className="flex items-baseline justify-between gap-3">
           <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-subtle">
             Quality
           </span>
           <m.span
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.2, ease: [0.32, 0.72, 0, 1] }}
+            {...reveal(0.2)}
             role="img"
-            aria-label={`Quality score ${D3_SCORE} out of 100`}
+            aria-label={`Quality score ${PRODUCT.score} out of 100`}
             /* Template string, not cn() — tailwind-merge would treat
                `text-display-sm` and `text-severity-safe` as conflicting
                `text-*` utilities and drop the font size. */
-            className={`font-serif text-display-sm italic tabular-nums leading-none ${D3_BAND.textClass}`}
+            className={`font-serif text-display-sm italic tabular-nums leading-none ${BAND.textClass}`}
           >
-            {D3_SCORE}
+            {PRODUCT.score}
           </m.span>
         </div>
-        <div className="mt-3 h-[5px] overflow-hidden rounded-full bg-border">
+        <div className="mt-2.5 h-[5px] overflow-hidden rounded-full bg-border">
           <m.div
-            className={cn("h-full rounded-full", D3_BAND.barClass)}
-            initial={{ width: "0%" }}
-            animate={inView ? { width: `${D3_SCORE}%` } : {}}
-            transition={{ duration: 1.1, delay: 0.3, ease: [0.32, 0.72, 0, 1] }}
+            className={cn("h-full origin-left rounded-full", BAND.barClass)}
+            style={{ width: `${PRODUCT.score}%` }}
+            initial={reducedMotion ? false : { scaleX: 0 }}
+            animate={show ? { scaleX: 1 } : {}}
+            transition={{ duration: 1.1, delay: 0.3, ease: ease.emphasized }}
           />
         </div>
-        <p className="mt-2.5 text-[11px] leading-snug text-muted">
-          <span className="font-medium text-ink">{D3_BAND.label}</span> · {D3.certification} ·
-          cholecalciferol form
+        <p className="mt-2 text-[11px] leading-snug text-muted">
+          <span className="font-medium text-ink">{BAND.label}</span>
+          {PRODUCT.certification && ` · ${PRODUCT.certification}`}
         </p>
       </div>
 
-      {/* Reasoning chips — concrete proof beneath the score */}
-      <m.ul
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.5, delay: 0.8, ease: [0.32, 0.72, 0, 1] }}
-        className="flex flex-wrap gap-1.5"
-      >
-        {D3_CHIPS.map((chip) => (
-          <li
-            key={chip}
-            className="inline-flex items-center gap-1.5 rounded-pill border border-severity-safe/30 bg-severity-safe/[0.06] px-2 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-severity-safe"
-          >
-            <span aria-hidden="true" className="block h-1 w-1 rounded-full bg-severity-safe" />
-            {chip}
-          </li>
-        ))}
-      </m.ul>
+      <m.div
+        aria-hidden="true"
+        initial={reducedMotion ? false : { scaleX: 0 }}
+        animate={show ? { scaleX: 1 } : {}}
+        transition={{ duration: 0.5, delay: 1.0, ease: ease.emphasized }}
+        className="my-4 h-px origin-left bg-border"
+      />
+
+      {/* Read 2 — Your Fit: the same product, for this person's stack */}
+      <div>
+        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-subtle">
+          Your fit
+        </span>
+        <m.p
+          {...reveal(1.2)}
+          className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-severity-safe"
+        >
+          <span
+            aria-hidden="true"
+            className="block h-1.5 w-1.5 shrink-0 -translate-y-0.5 rounded-full bg-severity-safe"
+          />
+          <span className="whitespace-nowrap font-serif text-[19px] italic leading-none">
+            Good fit
+          </span>
+          <span className="text-[11px] leading-none text-severity-safe/80">
+            with timing adjustment
+          </span>
+        </m.p>
+        <m.p
+          {...reveal(1.45)}
+          className="mt-2.5 flex items-start gap-2 text-[11px] leading-snug text-muted"
+        >
+          <span
+            aria-hidden="true"
+            className="mt-[5px] block h-1 w-1 shrink-0 rounded-full bg-severity-caution"
+          />
+          <span>Separate from levothyroxine by 4+ hours</span>
+        </m.p>
+      </div>
     </div>
   );
 }

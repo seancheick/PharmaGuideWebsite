@@ -740,7 +740,6 @@ These are maintained automatically; just be aware of them:
 | `/blog/[slug]` | 3 related posts (same category) | Built into post layout |
 | Homepage `HowItWorks` credentials | /methodology | Inline `<Link>` |
 | Homepage `BeyondInteractions` footer | /features (pill) + /blog (secondary) | Inline links |
-| Homepage `YourFit` callback | /features#ingredient-transparency | Inline mono link |
 
 If you want to add another cross-link strip somewhere, drop in
 `<RelatedLinks>` from `src/components/shared/RelatedLinks.tsx` — it's

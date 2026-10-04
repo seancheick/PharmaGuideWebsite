@@ -30,13 +30,21 @@ export function Hero() {
             Two columns start at lg, not md: at exactly 768px the split left
             the copy ~340px wide, which wrapped the CTA labels and squeezed
             the phone against the header. Tablets now get the stacked mobile
-            layout, which has room for the headline at full measure.     */}
-        <div className="grid items-center gap-14 lg:grid-cols-[1.2fr_0.9fr] lg:items-start lg:gap-14">
+            layout, which has room for the headline at full measure.
+
+            Below lg the copy column is `contents`, so its children join
+            this grid and can be reordered around the phone: on a phone
+            the trust row and the /features link move under the mockup.
+            Above it they pushed the product to y≈917 on an 812px screen
+            — a first-time visitor saw no app without scrolling. Now the
+            CTA pair sits right above the phone, which peeks over the
+            fold. Desktop is unchanged (lg:block restores the column). */}
+        <div className="grid items-center gap-y-5 lg:grid-cols-[1.2fr_0.9fr] lg:items-start lg:gap-14">
           {/* Copy column — rhythm tightened from space-y-8/10. Six children
               at 40px apart spent 200px of vertical budget on air; 24/28px
               still reads as editorial spacing and buys back the room that
               puts the CTA pair above the fold. */}
-          <div className="space-y-6 md:space-y-7">
+          <div className="contents lg:block lg:space-y-7">
             <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
               The supplement &amp; medication co-pilot
             </p>
@@ -59,12 +67,12 @@ export function Hero() {
                 hero a spec sheet; it now lives on /features, linked below
                 the trust pills. What the hero owes a first-time visitor is
                 the outcome, stated as decision support — not advice.   */}
-            <p className="max-w-prose animate-fade-up text-body-xl text-muted">
+            <p className="max-w-prose animate-fade-up text-body-lg text-muted sm:text-body-xl">
               Know whether this supplement is right for you — before it conflicts with your
               medications, conditions, or existing stack.
             </p>
 
-            <div className="flex animate-fade-up flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:80ms]">
+            <div className="order-last flex animate-fade-up flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:80ms] max-lg:mt-4 lg:order-none">
               <span className="inline-flex items-center gap-1.5">
                 <svg
                   width="14"
@@ -129,7 +137,7 @@ export function Hero() {
                 under the trust row, above the action buttons.          */}
             <Link
               href="/features"
-              className="inline-flex w-fit animate-fade-up items-center gap-1.5 font-mono text-eyebrow uppercase text-accent transition-colors duration-fast ease-smooth [animation-delay:120ms] hover:text-accent-strong"
+              className="order-last inline-flex w-fit animate-fade-up items-center gap-1.5 font-mono text-eyebrow uppercase text-accent transition-colors duration-fast ease-smooth [animation-delay:120ms] hover:text-accent-strong lg:order-none"
             >
               See everything we check
               <span aria-hidden="true">→</span>
@@ -143,20 +151,25 @@ export function Hero() {
                 opens. Three actions in one hero is one too many, so the
                 tertiary is the quiet mono link above.                    */}
             <div className="animate-fade-up pt-2 [animation-delay:160ms]">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+              {/* One row on phones too: each pill takes half the row and
+                  the pair wraps to full width on screens too narrow to fit
+                  (under ~350px). The arrow drops under sm to make room. */}
+              <div className="flex flex-wrap gap-2.5 sm:flex-nowrap sm:items-center sm:gap-4 [&>*]:flex-1 sm:[&>*]:flex-none">
                 <WaitlistLink
                   href="#waitlist"
                   /* border-transparent so the filled and outlined pills share
                      a box model and line up to the pixel. */
-                  className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill border border-transparent bg-accent px-5 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent"
+                  className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-pill border border-transparent bg-accent px-4 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent sm:px-5"
                 >
                   Get early access
-                  <span aria-hidden="true">→</span>
+                  <span aria-hidden="true" className="max-sm:hidden">
+                    →
+                  </span>
                 </WaitlistLink>
 
                 <Link
                   href="/#how-it-works"
-                  className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill border border-border bg-surface px-5 py-3 text-body-sm font-medium text-ink shadow-xs transition-[transform,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-accent"
+                  className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-pill border border-border bg-surface px-4 py-3 text-body-sm font-medium text-ink shadow-xs transition-[transform,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-accent sm:px-5"
                 >
                   See how it works
                 </Link>
@@ -175,7 +188,7 @@ export function Hero() {
           </div>
 
           {/* Phone column */}
-          <div className="animate-fade-up [animation-delay:200ms]">
+          <div className="animate-fade-up [animation-delay:200ms] max-lg:mt-5">
             <PhoneMockup />
           </div>
         </div>

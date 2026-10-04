@@ -337,7 +337,9 @@ export function PhoneMockup() {
                           </svg>
                         )}
                       </span>
-                      <span className="truncate text-[11.5px] font-medium leading-tight text-ink">
+                      {/* Wraps instead of truncating: on a 375px phone the
+                          story-2 line lost its punchline ("…they don't"). */}
+                      <span className="text-pretty text-[11.5px] font-medium leading-tight text-ink">
                         {story.chip.text}
                       </span>
                     </span>

@@ -60,7 +60,7 @@ export function HowItWorks() {
     <section
       id="how-it-works"
       aria-labelledby="how-heading"
-      className="relative section-y bg-surface-raised/50"
+      className="section-y relative bg-surface-raised/50"
     >
       {/* Slight surface warmth + hairlines top/bottom: the section reads
           as its own zone, distinct from the warm cream above and the
@@ -89,16 +89,15 @@ export function HowItWorks() {
             variants={fadeUpItem}
             className="text-balance text-display-lg text-ink"
           >
-            Three beats.{" "}
-            <span className="font-serif italic text-accent">No guesswork.</span>
+            Three beats. <span className="font-serif italic text-accent">No guesswork.</span>
           </m.h2>
 
           <m.p
             variants={fadeUpItem}
             className="max-w-prose text-body-lg leading-relaxed text-muted"
           >
-            From scan to verdict — find the product, check it against your stack,
-            and understand what to do next.
+            From scan to verdict — find the product, check it against your stack, and understand
+            what to do next.
           </m.p>
         </m.div>
 
@@ -121,7 +120,7 @@ export function HowItWorks() {
               variants={fadeUpItem}
               className="group flex min-h-[480px] flex-col rounded-2xl border border-border bg-surface p-7 shadow-md transition-[transform,box-shadow] duration-slow ease-emphasized hover:-translate-y-1 hover:shadow-xl md:p-8"
             >
-              <span className="font-mono text-[11px] font-medium tabular-nums uppercase tracking-[0.22em] text-accent">
+              <span className="font-mono text-[11px] font-medium uppercase tabular-nums tracking-[0.22em] text-accent">
                 {step.num}
               </span>
               {/* Title bumped down to text-h3 so the longer full-sentence
@@ -160,19 +159,25 @@ export function HowItWorks() {
             className="group flex flex-col items-center gap-2 text-center md:gap-2.5"
           >
             <p className="text-balance text-body leading-relaxed text-ink transition-colors duration-fast ease-smooth group-hover:text-accent">
-              Cross-referenced with{" "}
-              <span className="font-medium">FDA</span>
-              <span aria-hidden="true" className="mx-1.5 text-border-strong">·</span>
+              Cross-referenced with <span className="font-medium">FDA</span>
+              <span aria-hidden="true" className="mx-1.5 text-border-strong">
+                ·
+              </span>
               <span className="font-medium">NIH</span>
-              <span aria-hidden="true" className="mx-1.5 text-border-strong">·</span>
+              <span aria-hidden="true" className="mx-1.5 text-border-strong">
+                ·
+              </span>
               <span className="font-medium">PubMed</span>
-              <span aria-hidden="true" className="mx-1.5 text-border-strong">·</span>
+              <span aria-hidden="true" className="mx-1.5 text-border-strong">
+                ·
+              </span>
               <span className="font-medium">DSLD</span>
             </p>
             <p className="text-body-sm leading-relaxed text-muted">
-              Reviewed by{" "}
-              <span className="text-ink">{displayName(LEAD_REVIEWER)}</span>
-              <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
+              Reviewed by <span className="text-ink">{displayName(LEAD_REVIEWER)}</span>
+              <span aria-hidden="true" className="mx-2 text-border-strong">
+                ·
+              </span>
               Catalog updated weekly
             </p>
             <p className="mt-1 inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent">
@@ -208,7 +213,7 @@ function CatalogVisual() {
   return (
     <div className="flex h-[280px] flex-col gap-3 p-5">
       {/* Header row: catalog label + offline indicator */}
-      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-border">
+      <div className="flex items-center justify-between gap-3 border-b border-border pb-2.5">
         <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-subtle">
           Catalog · local
         </span>
@@ -229,7 +234,16 @@ function CatalogVisual() {
             className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors duration-fast hover:bg-surface"
           >
             <span aria-hidden="true" className="text-subtle">
-              <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M6 4l4 4-4 4" />
               </svg>
             </span>
@@ -311,9 +325,7 @@ function CrossRefVisual() {
             className={`mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full ${SEVERITY_DOT_MAP[r.severity]}`}
           />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[12.5px] leading-tight text-ink">
-              {r.name}
-            </p>
+            <p className="truncate text-[12.5px] leading-tight text-ink">{r.name}</p>
             <p
               className={`mt-1 font-mono text-[10px] uppercase tracking-[0.14em] ${SEVERITY_TEXT_MAP[r.severity]}`}
             >
@@ -367,7 +379,7 @@ function YourFitVisual() {
             /* Template string, not cn() — tailwind-merge would treat
                `text-display-sm` and `text-severity-safe` as conflicting
                `text-*` utilities and drop the font size. */
-            className={`font-serif text-display-sm italic leading-none tabular-nums ${D3_BAND.textClass}`}
+            className={`font-serif text-display-sm italic tabular-nums leading-none ${D3_BAND.textClass}`}
           >
             {D3_SCORE}
           </m.span>
@@ -381,7 +393,8 @@ function YourFitVisual() {
           />
         </div>
         <p className="mt-2.5 text-[11px] leading-snug text-muted">
-          <span className="font-medium text-ink">{D3_BAND.label}</span> · USP-verified · cholecalciferol form
+          <span className="font-medium text-ink">{D3_BAND.label}</span> · USP-verified ·
+          cholecalciferol form
         </p>
       </div>
 
@@ -392,17 +405,15 @@ function YourFitVisual() {
         transition={{ duration: 0.5, delay: 0.8, ease: [0.32, 0.72, 0, 1] }}
         className="flex flex-wrap gap-1.5"
       >
-        {["3rd-party tested", "No fillers flagged", "Evidence: established"].map(
-          (chip) => (
-            <li
-              key={chip}
-              className="inline-flex items-center gap-1.5 rounded-pill border border-severity-safe/30 bg-severity-safe/[0.06] px-2 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-severity-safe"
-            >
-              <span aria-hidden="true" className="block h-1 w-1 rounded-full bg-severity-safe" />
-              {chip}
-            </li>
-          )
-        )}
+        {["3rd-party tested", "No fillers flagged", "Evidence: established"].map((chip) => (
+          <li
+            key={chip}
+            className="inline-flex items-center gap-1.5 rounded-pill border border-severity-safe/30 bg-severity-safe/[0.06] px-2 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-severity-safe"
+          >
+            <span aria-hidden="true" className="block h-1 w-1 rounded-full bg-severity-safe" />
+            {chip}
+          </li>
+        ))}
       </m.ul>
     </div>
   );

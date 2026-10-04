@@ -82,7 +82,8 @@ export function Hero() {
                   <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                   <line x1="12" y1="22.08" x2="12" y2="12" />
                 </svg>
-                Sourced from <span className="tnum font-medium text-ink">{SOURCE_LABEL_COUNT}</span> NIH labels
+                Sourced from <span className="tnum font-medium text-ink">{SOURCE_LABEL_COUNT}</span>{" "}
+                NIH labels
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <svg

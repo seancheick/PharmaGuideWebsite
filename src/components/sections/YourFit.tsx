@@ -40,8 +40,7 @@ const BAND = qualityBand(TARGET_SCORE);
 const SCORE_DURATION_MS = 1200;
 
 const prefersReducedMotion = () =>
-  typeof window !== "undefined" &&
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export function YourFit() {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -77,11 +76,7 @@ export function YourFit() {
   }, [inView]);
 
   return (
-    <section
-      id="your-fit"
-      aria-labelledby="your-fit-heading"
-      className="relative section-y"
-    >
+    <section id="your-fit" aria-labelledby="your-fit-heading" className="section-y relative">
       <div className="container relative mx-auto">
         <div className="grid items-center gap-14 md:grid-cols-[1.05fr_1fr] md:gap-16 lg:gap-20">
           {/* Left column — copy */}
@@ -106,17 +101,15 @@ export function YourFit() {
             >
               High quality doesn&apos;t always mean
               <br />
-              <span className="font-serif italic text-accent">
-                right for you.
-              </span>
+              <span className="font-serif italic text-accent">right for you.</span>
             </m.h2>
 
             <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              PharmaGuide gives you two reads on every product — objective
-              quality, and personal fit.
+              PharmaGuide gives you two reads on every product — objective quality, and personal
+              fit.
             </m.p>
 
             {/* Callback to the Problem section's thesis. The shape of the
@@ -191,7 +184,7 @@ export function YourFit() {
                          `text-display-md` and `text-severity-safe` as two
                          `text-*` utilities in conflict and silently drops the
                          font size, shrinking the score to body text. */
-                      className={`font-serif text-display-md italic leading-none tabular-nums ${BAND.textClass}`}
+                      className={`font-serif text-display-md italic tabular-nums leading-none ${BAND.textClass}`}
                     >
                       {TARGET_SCORE}
                     </span>
@@ -215,9 +208,7 @@ export function YourFit() {
                     transition={{ duration: 0.4, delay: 1.0, ease: [0.32, 0.72, 0, 1] }}
                     className="mt-3 text-body-sm leading-snug text-muted"
                   >
-                    <span className="font-medium text-ink">
-                      {BAND.label} quality
-                    </span>
+                    <span className="font-medium text-ink">{BAND.label} quality</span>
                     {" · "}3rd-party tested · clean ingredient list
                   </m.p>
                 </div>
@@ -241,7 +232,7 @@ export function YourFit() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.5, delay: 1.6, ease: [0.32, 0.72, 0, 1] }}
-                    className="mt-3 inline-flex items-center gap-2.5 rounded-pill bg-severity-safe/18 px-4 py-2"
+                    className="bg-severity-safe/18 mt-3 inline-flex items-center gap-2.5 rounded-pill px-4 py-2"
                   >
                     <span
                       aria-hidden="true"
@@ -268,12 +259,8 @@ export function YourFit() {
                     className="mt-4 space-y-2"
                   >
                     <NoteItem dotClass="bg-accent">2 timing notes</NoteItem>
-                    <NoteItem dotClass="bg-severity-monitor">
-                      1 interaction to review
-                    </NoteItem>
-                    <NoteItem dotClass="bg-severity-safe">
-                      No high-risk conflicts detected
-                    </NoteItem>
+                    <NoteItem dotClass="bg-severity-monitor">1 interaction to review</NoteItem>
+                    <NoteItem dotClass="bg-severity-safe">No high-risk conflicts detected</NoteItem>
                   </m.ul>
                 </div>
 
@@ -295,13 +282,7 @@ export function YourFit() {
   );
 }
 
-function NoteItem({
-  children,
-  dotClass,
-}: {
-  children: React.ReactNode;
-  dotClass: string;
-}) {
+function NoteItem({ children, dotClass }: { children: React.ReactNode; dotClass: string }) {
   return (
     <m.li
       variants={{

@@ -31,14 +31,13 @@ const nextConfig: NextConfig = {
 
   // Premium font loading via next/font handles preload automatically.
   //
-  // inlineCss: the stylesheet ships inside the HTML instead of as a
-  // render-blocking <link>. Measured 2026-10-04 on cold loads of the live
-  // homepage (4x CPU, slow-4G): first paint = LCP (the h1) landed ~250 ms
-  // after the CSS file arrived, every run, and the CSS arrived late because
-  // it shared the connection with font preloads and JS chunks. Tailwind
-  // keeps the CSS small (~15 KiB gz), and most visitors are first-time.
+  // Not inlineCss (tried 2026-10-04, reverted): it removed the CSS request
+  // and a real throttled cold load got faster (LCP ~1.9 → ~0.9 s), but the
+  // HTML grew 195 → 444 KB (Next also embeds the CSS in the RSC payload)
+  // and PageSpeed mobile fell 76 → 64/65: Lighthouse records an unthrottled
+  // trace where the whole document is parsed before first paint, then
+  // scales it, so HTML size dominates its LCP estimate.
   experimental: {
-    inlineCss: true,
     optimizePackageImports: ["framer-motion", "clsx", "tailwind-merge"],
   },
 

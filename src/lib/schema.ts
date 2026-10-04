@@ -95,6 +95,7 @@ export function personNode(p: Person): SchemaNode {
     image: absoluteUrl(p.photo),
     url: absoluteUrl(profilePath(p)),
     affiliation: ref(schemaId.organization),
+    ...(p.linkedin ? { sameAs: [p.linkedin] } : {}),
     ...(p.schemaCredential
       ? {
           hasCredential: {

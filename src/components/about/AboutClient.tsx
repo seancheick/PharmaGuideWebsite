@@ -404,10 +404,7 @@ export function AboutClient() {
               Two systems. <span className="font-serif italic">Wildly different rules.</span>
             </m.h2>
 
-            <m.p
-              variants={fadeUpItem}
-              className="max-w-prose text-body leading-relaxed text-muted"
-            >
+            <m.p variants={fadeUpItem} className="max-w-prose text-body leading-relaxed text-muted">
               Compare what happens when a prescription drug is recalled vs. when a supplement is
               recalled. The gap is the entire reason PharmaGuide exists.
             </m.p>
@@ -633,7 +630,23 @@ export function AboutClient() {
                     </span>
                   )}
                   <div className="min-w-0">
-                    <p className="font-serif text-h3 italic leading-tight text-ink">{displayName(person)}</p>
+                    <p className="font-serif text-h3 italic leading-tight text-ink">
+                      {/* Linked where a public profile exists: Clarity
+                          recorded a dead click on the founder card. */}
+                      {person.linkedin ? (
+                        <a
+                          href={person.linkedin}
+                          target="_blank"
+                          rel="me noopener noreferrer"
+                          className="underline decoration-border-strong underline-offset-4 transition-colors duration-fast ease-smooth hover:text-accent hover:decoration-accent"
+                        >
+                          {displayName(person)}
+                          <span className="sr-only"> on LinkedIn (opens in a new tab)</span>
+                        </a>
+                      ) : (
+                        displayName(person)
+                      )}
+                    </p>
                     <p className="font-mono text-eyebrow uppercase text-subtle">{person.role}</p>
                   </div>
                 </div>

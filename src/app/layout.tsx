@@ -20,6 +20,9 @@ const newsreader = Newsreader({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-newsreader",
+  // Not preloaded: nothing in the first viewport is set in the serif, and
+  // its two preloads competed with the CSS for bandwidth on slow mobile.
+  preload: false,
   weight: ["400", "500"],
   style: ["normal", "italic"],
 });
@@ -96,9 +99,7 @@ export const metadata: Metadata = {
   category: "health",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"

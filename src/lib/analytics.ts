@@ -1,4 +1,3 @@
-import clarity from "@microsoft/clarity";
 import { site } from "./site";
 
 /**
@@ -60,6 +59,8 @@ type Events = {
 declare global {
   interface Window {
     gtag?: (command: "event", name: string, params: Record<string, unknown>) => void;
+    /** Clarity's queue function, defined by ClarityProvider's init. */
+    clarity?: (command: "event" | "set", ...args: string[]) => void;
   }
 }
 
@@ -68,8 +69,8 @@ export function track<E extends keyof Events>(name: E, params: Events[E]): void 
   try {
     // Clarity takes a bare event name; the value rides along as a tag.
     const [key, value] = Object.entries(params)[0] ?? [];
-    clarity.event(value === undefined ? name : `${name}:${String(value)}`);
-    if (key !== undefined) clarity.setTag(name, String(value));
+    window.clarity?.("event", value === undefined ? name : `${name}:${String(value)}`);
+    if (key !== undefined) window.clarity?.("set", name, String(value));
     window.gtag?.("event", name, params);
   } catch {
     // Analytics must never break the page (blocked scripts, no init).

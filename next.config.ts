@@ -30,7 +30,15 @@ const nextConfig: NextConfig = {
   },
 
   // Premium font loading via next/font handles preload automatically.
+  //
+  // inlineCss: the stylesheet ships inside the HTML instead of as a
+  // render-blocking <link>. Measured 2026-10-04 on cold loads of the live
+  // homepage (4x CPU, slow-4G): first paint = LCP (the h1) landed ~250 ms
+  // after the CSS file arrived, every run, and the CSS arrived late because
+  // it shared the connection with font preloads and JS chunks. Tailwind
+  // keeps the CSS small (~15 KiB gz), and most visitors are first-time.
   experimental: {
+    inlineCss: true,
     optimizePackageImports: ["framer-motion", "clsx", "tailwind-merge"],
   },
 
@@ -69,16 +77,17 @@ const nextConfig: NextConfig = {
     // Permanent (308) is right here — unlike the print links, this
     // destination never changes.
     const apex = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://pharmaguide.io");
-    const hostRedirects = apex.hostname.includes(".") && !apex.hostname.startsWith("www.")
-      ? [
-          {
-            source: "/:path*",
-            has: [{ type: "host" as const, value: `www.${apex.hostname}` }],
-            destination: `${apex.origin}/:path*`,
-            permanent: true,
-          },
-        ]
-      : [];
+    const hostRedirects =
+      apex.hostname.includes(".") && !apex.hostname.startsWith("www.")
+        ? [
+            {
+              source: "/:path*",
+              has: [{ type: "host" as const, value: `www.${apex.hostname}` }],
+              destination: `${apex.origin}/:path*`,
+              permanent: true,
+            },
+          ]
+        : [];
 
     return [...hostRedirects, ...printRedirects];
   },

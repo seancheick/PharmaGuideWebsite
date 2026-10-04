@@ -35,6 +35,8 @@ export interface Person {
   schemaCredential?: { name: string; category: "degree" | "license" };
   /** True for licensed clinicians who review content. */
   clinician: boolean;
+  /** Public LinkedIn profile — team-card link and schema.org `sameAs`. */
+  linkedin?: string;
 }
 
 export const PEOPLE: Record<PersonId, Person> = {
@@ -48,6 +50,7 @@ export const PEOPLE: Record<PersonId, Person> = {
     context: "B&Br Technology · Boston, MA",
     bio: "Built PharmaGuide after watching family members navigate medication and supplement complexity without the tools to do it safely.",
     clinician: false,
+    linkedin: "https://www.linkedin.com/in/seancheick",
   },
   "laurie-pham": {
     id: "laurie-pham",
@@ -110,9 +113,6 @@ export function profilePath(p: Person): string {
 export function findPerson(value: string): Person | undefined {
   const v = value.trim().toLowerCase();
   return TEAM.find(
-    (p) =>
-      p.id === v ||
-      p.name.toLowerCase() === v ||
-      displayName(p).toLowerCase() === v
+    (p) => p.id === v || p.name.toLowerCase() === v || displayName(p).toLowerCase() === v
   );
 }

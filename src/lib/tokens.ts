@@ -58,6 +58,15 @@ export const transitions = {
     damping: 28,
     mass: 0.9,
   },
+  // Tactile spring — damping ratio ≈ 0.78, so an object lands with a
+  // 1–2% overshoot and settles. For things that should feel physically
+  // placed (a card dropping into the hero phone's stack), never for text.
+  tactile: {
+    type: "spring" as const,
+    stiffness: 320,
+    damping: 25,
+    mass: 0.8,
+  },
   // Soft spring — for the FitScore ring fill
   softSpring: {
     type: "spring" as const,

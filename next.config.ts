@@ -88,7 +88,17 @@ const nextConfig: NextConfig = {
           ]
         : [];
 
-    return [...hostRedirects, ...printRedirects];
+    // Addresses left over from the WordPress site that Google still
+    // crawls (Search Console, 2026-10-04). Only URLs with an exact
+    // equivalent are redirected; the rest (e.g. /power-of-magnesium)
+    // stay 404 — redirecting to an unrelated page reads as a soft 404.
+    const legacyRedirects = [
+      { source: "/sitemap_index.xml", destination: "/sitemap.xml", permanent: true },
+      { source: "/home/privacy", destination: "/privacy", permanent: true },
+      { source: "/index.php", destination: "/", permanent: true },
+    ];
+
+    return [...hostRedirects, ...printRedirects, ...legacyRedirects];
   },
 
   // Security + SEO friendly headers

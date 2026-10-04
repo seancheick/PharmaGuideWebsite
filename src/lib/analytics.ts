@@ -16,7 +16,9 @@ import { site } from "./site";
  * pressed a CTA) and to GA4 when gtag has loaded. Never pass personal data:
  * no emails, no free text — only the fixed values documented above.
  *
- * analyticsEnabled() is the one gate for Clarity, GA4 and these events.
+ * analyticsEnabled() is the one gate for Clarity, GA4, Vercel Web
+ * Analytics + Speed Insights (components/analytics/VercelInsights.tsx)
+ * and these events.
  * Visits are counted only when they are real visits:
  *   • on the production host — not localhost, not *.vercel.app previews;
  *   • not under browser automation (navigator.webdriver) — a headless

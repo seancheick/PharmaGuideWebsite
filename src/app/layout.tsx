@@ -2,10 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Newsreader } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClarityProvider } from "@/components/analytics/ClarityProvider";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { VercelInsights } from "@/components/analytics/VercelInsights";
 import { ChatLauncherGate } from "@/components/chat/ChatLauncherGate";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { JsonLd } from "@/components/shared/JsonLd";
@@ -171,8 +170,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               the hero on every other page. See ChatLauncherGate. */}
           <ChatLauncherGate />
         </MotionProvider>
-        <Analytics />
-        <SpeedInsights />
+        <VercelInsights />
         <ClarityProvider />
         <GoogleAnalytics />
       </body>

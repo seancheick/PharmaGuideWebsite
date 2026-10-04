@@ -7,6 +7,7 @@ import { joinBetaWaitlist } from "@/app/actions/subscribe";
 import { isValidEmail } from "@/lib/validation";
 import { SOURCE_LABEL_COUNT } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/analytics";
 
 /**
  * Final CTA — the cinematic close.
@@ -72,12 +73,14 @@ export function FinalCTA() {
 
     try {
       const result = await joinBetaWaitlist({ email, company });
+      track("waitlist_submit", { ok: result.ok });
       if (result.ok) {
         setSubmitted(true);
       } else {
         setError(result.message);
       }
     } catch {
+      track("waitlist_submit", { ok: false });
       setError("Something went wrong. Try again in a moment?");
     } finally {
       setSubmitting(false);

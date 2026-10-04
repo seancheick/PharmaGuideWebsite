@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { AnchorHTMLAttributes, MouseEvent, ReactNode } from "react";
+import { track } from "@/lib/analytics";
 
 const WAITLIST_ID = "waitlist";
 const WAITLIST_HASH = `#${WAITLIST_ID}`;
@@ -24,6 +25,14 @@ export function WaitlistLink({
     if (stopPropagation) {
       event.stopPropagation();
     }
+
+    // Where the click came from, read from the page rather than passed in,
+    // so every waitlist button on the site reports without call-site props.
+    const from = event.currentTarget.closest("header")
+      ? "header"
+      : (event.currentTarget.closest("section[id], [role='dialog'][id]")?.id ??
+        window.location.pathname);
+    track("waitlist_cta", { from });
 
     if (
       event.defaultPrevented ||

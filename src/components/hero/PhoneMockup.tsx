@@ -11,6 +11,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 import { transitions } from "@/lib/tokens";
 import { cn } from "@/lib/utils";
 import { AppUILoop, CHECKS, type ScreenFrame } from "./AppUILoop";
@@ -95,6 +96,8 @@ export function PhoneMockup() {
       while (!activeRef.current && !cancelled) await sleep(300);
     };
     const patch = (p: Partial<ScreenFrame>) => setFrame((f) => ({ ...f, ...p }));
+    // Each story's finding reported once per page view (see lib/analytics).
+    const seen = new Set<string>();
 
     async function play(story: HeroStory) {
       setShowCard(false);
@@ -138,6 +141,10 @@ export function PhoneMockup() {
       if (cancelled) return;
 
       setShowCard(true);
+      if (!seen.has(story.id)) {
+        seen.add(story.id);
+        track("hero_story", { story: story.id });
+      }
       await wait(1150);
       setShowChip(true);
       await wait(3000);

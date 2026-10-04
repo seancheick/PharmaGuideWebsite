@@ -135,16 +135,13 @@ export function Hero() {
               <span aria-hidden="true">→</span>
             </Link>
 
-            {/* CTA pair — the primary is the visitor's job ("Check my
-                stack"), not ours ("Join the beta"). Both land on the same
-                waitlist form because joining IS how you get a stack check
-                today, so the secondary says "waitlist" out loud and the
-                caption dates the promise: nobody should click "Check my
-                stack" expecting an instant answer and find a signup form.
-                When the app ships, the primary repoints and the caption
-                comes out. Replaces the old "Why interactions matter ↓"
-                scroll cue — three actions in one hero was one too many,
-                and #problem is the next section anyway.                */}
+            {/* CTA pair. The primary says exactly what the click does — join
+                the beta — and the secondary keeps the visitor on the page
+                to see the product work. "Check my stack" was the primary
+                until 2026-10-04, but both buttons led to the same signup
+                form; it comes back, pointing at the app, the day the app
+                opens. Three actions in one hero is one too many, so the
+                tertiary is the quiet mono link above.                    */}
             <div className="animate-fade-up pt-2 [animation-delay:160ms]">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <WaitlistLink
@@ -153,25 +150,26 @@ export function Hero() {
                      a box model and line up to the pixel. */
                   className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill border border-transparent bg-accent px-5 py-3 text-body-sm font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent"
                 >
-                  Check my stack
+                  Get early access
                   <span aria-hidden="true">→</span>
                 </WaitlistLink>
 
-                <WaitlistLink
-                  href="#waitlist"
+                <Link
+                  href="/#how-it-works"
                   className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-1.5 rounded-pill border border-border bg-surface px-5 py-3 text-body-sm font-medium text-ink shadow-xs transition-[transform,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-accent"
                 >
-                  Get early access
-                </WaitlistLink>
+                  See how it works
+                </Link>
               </div>
 
-              {/* Sets expectation before the click, not after it. "Waitlist"
-                  and "opening in waves" both described a queue you sit in;
-                  the first testers are being added by hand right now, so the
-                  line says that instead. Update this the day the app opens
-                  to everyone — it dates itself on purpose. */}
+              {/* Sets expectation before the click, not after it: what you're
+                  signing up for (a phone app — the privacy policy and press
+                  kit already name both platforms) and where it stands. Not
+                  "opening in waves": that reads as a queue, and the first
+                  testers are being added by hand now. Update the day the app
+                  opens to everyone — it dates itself on purpose. */}
               <p className="mt-3 text-body-sm text-subtle">
-                Free in beta · we&apos;re adding the first testers now
+                iPhone &amp; Android app · free in beta · we&apos;re adding the first testers now
               </p>
             </div>
           </div>

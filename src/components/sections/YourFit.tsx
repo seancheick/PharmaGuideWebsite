@@ -4,6 +4,7 @@ import Link from "next/link";
 import { m, useInView } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { DEMO_PRODUCTS } from "@/lib/demo-products";
 import { qualityBand } from "@/lib/quality-score";
 import { cn } from "@/lib/utils";
 
@@ -30,12 +31,11 @@ import { cn } from "@/lib/utils";
  * section's thesis — closes the loop.
  */
 
-// Demo score for the Magnesium Glycinate card. The verdict word and the colors
-// are DERIVED from it via the shared band table — change this number and the
-// card re-labels itself instead of quietly contradicting the new value.
-// (Was 89 with a hardcoded "Excellent quality"; 89 falls in the Strong band,
-// so the number moved into the Excellent band rather than the copy changing.)
-const TARGET_SCORE = 92;
+// The card is a real catalog record (lib/demo-products.ts) — the same
+// magnesium the hero phone adds, so the page shows one product with one
+// score everywhere. The verdict word and colors derive from the score.
+const PRODUCT = DEMO_PRODUCTS.magnesium;
+const TARGET_SCORE = PRODUCT.score;
 const BAND = qualityBand(TARGET_SCORE);
 const SCORE_DURATION_MS = 1200;
 
@@ -161,7 +161,7 @@ export function YourFit() {
                     (which now shows Vitamin D3 Quality only) so the two
                     surfaces do different jobs rather than duplicating. */}
                 <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-subtle">
-                  Magnesium Glycinate · 400 mg
+                  {PRODUCT.name} · {PRODUCT.dose}
                 </p>
 
                 {/* QUALITY — top section */}
@@ -209,7 +209,8 @@ export function YourFit() {
                     className="mt-3 text-body-sm leading-snug text-muted"
                   >
                     <span className="font-medium text-ink">{BAND.label} quality</span>
-                    {" · "}3rd-party tested · clean ingredient list
+                    {PRODUCT.thirdPartyTested && " · 3rd-party tested"}
+                    {PRODUCT.certification && ` · ${PRODUCT.certification}`}
                   </m.p>
                 </div>
 
@@ -241,6 +242,9 @@ export function YourFit() {
                     <span className="font-serif text-h3 italic leading-none text-severity-safe">
                       Good fit
                     </span>
+                    <span className="text-body-sm leading-none text-severity-safe/80">
+                      with timing adjustment
+                    </span>
                   </m.div>
 
                   {/* Notes — stagger in last */}
@@ -258,8 +262,11 @@ export function YourFit() {
                     }}
                     className="mt-4 space-y-2"
                   >
-                    <NoteItem dotClass="bg-accent">2 timing notes</NoteItem>
-                    <NoteItem dotClass="bg-severity-monitor">1 interaction to review</NoteItem>
+                    {/* Same finding as the hero phone: excellent product,
+                        one timing change for this person. */}
+                    <NoteItem dotClass="bg-severity-caution">
+                      1 interaction needs a timing change · levothyroxine
+                    </NoteItem>
                     <NoteItem dotClass="bg-severity-safe">No high-risk conflicts detected</NoteItem>
                   </m.ul>
                 </div>

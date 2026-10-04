@@ -9,10 +9,9 @@
  * Calcium + Levothyroxine"). Mechanism, dose thresholds, and clinical
  * rationale belong only in the expanded "PharmaGuide flag" panel.
  *
- * `image` and `member.avatar` are Unsplash placeholders for V1. Swap them
- * with your Cloudinary URLs once the AI-generated photos are uploaded.
- * The shape stays the same — just replace the URL strings. See
- * `images.json` at the repo root for the full generation guide.
+ * `image` is a local photo per moment (see `images.json` at the repo root
+ * for the generation guide). Personas are labelled "Example scenario" and
+ * shown as monograms — pre-launch there are no members to quote.
  *
  * Title is split into `lead` + `em` so we render Oura-style "punchy line
  * with italic emphasis" without HTML markup in strings.
@@ -41,11 +40,12 @@ export interface Moment {
   image: string;
   imageAlt: string;
 
-  // Member spotlight (revealed on expand, md+ only)
+  // Example scenario (revealed on expand, md+ only). Pre-launch there are
+  // no members, so these are labelled scenarios — never a photo of a real
+  // person standing in for a patient.
   member: {
     name: string;
     role: string;
-    avatar: string;
   };
   quote: string;
 
@@ -66,28 +66,31 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "morning",
     category: "Daily routine",
-    title: { lead: "The vitamins", em: "you've taken for years" },
-    description: "Sometimes the problem isn't what you take. It's what you started taking later.",
-    learnMore: "Learn about long-term stacks",
-    preview: "Caution · Calcium + Levothyroxine",
+    title: { lead: "The prescription", em: "you've taken for years" },
+    description:
+      "Sometimes the problem isn't a new bottle. It's a medication you've taken so long you stopped thinking about it.",
+    learnMore: "Learn about medication depletion",
+    // Production record DEP_METFORMIN_VITAMINB12 (PharmaGuide_Pipeline
+    // scripts/data/medication_depletions.json): severity "significant",
+    // evidence "established", onset "years"; clinically signed off (B1).
+    preview: "Significant · Metformin → Vitamin B12",
     image: "/images/moments/daily.jpg",
     imageAlt:
       "Close-up of a woman's hands pouring white supplement capsules from a labeled energy packet into her palm.",
     member: {
       name: "Hannah L.",
-      role: "Member spotlight",
-      avatar:
-        "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=160&q=80&auto=format&fit=crop",
+      role: "Example scenario",
     },
-    quote: "I'd been taking calcium with my thyroid medication every morning for almost a decade.",
+    quote: "Metformin every morning for eight years. B12 never came up.",
     flag: {
-      name: "Calcium ↔ Levothyroxine",
+      name: "Metformin → Vitamin B12",
+      // Color tone only; the label is the record's own severity word.
       severity: "caution",
-      severityLabel: "Caution",
+      severityLabel: "Significant",
       description:
-        "Calcium binds levothyroxine in the gut. Space by at least 4 hours; take levothyroxine on an empty stomach for best absorption.",
-      metaLeft: "Spacing",
-      metaRight: "≥ 4 hours apart",
+        "With long-term use, the chance of low B12 rises with higher doses and other B12 factors. Testing — not diet alone — helps determine whether treatment is needed.",
+      metaLeft: "Onset",
+      metaRight: "Over years of use",
     },
   },
 
@@ -104,9 +107,7 @@ export const MOMENTS: readonly Moment[] = [
       "Pregnant woman in a white linen blouse cradling her bump in soft natural window light.",
     member: {
       name: "Maya R.",
-      role: "Member spotlight",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&q=80&auto=format&fit=crop",
+      role: "Example scenario",
     },
     quote: "I thought if it was sold over the counter, it had to be safe.",
     flag: {
@@ -134,9 +135,7 @@ export const MOMENTS: readonly Moment[] = [
       "Open palm holding a mix of different-colored pills and capsules against a dark background.",
     member: {
       name: "Jordan T.",
-      role: "Member spotlight",
-      avatar:
-        "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=160&q=80&auto=format&fit=crop",
+      role: "Example scenario",
     },
     quote:
       "My pharmacist caught it three days later. PharmaGuide caught it before I left the clinic.",
@@ -164,9 +163,7 @@ export const MOMENTS: readonly Moment[] = [
       "Athletic man running on a treadmill in a bright gym, wearing a PharmaGuide wristband.",
     member: {
       name: "Devon P.",
-      role: "Member spotlight",
-      avatar:
-        "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=160&q=80&auto=format&fit=crop",
+      role: "Example scenario",
     },
     quote: "Turmeric for recovery, ibuprofen for my knees. I never thought about them together.",
     flag: {
@@ -193,9 +190,7 @@ export const MOMENTS: readonly Moment[] = [
       "Elderly couple walking together on a city sidewalk, seen from behind, arm in arm with a shopping trolley.",
     member: {
       name: "Sarah K.",
-      role: "Member spotlight",
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=160&q=80&auto=format&fit=crop",
+      role: "Example scenario",
     },
     quote:
       "My dad had four bottles lined up next to the coffee maker. Nobody had ever checked them together.",
@@ -224,9 +219,7 @@ export const MOMENTS: readonly Moment[] = [
       "Two women meditating on yoga mats in a bright modern studio with large windows and plants.",
     member: {
       name: "Tasha K.",
-      role: "Member spotlight",
-      avatar:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&q=80&auto=format&fit=crop",
+      role: "Example scenario",
     },
     quote: "I wasn't taking anything dangerous. Just too many things that did the same thing.",
     flag: {
@@ -255,9 +248,7 @@ export const MOMENTS: readonly Moment[] = [
       "An unbranded supplement bottle on a kitchen counter in low evening light, capsules spilled beside it, an unsettling quiet to the scene.",
     member: {
       name: "Marcus D.",
-      role: "Member spotlight",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160&q=80&auto=format&fit=crop",
+      role: "Example scenario",
     },
     quote:
       "It was a 'natural' energy booster. Turns out it had a prescription drug in it the label never mentioned.",
@@ -287,9 +278,7 @@ export const MOMENTS: readonly Moment[] = [
       "A middle-aged person at a kitchen table holding a single supplement capsule, a row of prescription bottles and a glass of water nearby, considering it carefully in soft morning light.",
     member: {
       name: "Elena V.",
-      role: "Member spotlight",
-      avatar:
-        "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=160&q=80&auto=format&fit=crop",
+      role: "Example scenario",
     },
     quote:
       "Nobody flagged that a potassium supplement was a problem with my kidney condition and my blood-pressure medication.",

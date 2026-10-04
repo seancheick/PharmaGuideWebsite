@@ -1,4 +1,4 @@
-import { qualityBand } from "@/lib/quality-score";
+import { DEMO_PRODUCTS } from "@/lib/demo-products";
 
 /**
  * Hero phone stories — the two scenarios the homepage phone plays in turn.
@@ -70,8 +70,6 @@ export interface HeroStory {
   chip: { text: string; tag: string; tone: "safe" | "caution" };
 }
 
-const MAGNESIUM_SCORE = 92;
-
 export const HERO_STORIES: readonly HeroStory[] = [
   {
     id: "timing",
@@ -83,12 +81,12 @@ export const HERO_STORIES: readonly HeroStory[] = [
     search: "magnesium glycinate",
     added: {
       id: "mag",
-      name: "Magnesium Bisglycinate",
-      dose: "1 scoop",
+      name: DEMO_PRODUCTS.magnesium.name,
+      dose: DEMO_PRODUCTS.magnesium.dose,
       quality: {
-        score: MAGNESIUM_SCORE,
-        label: qualityBand(MAGNESIUM_SCORE).label,
-        badge: "NSF Certified for Sport",
+        score: DEMO_PRODUCTS.magnesium.score,
+        label: DEMO_PRODUCTS.magnesium.tier,
+        badge: DEMO_PRODUCTS.magnesium.certification,
       },
     },
     linked: ["levo", "mag"],

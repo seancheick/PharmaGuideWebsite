@@ -496,21 +496,15 @@ const MomentCard = ({
               <div className="flex items-start gap-3">
                 <span
                   aria-hidden="true"
-                  className="block h-9 w-9 shrink-0 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/20"
-                  style={{
-                    backgroundImage: `url(${moment.member.avatar})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                />
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 font-serif text-[13px] italic text-white/80 ring-1 ring-white/20"
+                >
+                  {initials(moment.member.name)}
+                </span>
                 <div className="min-w-0">
                   <p className="text-[12.5px] font-medium leading-tight text-white">
                     {moment.member.name}
-                    <span className="ml-2 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/55">
+                    <span className="ml-2 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/70">
                       {moment.member.role}
-                    </span>
-                    <span className="ml-1.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/35">
-                      · Illustrative
                     </span>
                   </p>
                   <p className="mt-2 text-[12px] leading-relaxed text-white/80">“{moment.quote}”</p>
@@ -672,21 +666,15 @@ const MomentSheet = ({ moment, onClose }: { moment: Moment; onClose: () => void 
             <div className="flex items-start gap-3">
               <span
                 aria-hidden="true"
-                className="block h-9 w-9 shrink-0 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/20"
-                style={{
-                  backgroundImage: `url(${moment.member.avatar})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              />
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 font-serif text-[13px] italic text-white/80 ring-1 ring-white/20"
+              >
+                {initials(moment.member.name)}
+              </span>
               <div className="min-w-0">
                 <p className="text-[12.5px] font-medium leading-tight text-white">
                   {moment.member.name}
-                  <span className="ml-2 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/55">
+                  <span className="ml-2 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/70">
                     {moment.member.role}
-                  </span>
-                  <span className="ml-1.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-white/35">
-                    · Illustrative
                   </span>
                 </p>
                 <p className="mt-2 text-[13px] leading-relaxed text-white/80">“{moment.quote}”</p>
@@ -728,3 +716,14 @@ const MomentSheet = ({ moment, onClose }: { moment: Moment; onClose: () => void 
   );
 };
 MomentSheet.displayName = "MomentSheet";
+
+/** "Hannah L." → "HL" — scenario personas get a monogram, not a stock face. */
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .map((part) => part[0] ?? "")
+    .join("")
+    .replace(/[^A-Za-z]/g, "")
+    .slice(0, 2)
+    .toUpperCase();
+}

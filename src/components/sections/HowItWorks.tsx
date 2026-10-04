@@ -5,6 +5,7 @@ import { m, useInView } from "framer-motion";
 import { LEAD_REVIEWER, displayName } from "@/lib/people";
 import { useRef } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { DEMO_PRODUCTS } from "@/lib/demo-products";
 import { qualityBand } from "@/lib/quality-score";
 import { SOURCE_LABEL_COUNT } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -278,8 +279,10 @@ const CROSS_REFS = [
     severity: "contraindicated" as const,
   },
   {
-    name: "Calcium ↔ levothyroxine",
-    label: "Caution · space 4h",
+    // Production: berberine × hypoglycemics_lower_risk (metformin's class),
+    // caution / established — "May boost your diabetes medication".
+    name: "Berberine ↔ metformin",
+    label: "Caution",
     severity: "caution" as const,
   },
   {
@@ -346,12 +349,17 @@ function CrossRefVisual() {
 // teaches "fit is different from quality" on Magnesium Glycinate
 // without repeating the same artifact. Two surfaces, two jobs.
 
-// Demo score for the Vitamin D3 card. Number, bar width, verdict word, and
-// color all derive from this one value via the shared band table — before,
-// the 87 was typed three separate times (text, bar width, verdict) and could
-// drift apart silently.
-const D3_SCORE = 85;
+// The Vitamin D3 card is a real catalog record (lib/demo-products.ts).
+// Score, verdict, certification and every chip come from that record —
+// the chips are shown only when the record supports them.
+const D3 = DEMO_PRODUCTS.vitaminD;
+const D3_SCORE = D3.score;
 const D3_BAND = qualityBand(D3_SCORE);
+const D3_CHIPS = [
+  D3.thirdPartyTested && "3rd-party tested",
+  D3.noHarmfulAdditives && "No harmful additives",
+  D3.noWarnings && "No safety flags",
+].filter((chip): chip is string => Boolean(chip));
 
 function YourFitVisual() {
   const ref = useRef<HTMLDivElement>(null);
@@ -361,7 +369,7 @@ function YourFitVisual() {
     <div ref={ref} className="flex h-[280px] flex-col justify-center gap-5 p-5">
       {/* Product label — different from the YourFit section's product */}
       <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.16em] text-subtle">
-        Vitamin D3 · 5,000 IU
+        {D3.name} · {D3.dose}
       </p>
 
       {/* QUALITY — the only read this card shows */}
@@ -393,7 +401,7 @@ function YourFitVisual() {
           />
         </div>
         <p className="mt-2.5 text-[11px] leading-snug text-muted">
-          <span className="font-medium text-ink">{D3_BAND.label}</span> · USP-verified ·
+          <span className="font-medium text-ink">{D3_BAND.label}</span> · {D3.certification} ·
           cholecalciferol form
         </p>
       </div>
@@ -405,7 +413,7 @@ function YourFitVisual() {
         transition={{ duration: 0.5, delay: 0.8, ease: [0.32, 0.72, 0, 1] }}
         className="flex flex-wrap gap-1.5"
       >
-        {["3rd-party tested", "No fillers flagged", "Evidence: established"].map((chip) => (
+        {D3_CHIPS.map((chip) => (
           <li
             key={chip}
             className="inline-flex items-center gap-1.5 rounded-pill border border-severity-safe/30 bg-severity-safe/[0.06] px-2 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-severity-safe"

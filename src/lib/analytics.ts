@@ -1,4 +1,5 @@
 import clarity from "@microsoft/clarity";
+import { site } from "./site";
 
 /**
  * Product analytics events — the one place the site names an event.
@@ -15,7 +16,40 @@ import clarity from "@microsoft/clarity";
  * recordings, so you can watch exactly the visits that reached story 2 or
  * pressed a CTA) and to GA4 when gtag has loaded. Never pass personal data:
  * no emails, no free text — only the fixed values documented above.
+ *
+ * analyticsEnabled() is the one gate for Clarity, GA4 and these events.
+ * Visits are counted only when they are real visits:
+ *   • on the production host — not localhost, not *.vercel.app previews;
+ *   • not under browser automation (navigator.webdriver) — a headless
+ *     browser loaded the homepage at ~01:20–02:20 UTC every night in
+ *     Sept 2026, inflating Clarity's LCP and session counts;
+ *   • not from a team device. Open https://pharmaguide.io/?internal=1
+ *     once on each device to stop counting it; ?internal=0 undoes it.
  */
+
+const INTERNAL_KEY = "pg_internal";
+let enabled: boolean | undefined;
+
+export function analyticsEnabled(): boolean {
+  if (typeof window === "undefined") return false;
+  if (enabled !== undefined) return enabled;
+  enabled =
+    window.location.hostname === new URL(site.url).hostname &&
+    !navigator.webdriver &&
+    !isInternalDevice();
+  return enabled;
+}
+
+function isInternalDevice(): boolean {
+  try {
+    const flag = new URLSearchParams(window.location.search).get("internal");
+    if (flag === "1") window.localStorage.setItem(INTERNAL_KEY, "1");
+    if (flag === "0") window.localStorage.removeItem(INTERNAL_KEY);
+    return window.localStorage.getItem(INTERNAL_KEY) === "1";
+  } catch {
+    return false; // storage blocked: count the visit
+  }
+}
 
 type Events = {
   hero_story: { story: string };
@@ -30,7 +64,7 @@ declare global {
 }
 
 export function track<E extends keyof Events>(name: E, params: Events[E]): void {
-  if (typeof window === "undefined") return;
+  if (!analyticsEnabled()) return;
   try {
     // Clarity takes a bare event name; the value rides along as a tag.
     const [key, value] = Object.entries(params)[0] ?? [];

@@ -230,10 +230,9 @@ function CatalogVisual() {
       {/* Query rows — chevron + name + timing */}
       <div className="flex flex-col gap-1">
         {CATALOG_QUERIES.map((q) => (
-          <div
-            key={q.name}
-            className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors duration-fast hover:bg-surface"
-          >
+          // Static rows, deliberately no hover state: a Clarity recording
+          // (2026-10-01) shows clicks on them — the hover tint read as a button.
+          <div key={q.name} className="flex items-center gap-3 rounded-md px-2 py-2">
             <span aria-hidden="true" className="text-subtle">
               <svg
                 width="10"

@@ -60,6 +60,15 @@ export const env = {
   UPSTASH_REDIS_REST_URL: requiredInProduction("UPSTASH_REDIS_REST_URL"),
   UPSTASH_REDIS_REST_TOKEN: requiredInProduction("UPSTASH_REDIS_REST_TOKEN"),
 
+  // Chat proxy → chatbot API. Both are optional: without PG_PROXY_SECRET the proxy
+  // simply sends no secret (the API accepts that until it is switched to enforce).
+  // PG_PROXY_SECRET must equal the API project's PG_PROXY_SECRET.
+  PG_PROXY_SECRET: process.env.PG_PROXY_SECRET ?? "",
+  // Key for the one-way hash of visitor addresses used by the chat limiter. Falls
+  // back to the Upstash token, which is a secret that is always present when the
+  // limiter is in use.
+  RATE_LIMIT_SALT: process.env.RATE_LIMIT_SALT ?? "",
+
   // Supabase — backs product share links (/api/share, /s/[code]).
   //
   // Optional everywhere on purpose, including production. Sharing is an

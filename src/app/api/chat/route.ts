@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { checkChatRateLimit } from "@/lib/rate-limit";
-import { log } from "@/lib/logger";
+import { log, hashPii } from "@/lib/logger";
+import { env } from "@/lib/env";
 
 /**
  * /api/chat — server-side proxy for the PharmaGuide chatbot.
@@ -17,6 +18,8 @@ import { log } from "@/lib/logger";
  *   2. Per-IP rate limit (40/10min) via Upstash sliding window
  *   3. 15s upstream timeout — matches the old widget's behavior
  *   4. Passthrough of 429 with Retry-After so the client can back off
+ *   5. Shared secret + visitor address sent to the API (PG_PROXY_SECRET), so
+ *      the API can accept calls from this proxy only and limit per visitor
  */
 
 const UPSTREAM = "https://pharmaguide-chatbot-api.vercel.app/api/chat";
@@ -121,9 +124,19 @@ export async function POST(req: Request) {
       typeof body._state === "object" &&
       !Array.isArray(body._state);
 
+    // When PG_PROXY_SECRET is configured the API knows this request came from us and
+    // rate-limits on the visitor's address instead of this server's.
+    const upstreamHeaders: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (env.PG_PROXY_SECRET) {
+      upstreamHeaders["x-pg-proxy-secret"] = env.PG_PROXY_SECRET;
+      upstreamHeaders["x-pg-client-ip"] = ip;
+    }
+
     const upstream = await fetch(UPSTREAM, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: upstreamHeaders,
       body: JSON.stringify({
         message: body.message.trim(),
         history,
@@ -140,7 +153,7 @@ export async function POST(req: Request) {
         .catch(() => ({}))) as Record<string, unknown>;
       log.warn("chat.upstream_error", {
         status: upstream.status,
-        ip_hash: ip,
+        ip_hash: hashPii(ip),
       });
       return NextResponse.json(
         {

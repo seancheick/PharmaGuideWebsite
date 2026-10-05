@@ -20,15 +20,19 @@ import { cn } from "@/lib/utils";
  *     route check; this component handles the visibility within scope.
  *
  * Chat shape: POSTs to `/api/chat` (our proxy → upstream Vercel chatbot
- * API at pharmaguide-chatbot-api.vercel.app/api/chat). Conversation
- * history persists across visits via localStorage, capped to the last
- * 10 messages — same window we send upstream.
+ * API at pharmaguide-chatbot-api.vercel.app/api/chat). The conversation
+ * lives in memory only: nothing is written to localStorage or cookies, so it
+ * is gone when the page is closed or reloaded. The last 10 messages are sent
+ * upstream with each request.
+ *
+ * Privacy: the panel is masked from Microsoft Clarity session recordings
+ * (data-clarity-mask on the dialog). Clarity's default mode records visible
+ * page text, which would include medication questions and the answers.
  */
 
-const STORAGE_KEY = "pg-chat-history";
-const STATE_STORAGE_KEY = "pg-chat-state";
+// Keys an earlier version wrote to localStorage; cleared on mount, never written.
+const LEGACY_STORAGE_KEYS = ["pg-chat-history", "pg-chat-state"];
 const HISTORY_SEND_LIMIT = 10;
-const HISTORY_STORE_LIMIT = 20;
 const SCROLL_REVEAL_PX = 200;
 
 // Three starter questions aligned with the chatbot API's routing.
@@ -93,32 +97,15 @@ export function ChatLauncher() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
 
-  // ─── Mount + restore from localStorage ─────────────────────────
+  // ─── Mount + clear anything an earlier version saved ───────────
+  // Conversations used to be written to localStorage. They no longer are, so
+  // remove what is already sitting in returning visitors' browsers.
   useEffect(() => {
     setMounted(true);
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as Message[];
-        if (Array.isArray(parsed)) setMessages(parsed.slice(-HISTORY_STORE_LIMIT));
-      }
+      for (const key of LEGACY_STORAGE_KEYS) localStorage.removeItem(key);
     } catch {
-      // Corrupted localStorage — silently start fresh
-    }
-    try {
-      const rawState = localStorage.getItem(STATE_STORAGE_KEY);
-      if (rawState) {
-        const parsedState = JSON.parse(rawState) as unknown;
-        if (
-          parsedState &&
-          typeof parsedState === "object" &&
-          !Array.isArray(parsedState)
-        ) {
-          setConversationState(parsedState as ConversationState);
-        }
-      }
-    } catch {
-      // Corrupted state — start fresh; the API will rebuild it
+      // Storage blocked (private mode): nothing was saved there anyway
     }
   }, []);
 
@@ -132,36 +119,6 @@ export function ChatLauncher() {
     window.addEventListener("scroll", handle, { passive: true });
     return () => window.removeEventListener("scroll", handle);
   }, [revealed]);
-
-  // ─── Persist conversation ──────────────────────────────────────
-  useEffect(() => {
-    if (!mounted) return;
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(messages.slice(-HISTORY_STORE_LIMIT))
-      );
-    } catch {
-      // Quota / private mode — drop silently. Session-only fallback.
-    }
-  }, [messages, mounted]);
-
-  // ─── Persist conversation state (patient context) ──────────────
-  useEffect(() => {
-    if (!mounted) return;
-    try {
-      if (conversationState) {
-        localStorage.setItem(
-          STATE_STORAGE_KEY,
-          JSON.stringify(conversationState)
-        );
-      } else {
-        localStorage.removeItem(STATE_STORAGE_KEY);
-      }
-    } catch {
-      // Quota / private mode — drop silently
-    }
-  }, [conversationState, mounted]);
 
   // ─── Body scroll lock + Esc when panel is open on mobile ───────
   useEffect(() => {
@@ -306,12 +263,6 @@ export function ChatLauncher() {
     setMessages([]);
     setConversationState(null);
     setDraft("");
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(STATE_STORAGE_KEY);
-    } catch {
-      // ignore
-    }
     inputRef.current?.focus();
   };
 
@@ -369,6 +320,7 @@ export function ChatLauncher() {
               role="dialog"
               aria-modal="true"
               aria-label="Chat with PharmaGuide AI"
+              data-clarity-mask="True"
               initial={
                 reducedMotion ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.98 }
               }

@@ -1,4 +1,5 @@
 import "server-only";
+import { createHmac } from "node:crypto";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { env } from "./env";
@@ -43,17 +44,28 @@ export const subscribeLimiter = redis
 
 /**
  * Chat rate limiter — more permissive than subscribe because a real
- * conversation needs many turns. 40 messages per IP per 10 minutes
+ * conversation needs many turns. 40 messages per visitor per 10 minutes
  * cuts off scrape/abuse without bothering legit users.
+ *
+ * Visitors are keyed by a keyed one-way hash of their address, never the
+ * address itself, and analytics is off because that feature keeps the
+ * identifiers it is given. (The privacy policy promises exactly this.)
  */
 export const chatLimiter = redis
   ? new Ratelimit({
       redis,
       limiter: Ratelimit.slidingWindow(40, "10 m"),
-      analytics: true,
+      analytics: false,
       prefix: "rl:chat",
     })
   : null;
+
+/** Stable across serverless instances and secret, so the hash cannot be rebuilt from a list of addresses. */
+function chatLimiterKey(ip: string): string {
+  const secret =
+    env.RATE_LIMIT_SALT || env.UPSTASH_REDIS_REST_TOKEN || "pharmaguide-local-dev";
+  return createHmac("sha256", secret).update(ip).digest("hex").slice(0, 32);
+}
 
 /**
  * Share-link minting. 20 per IP per 10 minutes.
@@ -118,7 +130,7 @@ export async function checkChatRateLimit(
     return { ok: true };
   }
 
-  const result = await chatLimiter.limit(ip);
+  const result = await chatLimiter.limit(chatLimiterKey(ip));
   if (!result.success) {
     log.warn("rate_limit.exceeded", {
       ip_hash: hashPii(ip),

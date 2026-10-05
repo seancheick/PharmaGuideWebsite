@@ -27,13 +27,14 @@ export const PRIVACY_DOC: LegalDocument = {
   titleEm: "By design.",
   subhead:
     "Your health profile, conditions and medications stay on your device. This page explains exactly what we do collect, why, and how to control it.",
-  lastUpdated: "2026-10-01",
+  lastUpdated: "2026-10-05",
   summary: {
     title: "The short version",
     points: [
       "Your **health profile, conditions and medications** are stored only on your device, and interaction checks run there too.",
       "If you create an account, we keep your **email** and a **backup of the supplement products in your stack** so you can restore it. Without an account, your stack stays on your device.",
       "We **never sell** your data. We don't share it with advertisers, brokers, or insurance companies.",
+      "The **website chat** doesn't save your conversations: they stay in your browser until you close the page, and the text is processed by AI service providers to write each reply.",
       "You can **delete your account** and the data we hold at any time. A full in-app data export is on the way.",
       "Children under 13 may not use PharmaGuide. We comply with COPPA, CCPA/CPRA, and GDPR.",
     ],
@@ -62,6 +63,8 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
 **When you search for a medication:** the name you type is sent to the U.S. National Library of Medicine's RxNorm service (rxnav.nlm.nih.gov) to identify the medication. We do not attach your account to that request, and the medication you select is stored only on your device.
 
 **When you choose to submit a product:** the photos and details you submit for a product we don't have yet are sent to us for review.
+
+**When you use the chat on this website:** the messages you type, and the last few messages from the same visit, are sent to our server and on to an AI service provider so it can write a reply. There is no account for chat, and we don't save your messages in a database. The conversation stays in your browser's memory for the current visit only; closing or reloading the page clears it. To limit abuse we rate-limit requests using a one-way hash of your IP address, not the address itself. We keep anonymous, topic-level usage statistics, never the messages. The chat window is masked from our session recordings.
 
 **What we do NOT collect from your device:** the medications you take, your conditions, your age, your goals, your allergies, your scan history, your interaction warnings, or any other health-related profile data. All of that is stored only on your phone.
 
@@ -128,6 +131,8 @@ If you're in California, the EU, the UK, or another jurisdiction with additional
       num: "7",
       title: "Third parties and tracking",
       body: `**Cookies on the website:** we use a minimal set of essential cookies (session, security). We use privacy-friendly analytics (Vercel Analytics, Microsoft Clarity for session replay). No cross-site advertising trackers. No Facebook pixel. No data brokers.
+
+**AI service providers (website chat):** to answer a chat question we send your message to Google (Gemini) and, as a backup, to Groq. They process that text to generate the reply, and each provider's own terms govern how it handles it. Don't type details you wouldn't want processed that way, such as your name or contact information.
 
 **Third-party links:** the site occasionally links to external sources (FDA, NIH, PubMed, DSLD). When you click those, you leave our site and their privacy policies apply.
 

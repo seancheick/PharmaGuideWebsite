@@ -80,9 +80,9 @@ Use these in order; the first two are free and authoritative.
    (ads.tiktok.com/business/creativecenter) and Instagram search suggestions.
 5. **Paid estimates, optional**: Exploding Topics, Glimpse (meetglimpse.com), Ahrefs or Semrush.
    Their volumes are third-party estimates, like the sources below.
-6. **`/last30days <topic> --deep`** (Claude skill): 30-day research across Reddit, X, TikTok, YouTube
-   and the web. Needs keys in `~/.config/last30days/.env` (free ScrapeCreators key at minimum); social
-   findings are demand signals, never facts.
+6. **`/pg-trends "<topic>"`** (Claude skill): autocomplete questions, Wikipedia interest, Reddit,
+   TikTok, Instagram, YouTube, X and news (Exa), new PubMed papers and FDA recalls for the last 30
+   days, with a coverage table. Social findings are demand signals, never facts.
 
 A trending topic still ships only through `/pg-blog-mdx` and `pnpm blog:validate`; demand never
 outranks accuracy.

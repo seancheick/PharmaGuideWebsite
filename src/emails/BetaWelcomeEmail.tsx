@@ -236,7 +236,7 @@ export function BetaWelcomeEmail({ email }: BetaWelcomeEmailProps) {
                 margin: 0,
               }}
             >
-              PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02124
+              PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
             </Text>
           </Container>
         </Body>

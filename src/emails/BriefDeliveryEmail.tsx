@@ -140,8 +140,7 @@ export function BriefDeliveryEmail({ email }: BriefDeliveryEmailProps) {
             }}
           >
             You&apos;re also on the PharmaGuide beta list now. When your wave opens, we&apos;ll
-            email this address ({email}) with your invite — the app runs every check in this brief
-            automatically, against your medications and conditions.
+            email this address ({email}) with your invite.
           </Text>
 
           <Hr
@@ -211,7 +210,7 @@ export function BriefDeliveryEmail({ email }: BriefDeliveryEmailProps) {
               margin: 0,
             }}
           >
-            PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02124
+            PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
           </Text>
         </Container>
       </Body>

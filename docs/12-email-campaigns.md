@@ -17,7 +17,7 @@ or your personal mail client.
 
 **CAN-SPAM footer** (copy-paste for any Resend send):
 ```
-PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02124
+PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
 Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 ```
 
@@ -110,7 +110,7 @@ Founder, PharmaGuide
 
 ---
 
-PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02124
+PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
 Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 
 ---
@@ -172,7 +172,7 @@ signup, and you're in the first wave.
 
 ---
 
-PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02124
+PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
 Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 
 ---
@@ -221,7 +221,7 @@ shaped more by what waitlist readers ask about than by SEO research.
 
 ---
 
-PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02124
+PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
 Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 
 ---
@@ -284,7 +284,7 @@ Founder, PharmaGuide
 
 ---
 
-PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02124
+PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
 Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
 
 ---

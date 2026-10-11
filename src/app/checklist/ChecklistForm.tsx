@@ -101,7 +101,7 @@ export function ChecklistForm() {
         </p>
       )}
       <p className="mt-3 text-sm text-muted">
-        One email with the brief. No spam, unsubscribe anytime.
+        One email with the brief, and you join the PharmaGuide beta list. Unsubscribe anytime.
       </p>
     </form>
   );

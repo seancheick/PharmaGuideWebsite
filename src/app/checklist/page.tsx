@@ -1,11 +1,8 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/pages";
+import { displayName, LEAD_REVIEWER } from "@/lib/people";
 import { ChecklistForm } from "./ChecklistForm";
 
-export const metadata: Metadata = {
-  title: "Get the free Supplement Safety Brief | PharmaGuide",
-  description:
-    "The Supplement Safety Intelligence Brief: 12 pharmacist-reviewed sections on labels, doses, hidden ingredients, and interactions. Free.",
-};
+export const metadata = pageMetadata("checklist");
 
 /**
  * /checklist — the lead-magnet landing page for the Instagram funnel.
@@ -16,7 +13,6 @@ export const metadata: Metadata = {
  *
  * Copy rules: no clinical claims on this page (the brief itself is the
  * Laurie-reviewed substance). Describe the brief, don't practice pharmacy.
- * No em dashes in copy.
  */
 
 const BULLETS = [
@@ -64,7 +60,7 @@ export default function ChecklistPage() {
         </div>
 
         <p className="mt-8 text-xs text-muted">
-          Reviewed by Laurie Pham, PharmD. Educational only, not medical advice.
+          Reviewed by {displayName(LEAD_REVIEWER)}. Educational only, not medical advice.
         </p>
       </div>
     </main>

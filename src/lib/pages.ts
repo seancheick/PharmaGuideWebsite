@@ -33,7 +33,8 @@ export type PageKey =
   | "privacy"
   | "terms"
   | "hipaa"
-  | "accessibility";
+  | "accessibility"
+  | "checklist";
 
 export interface PageEntry {
   path: string;
@@ -200,6 +201,15 @@ export const PAGES: Record<PageKey, PageEntry> = {
     og: { eyebrow: "Accessibility", headline: "WCAG 2.2 AA —", accent: "and what's still owed." },
     sitemap: { priority: 0.4, changeFrequency: "yearly" },
     llms: { section: "trust", summary: "WCAG 2.2 AA target, what's in place, what's still owed" },
+  },
+  checklist: {
+    path: "/checklist",
+    title: "Free Supplement Safety Brief",
+    description:
+      "The Supplement Safety Intelligence Brief: 12 pharmacist-reviewed sections on labels, doses, hidden ingredients, and interactions. Free.",
+    label: "Safety Brief",
+    og: { eyebrow: "Free field guide", headline: "Know what you're", accent: "actually taking." },
+    sitemap: { priority: 0.5, changeFrequency: "monthly" },
   },
 };
 

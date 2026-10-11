@@ -1,5 +1,5 @@
 import "server-only";
-import { Resend } from "resend";
+import { Resend, type ErrorResponse } from "resend";
 import { render } from "@react-email/render";
 import { env } from "./env";
 import { isValidEmail } from "./validation";
@@ -43,6 +43,49 @@ export interface SubscribeResult {
   code?: string;
 }
 
+/**
+ * The Resend SDK reports failures as `{ data: null, error }` instead of
+ * throwing, so an unchecked call fails silently: the visitor is told
+ * "you're in" and nothing was stored or sent. Every call goes through one
+ * of these two helpers so a failure lands in the catch blocks below.
+ */
+class ResendError extends Error {
+  constructor(what: string, error: ErrorResponse) {
+    super(`${what}: ${error.name} (${error.statusCode ?? "no status"}) ${error.message}`);
+  }
+}
+
+/** Throws on any send failure: an email that did not go out is never a success. */
+async function sendEmail(options: Parameters<typeof resend.emails.send>[0]): Promise<void> {
+  const { error } = await resend.emails.send(options);
+  if (error) throw new ResendError("emails.send", error);
+}
+
+/**
+ * Adds a contact; returns false when Resend did not create one.
+ *
+ * Resend does not document what a re-add returns. A conflict or
+ * validation answer (409/422) is treated as "already on the list", the
+ * behavior visitors have always seen, and logged so the real shape shows
+ * up. Anything else (bad key, missing audience, quota, outage) throws.
+ */
+async function addContact(email: string, audienceId: string, firstName?: string): Promise<boolean> {
+  const { data, error } = await resend.contacts.create({
+    email,
+    audienceId,
+    ...(firstName ? { firstName } : {}),
+  });
+  if (!error) return !!data;
+  if (error.statusCode === 409 || error.statusCode === 422) {
+    log.warn("resend.contact_not_created", {
+      email_hash: hashPii(email),
+      error: `${error.name} (${error.statusCode}) ${error.message}`,
+    });
+    return false;
+  }
+  throw new ResendError("contacts.create", error);
+}
+
 const listToAudience: Record<SubscribeList, string> = {
   beta: env.RESEND_AUDIENCE_BETA_ID,
   newsletter: env.RESEND_AUDIENCE_NEWSLETTER_ID,
@@ -51,10 +94,8 @@ const listToAudience: Record<SubscribeList, string> = {
 /**
  * Add a contact to an Audience + send the welcome email.
  *
- * Idempotent at the audience layer: Resend's create-contact endpoint
- * returns an existing-contact response if the email is already in
- * the audience (it doesn't error). We treat that as a success and
- * skip sending another welcome email.
+ * Idempotent at the audience layer: a contact Resend did not create
+ * (see addContact) is a success that skips the second welcome email.
  */
 export async function subscribe({
   email,
@@ -72,17 +113,9 @@ export async function subscribe({
   const audienceId = listToAudience[list];
 
   try {
-    // 1. Add to audience (Resend dedupes — re-adds are no-ops)
-    const contactResult = await resend.contacts.create({
-      email,
-      audienceId,
-      ...(firstName ? { firstName } : {}),
-    });
-
-    // Some clients return data: null when the email already exists.
-    // We don't treat that as an error — just don't double-send the
-    // welcome email.
-    const isNewContact = !!contactResult.data;
+    // 1. Add to audience. An existing contact is not an error; it just
+    // doesn't get a second welcome email.
+    const isNewContact = await addContact(email, audienceId, firstName);
 
     // 2. Send welcome email (only for net-new contacts)
     if (isNewContact) {
@@ -136,7 +169,7 @@ async function sendWelcomeEmail({ email, list }: { email: string; list: Subscrib
 
   const text = await render(react, { plainText: true });
 
-  await resend.emails.send({
+  await sendEmail({
     from: env.RESEND_FROM_EMAIL,
     to: email,
     replyTo: env.RESEND_REPLY_TO_EMAIL,
@@ -162,18 +195,23 @@ export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
   }
 
   try {
-    // Add to the beta audience so brief requesters join the waitlist.
-    // Re-adds are no-ops at the Resend layer.
-    await resend.contacts.create({
-      email,
-      audienceId: env.RESEND_AUDIENCE_BETA_ID,
-    });
+    // Add to the beta audience so brief requesters join the waitlist
+    // (the form says so). Re-requests still get the brief, and so does a
+    // visitor whose contact add failed: they asked for the PDF.
+    try {
+      await addContact(email, env.RESEND_AUDIENCE_BETA_ID);
+    } catch (err) {
+      log.error("brief.contact_failed", {
+        email_hash: hashPii(email),
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
 
     const { BriefDeliveryEmail } = await import("@/emails/BriefDeliveryEmail");
     const react = BriefDeliveryEmail({ email });
     const text = await render(react, { plainText: true });
 
-    await resend.emails.send({
+    await sendEmail({
       from: env.RESEND_FROM_EMAIL,
       to: email,
       replyTo: env.RESEND_REPLY_TO_EMAIL,
@@ -234,7 +272,7 @@ export async function notifyProviderInterest(inq: ProviderInquiry): Promise<Subs
     .join("\n");
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: env.RESEND_FROM_EMAIL,
       to: env.RESEND_PROVIDERS_NOTIFY_EMAIL,
       replyTo: inq.email,

@@ -6,10 +6,11 @@ import { isValidEmail } from "./validation";
 import { log, hashPii } from "./logger";
 
 /**
- * Resend client + helpers for the two email surfaces:
+ * Resend client + helpers for the email surfaces:
  *
  *   1. Beta waitlist     (homepage FinalCTA)
  *   2. Newsletter        (/faq NewsletterCTA + future surfaces)
+ *   3. Safety Brief      (/checklist lead-magnet funnel)
  *
  * Each subscribe flow does two things:
  *   • Adds the contact to the right Resend Audience (so future
@@ -96,9 +97,7 @@ export async function subscribe({
 
     return {
       ok: true,
-      message: isNewContact
-        ? "You're in."
-        : "You're already on the list — see you soon.",
+      message: isNewContact ? "You're in." : "You're already on the list — see you soon.",
     };
   } catch (err) {
     log.error("subscribe.failed", {
@@ -124,27 +123,16 @@ export async function subscribe({
  * Resend auto-generates one when omitted, but explicit text gives
  * us control over what Apple Mail / accessibility tools read.
  */
-async function sendWelcomeEmail({
-  email,
-  list,
-}: {
-  email: string;
-  list: SubscribeList;
-}) {
+async function sendWelcomeEmail({ email, list }: { email: string; list: SubscribeList }) {
   const { BetaWelcomeEmail } = await import("@/emails/BetaWelcomeEmail");
-  const { NewsletterWelcomeEmail } = await import(
-    "@/emails/NewsletterWelcomeEmail"
-  );
+  const { NewsletterWelcomeEmail } = await import("@/emails/NewsletterWelcomeEmail");
 
   const subject =
     list === "beta"
       ? "You're on the PharmaGuide beta list"
       : "Welcome to PharmaGuide — first dispatch on the way";
 
-  const react =
-    list === "beta"
-      ? BetaWelcomeEmail({ email })
-      : NewsletterWelcomeEmail({ email });
+  const react = list === "beta" ? BetaWelcomeEmail({ email }) : NewsletterWelcomeEmail({ email });
 
   const text = await render(react, { plainText: true });
 
@@ -156,6 +144,58 @@ async function sendWelcomeEmail({
     react,
     text,
   });
+}
+
+// ─── Safety Brief delivery (/checklist funnel) ───────────────────────
+// Lead magnet: visitor requests the Supplement Safety Intelligence Brief.
+// Adds them to the beta audience (Resend dedupes re-adds) and always sends
+// the brief email — they explicitly asked for it, so unlike the welcome
+// flow this is not limited to net-new contacts.
+
+export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
+  if (!isValidEmail(email)) {
+    return {
+      ok: false,
+      message: "Please enter a valid email.",
+      code: "invalid_email",
+    };
+  }
+
+  try {
+    // Add to the beta audience so brief requesters join the waitlist.
+    // Re-adds are no-ops at the Resend layer.
+    await resend.contacts.create({
+      email,
+      audienceId: env.RESEND_AUDIENCE_BETA_ID,
+    });
+
+    const { BriefDeliveryEmail } = await import("@/emails/BriefDeliveryEmail");
+    const react = BriefDeliveryEmail({ email });
+    const text = await render(react, { plainText: true });
+
+    await resend.emails.send({
+      from: env.RESEND_FROM_EMAIL,
+      to: email,
+      replyTo: env.RESEND_REPLY_TO_EMAIL,
+      subject: "Your Supplement Safety Brief is here",
+      react,
+      text,
+    });
+
+    log.info("brief.sent", { email_hash: hashPii(email) });
+
+    return { ok: true, message: "Check your inbox — the brief is on its way." };
+  } catch (err) {
+    log.error("brief.failed", {
+      email_hash: hashPii(email),
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return {
+      ok: false,
+      message: "Something went wrong. Try again in a moment?",
+      code: "resend_api_error",
+    };
+  }
 }
 
 // ─── Healthcare Pros inquiry ─────────────────────────────────────────
@@ -170,9 +210,7 @@ export interface ProviderInquiry {
   notes?: string;
 }
 
-export async function notifyProviderInterest(
-  inq: ProviderInquiry
-): Promise<SubscribeResult> {
+export async function notifyProviderInterest(inq: ProviderInquiry): Promise<SubscribeResult> {
   if (!isValidEmail(inq.email)) {
     return {
       ok: false,
@@ -211,8 +249,7 @@ export async function notifyProviderInterest(
 
     return {
       ok: true,
-      message:
-        "Thanks — we'll be in touch as the Healthcare Pros tier opens.",
+      message: "Thanks — we'll be in touch as the Healthcare Pros tier opens.",
     };
   } catch (err) {
     log.error("providers.inquiry_failed", {

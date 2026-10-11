@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import {
   notifyProviderInterest,
+  sendSafetyBrief,
   subscribe,
   type ProviderInquiry,
   type SubscribeResult,
@@ -74,9 +75,7 @@ async function getClientIp(): Promise<string> {
   return "local-dev";
 }
 
-export async function joinBetaWaitlist(
-  args: BetaArgs
-): Promise<SubscribeResult> {
+export async function joinBetaWaitlist(args: BetaArgs): Promise<SubscribeResult> {
   if (args.company && args.company.length > 0) {
     log.warn("subscribe.honeypot_triggered", { list: "beta" });
     return SILENT_BOT_RESPONSE;
@@ -111,9 +110,7 @@ interface ProviderArgs {
   company?: string;
 }
 
-export async function requestProvidersAccess(
-  args: ProviderArgs
-): Promise<SubscribeResult> {
+export async function requestProvidersAccess(args: ProviderArgs): Promise<SubscribeResult> {
   if (args.company && args.company.length > 0) {
     log.warn("subscribe.honeypot_triggered", { list: "providers" });
     return SILENT_BOT_RESPONSE;
@@ -136,9 +133,7 @@ export async function requestProvidersAccess(
   });
 }
 
-export async function subscribeToNewsletter(
-  args: NewsletterArgs
-): Promise<SubscribeResult> {
+export async function subscribeToNewsletter(args: NewsletterArgs): Promise<SubscribeResult> {
   if (args.company && args.company.length > 0) {
     log.warn("subscribe.honeypot_triggered", { list: "newsletter" });
     return SILENT_BOT_RESPONSE;
@@ -154,4 +149,35 @@ export async function subscribeToNewsletter(
   if (!rl.ok) return RATE_LIMIT_RESPONSE;
 
   return subscribe({ email: cleanEmail, list: "newsletter" });
+}
+
+/**
+ * Safety Brief request from the /checklist funnel page.
+ *
+ * Same defense-in-depth as the other actions: honeypot, format check,
+ * per-IP rate limit. Adds the requester to the beta audience and emails
+ * the brief PDF link immediately.
+ */
+interface BriefArgs {
+  email: string;
+  /** Honeypot — must be empty. Filled = bot. */
+  company?: string;
+}
+
+export async function requestSafetyBrief(args: BriefArgs): Promise<SubscribeResult> {
+  if (args.company && args.company.length > 0) {
+    log.warn("subscribe.honeypot_triggered", { list: "brief" });
+    return SILENT_BOT_RESPONSE;
+  }
+
+  const cleanEmail = args.email.trim().toLowerCase();
+  if (!isValidEmail(cleanEmail)) {
+    return INVALID_EMAIL_RESPONSE;
+  }
+
+  const ip = await getClientIp();
+  const rl = await checkSubscribeRateLimit(ip);
+  if (!rl.ok) return RATE_LIMIT_RESPONSE;
+
+  return sendSafetyBrief(cleanEmail);
 }

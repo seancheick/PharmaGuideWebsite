@@ -67,6 +67,24 @@ for those, so they go to Laurie in a batch for a quick double-check.
 Already published: medication depletion guide, statins and CoQ10 (needs Laurie's re-review after
 its edit), GLP-1 supplements and nutrient gaps.
 
+## Finding and re-ranking topics
+
+Use these in order; the first two are free and authoritative.
+
+1. **Google Search Console**: the queries already bringing people to pharmaguide.io (setup in
+   [09](./09-search-console-setup.md)). Re-rank this backlog from it monthly.
+2. **Google Trends** (trends.google.com): compare candidate topics over the last 12 months.
+3. **The questions people ask**: Google "People also ask" and autocomplete; Reddit
+   (r/Supplements, r/pregnant, r/hypothyroidism).
+4. **Social trends** for the paired carousels: TikTok Creative Center
+   (ads.tiktok.com/business/creativecenter) and Instagram search suggestions.
+5. **Paid estimates, optional**: Exploding Topics, Glimpse (meetglimpse.com), Ahrefs or Semrush.
+   Their volumes are third-party estimates, like the sources below.
+6. **`/last30days`** (Claude skill): 30-day research across Reddit, X, TikTok, YouTube and the web.
+
+A trending topic still ships only through `/pg-blog-mdx` and `pnpm blog:validate`; demand never
+outranks accuracy.
+
 ## Demand sources (third-party estimates, checked October 10, 2026)
 
 - [Top 50 Supplement Trends, September 2026 — risingtrends.co](https://www.risingtrends.co/trends/supplement-trends-2026)

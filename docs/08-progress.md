@@ -345,7 +345,7 @@ Corrected the deployed PDF's remaining label-reading timing claim, hidden-dose a
 
 Owner: `src/lib/resend.ts::sendEmail/addContact/sendSafetyBrief`; the checklist displays the existing server result. Will NOT create a second subscription or delivery ledger. Contact and send responses now require acknowledgements; a delivered brief explicitly reports an unconfirmed beta enrollment. Seven production-helper mock tests cover failures and successful controls; no real email was sent.
 
-Validation: email 7/7, share 7/7, catalog-claim 2/2; typecheck and production build passed; lint has zero errors and four existing warnings. Independent PDF and email review passed. Receipts: `/Users/seancheick/pg_quality/claude_pdf_audit_20261011/REPORT.md`. Live deployment verification follows merge; this does not qualify a pipeline release or TestFlight build.
+Validation: email 7/7, share 7/7, catalog-claim 2/2; typecheck and production build passed; lint has zero errors and four existing warnings. Independent PDF and email review passed. Receipts: `/Users/seancheick/pg_quality/claude_pdf_audit_20261011/REPORT.md`. PR3 merged at67f58b9 after CI38159728468 passed. Live PDF SHA25667bc7190d8fc403c00601828e24880db0597e21a7c10c4f1abaa4e456f65c291 matches the reviewed file. All six existing saved Supabase auth templates were corrected from02124 to02114 and reloaded/read back; authentication behavior and tokens were retained. This does not qualify a pipeline release or TestFlight build.
 
 ---
 

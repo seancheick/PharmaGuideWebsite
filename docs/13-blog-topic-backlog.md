@@ -23,41 +23,43 @@ answers it in one scan.
    post still gets its own primary source.
 4. Regulatory words are exact: a warning letter or import alert is not a ban; say what FDA actually did.
 
-Cadence: two posts a week. Wave 1 is eight weeks.
+Cadence: a target of two posts a week, not a promise; accuracy wins over the calendar. Posts marked
+**Laurie** in the table are medication-heavy and are scheduled around her availability; the others
+fill the weeks she is busy. The skill's risk score, not this column, decides whether review is required.
 
 ## Wave 1 — high demand, app data behind it
 
-| # | Working title | Why people search it | PharmaGuide data | Social pair |
-|---|---|---|---|---|
-| 1 | Magnesium glycinate vs citrate vs oxide: which form, and who should be careful | "magnesium glycinate" is among the most-searched supplement terms of 2026 (third-party estimate ~1M/month) | Magnesium: kidney disease avoid; thyroid medications and fluoroquinolones caution (spacing) | Red Flag No. 01 (posted) |
-| 2 | Melatonin gummies: what's really in the bottle | Sleep is a top search driver; the JAMA 2023 label-accuracy study is already verified in the brief | Melatonin: sedatives caution, seizure disorder monitor | Red Flag No. 02 |
-| 3 | Your thyroid pill and calcium, iron, magnesium or zinc: how far apart | Evergreen, high-intent; the roughly 20–25% calcium figure (Zamfirescu, Thyroid 2011) is already verified | Calcium, iron, magnesium, zinc × thyroid medications: caution | Interaction Alert |
-| 4 | Supplements to stop before surgery | Common pre-op search; clear, actionable | Ginkgo avoid before surgery; fish oil and vitamin K monitor | Interaction Alert |
-| 5 | Creatine for women and adults over 40: what the evidence says, and the kidney question | Creatine searches up sharply in 2026 | Creatine: kidney disease caution | Myth vs Fact |
-| 6 | Ashwagandha: who should not take it | Persistent top social-media supplement | Ashwagandha: thyroid disorder and sedatives caution; withaferin A (an ashwagandha constituent) is on the banned_recalled watchlist, not banned | Red Flag |
-| 7 | Berberine, "nature's Ozempic": what it does and what it interacts with | Viral weight-loss claim; pairs with the existing GLP-1 post | Berberine: MAOIs avoid; statins, CYP3A4 substrates, diabetes medicines caution | Myth vs Fact |
-| 8 | Turmeric and curcumin: liver warnings and blood thinners | Very high consumer use | Turmeric/curcumin: liver disease avoid; anticoagulants and antiplatelets caution | Interaction Alert |
-| 9 | Hidden drugs in "sexual enhancement" and weight-loss supplements | Shareable safety story; the brief's FDA adulteration data is verified | banned_recalled: sildenafil/tadalafil analogs, sibutramine entries and recalled products | Red Flag |
-| 10 | How much vitamin D is too much? Stacking past the upper limit | Popular, and the brief's stacking chart already exists | Vitamin D: anticoagulants, thiazide diuretics monitor; UL data | Big Stat |
-| 11 | Red yeast rice and statins: why not both | Cholesterol audience; recall news | Red yeast rice × statins: avoid; banned_recalled entries | Interaction Alert |
-| 12 | Fish oil and blood thinners: what the bleeding risk really is | Very common pair | Fish oil: anticoagulants, antiplatelets, bleeding disorders caution | Myth vs Fact |
-| 13 | Rhodiola: the fastest-growing stress supplement, and who should skip it | Third-party estimate +234% year over year | Rhodiola: immunosuppressants caution; blood pressure and sedatives monitor | Did You Know |
-| 14 | Green tea extract and your liver | Weight-loss products; liver-injury data is in the brief | Green tea: liver disease avoid; beta blockers avoid | Red Flag |
-| 15 | How to read a Supplement Facts label in 60 seconds (proprietary blends included) | Evergreen; directly shows what the app automates | Engine: disclosure, blend detection, form | Label Decoded |
-| 16 | St John's wort: birth control, antidepressants and transplant drugs | The best-documented herb–drug interaction | Contraindicated with SSRIs/SNRIs, oral contraceptives, immunosuppressants, MAOIs, anticoagulants | Interaction Alert (likely PharmD-authored: high risk) |
+| # | Working title | Why people search it | PharmaGuide data (research lead) | Social pair | Laurie |
+|---|---|---|---|---|---|
+| 1 | Magnesium glycinate vs citrate vs oxide: which form, and who should be careful | "magnesium glycinate" is among the most-searched supplement terms of 2026 (third-party estimate ~1M/month) | Magnesium: kidney disease avoid; thyroid medications and fluoroquinolones caution (spacing). Keep the brief's corrected wording: citrate, chloride and lactate are the better-absorbed forms; glycinate is gentle on the stomach | Red Flag No. 01 (posted) | |
+| 2 | Melatonin gummies: what's really in the bottle | Sleep is a top search driver; the JAMA 2023 label-accuracy study is already verified in the brief | Melatonin: sedatives caution, seizure disorder monitor | Red Flag No. 02 | |
+| 3 | How to read a Supplement Facts label (proprietary blends included) | Evergreen; shows exactly what the app automates | Engine: disclosure, blend detection, form | Label Decoded | |
+| 4 | Third-party seals decoded: USP, NSF, Informed Sport | Trust question behind every purchase; the brief has a seals page | Verification pillar (`cert_evidence.py`) | Did You Know | |
+| 5 | Creatine for women and adults over 40: what the evidence says, and the kidney question | Creatine searches up sharply in 2026 | Creatine: kidney disease caution | Myth vs Fact | |
+| 6 | How much vitamin D is too much? Stacking past the upper limit | Popular, and the brief's stacking chart already exists | Vitamin D: anticoagulants, thiazide diuretics monitor; UL data | Big Stat | |
+| 7 | Ashwagandha: who should not take it | Persistent top social-media supplement | Ashwagandha: thyroid disorder and sedatives caution; withaferin A (an ashwagandha constituent) is on the banned_recalled watchlist, not banned | Red Flag | |
+| 8 | Your thyroid pill and calcium, iron, magnesium or zinc: how far apart | Evergreen, high-intent; the roughly 20–25% calcium figure (Zamfirescu, Thyroid 2011) is already verified | Calcium, iron, magnesium, zinc × thyroid medications: caution | Interaction Alert | Laurie |
+| 9 | Berberine, "nature's Ozempic": what it does and what it interacts with | Viral weight-loss claim; pairs with the existing GLP-1 post | Berberine: MAOIs avoid; statins, CYP3A4 substrates, diabetes medicines caution | Myth vs Fact | Laurie |
+| 10 | Hidden drugs in "sexual enhancement" and weight-loss supplements | Shareable safety story; the brief's FDA adulteration data is verified | banned_recalled: sildenafil/tadalafil analogs, sibutramine entries and recalled products | Red Flag | |
+| 11 | Supplements to stop before surgery | Common pre-op search; clear, actionable | Ginkgo avoid before surgery; fish oil and vitamin K monitor | Interaction Alert | Laurie |
+| 12 | Rhodiola: the fastest-growing stress supplement, and who should skip it | Third-party estimate +234% year over year | Rhodiola: immunosuppressants caution; blood pressure and sedatives monitor | Did You Know | |
+| 13 | Turmeric and curcumin: liver warnings and blood thinners | Very high consumer use | Turmeric/curcumin: liver disease avoid; anticoagulants and antiplatelets caution | Interaction Alert | Laurie |
+| 14 | Green tea extract and your liver | Weight-loss products; liver-injury data is in the brief | Green tea: liver disease avoid; beta blockers avoid | Red Flag | Laurie |
+| 15 | Red yeast rice and statins: why not both | Cholesterol audience; recall news | Red yeast rice × statins: avoid; banned_recalled entries | Interaction Alert | Laurie |
+| 16 | Fish oil and blood thinners: what the bleeding risk really is | Very common pair | Fish oil: anticoagulants, antiplatelets, bleeding disorders caution | Myth vs Fact | Laurie |
+| 17 | St John's wort: birth control, antidepressants and transplant drugs | The best-documented herb–drug interaction | Contraindicated with SSRIs/SNRIs, oral contraceptives, immunosuppressants, MAOIs, anticoagulants | Interaction Alert | Laurie (likely PharmD-authored: high risk) |
 
 ## Wave 2 — high risk or needs new research
 
 | # | Working title | Note |
 |---|---|---|
-| 17 | Kratom, 7-OH and tianeptine ("gas station heroin") | Risk ≥ 71 expected: PharmD-authored brief. banned_recalled has kratom, 7-hydroxymitragynine and tianeptine entries. |
-| 18 | Lithium orotate: the trend and the medicine it shares a name with | Third-party estimate +309%; interacts with lithium-drug rules; PharmD-authored. |
-| 19 | SARMs and MK-677 sold as supplements | Use the FDA document that names each compound; no "ban" unless FDA said ban. |
-| 20 | Compounded or counterfeit GLP-1 products sold online | banned_recalled has a contaminated-GLP-1 high-risk entry; pairs with the GLP-1 post. |
-| 21 | Potassium supplements and blood-pressure medicines | Kidney disease and potassium-sparing diuretics: avoid. |
-| 22 | Iron: which form, and when to take it | Iron: thyroid medications, fluoroquinolones caution; depletion data. |
-| 23 | Biotin can skew lab tests | Verify the FDA safety communication before drafting; app rule today is informational only. |
-| 24 | Third-party seals decoded: USP, NSF, Informed Sport | Verification pillar; the brief has a seals page. |
+| 18 | Kratom, 7-OH and tianeptine ("gas station heroin") | Risk ≥ 71 expected: PharmD-authored brief. banned_recalled has kratom, 7-hydroxymitragynine and tianeptine entries. |
+| 19 | Lithium orotate: the trend and the medicine it shares a name with | Third-party estimate +309%; interacts with lithium-drug rules; PharmD-authored. |
+| 20 | SARMs and MK-677 sold as supplements | Use the FDA document that names each compound; no "ban" unless FDA said ban. |
+| 21 | Compounded or counterfeit GLP-1 products sold online | banned_recalled has a contaminated-GLP-1 high-risk entry; pairs with the GLP-1 post. |
+| 22 | Potassium supplements and blood-pressure medicines | Kidney disease and potassium-sparing diuretics: avoid. |
+| 23 | Iron: which form, and when to take it | Iron: thyroid medications, fluoroquinolones caution; depletion data. |
+| 24 | Biotin can skew lab tests | Verify the FDA safety communication before drafting; app rule today is informational only. |
 | 25 | Collagen: what the evidence actually supports | High demand; no interaction rule, so this is an evidence post. |
 | 26 | Electrolyte powders: sodium and potassium for people with high blood pressure or kidney disease | High demand; potassium rules apply. |
 

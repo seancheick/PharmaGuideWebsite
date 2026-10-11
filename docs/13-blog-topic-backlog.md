@@ -5,7 +5,7 @@ instead of one topic at a time. Re-rank monthly from Search Console (see
 [09 — Search Console setup](./09-search-console-setup.md)); the demand column below is a
 starting estimate, not measured traffic.
 
-North star (Sean, sharpened October 11, 2026): anyone who scans a supplement gets a straight, verified answer: what the product is, whether it is good quality, and whether it is safe for them (their pregnancy or breastfeeding, conditions and medications), with the reason and the source. When we lack data we say so. No invented claims, and never a false reassurance. Every post
+North star (Sean, sharpened October 11, 2026): anyone who scans a supplement gets a straight, verified answer: what the product is, whether it is good quality, and whether it is safe for them (their pregnancy or breastfeeding, conditions and medications), with the reason and the source. We flag only real, sourced concerns, never noise; when we find none we say "no known concerns", never "safe". No invented claims, and never a false reassurance. Every post
 serves that sentence: it answers one question people already search, then shows that the app
 answers it in one scan.
 

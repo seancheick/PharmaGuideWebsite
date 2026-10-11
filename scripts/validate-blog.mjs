@@ -180,6 +180,8 @@ const AUTHORITATIVE_DOMAINS = [
   "bmj.com",
   "cochranelibrary.com",
   "amjmed.com",
+  "jacc.org",              // J Am Coll Cardiol
+  "ahajournals.org",       // AHA journals
   "nature.com",
   "sciencedirect.com",
   "wiley.com",
@@ -503,6 +505,24 @@ function checkPerSectionCitations(content, category) {
   return issues;
 }
 
+// Phrases that mark text as machine-written. Warnings, not failures: the
+// writer rewrites them in plain words (pg-blog-mdx humanizer pass).
+const AI_TELL_PHRASES = [
+  "it's important to note", "it is important to note", "it's worth noting", "it is worth noting",
+  "in today's", "navigate the", "navigating the", "a testament to", "plays a crucial role",
+  "plays a vital role", "dive into", "deep dive", "ever-evolving", "whether you're",
+  "in the realm of", "when it comes to", "at the end of the day", "a myriad of",
+  "embark on", "look no further", "rest assured", "holistic approach",
+];
+
+function checkAiTells(content) {
+  const sourcesIdx = content.search(/<Sources>|\n##\s+Sources?\b/i);
+  const body = (sourcesIdx > 0 ? content.slice(0, sourcesIdx) : content).toLowerCase();
+  return AI_TELL_PHRASES.filter((p) => body.includes(p)).map((p) =>
+    warn(`machine-sounding phrase "${p}" — rewrite in plain words`)
+  );
+}
+
 function checkReadability(content) {
   // Soft warnings only — readability is heuristic, not pass/fail.
   // Strips frontmatter + MDX components + fenced code + Sources section before measuring.
@@ -591,6 +611,24 @@ function checkReviewerInvariants(data) {
   return issues;
 }
 
+function doiFromUrl(url) {
+  const m = /(?:doi\.org\/|\/doi\/(?:full\/|abs\/|pdf\/)?)(10\.\d{4,9}\/[^\s?#]+)/i.exec(url);
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
+async function crossrefResolves(doi) {
+  try {
+    const res = await fetch(`https://api.crossref.org/works/${encodeURIComponent(doi)}`, {
+      headers: { "User-Agent": "PharmaGuide-Blog-Validator/1.0 (mailto:hello@pharmaguide.io)" },
+    });
+    if (!res.ok) return false;
+    const body = await res.json();
+    return Boolean(body?.message?.title?.length);
+  } catch {
+    return false;
+  }
+}
+
 async function checkUrls(content, { skip = false } = {}) {
   if (skip) return [];
   const issues = [];
@@ -619,11 +657,17 @@ async function checkUrls(content, { skip = false } = {}) {
   );
 
   for (const { url, result } of results) {
-    if (!result.ok) {
-      issues.push(
-        fail(`URL ${url} failed (status ${result.status || "no-response"}${result.error ? ", " + result.error : ""})`)
-      );
+    if (result.ok) continue;
+    const doi = doiFromUrl(url);
+    if (doi && (await crossrefResolves(doi))) continue; // publisher blocks bots; DOI is real
+    if ([401, 403, 429].includes(result.status)) {
+      // Bot protection is not a dead link: say so, and let a human confirm.
+      issues.push(warn(`URL ${url} blocked the automated check (status ${result.status}); confirm it opens`));
+      continue;
     }
+    issues.push(
+      fail(`URL ${url} failed (status ${result.status || "no-response"}${result.error ? ", " + result.error : ""})`)
+    );
   }
   for (const { url, isClinical } of sources) {
     if (!isClinical) continue;
@@ -781,6 +825,7 @@ async function validate(slug, { publishCheck = false, acceptWarnings = false, sk
   if (data.category) push("per-section-citations", checkPerSectionCitations(content, data.category));
   push("reviewer-invariants", checkReviewerInvariants(normalized));
   push("readability", checkReadability(content));
+  push("humanizer", checkAiTells(content));
   push("urls", await checkUrls(content, { skip: skipUrl }));
   push("pubmed-citations", await checkPubmedCitations(content, { skip: skipUrl && !publishCheck }));
 

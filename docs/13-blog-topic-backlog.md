@@ -23,13 +23,11 @@ answers it in one scan.
    post still gets its own primary source.
 4. Regulatory words are exact: a warning letter or import alert is not a ban; say what FDA actually did.
 
-Cadence: a target of two posts a week, not a promise; accuracy wins over the calendar. Clinical
-claims are verified by the agents against their actual sources (ingredient, population, dose, outcome,
-severity, applicability), as the pipeline roadmap's Launch track L4 describes; Laurie oversees through
-occasional summaries and is not the production queue. The **Med-heavy** column marks posts most likely
-to score risk 31–70: `blog:publish-check` still requires a `reviewer:` field for those, so each either
-waits for Laurie's explicit review or is rewritten to a lower risk. Never set a reviewer she did not
-give.
+Cadence: a target of two posts a week, not a promise; accuracy wins over the calendar. The agents
+verify every clinical claim live against its source (right study by title and body; ingredient,
+population, dose, outcome and severity match), as the pipeline roadmap's Launch track L4 describes.
+**Med-heavy** marks posts likely to score risk 31–70; `blog:publish-check` needs a `reviewer:` field
+for those, so they go to Laurie in a batch for a quick double-check.
 
 ## Wave 1 — high demand, app data behind it
 

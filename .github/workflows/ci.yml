@@ -45,6 +45,9 @@ jobs:
       - name: Share contract
         run: pnpm test:share
 
+      - name: Email delivery contract
+        run: pnpm test:email
+
       - name: Catalog claim contract
         run: pnpm test:catalog-claim
 

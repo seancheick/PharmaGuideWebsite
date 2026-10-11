@@ -17,7 +17,8 @@
     "blog:list": "node scripts/blog.mjs list",
     "blog:feature": "node scripts/blog.mjs feature",
     "blog:validate": "node scripts/validate-blog.mjs",
-    "blog:publish-check": "node scripts/validate-blog.mjs --publish-check"
+    "blog:publish-check": "node scripts/validate-blog.mjs --publish-check",
+    "test:email": "node --test tests/resend-contract.test.cjs"
   },
   "dependencies": {
     "@microsoft/clarity": "^1.0.2",

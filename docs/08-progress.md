@@ -339,4 +339,14 @@ re-keys the detail panel.
 
 ---
 
+## October 11, 2026 — independent safety-brief and email audit
+
+Corrected the deployed PDF's remaining label-reading timing claim, hidden-dose assessment language, niacin flushing qualifier, and zinc/iron advice against NIH sources. Preserved all 19 pages and 40 links; independently rendered all five changed pages and compared unchanged-page text. PubMed identifiers were checked with the pipeline verifier, with content review kept distinct from identifier resolution. This audit does not fabricate a clinician review of the revised version.
+
+Owner: `src/lib/resend.ts::sendEmail/addContact/sendSafetyBrief`; the checklist displays the existing server result. Will NOT create a second subscription or delivery ledger. Contact and send responses now require acknowledgements; a delivered brief explicitly reports an unconfirmed beta enrollment. Seven production-helper mock tests cover failures and successful controls; no real email was sent.
+
+Validation: email 7/7, share 7/7, catalog-claim 2/2; typecheck and production build passed; lint has zero errors and four existing warnings. Independent PDF and email review passed. Receipts: `/Users/seancheick/pg_quality/claude_pdf_audit_20261011/REPORT.md`. Live deployment verification follows merge; this does not qualify a pipeline release or TestFlight build.
+
+---
+
 <!-- Append new entries above this line as phases complete -->

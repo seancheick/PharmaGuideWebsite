@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
  */
 export function ChecklistForm() {
   const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -34,7 +34,7 @@ export function ChecklistForm() {
     try {
       const result = await requestSafetyBrief({ email, company });
       if (result.ok) {
-        setSubmitted(true);
+        setSubmitted(result.message);
       } else {
         setError(result.message);
       }
@@ -50,7 +50,7 @@ export function ChecklistForm() {
       <div className="rounded-2xl border border-accent/20 bg-white p-8 text-center" role="status">
         <p className="font-serif text-2xl italic text-ink">Check your inbox.</p>
         <p className="mt-2 text-muted">
-          The brief is on its way. Screenshot the eight-checks page before your next store run.
+          {submitted} Screenshot the eight-checks page before your next store run.
         </p>
       </div>
     );

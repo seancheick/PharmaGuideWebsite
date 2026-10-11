@@ -57,8 +57,9 @@ class ResendError extends Error {
 
 /** Throws on any send failure: an email that did not go out is never a success. */
 async function sendEmail(options: Parameters<typeof resend.emails.send>[0]): Promise<void> {
-  const { error } = await resend.emails.send(options);
+  const { data, error } = await resend.emails.send(options);
   if (error) throw new ResendError("emails.send", error);
+  if (!data?.id) throw new Error("emails.send: missing delivery acknowledgement");
 }
 
 /**
@@ -75,9 +76,12 @@ async function addContact(email: string, audienceId: string, firstName?: string)
     audienceId,
     ...(firstName ? { firstName } : {}),
   });
-  if (!error) return !!data;
+  if (!error) {
+    if (!data?.id) throw new Error("contacts.create: missing contact acknowledgement");
+    return true;
+  }
   const existing = await resend.contacts.get({ email, audienceId });
-  if (existing.data) {
+  if (!existing.error && existing.data?.id) {
     log.info("resend.contact_exists", {
       email_hash: hashPii(email),
       create_error: `${error.name} (${error.statusCode})`,
@@ -196,12 +200,14 @@ export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
   }
 
   try {
+    let audienceConfirmed = true;
     // Add to the beta audience so brief requesters join the waitlist
     // (the form says so). Re-requests still get the brief, and so does a
     // visitor whose contact add failed: they asked for the PDF.
     try {
       await addContact(email, env.RESEND_AUDIENCE_BETA_ID);
     } catch (err) {
+      audienceConfirmed = false;
       log.error("brief.contact_failed", {
         email_hash: hashPii(email),
         error: err instanceof Error ? err.message : String(err),
@@ -223,7 +229,12 @@ export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
 
     log.info("brief.sent", { email_hash: hashPii(email) });
 
-    return { ok: true, message: "Check your inbox — the brief is on its way." };
+    return {
+      ok: true,
+      message: audienceConfirmed
+        ? "Check your inbox — the brief is on its way."
+        : "Check your inbox for the brief. We could not confirm your beta signup; please join again.",
+    };
   } catch (err) {
     log.error("brief.failed", {
       email_hash: hashPii(email),

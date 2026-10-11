@@ -4,10 +4,9 @@ Shared by Claude, Codex and any other agent. Start at [docs/00-master-plan.md](d
 blog rules are in [docs/10-blog-system-guide.md](docs/10-blog-system-guide.md), the next posts in
 [docs/13-blog-topic-backlog.md](docs/13-blog-topic-backlog.md).
 
-## North star — Sean, October 10, 2026
+## North star — Sean, October 10, 2026 (sharpened October 11)
 
-Anyone who scans a supplement gets an accurate, sourced answer to "is this safe for me, and is it
-any good?", and never a false reassurance. Set by Sean; agents propose, Sean changes it.
+Anyone who scans a supplement gets a straight, verified answer: what the product is, whether it is good quality, and whether it is safe for them (their pregnancy or breastfeeding, conditions and medications), with the reason and the source. When we lack data we say so. No invented claims, and never a false reassurance. Example: a pregnant user scans a St. John's wort product and is told at the top of the page that it is not for her during pregnancy, why, and the source. Set by Sean; agents propose, Sean changes it.
 
 ## One product, three repos
 

@@ -56,7 +56,7 @@ function headlineSize(chars: number): number {
   return 50;
 }
 
-export const DEFAULT_FOOTNOTE = `Sourced from ${SOURCE_LABEL_COUNT} NIH labels · Evidence-graded · Clinician-informed`;
+export const DEFAULT_FOOTNOTE = `Sourced from ${SOURCE_LABEL_COUNT} NIH labels · Evidence-graded · Clinician-reviewed`;
 
 export function renderOgCard(card: OgCard): ImageResponse {
   const size = headlineSize(card.headline.length + (card.accent?.length ?? 0));

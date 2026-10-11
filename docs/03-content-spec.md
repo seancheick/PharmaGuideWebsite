@@ -63,7 +63,7 @@ Step 4: Hold for 1.5s, fade, restart.
 ## Infrastructure Strip
 
 ```
-Evidence-graded interactions · Clinician-informed review · Privacy-first architecture
+Evidence-graded interactions · Clinician-reviewed · Privacy-first architecture
 ```
 
 ---
@@ -400,7 +400,7 @@ info@pharmaguide.io
 
 ### Bottom row
 ```
-Evidence-graded · On-device analysis · Privacy-first · Clinician-informed
+Evidence-graded · On-device analysis · Privacy-first · Clinician-reviewed
 © 2026 PharmaGuide
 ```
 

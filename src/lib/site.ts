@@ -127,5 +127,5 @@ export const footerTrustBadges = [
 export const footerBadges = [
   "Evidence-graded",
   "On-device analysis",
-  "Clinician-informed",
+  "Clinician-reviewed",
 ] as const;

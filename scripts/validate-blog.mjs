@@ -64,6 +64,7 @@ const ALLOWED_MDX_COMPONENTS = new Set([
   "Source",
   "PostImage",
   "Illustration",
+  "Sources",
 ]);
 
 // Banned marketing words (from docs/03-content-spec.md + master prompt v3.2)
@@ -374,7 +375,7 @@ function checkInternalLinks(content) {
 }
 
 function checkSourcesSection(content) {
-  if (!/^##\s+Sources?\b/im.test(content)) {
+  if (!/^##\s+Sources?\b/im.test(content) && !/<Sources>/.test(content)) {
     return [fail(`missing "## Sources" section at bottom of post`)];
   }
   return [];
@@ -636,6 +637,111 @@ async function checkUrls(content, { skip = false } = {}) {
   return issues;
 }
 
+// ─── PubMed citation identity ────────────────────────────────────────
+// A PubMed link must point at the study the post names. The 2026-10
+// audit found live posts whose PMIDs resolved to unrelated papers (a
+// uterine-imaging study labelled as a CoQ10 meta-analysis), which a
+// reachability check cannot catch. This fetches each linked record from
+// NCBI and compares its real title, first author, year and journal with
+// the post's label. It proves identity only; whether the study supports
+// the sentence is checked by reading its abstract (pg-blog-mdx claim
+// validation).
+
+const EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
+
+function citationTokens(s) {
+  return String(s)
+    .normalize("NFKD")
+    .replace(/[₀-₉]/g, (c) => String(c.charCodeAt(0) - 0x2080))
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(" ")
+    .filter((w) => w.length > 3 || /^\d{4}$/.test(w));
+}
+
+function labelMatchesRecord(label, rec, namedAuthors = []) {
+  // An author named beside the link ("Young JM, et al.") must be the record's
+  // first author: a wrong PMID from the same journal and year otherwise passes.
+  const authorName = rec.firstAuthor.replace(/\s+[A-Z]{1,3}$/, "").toLowerCase();
+  if (namedAuthors.length && !namedAuthors.some((n) => authorName.includes(n.toLowerCase()))) return false;
+  const title = citationTokens(rec.title);
+  const has = (w) => title.some((t) => t.slice(0, 6) === w.slice(0, 6));
+  const words = citationTokens(label).filter((w) => !/^\d{4}$/.test(w));
+  const hits = words.filter(has).length;
+  if ((words.length >= 3 && hits / words.length >= 0.75) || (words.length === 2 && hits === 2)) return true;
+  const surname = authorName.split(" ").pop() || "";
+  const lower = label.toLowerCase();
+  const year = rec.year;
+  const journal = citationTokens(rec.source);
+  const journalHit = citationTokens(label).some((w) => journal.includes(w));
+  if (surname && lower.includes(surname) && (lower.includes(year) || hits >= 2)) return true;
+  return lower.includes(year) && journalHit;
+}
+
+async function checkPubmedCitations(content, { skip = false } = {}) {
+  const cites = []; // {id, kind, label}
+  const re = /\[([^\]]+)\]\(https?:\/\/(pubmed|pmc)\.ncbi\.nlm\.nih\.gov\/(?:articles\/)?(PMC)?(\d+)\/?\)/g;
+  let m;
+  let prevEnd = 0;
+  while ((m = re.exec(content)) !== null) {
+    let label = m[1].replace(/\s+/g, " ");
+    // Text between the previous link (or line start) and the end of this one.
+    const ctxStart = Math.max(content.lastIndexOf("\n", m.index) + 1, prevEnd);
+    const ctx = content.slice(ctxStart, m.index) + " " + label;
+    prevEnd = m.index + m[0].length;
+    const namedAuthors = [...ctx.matchAll(/([A-Z][A-Za-z'’-]+)(?:\s+[A-Z]{1,3})?,?\s+et al/g)].map((x) => x[1]);
+    if (/ncbi\.nlm\.nih\.gov/.test(label)) {
+      // Bare-URL link text: the label is the text before " — " on the same line.
+      const lineStart = content.lastIndexOf("\n", m.index) + 1;
+      const lead = content.slice(lineStart, m.index).replace(/^\s*\d+\.\s*/, "");
+      const parts = lead.split(/\s+—\s*|\s+·\s+/).map((p) => p.trim()).filter(Boolean);
+      label = parts.length ? parts[parts.length - 1] : "";
+    }
+    cites.push({ id: m[4], kind: m[3] ? "pmc" : "pubmed", label, namedAuthors });
+  }
+  if (cites.length === 0) return [];
+  if (skip) return [warn(`${cites.length} PubMed/PMC citation(s) not verified (offline)`)];
+
+  try {
+    const pmcIds = [...new Set(cites.filter((c) => c.kind === "pmc").map((c) => c.id))];
+    if (pmcIds.length) {
+      const conv = await (await fetch(
+        `https://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?format=json&tool=pharmaguide-blog&ids=${pmcIds.map((i) => "PMC" + i).join(",")}`
+      )).json();
+      const map = Object.fromEntries((conv.records || []).map((r) => [r.pmcid.slice(3), String(r.pmid || "")]));
+      for (const c of cites) if (c.kind === "pmc") c.pmid = map[c.id] || "";
+    }
+    for (const c of cites) if (c.kind === "pubmed") c.pmid = c.id;
+    const ids = [...new Set(cites.map((c) => c.pmid).filter(Boolean))];
+    const sum = ids.length
+      ? (await (await fetch(`${EUTILS}/esummary.fcgi?db=pubmed&retmode=json&tool=pharmaguide-blog&id=${ids.join(",")}`)).json()).result || {}
+      : {};
+    const issues = [];
+    for (const c of cites) {
+      const r = c.pmid && sum[c.pmid];
+      const ref = c.kind === "pmc" ? `PMC${c.id}` : `PMID ${c.id}`;
+      if (!r || r.error || !r.title) {
+        issues.push(fail(`${ref} does not resolve to a PubMed record`));
+        continue;
+      }
+      const rec = {
+        title: r.title,
+        firstAuthor: (r.authors && r.authors[0] && r.authors[0].name) || "",
+        year: String(r.pubdate || "").slice(0, 4),
+        source: r.source || "",
+      };
+      if (!c.label || !labelMatchesRecord(c.label, rec, c.namedAuthors)) {
+        issues.push(
+          fail(`${ref} is "${rec.title}" (${rec.firstAuthor}, ${rec.year}, ${rec.source}), but the post labels it "${c.label}"`)
+        );
+      }
+    }
+    return issues;
+  } catch (err) {
+    return [fail(`PubMed citation check could not reach NCBI (${err.message}); rerun online`)];
+  }
+}
+
 // ─── Main ────────────────────────────────────────────────────────────
 
 async function validate(slug, { publishCheck = false, acceptWarnings = false, skipUrl = false } = {}) {
@@ -676,6 +782,7 @@ async function validate(slug, { publishCheck = false, acceptWarnings = false, sk
   push("reviewer-invariants", checkReviewerInvariants(normalized));
   push("readability", checkReadability(content));
   push("urls", await checkUrls(content, { skip: skipUrl }));
+  push("pubmed-citations", await checkPubmedCitations(content, { skip: skipUrl && !publishCheck }));
 
   // ─── Publish-check escalations ─────────────────────────────────────
   if (publishCheck) {

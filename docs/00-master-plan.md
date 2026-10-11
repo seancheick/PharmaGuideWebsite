@@ -18,6 +18,7 @@ and tracks one concern. Don't lose track — this file is the entry point.
 | [06 — Accessibility Checklist](./06-accessibility-checklist.md) | WCAG 2.1 AA targets. |
 | [07 — Motion Spec](./07-motion-spec.md) | Animation philosophy + token usage. |
 | [08 — Progress Log](./08-progress.md) | Live diary of what shipped + decisions. |
+| [13 — Blog Topic Backlog](./13-blog-topic-backlog.md) | Ranked next posts, two a week, each paired with a carousel. |
 
 ## Phases
 

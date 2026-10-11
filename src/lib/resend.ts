@@ -62,12 +62,12 @@ async function sendEmail(options: Parameters<typeof resend.emails.send>[0]): Pro
 }
 
 /**
- * Adds a contact; returns false when Resend did not create one.
+ * Adds a contact; returns false when it was already in the audience.
  *
- * Resend does not document what a re-add returns. A conflict or
- * validation answer (409/422) is treated as "already on the list", the
- * behavior visitors have always seen, and logged so the real shape shows
- * up. Anything else (bad key, missing audience, quota, outage) throws.
+ * Resend does not document what a re-add returns, and its 409/422 codes
+ * also cover bad parameters and locks. So any failed add is followed by
+ * a lookup: only a contact that really exists counts as "already on the
+ * list". Everything else throws.
  */
 async function addContact(email: string, audienceId: string, firstName?: string): Promise<boolean> {
   const { data, error } = await resend.contacts.create({
@@ -76,10 +76,11 @@ async function addContact(email: string, audienceId: string, firstName?: string)
     ...(firstName ? { firstName } : {}),
   });
   if (!error) return !!data;
-  if (error.statusCode === 409 || error.statusCode === 422) {
-    log.warn("resend.contact_not_created", {
+  const existing = await resend.contacts.get({ email, audienceId });
+  if (existing.data) {
+    log.info("resend.contact_exists", {
       email_hash: hashPii(email),
-      error: `${error.name} (${error.statusCode}) ${error.message}`,
+      create_error: `${error.name} (${error.statusCode})`,
     });
     return false;
   }

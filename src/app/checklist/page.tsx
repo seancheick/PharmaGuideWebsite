@@ -17,7 +17,7 @@ export const metadata = pageMetadata("checklist");
 
 const BULLETS = [
   {
-    title: "Read any label in 60 seconds",
+    title: "Read any label",
     body: "The five lines that actually matter, and the marketing to ignore.",
   },
   {

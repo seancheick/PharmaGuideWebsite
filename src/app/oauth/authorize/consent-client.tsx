@@ -14,7 +14,15 @@ type View =
   | { kind: "loading" }
   | { kind: "message"; text: string }
   | { kind: "signin" }
-  | { kind: "consent"; session: Session; preview: Preview; busy: boolean; error?: string };
+  | {
+      kind: "consent";
+      session: Session;
+      preview: Preview;
+      busy: boolean;
+      error?: string;
+      /** Supabase already re-approved a returning assistant; this is where it goes. */
+      returningRedirect?: string;
+    };
 
 const ID_PATTERN = /^[A-Za-z0-9_-]{1,255}$/;
 
@@ -50,17 +58,14 @@ export default function ConsentClient() {
       if (error || !data) {
         return show({ kind: "message", text: "This connection request has ended. Start again from the assistant." });
       }
-      if (!("authorization_id" in data)) {
-        // Supabase approved it from an earlier consent; no new card was shown,
-        // so PharmaGuide does not add a connection silently.
-        return show({
-          kind: "message",
-          text: "This assistant already has an approval on record. To review or end it, open your connections page, disconnect it, and connect again.",
-        });
-      }
+      // Supabase approves a returning assistant from an earlier consent and
+      // returns only its redirect. PharmaGuide never adds a connection
+      // silently: the route allows a fresh one, with this card shown, only
+      // when the previous connection was revoked or has expired.
+      const returningRedirect = "authorization_id" in data ? undefined : data.redirect_url;
       const { ok, json } = await callRoute(session, { action: "preview", authorization_id: authorizationId });
       if (!ok) return show({ kind: "message", text: String(json.error ?? "This connection cannot be approved.") });
-      show({ kind: "consent", session, preview: json as unknown as Preview, busy: false });
+      show({ kind: "consent", session, preview: json as unknown as Preview, busy: false, returningRedirect });
     }
     void load();
     return () => {
@@ -79,6 +84,19 @@ export default function ConsentClient() {
         setView({ ...view, busy: false, error: String(written.json.error ?? "PharmaGuide could not record this connection.") });
         return;
       }
+    }
+    if (view.returningRedirect !== undefined) {
+      // Already approved by Supabase: deny simply never delivers the code.
+      if (!approve) {
+        setView({ kind: "message", text: "Nothing was connected. You can close this page." });
+        return;
+      }
+      if (!redirectMatchesCallback(view.returningRedirect, view.preview.redirect_uri)) {
+        setView({ ...view, busy: false, error: "The assistant could not be reached. Start again from the assistant." });
+        return;
+      }
+      window.location.assign(view.returningRedirect);
+      return;
     }
     const result = approve
       ? await supabase.auth.oauth.approveAuthorization(authorizationId, { skipBrowserRedirect: true })

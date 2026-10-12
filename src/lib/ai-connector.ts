@@ -107,6 +107,61 @@ export function redirectMatchesCallback(redirectUrl: string, callback: string): 
   }
 }
 
+/** The callback a redirect goes to (origin and path, without the code), or null. */
+export function callbackOf(redirectUrl: string): string | null {
+  try {
+    const url = new URL(redirectUrl);
+    return `${url.origin}${url.pathname}`;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Supabase approves a returning assistant without a new consent and returns
+ * only its redirect_url. The trusted client is the one whose S3 callback that
+ * redirect matches; anything unrecognised or ambiguous resolves to nothing.
+ */
+export function returningClient(redirectUrl: string, trusted: TrustedClient[]): TrustedClient | null {
+  const kinds = KINDS.filter((kind) => verifyCallback(redirectUrl, kind).ok);
+  if (kinds.length !== 1) return null;
+  const matches = trusted.filter((client) => client.kind === kinds[0]);
+  return matches.length === 1 ? (matches[0] ?? null) : null;
+}
+
+export type PriorConnection = { status: string; expires_at: string } | null;
+
+/**
+ * A returning assistant may connect again (with the consent card shown and a
+ * fresh row) when its latest connection was revoked or has expired. A live
+ * one is never duplicated silently.
+ */
+export function mayReconnect(latest: PriorConnection, now: Date): boolean {
+  if (!latest || latest.status !== "active") return true;
+  const expiresAt = Date.parse(latest.expires_at);
+  return !(Number.isFinite(expiresAt) && expiresAt > now.getTime());
+}
+
+/**
+ * In-memory sliding-window limit per key (per server instance). Returns a
+ * take(key, now) that is false once `limit` writes fell inside `windowMs`.
+ */
+export function createWriteLimiter(limit = 10, windowMs = 60_000, maxKeys = 10_000) {
+  const hits = new Map<string, number[]>();
+  return function take(key: string, now: number = Date.now()): boolean {
+    const recent = (hits.get(key) ?? []).filter((at) => now - at < windowMs);
+    hits.delete(key);
+    if (recent.length >= limit) {
+      hits.set(key, recent);
+      return false;
+    }
+    recent.push(now);
+    hits.set(key, recent);
+    if (hits.size > maxKeys) hits.delete(hits.keys().next().value as string);
+    return true;
+  };
+}
+
 export function connectionExpiry(now: Date): Date {
   return new Date(now.getTime() + CONNECTION_HOURS * 60 * 60 * 1000);
 }

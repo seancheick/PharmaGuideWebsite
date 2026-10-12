@@ -6,9 +6,13 @@ const {
   CONNECTION_SCOPE,
   CONNECTIONS_COPY,
   connectionExpiry,
+  callbackOf,
   consentCopy,
+  createWriteLimiter,
+  mayReconnect,
   parseTrustedClients,
   redirectMatchesCallback,
+  returningClient,
   verifyCallback,
 } = require("../.tmp/ai-connector-test-build/src/lib/ai-connector.js");
 
@@ -126,4 +130,55 @@ test("copy is calm-advisory and never offers a safety verdict", () => {
     assert.doesNotMatch(text, /\bsafe\b/i, text);
     assert.notEqual(text, text.toUpperCase(), `all caps: ${text}`);
   }
+});
+
+// Reconnect after a revoked or expired connection -----------------------------
+
+const TRUSTED = [
+  { client_id: "c-claude", name: "Claude", kind: "claude" },
+  { client_id: "c-chatgpt", name: "ChatGPT", kind: "chatgpt" },
+  { client_id: "c-code", name: "Claude Code", kind: "claude_code" },
+];
+
+test("a returning authorization resolves to exactly one trusted client by its callback", () => {
+  assert.equal(returningClient("https://claude.ai/api/mcp/auth_callback?code=a&state=b", TRUSTED).client_id, "c-claude");
+  assert.equal(returningClient("https://chatgpt.com/connector/oauth/abc?code=a", TRUSTED).client_id, "c-chatgpt");
+  assert.equal(returningClient("http://localhost:5555/callback?code=a", TRUSTED).client_id, "c-code");
+  assert.equal(returningClient("https://evil.example/api/mcp/auth_callback?code=a", TRUSTED), null);
+  assert.equal(returningClient("not a url", TRUSTED), null);
+  const twoClaudes = [...TRUSTED, { client_id: "c-claude-2", name: "Claude (staging)", kind: "claude" }];
+  assert.equal(returningClient("https://claude.ai/api/mcp/auth_callback?code=a", twoClaudes), null, "ambiguous");
+  assert.equal(callbackOf("https://claude.ai/api/mcp/auth_callback?code=a&state=b"), "https://claude.ai/api/mcp/auth_callback");
+  assert.equal(callbackOf("http://localhost:5555/callback?code=a"), "http://localhost:5555/callback");
+  assert.equal(callbackOf("not a url"), null);
+});
+
+test("reconnect is allowed after revoked or expired, refused while a connection is live", () => {
+  const now = new Date("2026-10-12T12:00:00Z");
+  assert.equal(mayReconnect(null, now), true, "no row on record");
+  assert.equal(mayReconnect({ status: "revoked", expires_at: "2026-10-13T00:00:00Z" }, now), true);
+  assert.equal(mayReconnect({ status: "expired", expires_at: "2026-10-11T00:00:00Z" }, now), true);
+  assert.equal(mayReconnect({ status: "active", expires_at: "2026-10-12T11:59:59Z" }, now), true, "lapsed");
+  assert.equal(mayReconnect({ status: "active", expires_at: "2026-10-13T00:00:00Z" }, now), false, "live: no silent duplicate");
+});
+
+// Rate limit on /api/ai-connections writes ------------------------------------
+
+test("writes are limited per user within a sliding minute", () => {
+  const take = createWriteLimiter(3, 60_000);
+  const t0 = 1_000_000;
+  assert.equal(take("u1", t0), true);
+  assert.equal(take("u1", t0 + 1), true);
+  assert.equal(take("u1", t0 + 2), true);
+  assert.equal(take("u1", t0 + 3), false, "fourth write in the minute");
+  assert.equal(take("u2", t0 + 3), true, "other users unaffected");
+  assert.equal(take("u1", t0 + 60_001), true, "window slides");
+});
+
+test("the limiter forgets the oldest users past its key cap", () => {
+  const take = createWriteLimiter(1, 60_000, 2);
+  assert.equal(take("a", 0), true);
+  assert.equal(take("b", 0), true);
+  assert.equal(take("c", 0), true);
+  assert.equal(take("a", 1), true, "a was evicted");
 });

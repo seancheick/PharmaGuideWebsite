@@ -3,6 +3,8 @@
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { analyticsEnabled } from "@/lib/analytics";
+import { isPrivateRoute } from "@/lib/analytics";
+import { usePathname } from "next/navigation";
 
 /**
  * Vercel Web Analytics + Speed Insights, behind the same gate as Clarity
@@ -13,6 +15,8 @@ import { analyticsEnabled } from "@/lib/analytics";
 const gate = <T,>(event: T): T | null => (analyticsEnabled() ? event : null);
 
 export function VercelInsights() {
+  const pathname = usePathname();
+  if (isPrivateRoute(pathname)) return null;
   return (
     <>
       <Analytics beforeSend={gate} />

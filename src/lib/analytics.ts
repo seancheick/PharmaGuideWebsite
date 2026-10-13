@@ -29,16 +29,34 @@ import { site } from "./site";
  */
 
 const INTERNAL_KEY = "pg_internal";
-let enabled: boolean | undefined;
+let marketingDocument = false;
+
+/** Consent/account URLs may contain authorization codes or private metadata. */
+export function isPrivateRoute(pathname: string): boolean {
+  return /^\/(oauth|account)(\/|$)/.test(pathname);
+}
+
+/** Loaded trackers cannot be safely unloaded on a client-side navigation. */
+export function privatePageNeedsReload(): boolean {
+  // The private boundary can render before client navigation commits the URL.
+  return typeof window !== "undefined" && marketingDocument;
+}
 
 export function analyticsEnabled(): boolean {
   if (typeof window === "undefined") return false;
-  if (enabled !== undefined) return enabled;
-  enabled =
+  if (isPrivateRoute(window.location.pathname)) return false;
+  const query = new URLSearchParams(window.location.search);
+  if (["code", "authorization_id", "access_token", "refresh_token"].some((key) => query.has(key))) {
+    return false;
+  }
+  const allowed = (
     window.location.hostname === new URL(site.url).hostname &&
     !navigator.webdriver &&
-    !isInternalDevice();
-  return enabled;
+    navigator.doNotTrack !== "1" &&
+    !isInternalDevice()
+  );
+  if (allowed) marketingDocument = true;
+  return allowed;
 }
 
 function isInternalDevice(): boolean {

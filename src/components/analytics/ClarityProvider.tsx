@@ -14,7 +14,10 @@ const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID;
 export function ClarityProvider() {
   useEffect(() => {
     if (CLARITY_ID && analyticsEnabled()) {
-      void import("@microsoft/clarity").then(({ default: clarity }) => clarity.init(CLARITY_ID));
+      void import("@microsoft/clarity").then(({ default: clarity }) => {
+        // The route may have changed while the module was downloading.
+        if (analyticsEnabled()) clarity.init(CLARITY_ID);
+      });
     }
   }, []);
 

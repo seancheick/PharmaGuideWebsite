@@ -14,8 +14,8 @@ import type { LegalDocument } from "./legal";
  *   security measures, contact + complaint paths.
  *
  * IMPORTANT: this page reflects the data flow the app actually has
- * (verified against the app code 2026-10-01): the health profile,
- * conditions and medications stay on the phone; a signed-in user's
+ * (verified against ADR-009 and app code 2026-10-13): the health profile,
+ * conditions and medications stay on the phone unless explicitly shared; a signed-in user's
  * supplement list is backed up to their account; medication search
  * text goes to NIH RxNorm. Edits to the product's data flow MUST be
  * reflected here.
@@ -23,15 +23,15 @@ import type { LegalDocument } from "./legal";
 
 export const PRIVACY_DOC: LegalDocument = {
   eyebrow: "Privacy Policy",
-  titleLead: "Your health details stay on your phone.",
+  titleLead: "Your health details are yours to share.",
   titleEm: "By design.",
   subhead:
-    "Your health profile, conditions and medications stay on your device. This page explains exactly what we do collect, why, and how to control it.",
-  lastUpdated: "2026-10-05",
+    "Your health details stay on your device unless you choose to share them. This page explains account backups, optional AI-assistant sharing, and your controls.",
+  lastUpdated: "2026-10-13",
   summary: {
     title: "The short version",
     points: [
-      "Your **health profile, conditions and medications** are stored only on your device, and interaction checks run there too.",
+      "Your **health profile, conditions and medications** stay on your device by default, and interaction checks run there. You can explicitly share a scoped brief or a temporary snapshot with an AI assistant.",
       "If you create an account, we keep your **email** and a **backup of the supplement products in your stack** so you can restore it. Without an account, your stack stays on your device.",
       "We **never sell** your data. We don't share it with advertisers, brokers, or insurance companies.",
       "The **website chat** doesn't save your conversations: they stay in your browser until you close the page, and the text is processed by AI service providers to write each reply.",
@@ -66,7 +66,11 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
 
 **When you use the chat on this website:** the messages you type, and the last few messages from the same visit, are sent to our server and on to an AI service provider so it can write a reply. There is no account for chat, and we don't save your messages in a database. The conversation stays in your browser's memory for the current visit only; closing or reloading the page clears it. To limit abuse we rate-limit requests using a one-way hash of your IP address, not the address itself. We keep anonymous, topic-level usage statistics, never the messages. The chat window is masked from our session recordings.
 
-**What we do NOT collect from your device:** the medications you take, your conditions, your age, your goals, your allergies, your scan history, your interaction warnings, or any other health-related profile data. All of that is stored only on your phone.
+**Optional AI-assistant sharing:** connecting an assistant lets it read your synced supplement list for the duration shown on the approval screen (currently 24 hours). Connecting alone does not share medications or your health profile. In the app you can separately choose categories, review the exact text, and share a snapshot with one connected assistant. Medication and profile switches start off. The snapshot may contain the categories and derived findings you explicitly selected. Copying a brief into another app sends it through that app, without storing an AI-share snapshot on PharmaGuide.
+
+**Keep updated:** this separate option starts off. When enabled, local stack changes can refresh the snapshot using the last selected categories and duration, including new entries within those categories. Turning it off stops future automatic updates; use Disconnect to remove the existing server copy.
+
+**Outside those choices:** medications, conditions, age, goals, allergies and other health-profile details are not part of ordinary account backup. Scan history stays on your device.
 
 **What we do NOT collect from you ever:** social security number, government ID, financial account numbers, biometric data, precise location.`,
     },
@@ -88,17 +92,19 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
       title: "Storage and security",
       body: `**Where data lives:**
 On your device (protected by your phone's built-in storage encryption): your full supplement stack, medications, conditions, profile, scan history and interaction history.
-On our servers (encrypted in transit and at rest): your email, account metadata, the supplement backup described above if you have an account, product submissions you send, and anonymized usage logs.
+On our servers (encrypted in transit and at rest): your email, account metadata, the supplement backup described above if you have an account, product submissions you send, anonymized usage logs, assistant connection/access metadata, and any AI-share snapshot you explicitly send. Snapshot text travels over an encrypted connection and is encrypted with AES-GCM by our server before storage. PharmaGuide can decrypt it to provide the authorized assistant access; this is not end-to-end encryption.
 
 **Security measures:** encryption in transit and at rest on our servers, the platform's secure keystore for sign-in credentials on your device, scoped service-account access for our servers, regular security audits, and a coordinated disclosure policy at [security@pharmaguide.io](mailto:security@pharmaguide.io).
 
-**Data retention:** server-side data is retained as long as your account is active. When you delete your account, we permanently remove your account record and email within 30 days. On-device data is wiped immediately when you uninstall the app or tap "delete all my data" in settings.`,
+**AI-share retention and removal:** snapshots default to 24 hours and support a maximum of 30 days; access also requires an active, unexpired assistant connection. Expired snapshots are refused immediately and a scheduled job removes expired rows every 15 minutes. Disconnecting or removing a share deletes its server snapshot. App sign-out attempts to delete snapshots before signing out; if the device is offline or deletion fails, expiry still limits access, and you can disconnect from the website. Deleting your account removes its snapshots and connections. These controls cannot erase information the assistant already received or retained in chat history.
+
+**Other data retention:** server-side data is retained as long as your account is active. When you delete your account, we permanently remove your account record and email within 30 days. On-device data is wiped immediately when you uninstall the app or tap "delete all my data" in settings.`,
     },
     {
       id: "sharing",
       num: "5",
       title: "Who we share with",
-      body: `**Service providers:** the small number of vendors we use (email delivery, app hosting, error monitoring) only see what they need to do their job. None of them receive your medications, conditions or health profile, because those never leave your device. All vendors are bound by data-processing agreements aligned with GDPR / CCPA standards.
+      body: `**Service providers:** the small number of vendors we use (email delivery, app hosting, error monitoring) only see what they need to do their job. Optional AI sharing is an exception to device-only storage: our hosting provider stores the encrypted snapshot, and the assistant provider you choose receives the selected text. The assistant handles and retains that text under its own policies. All vendors are bound by data-processing agreements aligned with GDPR / CCPA standards.
 
 **Legal requirements:** we will disclose information when legally required (court order, subpoena, lawful request from a regulator) and we will tell you about the request unless legally barred from doing so.
 
@@ -130,7 +136,11 @@ If you're in California, the EU, the UK, or another jurisdiction with additional
       id: "third-parties",
       num: "7",
       title: "Third parties and tracking",
-      body: `**Cookies on the website:** we use a minimal set of essential cookies (session, security). We use privacy-friendly analytics (Vercel Analytics, Microsoft Clarity for session replay). No cross-site advertising trackers. No Facebook pixel. No data brokers.
+      body: `**Sign-in on the website:** consent and connections pages use browser storage for your Supabase session and the PKCE sign-in verifier.
+
+**Cookies on the website:** we use a minimal set of essential cookies (session, security). We use privacy-friendly analytics (Vercel Analytics, Microsoft Clarity for session replay). No cross-site advertising trackers. No Facebook pixel. No data brokers.
+
+**Connected AI assistants:** each provider you approve receives your supplement list and any snapshot you separately share to that connection. PharmaGuide does not control the provider's chat retention or training settings. Review those settings before sharing health information. Disconnecting stops future access through PharmaGuide; ask the provider to delete information it already received.
 
 **AI service providers (website chat):** to answer a chat question we send your message to Google (Gemini) and, as a backup, to Groq. They process that text to generate the reply, and each provider's own terms govern how it handles it. Don't type details you wouldn't want processed that way, such as your name or contact information.
 

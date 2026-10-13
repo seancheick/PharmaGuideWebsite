@@ -5,6 +5,14 @@
 This is the navigational index for the website build. Every doc lives in `docs/`
 and tracks one concern. Don't lose track — this file is the entry point.
 
+## AI connector audit — October 13, 2026
+
+Audit candidate on `codex/ai-connector-audit`, not deployed. Consent now requires the exact trusted client identity; failed approval rolls back its connection; partial disconnects retain a visible retry path. Private consent/account pages exclude marketing trackers and chat, enforce no-referrer/no-store and a restricted CSP. Privacy/FAQ/security/press wording reflects explicit temporary snapshot sharing and provider retention. Authorization20 and privacy8 tests pass; lint has0errors/4existing warnings, typecheck and production build pass. CI now runs both AI suites. The unconfigured private-page browser smoke passes; authenticated/provider end-to-end is not verified.
+
+Production is missing `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `AI_CONNECTOR_TRUSTED_CLIENTS`; the live connections page visibly reports unavailable despite HTTP200. Do not configure/redeploy personal sharing until the app ADR-009 S2 resource-binding blocker is resolved and release approval is given. Production DCR also conflicts with accepted pre-registration policy. The phone's scoped preview remains snapshot consent; this site's grant is supplements only. Privacy text is a corrected draft, not completed legal review. Cross-repo execution evidence is in the pipeline LEDGER and app `supabase/functions/mcp-personal/README.md`.
+
+Owner: `src/lib/ai-connector.ts` and `src/app/api/ai-connections/route.ts` own grant consent; `src/lib/analytics.ts` owns tracking eligibility. Evidence: route/helper callers and regression tests. Will NOT create: alternative authorization owner, client identity inferred from callback, new clinical rules or personal-data directory listing.
+
 ## Documents
 
 | Doc | Purpose |

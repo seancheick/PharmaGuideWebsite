@@ -20,13 +20,13 @@ export const HIPAA_DOC: LegalDocument = {
   titleEm: "Honest about the rest.",
   subhead:
     "How PharmaGuide thinks about health-data protection — what's HIPAA-aligned, what's beyond HIPAA, and where the line actually sits.",
-  lastUpdated: "2026-10-01",
+  lastUpdated: "2026-10-13",
   summary: {
     title: "The short version",
     points: [
       "HIPAA primarily applies to **covered entities** (providers, payers, clearinghouses) and their business associates. PharmaGuide consumer apps are usually outside that scope — a fact most apps quietly bury.",
       "We design **as if** HIPAA's Security Rule applies — encryption, access control, audit logging, breach response within 72 hours.",
-      "Your **medications, conditions and health profile stay on your device**. They never reach our servers, so we cannot look at them, leak them or be compelled to produce them.",
+      "Your **medications, conditions and health profile stay on your device by default**. An optional, explicitly shared AI snapshot is stored encrypted on our server and disclosed to your chosen assistant.",
       "If/when **PharmaGuide for Healthcare Pros** ships, that product will operate as a HIPAA business associate with full BAA support.",
     ],
   },
@@ -65,17 +65,17 @@ What that means in practice:
       title: "Why on-device data changes the equation",
       body: `The most sensitive things you put into PharmaGuide — your medications, your conditions, your health profile, your scan history, your interaction history — live in a local database on your phone, protected by your phone's built-in storage encryption. Interaction checks run on the device.
 
-We do not sync these to our servers and we do not have a copy, so there is nothing of them on our side to look up, expose or be compelled to produce.
+Ordinary stack backup excludes these health details. If you explicitly share an AI snapshot, PharmaGuide stores the selected text encrypted for a limited time and can decrypt it for that assistant. It is not end-to-end encrypted.
 
-One thing does reach us, only if you create an account: a backup of the supplement products in your stack, so you can restore it. It does not include your medications, conditions, doses or schedules. Read the [Privacy Policy](/privacy) for the exact data inventory.
+An account also enables a backup of the supplement products in your stack, so you can restore it. It does not include your medications, conditions, doses or schedules. Read the [Privacy Policy](/privacy) for the exact data inventory.
 
-By extension, much of the surface that HIPAA worries about — disclosure of PHI to third parties, audit trails of PHI access, BAAs with downstream vendors — is far smaller for us, because the most sensitive data never leaves your device.`,
+AI sharing creates an additional disclosure of health information. The consent preview explains the categories, duration and destination. Disconnecting ends future access but cannot erase the assistant’s existing chat history; see the privacy policy for removal and offline limits.`,
     },
     {
       id: "what-we-do-hold",
       num: "4",
       title: "What we do hold (and how it's protected)",
-      body: `On our servers we hold your **email address** (required for account auth), the **supplement backup** if you have an account, **product submissions** you choose to send, **anonymized usage logs** (server logs, crash reports, aggregated analytics), and **opt-in newsletter subscription records**.
+      body: `On our servers we hold your **email address** (required for account auth), the **supplement backup** if you have an account, **product submissions** you choose to send, **anonymized usage logs** (server logs, crash reports, aggregated analytics), **opt-in newsletter subscription records**, **AI connection/access metadata**, and any **temporary AI-share snapshot** you explicitly send.
 
 For these:
 - Encrypted at rest and in transit

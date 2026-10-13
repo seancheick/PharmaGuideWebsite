@@ -20,8 +20,6 @@ type View =
       preview: Preview;
       busy: boolean;
       error?: string;
-      /** Supabase already re-approved a returning assistant; this is where it goes. */
-      returningRedirect?: string;
     };
 
 const ID_PATTERN = /^[A-Za-z0-9_-]{1,255}$/;
@@ -51,21 +49,18 @@ export default function ConsentClient() {
       if (!ID_PATTERN.test(authorizationId)) {
         return show({ kind: "message", text: "This link is incomplete. Start the connection again from the assistant." });
       }
-      const { data: sessionData } = await supabase.auth.getSession();
-      const session = sessionData.session;
-      if (!session) return show({ kind: "signin" });
-      const { data, error } = await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
-      if (error || !data) {
-        return show({ kind: "message", text: "This connection request has ended. Start again from the assistant." });
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const session = sessionData.session;
+        if (!session) return show({ kind: "signin" });
+        // The route is the only reader: details lookup can complete a
+        // returning authorization, so it must not run twice in parallel.
+        const { ok, json } = await callRoute(session, { action: "preview", authorization_id: authorizationId });
+        if (!ok) return show({ kind: "message", text: String(json.error ?? "This connection cannot be approved.") });
+        show({ kind: "consent", session, preview: json as unknown as Preview, busy: false });
+      } catch {
+        show({ kind: "message", text: "The connection could not be loaded. Try again from the assistant." });
       }
-      // Supabase approves a returning assistant from an earlier consent and
-      // returns only its redirect. PharmaGuide never adds a connection
-      // silently: the route allows a fresh one, with this card shown, only
-      // when the previous connection was revoked or has expired.
-      const returningRedirect = "authorization_id" in data ? undefined : data.redirect_url;
-      const { ok, json } = await callRoute(session, { action: "preview", authorization_id: authorizationId });
-      if (!ok) return show({ kind: "message", text: String(json.error ?? "This connection cannot be approved.") });
-      show({ kind: "consent", session, preview: json as unknown as Preview, busy: false, returningRedirect });
     }
     void load();
     return () => {
@@ -76,37 +71,34 @@ export default function ConsentClient() {
   async function decide(approve: boolean) {
     if (view.kind !== "consent") return;
     const supabase = browserSupabase();
-    if (!supabase) return;
+    if (!supabase) {
+      setView({ ...view, busy: false, error: "Connecting assistants is unavailable right now." });
+      return;
+    }
     setView({ ...view, busy: true, error: undefined });
-    if (approve) {
-      const written = await callRoute(view.session, { action: "approve", authorization_id: authorizationId });
-      if (!written.ok) {
-        setView({ ...view, busy: false, error: String(written.json.error ?? "PharmaGuide could not record this connection.") });
-        return;
+    try {
+      let redirectUrl: unknown;
+      if (approve) {
+        // The route creates the connection, approves with Auth and closes
+        // the new connection on an approval failure before responding.
+        const written = await callRoute(view.session, { action: "approve", authorization_id: authorizationId });
+        if (!written.ok) {
+          setView({ ...view, busy: false, error: String(written.json.error ?? "PharmaGuide could not record this connection.") });
+          return;
+        }
+        redirectUrl = written.json.redirect_url;
+      } else {
+        const result = await supabase.auth.oauth.denyAuthorization(authorizationId, { skipBrowserRedirect: true });
+        if (result.error) throw new Error("denial failed");
+        redirectUrl = result.data?.redirect_url;
       }
-    }
-    if (view.returningRedirect !== undefined) {
-      // Already approved by Supabase: deny simply never delivers the code.
-      if (!approve) {
-        setView({ kind: "message", text: "Nothing was connected. You can close this page." });
-        return;
+      if (typeof redirectUrl !== "string" || !redirectMatchesCallback(redirectUrl, view.preview.redirect_uri)) {
+        throw new Error("callback unavailable");
       }
-      if (!redirectMatchesCallback(view.returningRedirect, view.preview.redirect_uri)) {
-        setView({ ...view, busy: false, error: "The assistant could not be reached. Start again from the assistant." });
-        return;
-      }
-      window.location.assign(view.returningRedirect);
-      return;
+      window.location.assign(redirectUrl);
+    } catch {
+      setView({ ...view, busy: false, error: "The connection could not finish. Check your connections page before trying again from the assistant." });
     }
-    const result = approve
-      ? await supabase.auth.oauth.approveAuthorization(authorizationId, { skipBrowserRedirect: true })
-      : await supabase.auth.oauth.denyAuthorization(authorizationId, { skipBrowserRedirect: true });
-    const redirectUrl = result.data?.redirect_url;
-    if (result.error || !redirectUrl || !redirectMatchesCallback(redirectUrl, view.preview.redirect_uri)) {
-      setView({ ...view, busy: false, error: "The assistant could not be reached. Start again from the assistant." });
-      return;
-    }
-    window.location.assign(redirectUrl);
   }
 
   if (view.kind === "loading") return <p className="text-neutral-500">Loading…</p>;

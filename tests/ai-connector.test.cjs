@@ -6,13 +6,10 @@ const {
   CONNECTION_SCOPE,
   CONNECTIONS_COPY,
   connectionExpiry,
-  callbackOf,
   consentCopy,
   createWriteLimiter,
-  mayReconnect,
   parseTrustedClients,
   redirectMatchesCallback,
-  returningClient,
   verifyCallback,
 } = require("../.tmp/ai-connector-test-build/src/lib/ai-connector.js");
 
@@ -140,28 +137,6 @@ const TRUSTED = [
   { client_id: "c-code", name: "Claude Code", kind: "claude_code" },
 ];
 
-test("a returning authorization resolves to exactly one trusted client by its callback", () => {
-  assert.equal(returningClient("https://claude.ai/api/mcp/auth_callback?code=a&state=b", TRUSTED).client_id, "c-claude");
-  assert.equal(returningClient("https://chatgpt.com/connector/oauth/abc?code=a", TRUSTED).client_id, "c-chatgpt");
-  assert.equal(returningClient("http://localhost:5555/callback?code=a", TRUSTED).client_id, "c-code");
-  assert.equal(returningClient("https://evil.example/api/mcp/auth_callback?code=a", TRUSTED), null);
-  assert.equal(returningClient("not a url", TRUSTED), null);
-  const twoClaudes = [...TRUSTED, { client_id: "c-claude-2", name: "Claude (staging)", kind: "claude" }];
-  assert.equal(returningClient("https://claude.ai/api/mcp/auth_callback?code=a", twoClaudes), null, "ambiguous");
-  assert.equal(callbackOf("https://claude.ai/api/mcp/auth_callback?code=a&state=b"), "https://claude.ai/api/mcp/auth_callback");
-  assert.equal(callbackOf("http://localhost:5555/callback?code=a"), "http://localhost:5555/callback");
-  assert.equal(callbackOf("not a url"), null);
-});
-
-test("reconnect is allowed after revoked or expired, refused while a connection is live", () => {
-  const now = new Date("2026-10-12T12:00:00Z");
-  assert.equal(mayReconnect(null, now), true, "no row on record");
-  assert.equal(mayReconnect({ status: "revoked", expires_at: "2026-10-13T00:00:00Z" }, now), true);
-  assert.equal(mayReconnect({ status: "expired", expires_at: "2026-10-11T00:00:00Z" }, now), true);
-  assert.equal(mayReconnect({ status: "active", expires_at: "2026-10-12T11:59:59Z" }, now), true, "lapsed");
-  assert.equal(mayReconnect({ status: "active", expires_at: "2026-10-13T00:00:00Z" }, now), false, "live: no silent duplicate");
-});
-
 // Rate limit on /api/ai-connections writes ------------------------------------
 
 test("writes are limited per user within a sliding minute", () => {
@@ -181,4 +156,224 @@ test("the limiter forgets the oldest users past its key cap", () => {
   assert.equal(take("b", 0), true);
   assert.equal(take("c", 0), true);
   assert.equal(take("a", 1), true, "a was evicted");
+});
+
+// Execute the real route and client components with isolated network/hooks.
+// No production test exports; TypeScript imports are substituted at the boundary.
+const fs = require("node:fs");
+const path = require("node:path");
+const Module = require("node:module");
+const ts = require("typescript");
+const connector = require("../.tmp/ai-connector-test-build/src/lib/ai-connector.js");
+function loadSource(relative, mocks, fetchFn) {
+  const filename = path.resolve(__dirname, "..", relative);
+  const instance = new Module(filename, module);
+  instance.filename = filename;
+  instance.paths = Module._nodeModulePaths(path.dirname(filename));
+  const original = instance.require.bind(instance);
+  instance.require = (name) => Object.hasOwn(mocks, name) ? mocks[name] : original(name);
+  instance.testFetch = fetchFn;
+  instance.testProcess = { env: { AI_CONNECTOR_TRUSTED_CLIENTS: JSON.stringify(TRUSTED) } };
+  instance.testWindow = { location: { assign: (url) => { instance.redirect = url; } } };
+  const compiled = ts.transpileModule(fs.readFileSync(filename, "utf8"), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
+  }).outputText;
+  instance._compile("const fetch = module.testFetch; const process = module.testProcess; const window = module.testWindow;\n" + compiled, filename);
+  return instance;
+}
+const sessionToken = `header.${Buffer.from(JSON.stringify({ sub: "user-1" })).toString("base64url")}.signature`;
+const response = (value, status = 200) => Response.json(value, { status });
+function routeHarness(overrides = {}) {
+  const calls = [];
+  const fetchFn = async (url, init = {}) => {
+    calls.push({ url, ...init });
+    if (overrides.fetch) return overrides.fetch(url, init);
+    if (url.endsWith("/auth/v1/user")) {
+      if (overrides.authThrows) throw new Error("network unavailable");
+      return response({ id: "user-1" });
+    }
+    if (url.includes("/oauth/authorizations/") && !url.endsWith("/consent")) {
+      return response(overrides.details ?? { client: { id: "c-claude" }, redirect_uri: "https://claude.ai/api/mcp/auth_callback" });
+    }
+    if (url.endsWith("/consent")) return response(overrides.consent ?? { redirect_url: "https://claude.ai/api/mcp/auth_callback?code=approved" }, overrides.consentStatus ?? 200);
+    if (init.method === "POST") return response([{ connection_id: JSON.parse(init.body).connection_id, expires_at: "2026-10-14T12:00:00Z" }]);
+    return response([]);
+  };
+  const route = loadSource("src/app/api/ai-connections/route.ts", {
+    "next/server": { NextResponse: { json: (value, options = {}) => response(value, options.status ?? 200) } },
+    "@/lib/env": { env: { SUPABASE_URL: "https://project.test", SUPABASE_SERVICE_ROLE_KEY: "fixture-service-key" } },
+    "@/lib/logger": { log: { info() {}, error() {} } },
+    "@/lib/ai-connector": connector,
+  }, fetchFn);
+  // Match NextResponse.json's options form.
+  route.testFetch = fetchFn;
+  return { calls, post: (body) => route.exports.POST(new Request("https://site.test/api/ai-connections", {
+    method: "POST", headers: { authorization: `Bearer ${sessionToken}` }, body: JSON.stringify(body),
+  })) };
+}
+
+test("route refuses redirect-only authorization without attributing it to a callback-sharing client", async () => {
+  const h = routeHarness({ details: { redirect_url: "https://claude.ai/api/mcp/auth_callback?code=untrusted" } });
+  const result = await h.post({ action: "approve", authorization_id: "authorization-1" });
+  assert.equal(result.status, 409);
+  assert.equal(h.calls.some((c) => c.url.includes("/rest/v1/") && c.method === "POST"), false);
+});
+
+test("route rejects non-object JSON and handles auth network failures", async () => {
+  for (const body of [null, [], "approve"]) {
+    assert.equal((await routeHarness().post(body)).status, 400);
+  }
+  const result = await routeHarness({ authThrows: true }).post({ action: "preview", authorization_id: "authorization-1" });
+  assert.equal(result.status, 503);
+});
+
+test("approval returns only a checked OAuth redirect and rolls its row back on consent failure", async () => {
+  for (const options of [{ consentStatus: 500 }, { consent: { redirect_url: "https://evil.test/callback" } }]) {
+    const h = routeHarness(options);
+    const result = await h.post({ action: "approve", authorization_id: "authorization-1" });
+    assert.equal(result.status, 503);
+    assert.ok(h.calls.some((c) => c.url.includes("connection_id=eq.") && c.method === "PATCH" && JSON.parse(c.body).status === "revoked"));
+  }
+  const h = routeHarness();
+  const result = await h.post({ action: "approve", authorization_id: "authorization-1" });
+  assert.equal(result.status, 200);
+  assert.equal((await result.json()).redirect_url, "https://claude.ai/api/mcp/auth_callback?code=approved");
+});
+
+async function flush() { for (let i = 0; i < 8; i++) await new Promise(setImmediate); }
+function clientHarness(relative, supabase, fetchFn = async () => response({})) {
+  const states = [];
+  const effects = [];
+  let cursor = 0;
+  let mounted = false;
+  const react = {
+    useState(initial) {
+      const index = cursor++;
+      if (!(index in states)) states[index] = initial;
+      return [states[index], (next) => { states[index] = typeof next === "function" ? next(states[index]) : next; }];
+    },
+    useCallback(fn) { return fn; },
+    useEffect(fn) { if (!mounted) effects.push(fn); },
+  };
+  const loaded = loadSource(relative, {
+    react,
+    "next/link": { __esModule: true, default: "a" },
+    "next/navigation": { useSearchParams: () => new URLSearchParams("authorization_id=authorization-1") },
+    "@/components/ai-connector/SignInPanel": { SignInPanel: "signin" },
+    "@/lib/ai-connector": connector,
+    "@/lib/supabase-browser": { browserSupabase: () => supabase },
+  }, fetchFn);
+  function render() { cursor = 0; return loaded.exports.default(); }
+  return { states, render, async start() { render(); mounted = true; effects.forEach((fn) => fn()); await flush(); } };
+}
+function fakeSupabase(options = {}) {
+  let grants = options.grants ?? [];
+  return {
+    auth: {
+      getSession: async () => ({ data: { session: { access_token: sessionToken } } }),
+      oauth: {
+        listGrants: async () => ({ data: grants, error: null }),
+        revokeGrant: async () => { grants = []; return { error: null }; },
+        getAuthorizationDetails: async () => { throw new Error("browser must not read authorization a second time"); },
+      },
+    },
+    from: () => ({ select: () => ({ order: async () => ({ data: options.rows ?? [], error: options.rowsError ?? null }) }) }),
+  };
+}
+function buttons(node) {
+  if (!node || typeof node !== "object") return [];
+  if (Array.isArray(node)) return node.flatMap(buttons);
+  return [...(node.type === "button" ? [node] : []), ...buttons(node.props?.children)];
+}
+
+test("connections retain stored grants after OAuth removal and expose database read failures", async () => {
+  const rows = [{ client_id: "c-claude", client_name: "Claude", status: "active", expires_at: "2099-01-01T00:00:00Z" }];
+  const h = clientHarness("src/app/account/connections/connections-client.tsx", fakeSupabase({ rows }));
+  await h.start();
+  assert.equal(h.states[0].kind, "list");
+  assert.deepEqual(h.states[0].grants.map((g) => g.clientId), ["c-claude"]);
+  const failed = clientHarness("src/app/account/connections/connections-client.tsx", fakeSupabase({ rowsError: { message: "db unavailable" } }));
+  await failed.start();
+  assert.equal(failed.states[0].kind, "message");
+  assert.match(failed.states[0].text, /could not be loaded/);
+});
+
+test("consent uses server preview once and recovers a failed approval request", async () => {
+  let calls = 0;
+  const h = clientHarness("src/app/oauth/authorize/consent-client.tsx", fakeSupabase(), async () => {
+    calls++;
+    if (calls > 1) throw new Error("offline");
+    return response({ client_name: "Claude", callback_host: "claude.ai", redirect_uri: "https://claude.ai/api/mcp/auth_callback" });
+  });
+  await h.start();
+  assert.equal(h.states[0].kind, "consent");
+  buttons(h.render())[0].props.onClick();
+  await flush();
+  assert.equal(h.states[0].busy, false);
+  assert.match(h.states[0].error, /could not|unavailable|again/);
+});
+
+test("disconnect remains retryable when revoking the database grant fails", async () => {
+  const rows = [{ client_id: "c-claude", client_name: "Claude", status: "active", expires_at: "2099-01-01T00:00:00Z" }];
+  const supabase = fakeSupabase({ rows, grants: [{ client: { id: "c-claude", name: "Claude" }, granted_at: "2026-10-13" }] });
+  const h = clientHarness("src/app/account/connections/connections-client.tsx", supabase, async () => { throw new Error("offline"); });
+  await h.start();
+  buttons(h.render())[0].props.onClick();
+  await flush();
+  assert.equal(h.states[0].kind, "list");
+  assert.deepEqual(h.states[0].grants.map((g) => g.clientId), ["c-claude"]);
+  assert.match(h.states[0].notice, /could not finish/);
+});
+
+test("approval creates the grant before Auth creates its OAuth session", async () => {
+  const h = routeHarness();
+  assert.equal((await h.post({ action: "approve", authorization_id: "authorization-1" })).status, 200);
+  const insert = h.calls.findIndex((c) => c.url.includes("/rest/v1/ai_connections") && c.method === "POST");
+  const consent = h.calls.findIndex((c) => c.url.endsWith("/consent"));
+  assert.ok(insert >= 0 && consent > insert, "authoritative session age must follow consent row creation");
+});
+
+test("a lost insert response rolls back the known attempted id and rollback failure names recovery", async () => {
+  for (const rollbackFails of [false, true]) {
+    const calls = [];
+    let attemptedId;
+    const h = routeHarness({ fetch: async (url, init = {}) => {
+      calls.push({ url, ...init });
+      if (url.endsWith("/user")) return response({ id: "user-1" });
+      if (url.includes("/oauth/authorizations/")) return response({ client: { id: "c-claude" }, redirect_uri: "https://claude.ai/api/mcp/auth_callback" });
+      if (init.method === "POST") {
+        attemptedId = JSON.parse(init.body).connection_id;
+        throw new Error("insert response lost");
+      }
+      if (url.includes("connection_id=eq.") && rollbackFails) return response({}, 503);
+      return response([]);
+    } });
+    const result = await h.post({ action: "approve", authorization_id: "authorization-1" });
+    assert.equal(result.status, 503);
+    assert.ok(attemptedId);
+    assert.ok(calls.some((c) => c.url.includes(`connection_id=eq.${attemptedId}`) && c.url.includes("user_id=eq.user-1") && JSON.parse(c.body).status === "revoked"));
+    if (rollbackFails) assert.match((await result.json()).error, /connections page and disconnect/);
+  }
+});
+
+test("unknown clients and wrong callbacks never write a consent row", async () => {
+  for (const details of [
+    { client: { id: "unregistered" }, redirect_uri: "https://claude.ai/api/mcp/auth_callback" },
+    { client: { id: "c-claude" }, redirect_uri: "https://evil.example/callback" },
+  ]) {
+    const h = routeHarness({ details });
+    assert.equal((await h.post({ action: "approve", authorization_id: "authorization-1" })).status, 403);
+    assert.equal(h.calls.some((c) => c.url.includes("/rest/v1/")), false);
+  }
+});
+
+test("both pages stop loading and show recovery after session lookup rejects", async () => {
+  for (const relative of ["src/app/oauth/authorize/consent-client.tsx", "src/app/account/connections/connections-client.tsx"]) {
+    const supabase = fakeSupabase();
+    supabase.auth.getSession = async () => { throw new Error("offline"); };
+    const h = clientHarness(relative, supabase);
+    await h.start();
+    assert.equal(h.states[0].kind, "message");
+    assert.match(h.states[0].text, /could not be loaded/);
+  }
 });

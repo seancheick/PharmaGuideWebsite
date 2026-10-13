@@ -20,7 +20,8 @@
     "blog:publish-check": "node scripts/validate-blog.mjs --publish-check",
     "test:email": "node --test tests/resend-contract.test.cjs",
     "test:ai-connector": "tsc -p tests/tsconfig.ai-connector.json && node --test tests/ai-connector.test.cjs",
-    "test:ai-privacy": "node --test tests/analytics-privacy.test.cjs"
+    "test:ai-privacy": "node --test tests/analytics-privacy.test.cjs",
+    "test:mcp-routing": "node --test tests/mcp-routing.test.cjs"
   },
   "dependencies": {
     "@microsoft/clarity": "^1.0.2",

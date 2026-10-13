@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { ChatLauncher } from "./ChatLauncher";
+import { isPrivateRoute } from "@/lib/analytics";
 
 /**
  * ChatLauncherGate — decides whether to render the chat launcher
@@ -21,6 +22,6 @@ const HIDDEN_ROUTES = ["/privacy", "/terms", "/hipaa", "/accessibility"];
 export function ChatLauncherGate() {
   const pathname = usePathname();
   const shouldHide = HIDDEN_ROUTES.some((r) => pathname.startsWith(r));
-  if (shouldHide) return null;
+  if (shouldHide || isPrivateRoute(pathname)) return null;
   return <ChatLauncher />;
 }

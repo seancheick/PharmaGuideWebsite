@@ -63,7 +63,7 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "privacy",
     q: "Is my health data actually private?",
-    body: "**Yes.** Your medications, conditions and health profile are stored only on your device, and interaction checks run there. If you create an account, we back up the supplement products in your stack so you can restore it — never your medications or conditions. The architecture is HIPAA-aligned. We do not sell health data.",
+    body: "**Yes.** Your medications, conditions and health profile stay on your device by default, and interaction checks run there. If you create an account, we back up the supplement products in your stack so you can restore it — never your medications or conditions. You can separately choose to share a brief or a temporary encrypted snapshot with an AI assistant; the app previews exactly what you selected. Disconnecting cannot erase the assistant’s existing chat history. See our [Privacy Policy](/privacy). We do not sell health data.",
   },
   {
     group: "product",

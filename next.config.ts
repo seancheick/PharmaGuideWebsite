@@ -120,6 +120,19 @@ const nextConfig: NextConfig = {
           { key: "X-DNS-Prefetch-Control", value: "on" },
         ],
       },
+      ...["/oauth/:path*", "/account/:path*"].map((source) => ({
+        source,
+        headers: [
+          { key: "Referrer-Policy", value: "no-referrer" },
+          { key: "Cache-Control", value: "no-store" },
+          // Consent pages have no marketing scripts or third-party beacons.
+          // Sign-in redirects are top-level navigations, not embedded frames.
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://omayamxacvacrnvdvzhr.supabase.co; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://omayamxacvacrnvdvzhr.supabase.co",
+          },
+        ],
+      })),
     ];
   },
 };

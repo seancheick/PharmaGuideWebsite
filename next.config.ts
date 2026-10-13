@@ -41,6 +41,20 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["framer-motion", "clsx", "tailwind-merge"],
   },
 
+  // Branded public catalog transport. Keep the clinical/data owner in the
+  // existing Edge function; no personal endpoint is exposed by this alias.
+  async rewrites() {
+    return {
+      beforeFiles: ["/", "/public"].map((source) => ({
+        source,
+        has: [{ type: "host" as const, value: "mcp\\.pharmaguide\\.io" }],
+        destination: "https://omayamxacvacrnvdvzhr.supabase.co/functions/v1/mcp-public",
+      })),
+      afterFiles: [],
+      fallback: [],
+    };
+  },
+
   // Print → web entry points.
   //
   // /card is the URL encoded in the QR on the business card. The card is

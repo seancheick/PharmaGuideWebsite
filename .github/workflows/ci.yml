@@ -52,7 +52,7 @@ jobs:
         run: pnpm test:catalog-claim
 
       - name: AI connector authorization and privacy
-        run: pnpm test:ai-connector && pnpm test:ai-privacy
+        run: pnpm test:ai-connector && pnpm test:ai-privacy && pnpm test:mcp-routing
 
       # Build last: it is the slowest step and the one most likely to be
       # fixed by whatever lint or typecheck already caught.

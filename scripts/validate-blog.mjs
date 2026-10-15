@@ -528,9 +528,13 @@ function checkReadability(content) {
   // Strips frontmatter + MDX components + fenced code + Sources section before measuring.
   const issues = [];
 
-  // Cut anything from "## Sources" onward (reference list, not body prose)
+  // Cut the reference list: either a "## Sources" heading or the <Sources>
+  // component the MDX contract actually mandates. Measuring the reference
+  // list as prose produced a phantom "paragraph exceeds 5 sentences" warning
+  // on every post that used the component.
   const sourcesIdx = content.search(/\n##\s+Sources?\b/i);
   let body = sourcesIdx > 0 ? content.slice(0, sourcesIdx) : content;
+  body = body.replace(/<Sources>[\s\S]*?<\/Sources>/gi, "");
 
   // Drop fenced code blocks and inline component blocks (keep their text where possible)
   body = body.replace(/```[\s\S]*?```/g, "");
@@ -547,7 +551,7 @@ function checkReadability(content) {
 
   // Sentence count per paragraph (approx: split on . ! ? followed by space/newline/end)
   const longParas = paragraphs
-    .map((p) => ({ p, sentences: (p.match(/[.!?](?=\s|$)/g) || []).length }))
+    .map((p) => ({ p, sentences: (p.match(/[.!?]["'\u2019\u201d)\]]*(?=\s|$)/g) || []).length }))
     .filter((x) => x.sentences > 5);
 
   if (longParas.length) {
@@ -558,10 +562,15 @@ function checkReadability(content) {
     );
   }
 
-  // Average sentence length across body
+  // Average sentence length across body.
+  // Terminal punctuation may be followed by a closing quote or bracket
+  // (`."` / `.)` ), and markdown table rows carry no sentence punctuation at
+  // all — both previously merged real sentences into one giant pseudo-sentence.
   const allSentences = body
-    .replace(/\n/g, " ")
-    .split(/[.!?](?=\s|$)/)
+    .split(/\n/)
+    .filter((l) => !/^\s*\|/.test(l))
+    .join(" ")
+    .split(/[.!?]["'\u2019\u201d)\]]*(?=\s|$)/)
     .map((s) => s.trim())
     .filter((s) => s.length > 0 && !/^#+\s/.test(s));
   const longSentences = allSentences.filter(
@@ -786,6 +795,166 @@ async function checkPubmedCitations(content, { skip = false } = {}) {
   }
 }
 
+// ─── PubMed citation SUPPORT ─────────────────────────────────────────
+// Identity (above) proves the PMID is the paper the post names. It cannot
+// see whether that paper supports the sentence it is attached to — the
+// failure mode where a real, correctly-labelled study is cited for a claim
+// it never made, or an animal study is cited for a human-sounding claim.
+// This fetches each record's ABSTRACT, publication types and MeSH terms and
+// checks the claim it is attached to against them.
+
+const STOP_CTX = new Set(["that","this","with","from","have","been","were","which","their","there","about","would","could","should","these","those","other","than","then","when","what","your","more","most","some","only","also","into","over","under","after","before","because","while","they","them","same","such","does","doing","being","between","against","during","above","below","through","shows","show","found","study","studies","research","review","evidence","people","reader","label","post"]);
+
+function parseEfetch(xml) {
+  const out = {};
+  for (const art of xml.split(/(?=<PubmedArticle>)/)) {
+    const pm = /<PMID[^>]*>(\d+)<\/PMID>/.exec(art);
+    if (!pm || !/<ArticleTitle>/.test(art)) continue;
+    const strip = (t) => t.replace(/<[^>]+>/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+    const title = strip((/<ArticleTitle>([\s\S]*?)<\/ArticleTitle>/.exec(art) || [, ""])[1]);
+    const abstract = [...art.matchAll(/<AbstractText[^>]*>([\s\S]*?)<\/AbstractText>/g)].map((m) => strip(m[1])).join(" ");
+    const pubtypes = [...art.matchAll(/<PublicationType[^>]*>([\s\S]*?)<\/PublicationType>/g)].map((m) => strip(m[1]).toLowerCase());
+    const mesh = [...art.matchAll(/<DescriptorName[^>]*>([\s\S]*?)<\/DescriptorName>/g)].map((m) => strip(m[1]).toLowerCase());
+    out[pm[1]] = { title, abstract, pubtypes, mesh };
+  }
+  return out;
+}
+
+// Pair each citation with the prose it is attached to.
+// <Source>…</Source> and <EvidencePill> follow their claim, so the claim is
+// the preceding paragraph. Entries inside <Sources> or on a "**Source:**"
+// line are reference listings, not claims — identity-only, skipped here.
+function claimContexts(content) {
+  const pairs = [];
+  const sourcesBlock = /<Sources>[\s\S]*?<\/Sources>/g;
+  const masked = content.replace(sourcesBlock, (m) => " ".repeat(m.length));
+  const re = /<Source>([\s\S]*?)<\/Source>/g;
+  let m;
+  while ((m = re.exec(masked)) !== null) {
+    // The link text and the href both contain the PMID; dedupe or every
+    // finding is reported twice.
+    const ids = [...new Set([...m[1].matchAll(/pubmed\.ncbi\.nlm\.nih\.gov\/(\d+)/g)].map((x) => x[1]))];
+    if (!ids.length) continue;
+    const before = masked.slice(0, m.index).trimEnd();
+    const clean = (t) => t.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    // Three scopes, because each test needs a different one:
+    //   ctx      — the paragraph the citation hangs off (subject + study type)
+    //   section  — the enclosing H2 block (species framing is often set a
+    //              paragraph earlier: "researchers gave it to rodents")
+    //   sentence — the last sentence before the chip (numbers only belong to
+    //              the claim they sit next to; a paragraph may cite two studies)
+    const paras = before.split(/\n\s*\n/).filter((q) => q.trim() && !/^#+\s/.test(q.trim()));
+    const ctx = clean(paras[paras.length - 1] || "");
+    const h2 = before.lastIndexOf("\n## ");
+    const section = clean(h2 >= 0 ? before.slice(h2) : before);
+    const sentences = ctx.split(/(?<=[.!?])\s+/).filter(Boolean);
+    const sentence = sentences[sentences.length - 1] || ctx;
+    for (const id of ids) pairs.push({ pmid: id, ctx, section, sentence });
+  }
+  return pairs;
+}
+
+function numbersIn(text) {
+  // Numeric tokens worth verifying: doses, percentages, fold-changes, counts.
+  // Excludes years, 4-digit+ ids, and table rows (handled by caller).
+  return [...text.matchAll(/(?<![\w.])(\d+(?:\.\d+)?)\s*(%|-fold|fold|mg|g\b|ppm|µg|mcg|weeks?|months?|days?)?/gi)]
+    .map((m) => ({ n: m[1], unit: (m[2] || "").toLowerCase() }))
+    .filter((x) => !/^(19|20)\d{2}$/.test(x.n) && Number(x.n) !== 1 && x.n.length <= 6);
+}
+
+async function checkCitationSupport(content, { skip = false } = {}) {
+  const pairs = claimContexts(content);
+  if (!pairs.length) return [];
+  if (skip) return [warn(`${pairs.length} citation-support check(s) skipped (offline)`)];
+  const ids = [...new Set(pairs.map((p) => p.pmid))];
+  let recs;
+  try {
+    const res = await fetch(`${EUTILS}/efetch.fcgi?db=pubmed&retmode=xml&tool=pharmaguide-blog&id=${ids.join(",")}`, {
+      headers: { "User-Agent": "PharmaGuide-Blog-Validator/1.0 (mailto:hello@pharmaguide.io)" },
+    });
+    recs = parseEfetch(await res.text());
+  } catch (err) {
+    return [fail(`citation-support check could not reach NCBI (${err.message}); rerun online`)];
+  }
+
+  const issues = [];
+  for (const { pmid, ctx, section, sentence } of pairs) {
+    const r = recs[pmid];
+    if (!r) { issues.push(warn(`PMID ${pmid}: no record returned for the support check`)); continue; }
+    if (!r.abstract) { issues.push(warn(`PMID ${pmid} has no abstract on PubMed — verify support by hand`)); continue; }
+    const hay = (r.title + " " + r.abstract).toLowerCase();
+    const meshAll = r.mesh.join(" ");
+    const low = ctx.toLowerCase();
+
+    // 1. Zero topic overlap — the citation is about something else entirely.
+    const words = [...new Set(low.replace(/[^a-z0-9 ]+/g, " ").split(/\s+/).filter((w) => w.length > 4 && !STOP_CTX.has(w)))];
+    const overlap = words.filter((w) => hay.includes(w.slice(0, Math.max(5, w.length - 2))));
+    if (words.length >= 4 && overlap.length === 0) {
+      issues.push(fail(`PMID ${pmid} shares no subject terms with the claim it is attached to — wrong source? claim: "${ctx.slice(0, 110)}…"`));
+      continue;
+    }
+
+    // 2. Animal / in-vitro study cited for a claim that reads as human.
+    // Species words are the easy case. Many toxicology abstracts never name
+    // the animal ("in vivo", "LD50 > 2000 mg kg-1"), and a paper indexed in
+    // the last few months has no MeSH terms at all — so the signature of an
+    // animal/lab study has to be matched too, or human-sounding claims on
+    // rodent data sail through. This is the check that matters most for YMYL.
+    const speciesNamed = /\b(rats?|mice|mouse|murine|rodents?|zebrafish|drosophila|rabbits?|porcine|canine|bovine|wistar|sprague[- ]dawley|albino)\b/.test(hay);
+    const labOnly = /\b(in vitro|cell lines?|cultured cells?)\b/.test(hay);
+    const toxSignature = /\bld50\b|\bmg\s*kg-?1\b|\bmg\/kg\b|\bbody weight gain\b|\bhistopatholog/.test(hay)
+      && /\bin vivo\b/.test(hay) && !/\b(patients?|participants?|volunteers?|humans?|adults?|men|women)\b/.test(hay);
+    const meshAnimal = /\banimals\b/.test(meshAll) && !/\bhumans\b/.test(meshAll);
+    const animalEvidence = speciesNamed || labOnly || toxSignature || meshAnimal;
+    // Scoped to the whole H2 section: a post that says "gave shilajit to
+    // rodents" one paragraph earlier has qualified the claim for the reader.
+    const ctxFlagsAnimal = /\b(rats?|mice|mouse|murine|rodents?|animals?|in vitro|in vivo|preclinical|cell|lab|laborator)\w*\b/.test(section.toLowerCase());
+    if (animalEvidence && !ctxFlagsAnimal) {
+      issues.push(fail(`PMID ${pmid} is animal or in-vitro evidence but the claim does not say so — add the qualifier. claim: "${ctx.slice(0, 110)}…"`));
+    }
+
+    // 3. Numbers attributed to this study must appear in its abstract.
+    // Warning, not a failure: one sentence may legitimately draw a figure from
+    // a guideline or a second citation, so a human has to judge. Scoped to the
+    // sentence beside the chip — attributing every digit in a paragraph to one
+    // study produced false positives on real posts.
+    const sentNoTable = sentence.replace(/\|[^|]*\|/g, " ");
+    const missing = numbersIn(sentNoTable).filter(({ n }) => !new RegExp(`(?<![\\w.])${n.replace(".", "\\.")}`).test(r.abstract));
+    if (missing.length) {
+      issues.push(warn(`PMID ${pmid}: number(s) ${missing.map((x) => x.n + x.unit).join(", ")} are not in this study's abstract — confirm the figure belongs to this source`));
+    }
+
+    // 4. Study-type overclaim.
+    const typeClaims = [
+      [/\bmeta-?analys/i, "meta-analysis"],
+      [/\bsystematic review\b/i, "systematic review"],
+      [/\b(randomi[sz]ed|RCT|placebo-controlled)\b/i, "randomized controlled trial"],
+    ];
+    for (const [rx, pt] of typeClaims) {
+      if (rx.test(ctx) && !r.pubtypes.some((t) => t.includes(pt.split(" ")[0]))) {
+        issues.push(fail(`PMID ${pmid} is not indexed as a ${pt} (types: ${r.pubtypes.join(", ") || "none"}) but the claim calls it one`));
+      }
+    }
+
+    // 5. Null-result study read as positive.
+    const nullResult = /\b(no significant|did not differ|no difference|no effect|failed to|was not associated|non-significant)\b/.test(hay);
+    const positiveClaim = /\b(reduces?|reduced|improves?|improved|increases?|increased|lowers?|lowered|helps?|prevents?|boosts?)\b/.test(low);
+    const hedged = /\b(mixed|no benefit|did not|does not|unclear|inconsistent|no significant|null)\b/.test(low);
+    if (nullResult && positiveClaim && !hedged) {
+      issues.push(warn(`PMID ${pmid} reports a null or non-significant finding but the claim reads positive — confirm direction. claim: "${ctx.slice(0, 110)}…"`));
+    }
+  }
+  // The same claim can legitimately cite one study twice; report each distinct
+  // finding once.
+  const seen = new Set();
+  return issues.filter((i) => {
+    const k = i.kind + "|" + i.msg;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
+
 // ─── Main ────────────────────────────────────────────────────────────
 
 async function validate(slug, { publishCheck = false, acceptWarnings = false, skipUrl = false } = {}) {
@@ -828,6 +997,7 @@ async function validate(slug, { publishCheck = false, acceptWarnings = false, sk
   push("humanizer", checkAiTells(content));
   push("urls", await checkUrls(content, { skip: skipUrl }));
   push("pubmed-citations", await checkPubmedCitations(content, { skip: skipUrl && !publishCheck }));
+  push("citation-support", await checkCitationSupport(content, { skip: skipUrl && !publishCheck }));
 
   // ─── Publish-check escalations ─────────────────────────────────────
   if (publishCheck) {

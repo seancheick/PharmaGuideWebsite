@@ -20,7 +20,7 @@ export default function AuthorizePage() {
   return (
     <>
       <Header />
-      <main id="main" data-clarity-mask="true" className="mx-auto max-w-xl px-4 py-16">
+      <main id="main" data-clarity-mask="true" className="mx-auto min-h-[70vh] max-w-xl px-5 pb-16 pt-40 sm:pt-44">
         <PrivatePageBoundary><Suspense fallback={<p className="text-neutral-500">Loading…</p>}>
           <ConsentClient />
         </Suspense></PrivatePageBoundary>

@@ -152,3 +152,9 @@ References: [WorkOS standalone completion](https://workos.com/docs/reference/wor
 - [ ] Real lifestyle photography sources (Stocksy budget? AI gen?)
 - [ ] Email provider for waitlist (MailerLite proposed)
 - [ ] Analytics setup (GA + Clarity IDs)
+
+### October 23 real-account acceptance correction
+
+App PR135 and website PR8 merged; both connector migrations applied with explicit approval. Public personal access remains disabled. Real Google sign-in succeeded; WorkOS complete returned200 with `/oauth2/external/callback`, which the website rejected. Added that exact observed path to the existing issuer-pinned allowlist; fail-first regression503vs200 now passes, including hostile-origin/userinfo/fragment negatives. Existing route remains the authorization owner; no new identity or clinical logic. All41 connector tests and private production build pass. Local browser now reaches actual WorkOS consent and installed Codex reports OAuth success. Heading clearance, review action, loading feedback and recovery copy improved locally; browser render checked. This correction is not yet merged/deployed.
+
+Private test runtime initially used HTTP setup URL and hit the existing HTTPS guard; corrected harness configuration without changing that guard. Actual Codex now creates pending approval in hosted Supabase. Real-phone approval, read access, scoped snapshot/expiry and disconnect/reconnect acceptance remain pending; no completion claim.

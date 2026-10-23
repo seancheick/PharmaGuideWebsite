@@ -193,15 +193,15 @@ function ConsentRequest({authorizationId, externalAuthId = ""}: {authorizationId
       if (!result.ok || typeof result.json.redirect_uri !== "string") throw new Error("Login unavailable");
       window.location.assign(result.json.redirect_uri);
     } catch {
-      if (lifecycle.current.active) setView({...view, busy: false, error: "Sign-in could not continue. Start again from your assistant."});
+      if (lifecycle.current.active) setView({...view, busy: false, error: "You are signed in, but the assistant connection could not continue. Start a new connection from your assistant, then use the new browser tab."});
     } finally { actionPending.current = false; }
   }
 
-  if (view.kind === "login") return <article className="space-y-5">
-    <h1 className="text-2xl font-semibold">Continue to assistant sign-in</h1>
-    <p>You are signed in to PharmaGuide. Continue to WorkOS to review the requesting assistant. Personal access requires separate approval in the PharmaGuide app.</p>
+  if (view.kind === "login") return <article className="space-y-5 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 sm:p-8">
+    <h1 className="text-2xl font-semibold">Review your assistant connection</h1>
+    <p>You’re signed in. Next, review which assistant is requesting a connection. You’ll then approve access separately in the PharmaGuide app on your phone.</p>
     {view.error ? <p role="alert">{view.error}</p> : null}
-    <button type="button" disabled={view.busy} onClick={() => void continueLogin()} className="rounded-lg bg-neutral-900 px-5 py-3 text-white disabled:opacity-50">Continue</button>
+    <button type="button" disabled={view.busy} onClick={() => void continueLogin()} className="rounded-lg bg-neutral-900 px-5 py-3 text-white disabled:opacity-50">{view.busy ? "Opening review…" : "Review connection"}</button>
   </article>;
 
   if (view.kind === "loading") return <p className="text-neutral-500">Loading…</p>;

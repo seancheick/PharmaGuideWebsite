@@ -140,15 +140,15 @@ export function connectionExpiry(now: Date): Date {
 }
 
 /** S4 consent copy. Calm and specific; never a safety verdict. */
-export function consentCopy(clientName: string) {
+export function consentCopy(clientName: string, durable = false) {
   return {
     title: `Connect ${clientName} to PharmaGuide`,
-    destinationLabel: "Approving returns you to",
+    destinationLabel: durable ? "Configured assistant destination" : "Approving returns you to",
     categoriesHeading: "What it can see",
     categoriesIncluded: "Your supplement list and PharmaGuide product facts.",
     categoriesExcluded: "Medications and your health profile are not included.",
     durationHeading: "How long",
-    duration: `${CONNECTION_HOURS} hours. After that, ${clientName} needs your approval again.`,
+    duration: durable ? "Until you disconnect. Any snapshot you share has its own expiry." : `${CONNECTION_HOURS} hours. After that, ${clientName} needs your approval again.`,
     locationsHeading: "Where your supplement list goes",
     locations: [
       {

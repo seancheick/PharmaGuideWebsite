@@ -8,12 +8,13 @@ import { SignInPanel } from "@/components/ai-connector/SignInPanel";
 import { CONNECTIONS_PATH, consentCopy, redirectMatchesCallback } from "@/lib/ai-connector";
 import { browserSupabase } from "@/lib/supabase-browser";
 
-type Preview = { client_name: string; callback_host: string; redirect_uri: string };
+type Preview = { client_name: string; callback_host: string; redirect_uri: string; oauth_issuer?: string };
 
 type View =
   | { kind: "loading" }
   | { kind: "message"; text: string }
   | { kind: "signin" }
+  | { kind: "login"; session: Session; busy: boolean; error?: string }
   | {
       kind: "consent";
       session: Session;
@@ -39,11 +40,13 @@ async function callRoute(session: Session, payload: Record<string, string>) {
 }
 
 export default function ConsentClient() {
-  const authorizationId = useSearchParams().get("authorization_id") ?? "";
-  return <ConsentRequest key={authorizationId} authorizationId={authorizationId} />;
+  const params = useSearchParams();
+  const authorizationId = params.get("authorization_id") ?? "";
+  const externalAuthId = params.get("external_auth_id") ?? "";
+  return <ConsentRequest key={`${authorizationId}:${externalAuthId}`} authorizationId={authorizationId} externalAuthId={externalAuthId} />;
 }
 
-function ConsentRequest({authorizationId}: {authorizationId: string}) {
+function ConsentRequest({authorizationId, externalAuthId = ""}: {authorizationId: string; externalAuthId?: string}) {
   const lifecycle = useRef({active: false});
   const actionPending = useRef(false);
   const [view, setView] = useState<View>({ kind: "loading" });
@@ -58,13 +61,14 @@ function ConsentRequest({authorizationId}: {authorizationId: string}) {
     };
     async function load() {
       if (!supabase) return show({ kind: "message", text: "Connecting assistants is not available right now." });
-      if (!ID_PATTERN.test(authorizationId)) {
+      if ((!ID_PATTERN.test(authorizationId) && !ID_PATTERN.test(externalAuthId)) || (authorizationId && externalAuthId)) {
         return show({ kind: "message", text: "This link is incomplete. Start the connection again from the assistant." });
       }
       try {
         const { data: sessionData } = await supabase.auth.getSession();
         const session = sessionData.session;
         if (!session) return show({ kind: "signin" });
+        if (externalAuthId) return show({kind: "login", session, busy: false});
         // The route is the only reader: details lookup can complete a
         // returning authorization, so it must not run twice in parallel.
         const { ok, json } = await callRoute(session, { action: "preview", authorization_id: authorizationId });
@@ -79,7 +83,7 @@ function ConsentRequest({authorizationId}: {authorizationId: string}) {
       cancelled = true;
       lifetime.active = false;
     };
-  }, [authorizationId]);
+  }, [authorizationId, externalAuthId]);
 
   async function currentSession(original: Session): Promise<Session> {
     const current = (await browserSupabase()?.auth.getSession())?.data.session;
@@ -141,11 +145,26 @@ function ConsentRequest({authorizationId}: {authorizationId: string}) {
           setView({ ...view, busy: false, error: String(written.json.error ?? "PharmaGuide could not record this connection.") });
           return;
         }
+        if (view.preview.oauth_issuer) {
+          await currentSession(view.session);
+          if (live()) setView({kind: "message", text: "Connected. Return to your assistant to continue. You can disconnect at any time."});
+          return;
+        }
         redirectUrl = written.json.redirect_url;
       } else {
         const cancelled = await callRoute(session, {action: "pair_cancel", authorization_id: authorizationId});
         if (!live()) return;
-        if (!cancelled.ok) throw new Error("Cancellation failed");
+        if (!cancelled.ok) {
+          if (view.preview.oauth_issuer && cancelled.json.local_access_ended === true) {
+            setView({kind: "message", text: String(cancelled.json.error)});
+            return;
+          }
+          throw new Error("Cancellation failed");
+        }
+        if (view.preview.oauth_issuer) {
+          if (live()) setView({kind: "message", text: "Phone approval cancelled. No personal access was approved."});
+          return;
+        }
         const result = await supabase.auth.oauth.denyAuthorization(authorizationId, { skipBrowserRedirect: true });
         if (result.error) throw new Error("denial failed");
         redirectUrl = result.data?.redirect_url;
@@ -161,6 +180,29 @@ function ConsentRequest({authorizationId}: {authorizationId: string}) {
       setView({ ...view, busy: false, error: "The connection could not finish. Check your connections page before trying again from the assistant." });
     } finally { if (live()) actionPending.current = false; }
   }
+
+  async function continueLogin() {
+    if (view.kind !== "login" || view.busy || actionPending.current) return;
+    actionPending.current = true;
+    setView({...view, busy: true});
+    try {
+      const session = await currentSession(view.session);
+      const result = await callRoute(session, {action: "workos_login", external_auth_id: externalAuthId});
+      await currentSession(view.session);
+      if (!lifecycle.current.active) return;
+      if (!result.ok || typeof result.json.redirect_uri !== "string") throw new Error("Login unavailable");
+      window.location.assign(result.json.redirect_uri);
+    } catch {
+      if (lifecycle.current.active) setView({...view, busy: false, error: "Sign-in could not continue. Start again from your assistant."});
+    } finally { actionPending.current = false; }
+  }
+
+  if (view.kind === "login") return <article className="space-y-5">
+    <h1 className="text-2xl font-semibold">Continue to assistant sign-in</h1>
+    <p>You are signed in to PharmaGuide. Continue to WorkOS to review the requesting assistant. Personal access requires separate approval in the PharmaGuide app.</p>
+    {view.error ? <p role="alert">{view.error}</p> : null}
+    <button type="button" disabled={view.busy} onClick={() => void continueLogin()} className="rounded-lg bg-neutral-900 px-5 py-3 text-white disabled:opacity-50">Continue</button>
+  </article>;
 
   if (view.kind === "loading") return <p className="text-neutral-500">Loading…</p>;
   if (view.kind === "message") {
@@ -180,7 +222,7 @@ function ConsentRequest({authorizationId}: {authorizationId: string}) {
     ) : null;
   }
 
-  const copy = consentCopy(view.preview.client_name);
+  const copy = consentCopy(view.preview.client_name, Boolean(view.preview.oauth_issuer));
   return (
     <article className="space-y-6">
       <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">{copy.title}</h1>

@@ -210,6 +210,7 @@ function routeHarness(overrides = {}) {
   }, fetchFn);
   // Match NextResponse.json's options form.
   route.testFetch = fetchFn;
+  Object.assign(route.testProcess.env, overrides.env);
   if (overrides.disabled) delete route.testProcess.env.AI_CONNECTOR_PAIRING_ENABLED;
   return { calls, post: (body) => route.exports.POST(new Request("https://site.test/api/ai-connections", {
     method: "POST", headers: { authorization: `Bearer ${overrides.token ?? sessionToken}` }, body: JSON.stringify(body),
@@ -248,7 +249,7 @@ test("approval returns only a checked OAuth redirect and rolls its row back on c
 });
 
 async function flush() { for (let i = 0; i < 8; i++) await new Promise(setImmediate); }
-function clientHarness(relative, supabase, fetchFn = async () => response({})) {
+function clientHarness(relative, supabase, fetchFn = async () => response({}), props = {}) {
   const states = [];
   const effects = [];
   let cleanups = [];
@@ -271,14 +272,14 @@ function clientHarness(relative, supabase, fetchFn = async () => response({})) {
   const loaded = loadSource(relative, {
     react,
     "next/link": { __esModule: true, default: "a" },
-    "next/navigation": { useSearchParams: () => new URLSearchParams(`authorization_id=${authorizationId}`) },
+    "next/navigation": { useSearchParams: () => new URLSearchParams(props.externalAuthId ? `external_auth_id=${props.externalAuthId}` : `authorization_id=${authorizationId}`) },
     "@/components/ai-connector/SignInPanel": { SignInPanel: "signin" },
     "@/lib/ai-connector": connector,
     "@/lib/supabase-browser": { browserSupabase: () => supabase },
   }, fetchFn);
   function render() {
     cursor = 0; refCursor = 0;
-    const root = loaded.exports.default();
+    const root = loaded.exports.default(props);
     if (typeof root.type !== 'function') return root;
     if (childKey !== undefined && childKey !== root.key) {
       cleanups.forEach(fn => fn?.());
@@ -511,4 +512,132 @@ test('empty completion fails closed and compensates with successful void cancell
   assert.doesNotMatch((await result.json()).error, /disconnect before/);
   assert.ok(h.calls.some(c => c.url.endsWith('/cancel_ai_connection_pairing')));
   assert.ok(!h.calls.some(c => c.url.endsWith('/consent')));
+});
+
+const workosEnv = {WORKOS_ISSUER: 'https://auth.example.test', WORKOS_API_KEY: 'fixture-workos-key'};
+const workosPending = {authorization_id:'authorization-1',client_id:'c-claude',client_name:'Claude',redirect_uri:'https://claude.ai/api/mcp/auth_callback',callback_host:'claude.ai',oauth_issuer:workosEnv.WORKOS_ISSUER,expires_at:'2099-01-01T00:00:00Z'};
+test('WorkOS pairing uses trusted pending SQL and durable completion without Auth OAuth', async () => {
+ const h=routeHarness({env:workosEnv,fetch:async url=>{
+  if(url.endsWith('/auth/v1/user')) return response({id:'user-1'});
+  if(url.endsWith('/preview_workos_ai_pairing')) return response(workosPending);
+  if(url.endsWith('/complete_ai_connection_pairing')) return response({connection_id:'22222222-2222-4222-8222-222222222222',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER});
+  throw Error('Unexpected '+url);
+ }});
+ const r=await h.post({action:'approve',authorization_id:'authorization-1'});
+ assert.equal(r.status,200); assert.equal((await r.json()).expires_at,null);
+ assert.ok(!h.calls.some(c=>c.url.includes('/oauth/authorizations/')));
+});
+test('WorkOS wrong-user pending and wrong issuer fail closed',async()=>{
+ for(const pending of [{error:'not_found'}, {...workosPending,oauth_issuer:'https://evil.test'}]){
+ const h=routeHarness({env:workosEnv,fetch:async url=>response(url.endsWith('/user')?{id:'user-1'}:pending)});
+ assert.notEqual((await h.post({action:'preview',authorization_id:'authorization-1'})).status,200);
+ assert.ok(!h.calls.some(c=>c.url.endsWith('/start_ai_connection_pairing')));
+ }
+});
+test('WorkOS login uses verified account email and rejects unsafe hosted redirects',async()=>{
+ for(const redirect of ['https://auth.example.test/application-authorization?state=x','https://auth.example.test/oauth/authorize/complete?state=x','https://evil.test/oauth/authorize/complete','https://auth.example.test/other']){
+ const h=routeHarness({env:workosEnv,fetch:async url=>response(url.endsWith('/user')?{id:'11111111-1111-4111-8111-111111111111',email:'verified@example.test'}:{redirect_uri:redirect})});
+ const r=await h.post({action:'workos_login',external_auth_id:'ext_auth_fixture',email:'forged@example.test'});
+ assert.equal(r.status,['https://auth.example.test/oauth/authorize/complete?state=x','https://auth.example.test/application-authorization?state=x'].includes(redirect)?200:503);
+ const sent=JSON.parse(h.calls.find(c=>c.url.includes('api.workos.com')).body);
+ assert.deepEqual(sent,{external_auth_id:'ext_auth_fixture',user:{id:'11111111-1111-4111-8111-111111111111',email:'verified@example.test'}});
+ }
+});
+test('WorkOS disconnect blocks locally then deletes exact application across pagination before finish',async()=>{
+ for(const providerFails of [false,true]){
+ const h=routeHarness({env:workosEnv,fetch:async(url,init)=>{
+ if(url.endsWith('/auth/v1/user'))return response({id:'user-1'});
+ if(url.endsWith('/begin_ai_connection_revocation'))return response({generation:3});
+ if(url.includes('/external_id/'))return response({id:'user_internal',external_id:'user-1'});
+ if(init.method==='DELETE')return new Response(null,{status:providerFails?500:204});
+ if(url.includes('after=cursor'))return response({data:[{application:{id:'conn_app_exact',client_id:'c-claude'}}],list_metadata:{after:null}});
+ if(url.includes('/authorized_applications'))return response({data:[{application:{id:'conn_app_other',client_id:'other'}}],list_metadata:{after:'cursor'}});
+ if(url.endsWith('/finish_ai_connection_revocation'))return response({finished:true});
+ throw Error(url);
+ }});
+ const r=await h.post({action:'disconnect',client_id:'c-claude'});
+ assert.equal(r.status,providerFails?503:200);
+ const calls=h.calls.map(c=>c.url);
+ assert.ok(calls.findIndex(u=>u.endsWith('/begin_ai_connection_revocation'))<calls.findIndex(u=>u.includes('/external_id/')));
+ assert.equal(h.calls.filter(c=>c.method==='DELETE')[0].url,'https://api.workos.com/user_management/users/user_internal/authorized_applications/conn_app_exact');
+ assert.equal(calls.some(u=>u.endsWith('/finish_ai_connection_revocation')), !providerFails);
+ }
+});
+
+test('WorkOS UI finishes or cancels locally without a second OAuth callback',async()=>{
+ for(const approve of [true,false]){
+ const sdk=fakeSupabase();
+ sdk.auth.oauth.denyAuthorization=async()=>{throw Error('Must not deny provider OAuth');};
+ const actions=[];
+ const h=clientHarness('src/app/oauth/authorize/consent-client.tsx',sdk,async(_url,init)=>{
+ const action=JSON.parse(init.body).action; actions.push(action);
+ return response(action==='preview'?workosPending:{connection_id:'22222222-2222-4222-8222-222222222222',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER});
+ });
+ await h.start(); h.states[0].approved=true;h.states[0].expiresAt='2099-01-01T00:00:00Z';
+ buttons(h.render()).find(b=>b.props.children===(approve?'Finish connecting':'Deny')).props.onClick();
+ await flush();assert.equal(h.states[0].kind,'message');
+ assert.match(h.states[0].text,approve?/Connected.*Return/:/cancelled/);
+ assert.deepEqual(actions,['preview',approve?'approve':'pair_cancel']);
+ }
+});
+test('WorkOS connections never list or revoke Supabase OAuth grants and retain retry error',async()=>{
+ const sdk=fakeSupabase({rows:[{client_id:'c-claude',client_name:'Claude',status:'revoked',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER}]});
+ sdk.auth.oauth.listGrants=async()=>{throw Error('Must not list Supabase grants');};
+ sdk.auth.oauth.revokeGrant=async()=>{throw Error('Must not revoke Supabase grants');};
+ const h=clientHarness('src/app/account/connections/connections-client.tsx',sdk,async(_url,init)=>JSON.parse(init.body).action==='revocation_status'?response({client_id:null}):response({provider_handled:true,local_access_ended:true,error:'Local access ended; retry Disconnect.'},503),{workosMode:true});
+ await h.start();assert.equal(h.states[0].kind,'list');buttons(h.render())[0].props.onClick();await flush();
+ assert.match(h.states[0].notice,/Local access ended; retry/);
+});
+test('WorkOS durable disclosure retains independent snapshot expiry',()=>{
+ assert.match(consentCopy('Codex',true).duration,/Until you disconnect.*snapshot.*expiry/);
+ assert.equal(consentCopy('Codex',true).destinationLabel,'Configured assistant destination');
+});
+
+test('Standalone login waits for explicit Continue and does not preview or phone-pair',async()=>{
+ const actions=[];
+ const h=clientHarness('src/app/oauth/authorize/consent-client.tsx',fakeSupabase(),async(_url,init)=>{
+ actions.push(JSON.parse(init.body));return response({redirect_uri:'https://auth.example.test/application-authorization?state=x'});
+ },{externalAuthId:'ext_auth_fixture'});
+ await h.start();assert.equal(h.states[0].kind,'login');assert.equal(actions.length,0);
+ buttons(h.render())[0].props.onClick();await flush();
+ assert.deepEqual(actions,[{action:'workos_login',external_auth_id:'ext_auth_fixture'}]);
+});
+test('Standalone login default-off and malformed issuer cannot call WorkOS',async()=>{
+ for(const options of [{disabled:true,env:workosEnv},{env:{...workosEnv,WORKOS_ISSUER:'http://auth.example.test'}}]){
+ const h=routeHarness(options);const result=await h.post({action:'workos_login',external_auth_id:'ext_auth_fixture'});
+ assert.equal(result.status,503);assert.ok(!h.calls.some(c=>c.url.includes('api.workos.com')));
+ }
+});
+test('WorkOS cancellation finishes provider revocation only for authority owned by the cancelled setup',async()=>{
+ for(const needsRevoke of [true,false]){
+ const h=routeHarness({env:workosEnv,fetch:async(url,init)=>{
+ if(url.endsWith('/auth/v1/user'))return response({id:'user-1'});
+ if(url.endsWith('/cancel_ai_connection_pairing'))return response(needsRevoke?{cancelled:true,client_id:'c-claude',revocation_generation:4}:{cancelled:true});
+ if(url.includes('/external_id/'))return response({id:'user_internal',external_id:'user-1'});
+ if(url.includes('/authorized_applications'))return response({data:[],list_metadata:{after:null}});
+ if(url.endsWith('/finish_ai_connection_revocation'))return response({finished:true});
+ throw Error(url);
+ }});
+ const result=await h.post({action:'pair_cancel',authorization_id:'authorization-1'});
+ assert.equal(result.status,200);assert.equal(h.calls.some(c=>c.url.includes('/external_id/')),needsRevoke);
+ assert.equal(h.calls.some(c=>c.url.endsWith('/finish_ai_connection_revocation')),needsRevoke);
+ }
+});
+test('pending-only provider failure exposes a durable retry from connections',async()=>{
+ const h=routeHarness({env:workosEnv,fetch:async url=>{
+ if(url.endsWith('/auth/v1/user'))return response({id:'user-1'});
+ if(url.endsWith('/cancel_ai_connection_pairing'))return response({cancelled:true,client_id:'c-claude',revocation_generation:4});
+ if(url.includes('/external_id/'))return response({},500);
+ if(url.includes('/ai_connection_pairing_limits?'))return response([{revoking_client_id:'c-claude'}]);
+ throw Error(url);
+ }});
+ assert.equal((await h.post({action:'pair_cancel',authorization_id:'authorization-1'})).status,503);
+ const status=await h.post({action:'revocation_status'});assert.equal(status.status,200);
+ assert.deepEqual(await status.json(),{client_id:'c-claude'});
+ assert.match(h.calls.find(c=>c.url.includes('/ai_connection_pairing_limits?')).url,/user_id=eq.user-1/);
+ assert.ok(!h.calls.some(c=>c.url.endsWith('/finish_ai_connection_revocation')));
+ const ui=clientHarness('src/app/account/connections/connections-client.tsx',fakeSupabase(),async(_url,init)=>
+ JSON.parse(init.body).action==='revocation_status'?response({client_id:'c-claude'}):response({provider_handled:true,error:'Local access ended; retry Disconnect.'},503),{workosMode:true});
+ await ui.start();assert.equal(ui.states[0].grants[0].clientId,'c-claude');
+ buttons(ui.render())[0].props.onClick();await flush();assert.match(ui.states[0].notice,/retry Disconnect/);
 });

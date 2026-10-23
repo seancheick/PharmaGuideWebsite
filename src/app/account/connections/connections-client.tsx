@@ -7,7 +7,7 @@ import { CONNECTIONS_COPY } from "@/lib/ai-connector";
 import { browserSupabase } from "@/lib/supabase-browser";
 
 type Grant = { clientId: string; name: string; grantedAt: string };
-type ConnectionRow = { client_id: string; client_name: string | null; status: string; expires_at: string };
+type ConnectionRow = { client_id: string; client_name: string | null; status: string; expires_at: string | null; oauth_issuer?: string; consent_id?: string };
 
 type View =
   | { kind: "loading" }
@@ -18,12 +18,13 @@ type View =
 function statusLine(row: ConnectionRow | undefined): string {
   if (!row) return "No PharmaGuide connection on record.";
   if (row.status === "revoked") return "Disconnected.";
-  const expires = new Date(row.expires_at);
+  if (row.status === "active" && row.oauth_issuer && row.expires_at === null) return "Active until you disconnect. Shared snapshots expire separately.";
+  const expires = new Date(row.expires_at ?? "");
   if (row.status !== "active" || !Number.isFinite(expires.getTime()) || expires.getTime() <= Date.now()) return "Ended. Connect again from the assistant to continue.";
   return `Active until ${expires.toLocaleString()}.`;
 }
 
-export default function ConnectionsClient() {
+export default function ConnectionsClient({workosMode = false}: {workosMode?: boolean} = {}) {
   const [view, setView] = useState<View>({ kind: "loading" });
 
   const load = useCallback(async (notice?: string): Promise<View> => {
@@ -34,10 +35,10 @@ export default function ConnectionsClient() {
       const session = sessionData.session;
       if (!session) return { kind: "signin" };
       const [{ data: grants, error }, { data: rows, error: rowsError }] = await Promise.all([
-        supabase.auth.oauth.listGrants(),
+        workosMode ? Promise.resolve({data: [], error: null}) : supabase.auth.oauth.listGrants(),
         supabase
           .from("ai_connections")
-          .select("client_id,client_name,status,expires_at")
+          .select("client_id,client_name,status,expires_at,oauth_issuer,consent_id")
           .order("created_at", { ascending: false }),
       ]);
       if (error || rowsError) return { kind: "message", text: "Your connections could not be loaded. Try again shortly." };
@@ -56,11 +57,23 @@ export default function ConnectionsClient() {
           grantedAt: combined.get(row.client_id)?.grantedAt ?? "",
         });
       }
+      if (workosMode) {
+        const recovery = await fetch("/api/ai-connections", {
+          method: "POST", headers: {Authorization: `Bearer ${session.access_token}`, "content-type": "application/json"},
+          body: JSON.stringify({action: "revocation_status"}),
+        });
+        if (!recovery.ok) throw new Error("Disconnect recovery unavailable");
+        const pending = await recovery.json() as {client_id?: string | null};
+        if (pending.client_id) {
+          if (!combined.has(pending.client_id)) combined.set(pending.client_id, {clientId: pending.client_id, name: "Unfinished assistant disconnect", grantedAt: ""});
+          notice ??= "PharmaGuide access has ended. Retry Disconnect to finish removing the assistant's provider access.";
+        }
+      }
       return { kind: "list", session, notice, grants: [...combined.values()], latest };
     } catch {
       return { kind: "message", text: "Your connections could not be loaded. Try again shortly." };
     }
-  }, []);
+  }, [workosMode]);
 
   useEffect(() => {
     let cancelled = false;
@@ -79,6 +92,8 @@ export default function ConnectionsClient() {
     setView({ ...view, busyClientId: clientId, notice: undefined });
     let connectionEnded = false;
     let grantEnded = false;
+    let providerHandled = workosMode || Boolean(view.latest[clientId]?.oauth_issuer);
+    let providerError: string | undefined;
     // Close the database gate first. Still attempt Auth revocation if that
     // request fails, and retain the row until cleanup can be retried.
     try {
@@ -88,14 +103,19 @@ export default function ConnectionsClient() {
         body: JSON.stringify({ action: "disconnect", client_id: clientId }),
       });
       connectionEnded = response.ok;
+      const result = await response.json().catch(() => ({}));
+      providerHandled ||= result.provider_handled === true;
+      if (providerHandled) { grantEnded = response.ok; providerError = result.error; }
     } catch { /* Keep the retryable connection visible below. */ }
     try {
-      const { error } = await supabase.auth.oauth.revokeGrant({ clientId });
-      grantEnded = !error;
+      if (!providerHandled) {
+        const { error } = await supabase.auth.oauth.revokeGrant({ clientId });
+        grantEnded = !error;
+      }
     } catch { /* A failed Auth revoke also needs a visible retry. */ }
     const notice = connectionEnded && grantEnded
       ? CONNECTIONS_COPY.disconnected
-      : "PharmaGuide could not finish disconnecting. Try again shortly.";
+      : providerError ?? "PharmaGuide could not finish disconnecting. Try again shortly.";
     const next = await load(notice);
     setView(next.kind === "message" ? { ...view, busyClientId: undefined, notice: `${notice} ${next.text}` } : next);
   }

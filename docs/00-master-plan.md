@@ -15,6 +15,16 @@ Authorization remains open. Sean authorized WorkOS Standalone Connect staging wi
 
 Owner: `next.config.ts` owns host routing; `src/lib/ai-connector.ts` and `src/app/api/ai-connections/route.ts` own grant consent; `src/lib/analytics.ts` owns tracking eligibility. Evidence: existing config, route/helper callers and regression tests. Will NOT create: duplicate catalog/clinical service, personal-data directory listing or public conditional-warning expansion. Cross-repo execution evidence remains in the pipeline LEDGER and app `supabase/functions/mcp-personal/README.md`.
 
+## Personal phone approval — October 23, 2026
+
+Sean approved OAuth, phone approval, read-only scoped snapshots and Codex-first acceptance. Implemented on `codex/personal-phone-approval`, not deployed: verified client/callback preview, five-minute approval code, separate signed-in session approval and atomic completion through the existing connection owner. The coordinated Flutter UI and database migration live in app branch of the same name. Flags default off; personal reads and snapshot uploads remain contained.
+
+Owner: existing `src/app/api/ai-connections/route.ts`, `src/lib/ai-connector.ts` and consent UI; existing app connection and snapshot owners. Evidence: route/helper callers, schema and regression tests. Will NOT create an issuer workaround, clinical engine, medication sync or alternative snapshot format.
+
+Apply app migration `20261023193612_ai_connection_phone_pairing.sql` before any website deployment, even with pairing disabled: disconnect uses its atomic revocation/purge RPC. The transient code table does not replace `ai_connections`. Phone approval proves a different live session of the same account, not device attestation.
+
+Hosted acceptance remains blocked: WorkOS engineering's October20 reply confirms no immutable authorization-attempt/refresh-family identity and no delivery date. Resource-required enforcement was awaiting deployment in that reply. The October15 retest also reproduced old-refresh inheriting newer consent. Do not enable personal access based on unit tests or synthetic phone rendering. Full two-account OAuth/Codex/snapshot acceptance, real-device confirmation and privacy review remain open. Final candidate checks and review receipts are recorded in the app threat-model implementation register.
+
 ## Documents
 
 | Doc | Purpose |

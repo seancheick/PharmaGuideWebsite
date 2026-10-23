@@ -9,7 +9,7 @@
  * Threat model: PharmaGuide app repo, docs/security/ai-connector-threat-model.md.
  */
 
-export type AssistantKind = "claude" | "chatgpt" | "claude_code";
+export type AssistantKind = "claude" | "chatgpt" | "claude_code" | "codex";
 
 export type TrustedClient = {
   /** Supabase OAuth client id, from the dashboard registration. */
@@ -17,6 +17,7 @@ export type TrustedClient = {
   /** The name PharmaGuide shows, never the name the client registered itself. */
   name: string;
   kind: AssistantKind;
+  redirect_uri?: string;
 };
 
 /** Default connection length. Expiry ends access; the user approves again. */
@@ -25,7 +26,7 @@ export const CONNECTION_HOURS = 24;
 export const CONNECTION_SCOPE = { categories: ["supplements"] } as const;
 export const CONNECTIONS_PATH = "/account/connections";
 
-const KINDS: readonly AssistantKind[] = ["claude", "chatgpt", "claude_code"];
+const KINDS: readonly AssistantKind[] = ["claude", "chatgpt", "claude_code", "codex"];
 const CHATGPT_CALLBACK_ID = /^\/connector\/oauth\/[A-Za-z0-9_-]{1,128}$/;
 
 /**
@@ -44,11 +45,12 @@ export function parseTrustedClients(raw: string | undefined): TrustedClient[] {
   if (!Array.isArray(parsed)) return [];
   return parsed.flatMap((entry): TrustedClient[] => {
     if (!entry || typeof entry !== "object") return [];
-    const { client_id, name, kind } = entry as Record<string, unknown>;
+    const { client_id, name, kind, redirect_uri } = entry as Record<string, unknown>;
     if (typeof client_id !== "string" || client_id.trim() === "") return [];
     if (typeof name !== "string" || name.trim() === "") return [];
     if (typeof kind !== "string" || !KINDS.includes(kind as AssistantKind)) return [];
-    return [{ client_id, name: name.trim(), kind: kind as AssistantKind }];
+    if (kind === "codex" && (typeof redirect_uri !== "string" || !verifyCallback(redirect_uri, "codex").ok)) return [];
+    return [{ client_id, name: name.trim(), kind: kind as AssistantKind, ...(kind === "codex" ? {redirect_uri: redirect_uri as string} : {}) }];
   });
 }
 
@@ -75,6 +77,12 @@ export function verifyCallback(redirectUri: string, kind: AssistantKind): Callba
     return REFUSED;
   }
   if (url.username || url.password || url.hash) return REFUSED;
+  if (kind === "codex") {
+    // Codex MCP native callback (rmcp-client/oauth_callback.rs), not account login.
+    if (url.protocol !== "http:" || url.hostname !== "127.0.0.1" || url.search ||
+        !/^\/callback\/[A-Za-z0-9_-]{1,128}$/.test(url.pathname) || redirectUri.includes("..")) return REFUSED;
+    return {ok: true, host: url.hostname, displayHost: `${url.hostname} (this computer)`};
+  }
   if (kind === "claude_code") {
     const loopback = url.hostname === "localhost" || url.hostname === "127.0.0.1";
     if (url.protocol !== "http:" || !loopback || url.pathname !== "/callback") return REFUSED;

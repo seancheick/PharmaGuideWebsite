@@ -1,10 +1,9 @@
+import { randomInt, createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
 import { log } from "@/lib/logger";
 import {
-  CONNECTION_SCOPE,
   type TrustedClient,
-  connectionExpiry,
   createWriteLimiter,
   parseTrustedClients,
   redirectMatchesCallback,
@@ -15,8 +14,9 @@ import {
  * POST /api/ai-connections — the server half of the AI connector consent.
  *
  *   preview    → verified client name and callback host for the consent card
- *   approve    → writes the ai_connections row (S10) with the client name and
- *                callback host shown (S3/S4), then approves with Auth
+ *   pair_start/status/cancel → short-lived approval from a different app session
+ *   approve    → atomically consumes phone approval and creates the connection,
+ *                then approves with Auth; cancellation recovers lost replies
  *   disconnect → marks the user's connection to one assistant revoked and
  *                deletes its shared snapshots and access-log rows (S5); the
  *                page then revokes the grant
@@ -76,14 +76,14 @@ function claimsOf(token: string): Record<string, unknown> | null {
 async function verifiedUserId(token: string): Promise<string | null> {
   const claims = claimsOf(token);
   // An assistant's own OAuth token must never approve or disconnect anything.
-  if (!claims || claims.client_id !== undefined) return null;
+  if (!claims || claims.client_id !== undefined || claims.is_anonymous === true) return null;
   const response = await fetch(authUrl("user"), {
     headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
   if (!response.ok) return null;
-  const user = (await response.json()) as { id?: unknown };
-  return typeof user.id === "string" ? user.id : null;
+  const user = (await response.json()) as { id?: unknown; is_anonymous?: boolean };
+  return typeof user.id === "string" && user.is_anonymous !== true ? user.id : null;
 }
 
 type Verified =
@@ -121,6 +121,9 @@ async function verifiedAuthorization(token: string, authorizationId: string): Pr
   if (!client) {
     return { ok: false, status: 403, error: "PharmaGuide does not recognise this assistant." };
   }
+  if (client.kind === "codex" && details.redirect_uri !== client.redirect_uri) {
+    return {ok: false, status: 403, error: "This assistant callback is not registered."};
+  }
   const callback = verifyCallback(details.redirect_uri, client.kind);
   if (!callback.ok) return { ok: false, status: 403, error: callback.reason };
   return {
@@ -136,6 +139,15 @@ async function rest(path: string, init: RequestInit): Promise<Response> {
   const response = await fetch(restUrl(path), { ...init, cache: "no-store" });
   if (!response.ok) throw new Error(`ai_connections ${response.status}`);
   return response;
+}
+
+async function rpc(name: string, args: Record<string, unknown>) {
+  const response = await rest(`rpc/${name}`, {method: "POST", headers: serviceHeaders(), body: JSON.stringify(args)});
+  const body = await response.text();
+  if (!body.trim() && (name === "cancel_ai_connection_pairing" || name === "revoke_ai_connection_pairings")) return null;
+  const result = JSON.parse(body);
+  if (result?.error) throw new Error("Pairing unavailable");
+  return result;
 }
 
 export async function POST(request: Request) {
@@ -156,7 +168,7 @@ export async function POST(request: Request) {
     return fail(400, "Invalid request.");
   }
 
-  let createdConnectionId: string | null = null;
+  let completionBinding: Record<string, unknown> | null = null;
   let userId: string | null = null;
   try {
     userId = await verifiedUserId(token);
@@ -167,9 +179,17 @@ export async function POST(request: Request) {
         { status: 429, headers: { "Retry-After": "60" } }
       );
     }
-    if (body.action === "preview" || body.action === "approve") {
+    if (["preview", "approve", "pair_start", "pair_status", "pair_cancel"].includes(String(body.action))) {
+      if (process.env.AI_CONNECTOR_PAIRING_ENABLED !== "true") return fail(503, "Connecting assistants is not available right now.");
+      const sessionId = claimsOf(token)?.session_id;
+      if (typeof sessionId !== "string" || !/^[0-9a-f-]{36}$/i.test(sessionId)) return fail(401, "Sign in again to continue.");
       if (typeof body.authorization_id !== "string" || !ID_PATTERN.test(body.authorization_id)) {
         return fail(400, "Invalid request.");
+      }
+      const binding = {p_user_id: userId, p_session_id: sessionId, p_authorization_id: body.authorization_id};
+      if (body.action === "pair_cancel") {
+        await rpc("cancel_ai_connection_pairing", binding);
+        return NextResponse.json({cancelled: true});
       }
       const verified = await verifiedAuthorization(token, body.authorization_id);
       if (!verified.ok) return fail(verified.status, verified.error);
@@ -182,33 +202,21 @@ export async function POST(request: Request) {
           redirect_uri: verified.redirectUri,
         });
       }
-      const now = new Date();
-      const owner = `user_id=eq.${userId}&client_id=eq.${encodeURIComponent(client.client_id)}`;
-      // A new approval supersedes the previous live connection to this assistant.
-      await rest(`ai_connections?${owner}&status=eq.active`, {
-        method: "PATCH",
-        headers: serviceHeaders({ Prefer: "return=minimal" }),
-        body: JSON.stringify({ status: "revoked", revoked_at: now.toISOString() }),
-      });
-      // Retain the id before the request: a lost HTTP response may still have
-      // inserted the row, and cleanup must target that exact attempt.
-      createdConnectionId = crypto.randomUUID();
-      const created = await rest("ai_connections?select=connection_id,expires_at", {
-        method: "POST",
-        headers: serviceHeaders({ Prefer: "return=representation" }),
-        body: JSON.stringify({
-          connection_id: createdConnectionId,
-          user_id: userId,
-          client_id: client.client_id,
-          scope: CONNECTION_SCOPE,
-          client_name: client.name,
-          callback_host: verified.host,
-          status: "active",
-          expires_at: connectionExpiry(now).toISOString(),
-        }),
-      });
-      const [row] = (await created.json()) as Array<{ connection_id: string; expires_at: string }>;
-      if (!row) throw new Error("connection insert returned no row");
+      if (body.action === "pair_start") {
+        const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        const code = Array.from({length: 12}, () => alphabet[randomInt(alphabet.length)]).join("");
+        const result = await rpc("start_ai_connection_pairing", {...binding, p_client_id: client.client_id, p_client_name: client.name, p_redirect_uri: verified.redirectUri, p_code_hash: createHash("sha256").update(code).digest("hex")});
+        if (typeof result?.expires_at !== "string") throw new Error("Invalid pairing response");
+        return NextResponse.json({code, expires_at: result.expires_at});
+      }
+      if (body.action === "pair_status") {
+        const result = await rpc("ai_connection_pairing_status", binding);
+        if (typeof result?.approved !== "boolean" || typeof result?.expires_at !== "string") throw new Error("Invalid pairing response");
+        return NextResponse.json({approved: result.approved, expires_at: result.expires_at});
+      }
+      completionBinding = binding;
+      const row = await rpc("complete_ai_connection_pairing", {...binding, p_client_id: client.client_id, p_redirect_uri: verified.redirectUri});
+      if (typeof row?.connection_id !== "string" || !/^[0-9a-f-]{36}$/i.test(row.connection_id) || typeof row.expires_at !== "string") throw new Error("Invalid connection response");
       const approved = await fetch(authUrl(`oauth/authorizations/${body.authorization_id}/consent`), {
         method: "POST",
         headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${token}`, "content-type": "application/json" },
@@ -228,49 +236,16 @@ export async function POST(request: Request) {
       if (typeof body.client_id !== "string" || !ID_PATTERN.test(body.client_id)) {
         return fail(400, "Invalid request.");
       }
-      const owner = `user_id=eq.${userId}&client_id=eq.${encodeURIComponent(body.client_id)}`;
-      const ended = await rest(`ai_connections?${owner}&status=eq.active&select=connection_id`, {
-        method: "PATCH",
-        headers: serviceHeaders({ Prefer: "return=representation" }),
-        body: JSON.stringify({ status: "revoked", revoked_at: new Date().toISOString() }),
-      });
-      const all = await rest(`ai_connections?${owner}&select=connection_id`, {
-        method: "GET",
-        headers: serviceHeaders(),
-      });
-      const ids = ((await all.json()) as Array<{ connection_id: string }>).map((r) => r.connection_id);
-      if (ids.length > 0) {
-        // S5: shared snapshots go with the connection. A project without the
-        // ai_share_snapshots migration (PostgREST 404) has none to delete.
-        const snapshots = await fetch(restUrl(`ai_share_snapshots?connection_id=in.(${ids.join(",")})`), {
-          method: "DELETE",
-          headers: serviceHeaders({ Prefer: "return=minimal" }),
-          cache: "no-store",
-        });
-        if (!snapshots.ok && snapshots.status !== 404) throw new Error(`ai_share_snapshots ${snapshots.status}`);
-        await rest(`mcp_access_log?connection_id=in.(${ids.join(",")})`, {
-          method: "DELETE",
-          headers: serviceHeaders({ Prefer: "return=minimal" }),
-        });
-      }
-      const endedCount = ((await ended.json()) as unknown[]).length;
-      log.info("ai_connection.disconnected", { ended: endedCount });
+      await rpc("revoke_ai_connection_pairings", {p_user_id: userId, p_client_id: body.client_id});
+      log.info("ai_connection.disconnected", {});
       return NextResponse.json({ disconnected: true });
     }
-  } catch (error) {
-    if (createdConnectionId && userId) {
-      try {
-        await rest(`ai_connections?connection_id=eq.${createdConnectionId}&user_id=eq.${userId}`, {
-          method: "PATCH",
-          headers: serviceHeaders({ Prefer: "return=minimal" }),
-          body: JSON.stringify({ status: "revoked", revoked_at: new Date().toISOString() }),
-        });
-      } catch {
-        log.error("ai_connection.rollback_failed", {});
-        return fail(503, "The approval could not finish and its connection could not be closed. Open your connections page and disconnect it before trying again.");
-      }
+  } catch {
+    if (completionBinding) {
+      try { await rpc("cancel_ai_connection_pairing", completionBinding); }
+      catch { return fail(503, "The approval could not finish. Open your connections page and disconnect before trying again."); }
     }
-    log.error("ai_connection.failed", { message: error instanceof Error ? error.message : "unknown" });
+    log.error("ai_connection.failed", {});
     return fail(503, "PharmaGuide could not update this connection. Try again shortly.");
   }
   return fail(400, "Invalid request.");

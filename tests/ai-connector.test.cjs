@@ -173,7 +173,7 @@ function loadSource(relative, mocks, fetchFn) {
   const original = instance.require.bind(instance);
   instance.require = (name) => Object.hasOwn(mocks, name) ? mocks[name] : original(name);
   instance.testFetch = fetchFn;
-  instance.testProcess = { env: { AI_CONNECTOR_TRUSTED_CLIENTS: JSON.stringify(TRUSTED) } };
+  instance.testProcess = { env: { AI_CONNECTOR_PAIRING_ENABLED: "true", AI_CONNECTOR_TRUSTED_CLIENTS: JSON.stringify(TRUSTED) } };
   instance.testWindow = { location: { assign: (url) => { instance.redirect = url; } } };
   const compiled = ts.transpileModule(fs.readFileSync(filename, "utf8"), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
@@ -181,7 +181,7 @@ function loadSource(relative, mocks, fetchFn) {
   instance._compile("const fetch = module.testFetch; const process = module.testProcess; const window = module.testWindow;\n" + compiled, filename);
   return instance;
 }
-const sessionToken = `header.${Buffer.from(JSON.stringify({ sub: "user-1" })).toString("base64url")}.signature`;
+const sessionToken = `header.${Buffer.from(JSON.stringify({ sub: "user-1", session_id: "11111111-1111-4111-8111-111111111111" })).toString("base64url")}.signature`;
 const response = (value, status = 200) => Response.json(value, { status });
 function routeHarness(overrides = {}) {
   const calls = [];
@@ -196,6 +196,9 @@ function routeHarness(overrides = {}) {
       return response(overrides.details ?? { client: { id: "c-claude" }, redirect_uri: "https://claude.ai/api/mcp/auth_callback" });
     }
     if (url.endsWith("/consent")) return response(overrides.consent ?? { redirect_url: "https://claude.ai/api/mcp/auth_callback?code=approved" }, overrides.consentStatus ?? 200);
+    if (url.endsWith('/rpc/start_ai_connection_pairing')) return response({expires_at: '2099-01-01T00:00:00Z'});
+    if (url.endsWith('/rpc/complete_ai_connection_pairing')) return response({connection_id: '22222222-2222-4222-8222-222222222222', expires_at: '2099-01-01T00:00:00Z'});
+    if (url.includes('/rpc/')) return response(null);
     if (init.method === "POST") return response([{ connection_id: JSON.parse(init.body).connection_id, expires_at: "2026-10-14T12:00:00Z" }]);
     return response([]);
   };
@@ -207,8 +210,9 @@ function routeHarness(overrides = {}) {
   }, fetchFn);
   // Match NextResponse.json's options form.
   route.testFetch = fetchFn;
+  if (overrides.disabled) delete route.testProcess.env.AI_CONNECTOR_PAIRING_ENABLED;
   return { calls, post: (body) => route.exports.POST(new Request("https://site.test/api/ai-connections", {
-    method: "POST", headers: { authorization: `Bearer ${sessionToken}` }, body: JSON.stringify(body),
+    method: "POST", headers: { authorization: `Bearer ${overrides.token ?? sessionToken}` }, body: JSON.stringify(body),
   })) };
 }
 
@@ -232,7 +236,10 @@ test("approval returns only a checked OAuth redirect and rolls its row back on c
     const h = routeHarness(options);
     const result = await h.post({ action: "approve", authorization_id: "authorization-1" });
     assert.equal(result.status, 503);
-    assert.ok(h.calls.some((c) => c.url.includes("connection_id=eq.") && c.method === "PATCH" && JSON.parse(c.body).status === "revoked"));
+    const compensation = h.calls.filter(c => c.url.endsWith("/rpc/cancel_ai_connection_pairing"));
+    assert.equal(compensation.length, 1);
+    assert.deepEqual(JSON.parse(compensation[0].body), {p_user_id: "user-1", p_session_id: "11111111-1111-4111-8111-111111111111", p_authorization_id: "authorization-1"});
+    assert.ok(!h.calls.some(c => c.url.includes("/rest/v1/") && !c.url.includes("/rpc/")));
   }
   const h = routeHarness();
   const result = await h.post({ action: "approve", authorization_id: "authorization-1" });
@@ -244,9 +251,15 @@ async function flush() { for (let i = 0; i < 8; i++) await new Promise(setImmedi
 function clientHarness(relative, supabase, fetchFn = async () => response({})) {
   const states = [];
   const effects = [];
+  let cleanups = [];
+  let childKey;
   let cursor = 0;
   let mounted = false;
+  let authorizationId = "authorization-1";
+  const refs = [];
+  let refCursor = 0;
   const react = {
+    useRef(value) { const i = refCursor++; return refs[i] ?? (refs[i] = {current: value}); },
     useState(initial) {
       const index = cursor++;
       if (!(index in states)) states[index] = initial;
@@ -258,13 +271,28 @@ function clientHarness(relative, supabase, fetchFn = async () => response({})) {
   const loaded = loadSource(relative, {
     react,
     "next/link": { __esModule: true, default: "a" },
-    "next/navigation": { useSearchParams: () => new URLSearchParams("authorization_id=authorization-1") },
+    "next/navigation": { useSearchParams: () => new URLSearchParams(`authorization_id=${authorizationId}`) },
     "@/components/ai-connector/SignInPanel": { SignInPanel: "signin" },
     "@/lib/ai-connector": connector,
     "@/lib/supabase-browser": { browserSupabase: () => supabase },
   }, fetchFn);
-  function render() { cursor = 0; return loaded.exports.default(); }
-  return { states, render, async start() { render(); mounted = true; effects.forEach((fn) => fn()); await flush(); } };
+  function render() {
+    cursor = 0; refCursor = 0;
+    const root = loaded.exports.default();
+    if (typeof root.type !== 'function') return root;
+    if (childKey !== undefined && childKey !== root.key) {
+      cleanups.forEach(fn => fn?.());
+      states.length = 0; refs.length = 0; effects.length = 0; mounted = false;
+    }
+    childKey = root.key;
+    const result = root.type(root.props);
+    if (!mounted && cleanups.length) {
+      mounted = true;
+      cleanups = effects.map(fn => fn());
+    }
+    return result;
+  }
+  return { states, render, navigate(id) { authorizationId = id; return render(); }, async start() { render(); mounted = true; cleanups = effects.map((fn) => fn()); await flush(); } };
 }
 function fakeSupabase(options = {}) {
   let grants = options.grants ?? [];
@@ -328,32 +356,21 @@ test("disconnect remains retryable when revoking the database grant fails", asyn
 test("approval creates the grant before Auth creates its OAuth session", async () => {
   const h = routeHarness();
   assert.equal((await h.post({ action: "approve", authorization_id: "authorization-1" })).status, 200);
-  const insert = h.calls.findIndex((c) => c.url.includes("/rest/v1/ai_connections") && c.method === "POST");
+  const insert = h.calls.findIndex((c) => c.url.includes("/rpc/complete_ai_connection_pairing") && c.method === "POST");
   const consent = h.calls.findIndex((c) => c.url.endsWith("/consent"));
   assert.ok(insert >= 0 && consent > insert, "authoritative session age must follow consent row creation");
 });
 
-test("a lost insert response rolls back the known attempted id and rollback failure names recovery", async () => {
-  for (const rollbackFails of [false, true]) {
-    const calls = [];
-    let attemptedId;
-    const h = routeHarness({ fetch: async (url, init = {}) => {
-      calls.push({ url, ...init });
-      if (url.endsWith("/user")) return response({ id: "user-1" });
-      if (url.includes("/oauth/authorizations/")) return response({ client: { id: "c-claude" }, redirect_uri: "https://claude.ai/api/mcp/auth_callback" });
-      if (init.method === "POST") {
-        attemptedId = JSON.parse(init.body).connection_id;
-        throw new Error("insert response lost");
-      }
-      if (url.includes("connection_id=eq.") && rollbackFails) return response({}, 503);
-      return response([]);
-    } });
-    const result = await h.post({ action: "approve", authorization_id: "authorization-1" });
-    assert.equal(result.status, 503);
-    assert.ok(attemptedId);
-    assert.ok(calls.some((c) => c.url.includes(`connection_id=eq.${attemptedId}`) && c.url.includes("user_id=eq.user-1") && JSON.parse(c.body).status === "revoked"));
-    if (rollbackFails) assert.match((await result.json()).error, /connections page and disconnect/);
-  }
+test("lost completion response cancels the exact authorization without issuing consent", async () => {
+  const h = routeHarness({fetch: async (url) => {
+    if (url.endsWith('/user')) return response({id: 'user-1'});
+    if (url.includes('/oauth/authorizations/')) return response({client: {id: 'c-claude'}, redirect_uri: 'https://claude.ai/api/mcp/auth_callback'});
+    if (url.endsWith('/rpc/complete_ai_connection_pairing')) throw new Error('lost response');
+    return response(null);
+  }});
+  assert.equal((await h.post({action: 'approve', authorization_id: 'authorization-1'})).status, 503);
+  assert.ok(h.calls.some(c => c.url.endsWith('/rpc/cancel_ai_connection_pairing') && JSON.parse(c.body).p_authorization_id === 'authorization-1'));
+  assert.ok(!h.calls.some(c => c.url.endsWith('/consent')));
 });
 
 test("unknown clients and wrong callbacks never write a consent row", async () => {
@@ -376,4 +393,122 @@ test("both pages stop loading and show recovery after session lookup rejects", a
     assert.equal(h.states[0].kind, "message");
     assert.match(h.states[0].text, /could not be loaded/);
   }
+});
+
+test("pairing starts only through verified authorization and stores a hash", async () => {
+  const h = routeHarness();
+  const result = await h.post({ action: "pair_start", authorization_id: "authorization-1" });
+  assert.equal(result.status, 200);
+  const body = await result.json();
+  assert.match(body.code, /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/);
+  const start = h.calls.find(c => c.url.endsWith('/rpc/start_ai_connection_pairing'));
+  assert.equal(JSON.parse(start.body).p_code_hash, require('node:crypto').createHash('sha256').update(body.code).digest('hex'));
+  assert.ok(!start.body.includes(body.code));
+});
+
+ test("Codex MCP callbacks require loopback and a bounded callback ID", () => {
+   assert.equal(verifyCallback('http://127.0.0.1:49831/callback/129AGzqE0Vj5', 'codex').ok, true);
+   for (const uri of ['http://localhost:49831/callback/id', 'http://127.0.0.1/callback/id?x=y', 'http://127.0.0.1/callback/id#x', 'http://127.0.0.1/callback/a/../id', 'http://127.0.0.1/callback/', 'http://evil.test/callback/id']) assert.equal(verifyCallback(uri, 'codex').ok, false);
+ });
+
+ test("pairing rollout defaults off and rejects JSON RPC errors", async () => {
+   for (const action of ['pair_start', 'pair_status', 'approve']) {
+     const h = routeHarness({disabled: true});
+     assert.equal((await h.post({action, authorization_id: 'authorization-1'})).status, 503);
+     assert.ok(!h.calls.some(c => c.url.includes('/rpc/')));
+   }
+   const h = routeHarness({fetch: async url => {
+     if (url.endsWith('/user')) return response({id: 'user-1'});
+     if (url.includes('/oauth/authorizations/')) return response({client: {id: 'c-claude'}, redirect_uri: 'https://claude.ai/api/mcp/auth_callback'});
+     return response({error: 'pairing_unavailable'});
+   }});
+   assert.equal((await h.post({action: 'approve', authorization_id: 'authorization-1'})).status, 503);
+   assert.ok(!h.calls.some(c => c.url.endsWith('/consent')));
+ });
+ test("anonymous, OAuth and missing-session credentials cannot start pairing", async () => {
+   for (const claims of [{is_anonymous: true}, {client_id: 'evil'}, {sub: 'user-1'}]) {
+     const token = `header.${Buffer.from(JSON.stringify(claims)).toString('base64url')}.signature`;
+     const h = routeHarness({token});
+     assert.equal((await h.post({action: 'pair_start', authorization_id: 'authorization-1'})).status, 401);
+     assert.ok(!h.calls.some(c => c.url.includes('/rpc/')));
+   }
+ });
+ test("Codex registration requires its exact valid callback", () => {
+   const client = {client_id: 'codex', name: 'Codex', kind: 'codex'};
+   assert.deepEqual(parseTrustedClients(JSON.stringify([client])), []);
+   assert.deepEqual(parseTrustedClients(JSON.stringify([{...client, redirect_uri: 'https://evil.test/callback/id'}])), []);
+   assert.equal(parseTrustedClients(JSON.stringify([{...client, redirect_uri: 'http://127.0.0.1:49831/callback/129AGzqE0Vj5'}])).length, 1);
+ });
+
+test("changed signed-in account cannot start phone approval", async () => {
+  const sdk = fakeSupabase();
+  const calls = [];
+  const h = clientHarness('src/app/oauth/authorize/consent-client.tsx', sdk, async (_url, init) => {
+    calls.push(JSON.parse(init.body));
+    return response({client_name: 'Claude', callback_host: 'claude.ai', redirect_uri: 'https://claude.ai/api/mcp/auth_callback'});
+  });
+  await h.start();
+  const token = `header.${Buffer.from(JSON.stringify({sub: 'other-user', session_id: 'other-session'})).toString('base64url')}.signature`;
+  sdk.auth.getSession = async () => ({data: {session: {access_token: token}}});
+  buttons(h.render())[0].props.onClick();
+  await flush();
+  assert.deepEqual(calls.map(c => c.action), ['preview']);
+  assert.equal(h.states[0].approved, false);
+});
+
+ test("late pairing result cannot restore approval after authorization navigation", async () => {
+   let resolvePair;
+   const sdk = fakeSupabase();
+   const h = clientHarness('src/app/oauth/authorize/consent-client.tsx', sdk, async (_url, init) => {
+     const body = JSON.parse(init.body);
+     if (body.action === 'preview') return response({client_name: 'Claude', callback_host: 'claude.ai', redirect_uri: 'https://claude.ai/api/mcp/auth_callback'});
+     return new Promise(resolve => { resolvePair = resolve; });
+   });
+   await h.start();
+   buttons(h.render())[0].props.onClick();
+   await flush();
+   assert.equal(typeof resolvePair, 'function');
+   h.navigate('authorization-2');
+   resolvePair(response({code: 'ABCDEFGHJKLM', expires_at: '2099-01-01T00:00:00Z'}));
+   await flush();
+   assert.equal(h.states[0].code, undefined);
+   assert.notEqual(h.states[0].approved, true);
+ });
+
+ test("account switch during pending pairing discards its code", async () => {
+   let resolvePair;
+   const sdk = fakeSupabase();
+   const h = clientHarness('src/app/oauth/authorize/consent-client.tsx', sdk, async (_url, init) => {
+     if (JSON.parse(init.body).action === 'preview') return response({client_name: 'Claude', callback_host: 'claude.ai', redirect_uri: 'https://claude.ai/api/mcp/auth_callback'});
+     return new Promise(resolve => { resolvePair = resolve; });
+   });
+   await h.start();
+   buttons(h.render())[0].props.onClick();
+   await flush();
+   sdk.auth.getSession = async () => ({data: {session: null}});
+   resolvePair(response({code: 'ABCDEFGHJKLM', expires_at: '2099-01-01T00:00:00Z'}));
+   await flush();
+   assert.equal(h.states[0].code, undefined);
+   assert.equal(h.states[0].approved, false);
+ });
+
+test('void pairing RPCs accept 204 and disconnect has no unlocked follow-up writes', async () => {
+  for (const action of ['pair_cancel', 'disconnect']) {
+    const h = routeHarness({fetch: async url => url.endsWith('/user') ? response({id: 'user-1'}) : new Response(null, {status: 204})});
+    const result = await h.post({action, authorization_id: 'authorization-1', client_id: 'c-claude'});
+    assert.equal(result.status, 200);
+    assert.deepEqual(h.calls.filter(c => c.url.includes('/rest/')).map(c => c.url.split('/').pop()), [action === 'disconnect' ? 'revoke_ai_connection_pairings' : 'cancel_ai_connection_pairing']);
+  }
+});
+test('empty completion fails closed and compensates with successful void cancellation', async () => {
+  const h = routeHarness({fetch: async url => {
+    if (url.endsWith('/user')) return response({id: 'user-1'});
+    if (url.includes('/oauth/authorizations/')) return response({client: {id: 'c-claude'}, redirect_uri: 'https://claude.ai/api/mcp/auth_callback'});
+    return new Response(null, {status: 204});
+  }});
+  const result = await h.post({action: 'approve', authorization_id: 'authorization-1'});
+  assert.equal(result.status, 503);
+  assert.doesNotMatch((await result.json()).error, /disconnect before/);
+  assert.ok(h.calls.some(c => c.url.endsWith('/cancel_ai_connection_pairing')));
+  assert.ok(!h.calls.some(c => c.url.endsWith('/consent')));
 });

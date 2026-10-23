@@ -6,10 +6,9 @@ import ConsentClient from "./consent-client";
 import { PrivatePageBoundary } from "@/components/ai-connector/PrivatePageBoundary";
 
 /**
- * Supabase Auth's OAuth 2.1 server sends a user here with ?authorization_id=…
- * when an AI assistant asks to connect (Authentication → OAuth Server →
- * authorization path). The card implements S3 and S4 of the AI connector
- * threat model; /api/ai-connections writes the connection on approval.
+ * external_auth_id: sign in, then explicitly continue to WorkOS hosted consent.
+ * authorization_id: review an authenticated pending setup and approve by phone.
+ * The server route owns request verification; URL parameters never name a client.
  */
 export const metadata: Metadata = {
   title: "Connect an AI assistant | PharmaGuide",

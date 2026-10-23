@@ -1,10 +1,9 @@
+import { randomInt, createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
 import { log } from "@/lib/logger";
 import {
-  CONNECTION_SCOPE,
   type TrustedClient,
-  connectionExpiry,
   createWriteLimiter,
   parseTrustedClients,
   redirectMatchesCallback,
@@ -12,26 +11,13 @@ import {
 } from "@/lib/ai-connector";
 
 /**
- * POST /api/ai-connections — the server half of the AI connector consent.
- *
- *   preview    → verified client name and callback host for the consent card
- *   approve    → writes the ai_connections row (S10) with the client name and
- *                callback host shown (S3/S4), then approves with Auth
- *   disconnect → marks the user's connection to one assistant revoked and
- *                deletes its shared snapshots and access-log rows (S5); the
- *                page then revokes the grant
- *
- * A redirect-only returning authorization does not prove client identity.
- * It is refused; the user disconnects its grant and starts a fresh request.
- * Approval writes the connection before asking Auth for the authorization
- * code, and revokes that exact row if Auth fails or returns a wrong callback.
- *
- * approve and disconnect are limited to 10 per user per minute (per instance).
- *
- * The caller is the signed-in user (Authorization: Bearer <session token>).
- * user_id always comes from Supabase Auth, the client and callback always
- * come from Supabase's own authorization record, and an AI assistant's OAuth
- * token is refused outright. Writes use the service role, server-only.
+ * Signed-in account actions only: Supabase Auth verifies the human user.
+ * WorkOS standalone login establishes identity before hosted OAuth consent.
+ * Later, SQL previews a pending request registered by verified MCP credentials;
+ * a separate live phone session approves it through the existing pairing owner.
+ * Disconnect closes the local gate, revokes the provider application, then clears
+ * the revocation barrier. Provider failure preserves the barrier for retry.
+ * Legacy Supabase OAuth remains available only under its existing default-off gate.
  */
 
 const MAX_BODY_BYTES = 1024;
@@ -40,7 +26,7 @@ const takeWrite = createWriteLimiter(10, 60_000);
 const ALREADY_CONNECTED =
   "This assistant already has an approval on record. To review or end it, open your connections page, disconnect it, and connect again.";
 
-type Body = { action?: unknown; authorization_id?: unknown; client_id?: unknown };
+type Body = { action?: unknown; authorization_id?: unknown; client_id?: unknown; external_auth_id?: unknown };
 
 function fail(status: number, error: string) {
   return NextResponse.json({ error }, { status });
@@ -73,17 +59,17 @@ function claimsOf(token: string): Record<string, unknown> | null {
 }
 
 /** The signed-in user, verified by Supabase Auth; null for anything else. */
-async function verifiedUserId(token: string): Promise<string | null> {
+async function verifiedUserId(token: string): Promise<{id: string; email?: string} | null> {
   const claims = claimsOf(token);
   // An assistant's own OAuth token must never approve or disconnect anything.
-  if (!claims || claims.client_id !== undefined) return null;
+  if (!claims || claims.client_id !== undefined || claims.is_anonymous === true) return null;
   const response = await fetch(authUrl("user"), {
     headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
   if (!response.ok) return null;
-  const user = (await response.json()) as { id?: unknown };
-  return typeof user.id === "string" ? user.id : null;
+  const user = (await response.json()) as { id?: unknown; email?: string; is_anonymous?: boolean };
+  return typeof user.id === "string" && user.is_anonymous !== true ? {id: user.id, email: user.email} : null;
 }
 
 type Verified =
@@ -121,6 +107,9 @@ async function verifiedAuthorization(token: string, authorizationId: string): Pr
   if (!client) {
     return { ok: false, status: 403, error: "PharmaGuide does not recognise this assistant." };
   }
+  if (client.kind === "codex" && details.redirect_uri !== client.redirect_uri) {
+    return {ok: false, status: 403, error: "This assistant callback is not registered."};
+  }
   const callback = verifyCallback(details.redirect_uri, client.kind);
   if (!callback.ok) return { ok: false, status: 403, error: callback.reason };
   return {
@@ -136,6 +125,81 @@ async function rest(path: string, init: RequestInit): Promise<Response> {
   const response = await fetch(restUrl(path), { ...init, cache: "no-store" });
   if (!response.ok) throw new Error(`ai_connections ${response.status}`);
   return response;
+}
+
+async function rpc(name: string, args: Record<string, unknown>) {
+  const response = await rest(`rpc/${name}`, {method: "POST", headers: serviceHeaders(), body: JSON.stringify(args)});
+  const body = await response.text();
+  if (!body.trim() && (name === "cancel_ai_connection_pairing" || name === "revoke_ai_connection_pairings")) return null;
+  const result = JSON.parse(body);
+  if (result?.error) throw new Error("Pairing unavailable");
+  return result;
+}
+
+function workosIssuer(): string {
+  const raw = process.env.WORKOS_ISSUER ?? "";
+  const url = new URL(raw);
+  if (url.protocol !== "https:" || url.origin !== raw || url.username || url.password) throw new Error("Invalid issuer");
+  return raw;
+}
+
+async function workos(path: string, init: RequestInit = {}) {
+  if (!process.env.WORKOS_API_KEY) throw new Error("WorkOS unavailable");
+  const response = await fetch(`https://api.workos.com${path}`, {...init, redirect: "error", cache: "no-store", signal: AbortSignal.timeout(10_000),
+    headers: {Authorization: `Bearer ${process.env.WORKOS_API_KEY}`, "content-type": "application/json"}});
+  if (!response.ok) throw new Error("WorkOS unavailable");
+  return response;
+}
+
+async function workosAuthorization(userId: string, authorizationId: string): Promise<Verified> {
+  const pending = await rpc("preview_workos_ai_pairing", {p_user_id: userId, p_authorization_id: authorizationId});
+  if (!pending || pending.authorization_id !== authorizationId || pending.oauth_issuer !== workosIssuer() ||
+      typeof pending.expires_at !== "string" || Date.parse(pending.expires_at) <= Date.now() || !Number.isFinite(Date.parse(pending.expires_at))) throw new Error("Invalid pending approval");
+  const client = parseTrustedClients(process.env.AI_CONNECTOR_TRUSTED_CLIENTS).find(c => c.client_id === pending.client_id);
+  if (!client || pending.client_name !== client.name || typeof pending.redirect_uri !== "string" ||
+      (client.redirect_uri && client.redirect_uri !== pending.redirect_uri)) throw new Error("Untrusted pending approval");
+  const callback = verifyCallback(pending.redirect_uri, client.kind);
+  if (!callback.ok || callback.host !== pending.callback_host) throw new Error("Invalid destination");
+  return {ok: true, client, redirectUri: pending.redirect_uri, host: callback.host, displayHost: callback.displayHost};
+}
+
+async function revokeWorkos(userId: string, clientId: string) {
+  const user = await (await workos(`/user_management/users/external_id/${encodeURIComponent(userId)}`)).json();
+  if (typeof user.id !== "string" || !ID_PATTERN.test(user.id) || user.external_id !== userId) throw new Error("Wrong provider user");
+  const base = `/user_management/users/${encodeURIComponent(user.id)}/authorized_applications`;
+  const ids = new Set<string>();
+  const cursors = new Set<string>();
+  let after: string | null = null;
+  do {
+    const page = await (await workos(`${base}?limit=100${after ? `&after=${encodeURIComponent(after)}` : ""}`)).json();
+    if (!Array.isArray(page.data) || !page.list_metadata) throw new Error("Invalid application list");
+    for (const row of page.data) {
+      if (row.application?.client_id === clientId) {
+        if (typeof row.application.id !== "string" || !ID_PATTERN.test(row.application.id)) throw new Error("Invalid application");
+        ids.add(row.application.id);
+      }
+    }
+    after = page.list_metadata.after ?? null;
+    if (after !== null && (typeof after !== "string" || cursors.has(after))) throw new Error("Invalid pagination");
+    if (after) cursors.add(after);
+  } while (after);
+  for (const id of ids) await workos(`${base}/${encodeURIComponent(id)}`, {method: "DELETE"});
+}
+
+/** Begin/cancel RPCs establish the local barrier before this provider phase. */
+async function finishWorkosRevocation(userId: string, clientId: string, generation: number) {
+  if (!Number.isSafeInteger(generation)) throw new Error("Invalid revocation generation");
+  try {
+    await revokeWorkos(userId, clientId);
+    const finished = await rpc("finish_ai_connection_revocation", {
+      p_user_id: userId, p_client_id: clientId, p_expected_generation: generation,
+    });
+    if (finished?.finished !== true) throw new Error("Revocation not finished");
+  } catch {
+    return NextResponse.json({provider_handled: true, local_access_ended: true,
+      error: "PharmaGuide access has ended. Provider disconnect is unfinished; open Your connections and retry Disconnect before connecting again."}, {status: 503});
+  }
+  return NextResponse.json({disconnected: true, cancelled: true, provider_handled: true});
 }
 
 export async function POST(request: Request) {
@@ -156,59 +220,76 @@ export async function POST(request: Request) {
     return fail(400, "Invalid request.");
   }
 
-  let createdConnectionId: string | null = null;
+  let completionBinding: Record<string, unknown> | null = null;
   let userId: string | null = null;
   try {
-    userId = await verifiedUserId(token);
-    if (!userId) return fail(401, "Sign in to continue.");
-    if ((body.action === "approve" || body.action === "disconnect") && !takeWrite(userId)) {
+    const user = await verifiedUserId(token);
+    userId = user?.id ?? null;
+    if (!userId || !user) return fail(401, "Sign in to continue.");
+    if ((body.action === "approve" || body.action === "disconnect" || body.action === "workos_login") && !takeWrite(userId)) {
       return NextResponse.json(
         { error: "Too many requests. Try again in a minute." },
         { status: 429, headers: { "Retry-After": "60" } }
       );
     }
-    if (body.action === "preview" || body.action === "approve") {
+    if (body.action === "workos_login") {
+      if (process.env.AI_CONNECTOR_PAIRING_ENABLED !== "true" || !process.env.WORKOS_ISSUER) return fail(503, "Connecting assistants is not available right now.");
+      const issuer = workosIssuer();
+      if (typeof body.external_auth_id !== "string" || !ID_PATTERN.test(body.external_auth_id)) return fail(400, "Invalid request.");
+      if (!/^[0-9a-f-]{36}$/i.test(user.id) || !user.email) return fail(401, "Sign in again to continue.");
+      const result = await (await workos("/authkit/oauth2/complete", {method: "POST", body: JSON.stringify({external_auth_id: body.external_auth_id, user: {id: user.id, email: user.email}})})).json();
+      const redirect = new URL(result.redirect_uri);
+      if (redirect.origin !== issuer || !["/oauth/authorize/complete", "/application-authorization"].includes(redirect.pathname) || redirect.username || redirect.password || redirect.hash) throw new Error("Invalid hosted redirect");
+      return NextResponse.json({redirect_uri: redirect.href});
+    }
+    if (["preview", "approve", "pair_start", "pair_status", "pair_cancel"].includes(String(body.action))) {
+      if (process.env.AI_CONNECTOR_PAIRING_ENABLED !== "true") return fail(503, "Connecting assistants is not available right now.");
+      const sessionId = claimsOf(token)?.session_id;
+      if (typeof sessionId !== "string" || !/^[0-9a-f-]{36}$/i.test(sessionId)) return fail(401, "Sign in again to continue.");
       if (typeof body.authorization_id !== "string" || !ID_PATTERN.test(body.authorization_id)) {
         return fail(400, "Invalid request.");
       }
-      const verified = await verifiedAuthorization(token, body.authorization_id);
+      const binding = {p_user_id: userId, p_session_id: sessionId, p_authorization_id: body.authorization_id};
+      if (body.action === "pair_cancel") {
+        const cancelled = await rpc("cancel_ai_connection_pairing", binding);
+        if (process.env.WORKOS_ISSUER && cancelled?.cancelled !== true) throw new Error("Invalid cancellation response");
+        // SQL atomically distinguishes this setup's authority from an existing
+        // connection reused by a repeat setup. Never revoke the latter here.
+        if (process.env.WORKOS_ISSUER && cancelled?.revocation_generation !== undefined) {
+          workosIssuer();
+          if (typeof cancelled.client_id !== "string" || !ID_PATTERN.test(cancelled.client_id)) throw new Error("Invalid cancellation client");
+          return finishWorkosRevocation(userId, cancelled.client_id, cancelled.revocation_generation);
+        }
+        return NextResponse.json({cancelled: true});
+      }
+      const verified = (process.env.WORKOS_ISSUER ? await workosAuthorization(userId, body.authorization_id) : await verifiedAuthorization(token, body.authorization_id));
       if (!verified.ok) return fail(verified.status, verified.error);
       const { client } = verified;
       if (body.action === "preview") {
         return NextResponse.json({
+          oauth_issuer: process.env.WORKOS_ISSUER ? workosIssuer() : null,
           client_name: client.name,
           client_kind: client.kind,
           callback_host: verified.displayHost,
           redirect_uri: verified.redirectUri,
         });
       }
-      const now = new Date();
-      const owner = `user_id=eq.${userId}&client_id=eq.${encodeURIComponent(client.client_id)}`;
-      // A new approval supersedes the previous live connection to this assistant.
-      await rest(`ai_connections?${owner}&status=eq.active`, {
-        method: "PATCH",
-        headers: serviceHeaders({ Prefer: "return=minimal" }),
-        body: JSON.stringify({ status: "revoked", revoked_at: now.toISOString() }),
-      });
-      // Retain the id before the request: a lost HTTP response may still have
-      // inserted the row, and cleanup must target that exact attempt.
-      createdConnectionId = crypto.randomUUID();
-      const created = await rest("ai_connections?select=connection_id,expires_at", {
-        method: "POST",
-        headers: serviceHeaders({ Prefer: "return=representation" }),
-        body: JSON.stringify({
-          connection_id: createdConnectionId,
-          user_id: userId,
-          client_id: client.client_id,
-          scope: CONNECTION_SCOPE,
-          client_name: client.name,
-          callback_host: verified.host,
-          status: "active",
-          expires_at: connectionExpiry(now).toISOString(),
-        }),
-      });
-      const [row] = (await created.json()) as Array<{ connection_id: string; expires_at: string }>;
-      if (!row) throw new Error("connection insert returned no row");
+      if (body.action === "pair_start") {
+        const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        const code = Array.from({length: 12}, () => alphabet[randomInt(alphabet.length)]).join("");
+        const result = await rpc("start_ai_connection_pairing", {...binding, p_client_id: client.client_id, p_client_name: client.name, p_redirect_uri: verified.redirectUri, p_code_hash: createHash("sha256").update(code).digest("hex")});
+        if (typeof result?.expires_at !== "string") throw new Error("Invalid pairing response");
+        return NextResponse.json({code, expires_at: result.expires_at});
+      }
+      if (body.action === "pair_status") {
+        const result = await rpc("ai_connection_pairing_status", binding);
+        if (typeof result?.approved !== "boolean" || typeof result?.expires_at !== "string") throw new Error("Invalid pairing response");
+        return NextResponse.json({approved: result.approved, expires_at: result.expires_at});
+      }
+      completionBinding = binding;
+      const row = await rpc("complete_ai_connection_pairing", {...binding, p_client_id: client.client_id, p_redirect_uri: verified.redirectUri});
+      if (typeof row?.connection_id !== "string" || !/^[0-9a-f-]{36}$/i.test(row.connection_id) || (process.env.WORKOS_ISSUER ? row.expires_at !== null || row.oauth_issuer !== workosIssuer() : typeof row.expires_at !== "string")) throw new Error("Invalid connection response");
+      if (process.env.WORKOS_ISSUER) return NextResponse.json({connection_id: row.connection_id, expires_at: null, oauth_issuer: row.oauth_issuer});
       const approved = await fetch(authUrl(`oauth/authorizations/${body.authorization_id}/consent`), {
         method: "POST",
         headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${token}`, "content-type": "application/json" },
@@ -224,53 +305,36 @@ export async function POST(request: Request) {
       return NextResponse.json({ ...row, redirect_url: result.redirect_url });
     }
 
+    if (body.action === "revocation_status") {
+      if (!process.env.WORKOS_ISSUER) return NextResponse.json({client_id: null});
+      workosIssuer();
+      const rows = await (await rest(`ai_connection_pairing_limits?user_id=eq.${encodeURIComponent(userId)}&select=revoking_client_id`, {headers: serviceHeaders()})).json();
+      if (!Array.isArray(rows) || rows.length > 1) throw new Error("Invalid revocation status");
+      const clientId = rows[0]?.revoking_client_id ?? null;
+      if (clientId !== null && (typeof clientId !== "string" || !ID_PATTERN.test(clientId))) throw new Error("Invalid revocation client");
+      return NextResponse.json({client_id: clientId});
+    }
+
     if (body.action === "disconnect") {
       if (typeof body.client_id !== "string" || !ID_PATTERN.test(body.client_id)) {
         return fail(400, "Invalid request.");
       }
-      const owner = `user_id=eq.${userId}&client_id=eq.${encodeURIComponent(body.client_id)}`;
-      const ended = await rest(`ai_connections?${owner}&status=eq.active&select=connection_id`, {
-        method: "PATCH",
-        headers: serviceHeaders({ Prefer: "return=representation" }),
-        body: JSON.stringify({ status: "revoked", revoked_at: new Date().toISOString() }),
-      });
-      const all = await rest(`ai_connections?${owner}&select=connection_id`, {
-        method: "GET",
-        headers: serviceHeaders(),
-      });
-      const ids = ((await all.json()) as Array<{ connection_id: string }>).map((r) => r.connection_id);
-      if (ids.length > 0) {
-        // S5: shared snapshots go with the connection. A project without the
-        // ai_share_snapshots migration (PostgREST 404) has none to delete.
-        const snapshots = await fetch(restUrl(`ai_share_snapshots?connection_id=in.(${ids.join(",")})`), {
-          method: "DELETE",
-          headers: serviceHeaders({ Prefer: "return=minimal" }),
-          cache: "no-store",
-        });
-        if (!snapshots.ok && snapshots.status !== 404) throw new Error(`ai_share_snapshots ${snapshots.status}`);
-        await rest(`mcp_access_log?connection_id=in.(${ids.join(",")})`, {
-          method: "DELETE",
-          headers: serviceHeaders({ Prefer: "return=minimal" }),
-        });
+      if (process.env.WORKOS_ISSUER) {
+        workosIssuer();
+        const args = {p_user_id: userId, p_client_id: body.client_id};
+        const begun = await rpc("begin_ai_connection_revocation", args);
+        return finishWorkosRevocation(userId, body.client_id, begun?.generation);
       }
-      const endedCount = ((await ended.json()) as unknown[]).length;
-      log.info("ai_connection.disconnected", { ended: endedCount });
+      await rpc("revoke_ai_connection_pairings", {p_user_id: userId, p_client_id: body.client_id});
+      log.info("ai_connection.disconnected", {});
       return NextResponse.json({ disconnected: true });
     }
-  } catch (error) {
-    if (createdConnectionId && userId) {
-      try {
-        await rest(`ai_connections?connection_id=eq.${createdConnectionId}&user_id=eq.${userId}`, {
-          method: "PATCH",
-          headers: serviceHeaders({ Prefer: "return=minimal" }),
-          body: JSON.stringify({ status: "revoked", revoked_at: new Date().toISOString() }),
-        });
-      } catch {
-        log.error("ai_connection.rollback_failed", {});
-        return fail(503, "The approval could not finish and its connection could not be closed. Open your connections page and disconnect it before trying again.");
-      }
+  } catch {
+    if (completionBinding) {
+      try { await rpc("cancel_ai_connection_pairing", completionBinding); }
+      catch { return fail(503, "The approval could not finish. Open your connections page and disconnect before trying again."); }
     }
-    log.error("ai_connection.failed", { message: error instanceof Error ? error.message : "unknown" });
+    log.error("ai_connection.failed", {});
     return fail(503, "PharmaGuide could not update this connection. Try again shortly.");
   }
   return fail(400, "Invalid request.");

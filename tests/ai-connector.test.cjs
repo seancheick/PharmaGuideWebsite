@@ -535,10 +535,10 @@ test('WorkOS wrong-user pending and wrong issuer fail closed',async()=>{
  }
 });
 test('WorkOS login uses verified account email and rejects unsafe hosted redirects',async()=>{
- for(const redirect of ['https://auth.example.test/application-authorization?state=x','https://auth.example.test/oauth/authorize/complete?state=x','https://evil.test/oauth/authorize/complete','https://auth.example.test/other']){
+ for(const redirect of ['https://auth.example.test/oauth2/external/callback?state=x','https://auth.example.test/application-authorization?state=x','https://auth.example.test/oauth/authorize/complete?state=x','https://evil.test/oauth/authorize/complete','https://evil.test/oauth2/external/callback','https://auth.example.test/oauth2/external/callback#fragment','https://user@auth.example.test/oauth2/external/callback','https://auth.example.test/other']){
  const h=routeHarness({env:workosEnv,fetch:async url=>response(url.endsWith('/user')?{id:'11111111-1111-4111-8111-111111111111',email:'verified@example.test'}:{redirect_uri:redirect})});
  const r=await h.post({action:'workos_login',external_auth_id:'ext_auth_fixture',email:'forged@example.test'});
- assert.equal(r.status,['https://auth.example.test/oauth/authorize/complete?state=x','https://auth.example.test/application-authorization?state=x'].includes(redirect)?200:503);
+ assert.equal(r.status,['https://auth.example.test/oauth2/external/callback?state=x','https://auth.example.test/oauth/authorize/complete?state=x','https://auth.example.test/application-authorization?state=x'].includes(redirect)?200:503);
  const sent=JSON.parse(h.calls.find(c=>c.url.includes('api.workos.com')).body);
  assert.deepEqual(sent,{external_auth_id:'ext_auth_fixture',user:{id:'11111111-1111-4111-8111-111111111111',email:'verified@example.test'}});
  }

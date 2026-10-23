@@ -239,7 +239,7 @@ export async function POST(request: Request) {
       if (!/^[0-9a-f-]{36}$/i.test(user.id) || !user.email) return fail(401, "Sign in again to continue.");
       const result = await (await workos("/authkit/oauth2/complete", {method: "POST", body: JSON.stringify({external_auth_id: body.external_auth_id, user: {id: user.id, email: user.email}})})).json();
       const redirect = new URL(result.redirect_uri);
-      if (redirect.origin !== issuer || !["/oauth/authorize/complete", "/application-authorization"].includes(redirect.pathname) || redirect.username || redirect.password || redirect.hash) throw new Error("Invalid hosted redirect");
+      if (redirect.origin !== issuer || !["/oauth/authorize/complete", "/application-authorization", "/oauth2/external/callback"].includes(redirect.pathname) || redirect.username || redirect.password || redirect.hash) throw new Error("Invalid hosted redirect");
       return NextResponse.json({redirect_uri: redirect.href});
     }
     if (["preview", "approve", "pair_start", "pair_status", "pair_cancel"].includes(String(body.action))) {

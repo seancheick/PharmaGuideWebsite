@@ -28,6 +28,19 @@ const ALREADY_CONNECTED =
 
 type Body = { action?: unknown; authorization_id?: unknown; client_id?: unknown; external_auth_id?: unknown };
 
+/** Temporary private qualification uses the verified account and a fixed window. */
+function pairingAllowed(userId: string, cancellation = false): boolean {
+  if (process.env.AI_CONNECTOR_PAIRING_ENABLED === "true") return true;
+  const testUser = process.env.AI_CONNECTOR_TEST_USER_ID;
+  if (!testUser || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(testUser) || testUser !== userId) return false;
+  // Cleanup still needs the existing SQL owner/session checks, but never a live window.
+  if (cancellation) return true;
+  const start = Date.parse(process.env.AI_CONNECTOR_TEST_STARTED_AT ?? "");
+  const end = Date.parse(process.env.AI_CONNECTOR_TEST_EXPIRES_AT ?? "");
+  const now = Date.now();
+  return Number.isFinite(start) && Number.isFinite(end) && end > start && end - start <= 8 * 60 * 60 * 1000 && now >= start && now < end;
+}
+
 function fail(status: number, error: string) {
   return NextResponse.json({ error }, { status });
 }
@@ -262,7 +275,7 @@ export async function POST(request: Request) {
       );
     }
     if (body.action === "workos_login") {
-      if (process.env.AI_CONNECTOR_PAIRING_ENABLED !== "true" || !process.env.WORKOS_ISSUER) return fail(503, "Connecting assistants is not available right now.");
+      if (!pairingAllowed(userId) || !process.env.WORKOS_ISSUER) return fail(503, "Connecting assistants is not available right now.");
       const issuer = workosIssuer();
       if (typeof body.external_auth_id !== "string" || !ID_PATTERN.test(body.external_auth_id)) return fail(400, "Invalid request.");
       if (!/^[0-9a-f-]{36}$/i.test(user.id) || !user.email) return fail(401, "Sign in again to continue.");
@@ -287,12 +300,13 @@ export async function POST(request: Request) {
         }
         return fail(409, "This account is being deleted. Connecting is unavailable.");
       }
+      if (!pairingAllowed(userId)) return fail(503, "This private connection window has ended. Contact the operator to continue.");
       const redirect = new URL(result.redirect_uri);
       if (redirect.origin !== issuer || !["/oauth/authorize/complete", "/application-authorization", "/oauth2/external/callback"].includes(redirect.pathname) || redirect.username || redirect.password || redirect.hash) throw new Error("Invalid hosted redirect");
       return NextResponse.json({redirect_uri: redirect.href});
     }
     if (["preview", "approve", "pair_start", "pair_status", "pair_cancel"].includes(String(body.action))) {
-      if (process.env.AI_CONNECTOR_PAIRING_ENABLED !== "true") return fail(503, "Connecting assistants is not available right now.");
+      if (!pairingAllowed(userId, body.action === "pair_cancel")) return fail(503, "Connecting assistants is not available right now.");
       const sessionId = claimsOf(token)?.session_id;
       if (typeof sessionId !== "string" || !/^[0-9a-f-]{36}$/i.test(sessionId)) return fail(401, "Sign in again to continue.");
       if (typeof body.authorization_id !== "string" || !ID_PATTERN.test(body.authorization_id)) {

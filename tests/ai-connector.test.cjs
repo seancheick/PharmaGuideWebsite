@@ -845,3 +845,55 @@ test('account existence verification rejects redirects and times out without ret
  assert.ok(!h.calls.some(c=>c.url.includes('evil.test')));
  }
 });
+
+test('private qualification permits only the verified user inside a fixed eight-hour window', async()=>{
+ const id='11111111-1111-4111-8111-111111111111',now=Date.now();
+ const valid={...workosEnv,AI_CONNECTOR_TEST_USER_ID:id,AI_CONNECTOR_TEST_STARTED_AT:new Date(now-60000).toISOString(),AI_CONNECTOR_TEST_EXPIRES_AT:new Date(now+3600000).toISOString()};
+ for(const mode of ['valid','wrong_user','missing','missing_start','expired','reversed','future','too_long','malformed']){
+ const env={...valid};
+ if(mode==='missing')delete env.AI_CONNECTOR_TEST_EXPIRES_AT;
+ if(mode==='missing_start')delete env.AI_CONNECTOR_TEST_STARTED_AT;
+ if(mode==='reversed')env.AI_CONNECTOR_TEST_EXPIRES_AT=new Date(now-120000).toISOString();
+ if(mode==='expired')env.AI_CONNECTOR_TEST_EXPIRES_AT=new Date(now-1).toISOString();
+ if(mode==='future')env.AI_CONNECTOR_TEST_STARTED_AT=new Date(now+60000).toISOString();
+ if(mode==='too_long')env.AI_CONNECTOR_TEST_EXPIRES_AT=new Date(now+9*3600000).toISOString();
+ if(mode==='malformed')env.AI_CONNECTOR_TEST_STARTED_AT='invalid';
+ const h=routeHarness({disabled:true,env,fetch:async url=>{
+ if(url.endsWith('/auth/v1/user')||url.includes('/admin/users/'))return response({id:mode==='wrong_user'?'22222222-2222-4222-8222-222222222222':id,email:'verified@example.test'});
+ if(url.includes('/ai_connection_pairing_limits?'))return response([]);
+ if(url.endsWith('/authkit/oauth2/complete'))return response({redirect_uri:'https://auth.example.test/application-authorization?state=x'});
+ throw new Error('Unexpected request');
+ }});
+ const result=await h.post({action:'workos_login',external_auth_id:'ext_auth_fixture'});
+ assert.equal(result.status,mode==='valid'?200:503,mode);
+ assert.equal(h.calls.some(c=>c.url.includes('api.workos.com')),mode==='valid',mode);
+ }
+});
+
+test('expired qualification blocks setup actions but preserves owner-bound cancellation and recovery',async()=>{
+ const id='11111111-1111-4111-8111-111111111111';
+ for(const action of ['preview','approve','pair_start','pair_status','pair_cancel','revocation_status']){
+ const h=routeHarness({disabled:true,env:{...workosEnv,AI_CONNECTOR_TEST_USER_ID:id,AI_CONNECTOR_TEST_STARTED_AT:'2020-01-01T00:00:00Z',AI_CONNECTOR_TEST_EXPIRES_AT:'2020-01-01T01:00:00Z'},fetch:async url=>{
+ if(url.endsWith('/auth/v1/user'))return response({id});
+ if(url.endsWith('/cancel_ai_connection_pairing'))return response({cancelled:true});
+ if(url.includes('/ai_connection_pairing_limits?'))return response([]);
+ throw new Error('Unexpected request');
+ }});
+ const result=await h.post({action,authorization_id:'authorization-1'});
+ assert.equal(result.status,['pair_cancel','revocation_status'].includes(action)?200:503,action);
+ if(action==='pair_cancel')assert.equal(JSON.parse(h.calls.find(c=>c.url.endsWith('/cancel_ai_connection_pairing')).body).p_user_id,id);
+ }
+});
+
+test('qualification expiry during provider completion cannot return a hosted redirect',async()=>{
+ const id='11111111-1111-4111-8111-111111111111',now=Date.now();
+ const h=routeHarness({disabled:true,env:{...workosEnv,AI_CONNECTOR_TEST_USER_ID:id,AI_CONNECTOR_TEST_STARTED_AT:new Date(now-60000).toISOString(),AI_CONNECTOR_TEST_EXPIRES_AT:new Date(now+1000).toISOString()},fetch:async url=>{
+ if(url.endsWith('/auth/v1/user')||url.includes('/admin/users/'))return response({id,email:'verified@example.test'});
+ if(url.includes('/ai_connection_pairing_limits?'))return response([]);
+ if(url.endsWith('/authkit/oauth2/complete')){await new Promise(resolve=>setTimeout(resolve,1100));return response({redirect_uri:'https://auth.example.test/application-authorization?state=x'});}
+ throw new Error('Unexpected request');
+ }});
+ const result=await h.post({action:'workos_login',external_auth_id:'ext_auth_fixture'});
+ assert.equal(result.status,503);assert.equal((await result.json()).redirect_uri,undefined);
+ assert.ok(h.calls.some(c=>c.url.endsWith('/authkit/oauth2/complete')));
+});

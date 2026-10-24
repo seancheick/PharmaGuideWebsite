@@ -12,7 +12,7 @@ type Preview = { client_name: string; callback_host: string; redirect_uri: strin
 
 type View =
   | { kind: "loading" }
-  | { kind: "message"; text: string }
+  | { kind: "message"; text: string; connected?: boolean }
   | { kind: "signin" }
   | { kind: "login"; session: Session; busy: boolean; error?: string }
   | {
@@ -27,6 +27,8 @@ type View =
       error?: string;
     };
 
+const CONNECTED_MESSAGE = "Connected. Return to your assistant to continue. You can disconnect at any time.";
+const APP_CONNECTIONS_URL = "pharmaguide:///ai-connections";
 const ID_PATTERN = /^[A-Za-z0-9_-]{1,255}$/;
 
 async function callRoute(session: Session, payload: Record<string, string>) {
@@ -73,6 +75,7 @@ function ConsentRequest({authorizationId, externalAuthId = ""}: {authorizationId
         // returning authorization, so it must not run twice in parallel.
         const { ok, json } = await callRoute(session, { action: "preview", authorization_id: authorizationId });
         if (!ok) return show({ kind: "message", text: String(json.error ?? "This connection cannot be approved.") });
+        if (json.connected === true && typeof json.oauth_issuer === "string") return show({kind: "message", text: CONNECTED_MESSAGE, connected: true});
         show({ kind: "consent", authorizationId, session, preview: json as unknown as Preview, busy: false });
       } catch {
         show({ kind: "message", text: "The connection could not be loaded. Try again from the assistant." });
@@ -109,17 +112,28 @@ function ConsentRequest({authorizationId, externalAuthId = ""}: {authorizationId
       await currentSession(view.session);
       if (!live()) return;
       if (!ok) throw new Error(String(json.error ?? "Phone approval is unavailable. Try again."));
+      if (action === "pair_status" && view.preview.oauth_issuer && json.approved === true && typeof json.connection_id === "string") {
+        setView({kind: "message", text: CONNECTED_MESSAGE, connected: true});
+        return;
+      }
+      if (action === "pair_start" && (typeof json.code !== "string" || !/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(json.code))) throw new Error("Invalid approval code");
       if (typeof json.expires_at !== "string" || !Number.isFinite(Date.parse(json.expires_at)) || Date.parse(json.expires_at) <= Date.now()) throw new Error("Expired approval");
-      setView({...view, busy: false, code: action === "pair_start" ? String(json.code) : view.code,
+      const next = {...view, busy: false, code: action === "pair_start" ? String(json.code) : view.code,
         expiresAt: String(json.expires_at), approved: action === "pair_status" && json.approved === true,
-        error: action === "pair_status" && json.approved !== true ? "Waiting for approval in the PharmaGuide app." : undefined});
+        error: action === "pair_status" && json.approved !== true ? "Waiting for approval in the PharmaGuide app." : undefined};
+      setView(next);
+      if (next.approved && next.preview.oauth_issuer) {
+        actionPending.current = false;
+        await decide(true, next);
+      }
     } catch {
       if (!live()) return;
       setView({...view, busy: false, approved: false, error: "Phone approval could not finish. Restart this connection from the assistant."});
     } finally { if (live()) actionPending.current = false; }
   }
 
-  async function decide(approve: boolean) {
+  async function decide(approve: boolean, currentView: View = view) {
+    const view = currentView;
     if (view.kind !== "consent" || view.authorizationId !== authorizationId || view.busy || actionPending.current) return;
     actionPending.current = true;
     const lifetime = lifecycle.current;
@@ -147,7 +161,7 @@ function ConsentRequest({authorizationId, externalAuthId = ""}: {authorizationId
         }
         if (view.preview.oauth_issuer) {
           await currentSession(view.session);
-          if (live()) setView({kind: "message", text: "Connected. Return to your assistant to continue. You can disconnect at any time."});
+          if (live()) setView({kind: "message", text: CONNECTED_MESSAGE, connected: true});
           return;
         }
         redirectUrl = written.json.redirect_url;
@@ -193,15 +207,22 @@ function ConsentRequest({authorizationId, externalAuthId = ""}: {authorizationId
       if (!result.ok || typeof result.json.redirect_uri !== "string") throw new Error("Login unavailable");
       window.location.assign(result.json.redirect_uri);
     } catch {
-      if (lifecycle.current.active) setView({...view, busy: false, error: "Sign-in could not continue. Start again from your assistant."});
+      if (lifecycle.current.active) setView({...view, busy: false, error: "You are signed in, but the assistant connection could not continue. Start a new connection from your assistant, then use the new browser tab."});
     } finally { actionPending.current = false; }
   }
 
-  if (view.kind === "login") return <article className="space-y-5">
-    <h1 className="text-2xl font-semibold">Continue to assistant sign-in</h1>
-    <p>You are signed in to PharmaGuide. Continue to WorkOS to review the requesting assistant. Personal access requires separate approval in the PharmaGuide app.</p>
+  useEffect(() => {
+    if (view.kind !== "consent" || !view.code || view.approved || view.busy || !view.expiresAt ||
+        (view.error && view.error !== "Waiting for approval in the PharmaGuide app.")) return;
+    const timer = setTimeout(() => { void pair("pair_status"); }, 15_000);
+    return () => clearTimeout(timer);
+  });
+
+  if (view.kind === "login") return <article className="space-y-5 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 sm:p-8">
+    <h1 className="text-2xl font-semibold">Review your assistant connection</h1>
+    <p>You’re signed in. Next, review which assistant is requesting a connection. You’ll then approve access separately in the PharmaGuide app on your phone.</p>
     {view.error ? <p role="alert">{view.error}</p> : null}
-    <button type="button" disabled={view.busy} onClick={() => void continueLogin()} className="rounded-lg bg-neutral-900 px-5 py-3 text-white disabled:opacity-50">Continue</button>
+    <button type="button" disabled={view.busy} onClick={() => void continueLogin()} className="rounded-lg bg-neutral-900 px-5 py-3 text-white disabled:opacity-50">{view.busy ? "Opening review…" : "Review connection"}</button>
   </article>;
 
   if (view.kind === "loading") return <p className="text-neutral-500">Loading…</p>;
@@ -209,6 +230,7 @@ function ConsentRequest({authorizationId, externalAuthId = ""}: {authorizationId
     return (
       <div className="space-y-4">
         <p className="text-base text-neutral-700 dark:text-neutral-300">{view.text}</p>
+        {view.connected ? <a href={APP_CONNECTIONS_URL} className="inline-flex w-full justify-center rounded-lg bg-neutral-900 px-5 py-3 font-semibold text-white dark:bg-white dark:text-neutral-900">Open PharmaGuide</a> : null}
         <Link href={CONNECTIONS_PATH} className="text-sm font-semibold underline">
           Your connections
         </Link>
@@ -229,6 +251,19 @@ function ConsentRequest({authorizationId, externalAuthId = ""}: {authorizationId
       <section aria-label="Destination" className="rounded-xl border border-neutral-200 p-5 dark:border-neutral-700">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">{copy.destinationLabel}</p>
         <p className="mt-1 break-all text-3xl font-bold text-neutral-900 dark:text-white">{view.preview.callback_host}</p>
+      </section>
+      <section className="space-y-3" aria-label="Phone approval">
+        <h2 className="font-semibold">Approve in PharmaGuide on your phone</h2>
+        <p>Open PharmaGuide on your phone and sign in to the same account. Review the assistant and destination in the app, then approve the connection.</p>
+        {view.code ? <><a href={`${APP_CONNECTIONS_URL}?code=${encodeURIComponent(view.code)}`} className="inline-flex w-full justify-center rounded-lg bg-neutral-900 px-5 py-3 font-semibold text-white dark:bg-white dark:text-neutral-900">Open PharmaGuide</a><p>On a computer, open AI connections in the app on your phone and enter this code:</p><p className="font-mono text-2xl" aria-label="Pairing code">{view.code.match(/.{1,4}/g)?.join("-")}</p><p>This code expires at {view.expiresAt ? new Date(view.expiresAt).toLocaleTimeString() : "the time shown in the app"}. Approval connects the assistant. To allow additional information, open Access settings in the app, review your choices and tap Save.</p></> : null}
+        {!view.code ? <button type="button" disabled={view.busy} onClick={() => void pair("pair_start")} className="inline-flex w-full justify-center rounded-lg bg-neutral-900 px-5 py-3 font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900">Start phone approval</button> : <p>If the code expires, ask your assistant to start a new connection, then open the new approval link.</p>}
+        {view.code ? <button type="button" disabled={view.busy} onClick={() => void pair("pair_status")} className="ml-4 underline">Check phone approval</button> : null}
+      {view.error ? (
+        <p role="alert" className="text-sm text-neutral-900 dark:text-white">
+          {view.error}
+        </p>
+      ) : null}
+        {view.approved ? <p role="status">Approved. Finish connecting below.</p> : null}
       </section>
       <section className="space-y-1">
         <h2 className="text-base font-semibold text-neutral-900 dark:text-white">{copy.categoriesHeading}</h2>
@@ -255,28 +290,15 @@ function ConsentRequest({authorizationId, externalAuthId = ""}: {authorizationId
           Your connections
         </Link>
       </p>
-      <section className="space-y-3" aria-label="Phone approval">
-        <h2 className="font-semibold">Approve in PharmaGuide on your phone</h2>
-        <p>Sign in to the same account in the app. Open AI connections, enter this code, and review the assistant and destination before approving.</p>
-        {view.code ? <><p className="font-mono text-2xl" aria-label="Pairing code">{view.code.match(/.{1,4}/g)?.join("-")}</p><p>This code expires in five minutes. Approval connects the assistant; sharing a snapshot is a separate step.</p></> : null}
-        {!view.code ? <button type="button" disabled={view.busy} onClick={() => void pair("pair_start")} className="underline">Get approval code</button> : <p>If the code expires, restart this connection from the assistant.</p>}
-        {view.code ? <button type="button" disabled={view.busy} onClick={() => void pair("pair_status")} className="ml-4 underline">Check phone approval</button> : null}
-        {view.approved ? <p role="status">Approved. Finish connecting below.</p> : null}
-      </section>
-      {view.error ? (
-        <p role="alert" className="text-sm text-neutral-900 dark:text-white">
-          {view.error}
-        </p>
-      ) : null}
       <div className="flex flex-col gap-3 sm:flex-row">
-        <button
+        {view.approved ? <button
           type="button"
           disabled={view.busy || !view.approved}
           onClick={() => void decide(true)}
           className="rounded-lg bg-neutral-900 px-5 py-3 text-sm font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
         >
           Finish connecting
-        </button>
+        </button> : null}
         <button
           type="button"
           disabled={view.busy}

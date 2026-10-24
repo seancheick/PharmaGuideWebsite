@@ -47,7 +47,7 @@ function boundaryHarness(analytics) {
         },
         useEffect(callback) { effects.push(callback); },
       };
-      if (name === 'react/jsx-runtime') return { jsx: (type, props) => ({ type, props }) };
+      if (name === 'react/jsx-runtime') return { jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }) };
       throw new Error(`Unexpected dependency ${name}`);
     },
   };
@@ -65,7 +65,7 @@ test('private boundary allows a clean private document without a reload loop', (
   const analytics = gate('/account/connections');
   const boundary = boundaryHarness(analytics);
   const privateContent = { sensitive: 'fixture only' };
-  assert.equal(boundary.render(privateContent), privateContent);
+  assert.equal(boundary.render(privateContent).props.children[1], privateContent);
   boundary.commit();
   assert.equal(boundary.reloads, 0);
 });
@@ -76,7 +76,7 @@ test('private boundary never mounts private content in an already tracked docume
   analytics.location.pathname = '/account/connections';
   const boundary = boundaryHarness(analytics);
   const privateContent = { sensitive: 'fixture only' };
-  assert.notEqual(boundary.render(privateContent), privateContent);
+  assert.notEqual(boundary.render(privateContent).props.children[1], privateContent);
   boundary.commit();
   assert.equal(boundary.reloads, 1);
 });
@@ -91,7 +91,19 @@ test('private boundary protects content even when the next route renders before 
   const first = boundary.render(privateContent);
   analytics.location.pathname = '/oauth/authorize';
   boundary.commit();
-  assert.notEqual(first, privateContent, 'no private children before the new URL commits');
+  assert.notEqual(first.props.children[1], privateContent, 'no private children before the new URL commits');
   assert.equal(boundary.reloads, 1);
-  assert.notEqual(boundary.render(privateContent), privateContent, 'private children stay suppressed until reload');
+  assert.notEqual(boundary.render(privateContent).props.children[1], privateContent, 'private children stay suppressed until reload');
+});
+
+
+test('private connection routes use the shared private shell without marketing navigation', () => {
+  for (const page of ['src/app/oauth/authorize/page.tsx', 'src/app/account/connections/page.tsx']) {
+    const source = fs.readFileSync(page, 'utf8');
+    assert.doesNotMatch(source, /components\/layout\/(Header|Footer)/);
+    assert.match(source, /<PrivatePageBoundary>/);
+  }
+  const boundary = fs.readFileSync('src/components/ai-connector/PrivatePageBoundary.tsx', 'utf8');
+  assert.match(boundary, /id="main"/);
+  assert.doesNotMatch(boundary, /fixed|sticky|pt-40|pt-44/);
 });

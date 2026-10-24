@@ -79,6 +79,7 @@ type Verified =
       redirectUri: string;
       host: string;
       displayHost: string;
+      connectionId?: string;
     }
   | { ok: false; status: number; error: string };
 
@@ -153,14 +154,15 @@ async function workos(path: string, init: RequestInit = {}) {
 
 async function workosAuthorization(userId: string, authorizationId: string): Promise<Verified> {
   const pending = await rpc("preview_workos_ai_pairing", {p_user_id: userId, p_authorization_id: authorizationId});
+  const completed = typeof pending?.connection_id === "string" && /^[0-9a-f-]{36}$/i.test(pending.connection_id);
   if (!pending || pending.authorization_id !== authorizationId || pending.oauth_issuer !== workosIssuer() ||
-      typeof pending.expires_at !== "string" || Date.parse(pending.expires_at) <= Date.now() || !Number.isFinite(Date.parse(pending.expires_at))) throw new Error("Invalid pending approval");
+      typeof pending.expires_at !== "string" || (!completed && Date.parse(pending.expires_at) <= Date.now()) || !Number.isFinite(Date.parse(pending.expires_at))) throw new Error("Invalid pending approval");
   const client = parseTrustedClients(process.env.AI_CONNECTOR_TRUSTED_CLIENTS).find(c => c.client_id === pending.client_id);
   if (!client || pending.client_name !== client.name || typeof pending.redirect_uri !== "string" ||
       (client.redirect_uri && client.redirect_uri !== pending.redirect_uri)) throw new Error("Untrusted pending approval");
   const callback = verifyCallback(pending.redirect_uri, client.kind);
   if (!callback.ok || callback.host !== pending.callback_host) throw new Error("Invalid destination");
-  return {ok: true, client, redirectUri: pending.redirect_uri, host: callback.host, displayHost: callback.displayHost};
+  return {ok: true, client, redirectUri: pending.redirect_uri, host: callback.host, displayHost: callback.displayHost, ...(completed ? {connectionId: pending.connection_id} : {})};
 }
 
 async function revokeWorkos(userId: string, clientId: string) {
@@ -239,7 +241,7 @@ export async function POST(request: Request) {
       if (!/^[0-9a-f-]{36}$/i.test(user.id) || !user.email) return fail(401, "Sign in again to continue.");
       const result = await (await workos("/authkit/oauth2/complete", {method: "POST", body: JSON.stringify({external_auth_id: body.external_auth_id, user: {id: user.id, email: user.email}})})).json();
       const redirect = new URL(result.redirect_uri);
-      if (redirect.origin !== issuer || !["/oauth/authorize/complete", "/application-authorization"].includes(redirect.pathname) || redirect.username || redirect.password || redirect.hash) throw new Error("Invalid hosted redirect");
+      if (redirect.origin !== issuer || !["/oauth/authorize/complete", "/application-authorization", "/oauth2/external/callback"].includes(redirect.pathname) || redirect.username || redirect.password || redirect.hash) throw new Error("Invalid hosted redirect");
       return NextResponse.json({redirect_uri: redirect.href});
     }
     if (["preview", "approve", "pair_start", "pair_status", "pair_cancel"].includes(String(body.action))) {
@@ -266,7 +268,12 @@ export async function POST(request: Request) {
       if (!verified.ok) return fail(verified.status, verified.error);
       const { client } = verified;
       if (body.action === "preview") {
+        if (verified.connectionId) {
+          const status = await rpc("ai_connection_pairing_status", binding);
+          if (status?.approved !== true || status.connection_id !== verified.connectionId) throw new Error("Invalid completed request");
+        }
         return NextResponse.json({
+          connected: Boolean(verified.connectionId),
           oauth_issuer: process.env.WORKOS_ISSUER ? workosIssuer() : null,
           client_name: client.name,
           client_kind: client.kind,
@@ -284,7 +291,8 @@ export async function POST(request: Request) {
       if (body.action === "pair_status") {
         const result = await rpc("ai_connection_pairing_status", binding);
         if (typeof result?.approved !== "boolean" || typeof result?.expires_at !== "string") throw new Error("Invalid pairing response");
-        return NextResponse.json({approved: result.approved, expires_at: result.expires_at});
+        if (result.connection_id !== undefined && (typeof result.connection_id !== "string" || !/^[0-9a-f-]{36}$/i.test(result.connection_id) || result.approved !== true || (verified.connectionId && result.connection_id !== verified.connectionId))) throw new Error("Invalid completed pairing");
+        return NextResponse.json({approved: result.approved, expires_at: result.expires_at, ...(result.connection_id ? {connection_id: result.connection_id} : {})});
       }
       completionBinding = binding;
       const row = await rpc("complete_ai_connection_pairing", {...binding, p_client_id: client.client_id, p_redirect_uri: verified.redirectUri});

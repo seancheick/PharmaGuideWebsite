@@ -173,12 +173,13 @@ function loadSource(relative, mocks, fetchFn) {
   const original = instance.require.bind(instance);
   instance.require = (name) => Object.hasOwn(mocks, name) ? mocks[name] : original(name);
   instance.testFetch = fetchFn;
+  instance.testTimers = {setTimeout, clearTimeout};
   instance.testProcess = { env: { AI_CONNECTOR_PAIRING_ENABLED: "true", AI_CONNECTOR_TRUSTED_CLIENTS: JSON.stringify(TRUSTED) } };
   instance.testWindow = { location: { assign: (url) => { instance.redirect = url; } } };
   const compiled = ts.transpileModule(fs.readFileSync(filename, "utf8"), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
   }).outputText;
-  instance._compile("const fetch = module.testFetch; const process = module.testProcess; const window = module.testWindow;\n" + compiled, filename);
+  instance._compile("const fetch = module.testFetch; const process = module.testProcess; const window = module.testWindow; const setTimeout = (...args) => module.testTimers.setTimeout(...args); const clearTimeout = (...args) => module.testTimers.clearTimeout(...args);\n" + compiled, filename);
   return instance;
 }
 const sessionToken = `header.${Buffer.from(JSON.stringify({ sub: "user-1", session_id: "11111111-1111-4111-8111-111111111111" })).toString("base64url")}.signature`;
@@ -258,7 +259,11 @@ function clientHarness(relative, supabase, fetchFn = async () => response({}), p
   let mounted = false;
   let authorizationId = "authorization-1";
   const refs = [];
-  let refCursor = 0;
+  let refCursor = 0, effectCursor = 0;
+  const effectDeps = [];
+  const pendingEffects = new Set();
+  const timers = new Map();
+  let timerId = 0;
   const react = {
     useRef(value) { const i = refCursor++; return refs[i] ?? (refs[i] = {current: value}); },
     useState(initial) {
@@ -267,7 +272,12 @@ function clientHarness(relative, supabase, fetchFn = async () => response({}), p
       return [states[index], (next) => { states[index] = typeof next === "function" ? next(states[index]) : next; }];
     },
     useCallback(fn) { return fn; },
-    useEffect(fn) { if (!mounted) effects.push(fn); },
+    useEffect(fn, deps) {
+      const index = effectCursor++;
+      if (!deps || !effectDeps[index] || deps.some((value, i) => !Object.is(value, effectDeps[index][i]))) {
+        effects[index] = fn; effectDeps[index] = deps; pendingEffects.add(index);
+      }
+    },
   };
   const loaded = loadSource(relative, {
     react,
@@ -277,23 +287,22 @@ function clientHarness(relative, supabase, fetchFn = async () => response({}), p
     "@/lib/ai-connector": connector,
     "@/lib/supabase-browser": { browserSupabase: () => supabase },
   }, fetchFn);
+  loaded.testTimers = {setTimeout(fn) { const id=++timerId;timers.set(id,fn);return id; }, clearTimeout(id) { timers.delete(id); }};
+  function commit() { for (const index of pendingEffects) { cleanups[index]?.();cleanups[index]=effects[index](); } pendingEffects.clear(); }
   function render() {
-    cursor = 0; refCursor = 0;
+    cursor = 0; refCursor = 0; effectCursor = 0;
     const root = loaded.exports.default(props);
-    if (typeof root.type !== 'function') return root;
+    if (typeof root.type !== 'function') { if(mounted) commit(); return root; }
     if (childKey !== undefined && childKey !== root.key) {
       cleanups.forEach(fn => fn?.());
-      states.length = 0; refs.length = 0; effects.length = 0; mounted = false;
+      states.length = 0; refs.length = 0; effects.length = 0; effectDeps.length = 0; pendingEffects.clear();
     }
     childKey = root.key;
     const result = root.type(root.props);
-    if (!mounted && cleanups.length) {
-      mounted = true;
-      cleanups = effects.map(fn => fn());
-    }
+    if (mounted) commit();
     return result;
   }
-  return { states, render, navigate(id) { authorizationId = id; return render(); }, async start() { render(); mounted = true; cleanups = effects.map((fn) => fn()); await flush(); } };
+  return { states, render, timerCount: () => timers.size, unmount() { cleanups.forEach(fn=>fn?.()); }, tick() { const tasks=[...timers.values()];timers.clear();tasks.forEach(fn=>fn()); }, navigate(id) { authorizationId = id; return render(); }, async start() { render(); mounted = true; commit(); await flush(); } };
 }
 function fakeSupabase(options = {}) {
   let grants = options.grants ?? [];
@@ -535,10 +544,10 @@ test('WorkOS wrong-user pending and wrong issuer fail closed',async()=>{
  }
 });
 test('WorkOS login uses verified account email and rejects unsafe hosted redirects',async()=>{
- for(const redirect of ['https://auth.example.test/application-authorization?state=x','https://auth.example.test/oauth/authorize/complete?state=x','https://evil.test/oauth/authorize/complete','https://auth.example.test/other']){
+ for(const redirect of ['https://auth.example.test/oauth2/external/callback?state=x','https://auth.example.test/application-authorization?state=x','https://auth.example.test/oauth/authorize/complete?state=x','https://evil.test/oauth/authorize/complete','https://evil.test/oauth2/external/callback','https://auth.example.test/oauth2/external/callback#fragment','https://user@auth.example.test/oauth2/external/callback','https://auth.example.test/other']){
  const h=routeHarness({env:workosEnv,fetch:async url=>response(url.endsWith('/user')?{id:'11111111-1111-4111-8111-111111111111',email:'verified@example.test'}:{redirect_uri:redirect})});
  const r=await h.post({action:'workos_login',external_auth_id:'ext_auth_fixture',email:'forged@example.test'});
- assert.equal(r.status,['https://auth.example.test/oauth/authorize/complete?state=x','https://auth.example.test/application-authorization?state=x'].includes(redirect)?200:503);
+ assert.equal(r.status,['https://auth.example.test/oauth2/external/callback?state=x','https://auth.example.test/oauth/authorize/complete?state=x','https://auth.example.test/application-authorization?state=x'].includes(redirect)?200:503);
  const sent=JSON.parse(h.calls.find(c=>c.url.includes('api.workos.com')).body);
  assert.deepEqual(sent,{external_auth_id:'ext_auth_fixture',user:{id:'11111111-1111-4111-8111-111111111111',email:'verified@example.test'}});
  }
@@ -584,12 +593,12 @@ test('WorkOS connections never list or revoke Supabase OAuth grants and retain r
  const sdk=fakeSupabase({rows:[{client_id:'c-claude',client_name:'Claude',status:'revoked',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER}]});
  sdk.auth.oauth.listGrants=async()=>{throw Error('Must not list Supabase grants');};
  sdk.auth.oauth.revokeGrant=async()=>{throw Error('Must not revoke Supabase grants');};
- const h=clientHarness('src/app/account/connections/connections-client.tsx',sdk,async(_url,init)=>JSON.parse(init.body).action==='revocation_status'?response({client_id:null}):response({provider_handled:true,local_access_ended:true,error:'Local access ended; retry Disconnect.'},503),{workosMode:true});
+ const h=clientHarness('src/app/account/connections/connections-client.tsx',sdk,async(_url,init)=>JSON.parse(init.body).action==='revocation_status'?response({client_id:'c-claude'}):response({provider_handled:true,local_access_ended:true,error:'Local access ended; retry Disconnect.'},503),{workosMode:true});
  await h.start();assert.equal(h.states[0].kind,'list');buttons(h.render())[0].props.onClick();await flush();
  assert.match(h.states[0].notice,/Local access ended; retry/);
 });
-test('WorkOS durable disclosure retains independent snapshot expiry',()=>{
- assert.match(consentCopy('Codex',true).duration,/Until you disconnect.*snapshot.*expiry/);
+test('WorkOS durable disclosure retains independent additional-information expiry',()=>{
+ assert.match(consentCopy('Codex',true).duration,/Until you disconnect.*Access settings.*access end time/);
  assert.equal(consentCopy('Codex',true).destinationLabel,'Configured assistant destination');
 });
 
@@ -640,4 +649,150 @@ test('pending-only provider failure exposes a durable retry from connections',as
  JSON.parse(init.body).action==='revocation_status'?response({client_id:'c-claude'}):response({provider_handled:true,error:'Local access ended; retry Disconnect.'},503),{workosMode:true});
  await ui.start();assert.equal(ui.states[0].grants[0].clientId,'c-claude');
  buttons(ui.render())[0].props.onClick();await flush();assert.match(ui.states[0].notice,/retry Disconnect/);
+});
+
+test('verified phone approval finishes WorkOS connection without another click', async()=>{
+ const sdk=fakeSupabase(), actions=[];
+ const h=clientHarness('src/app/oauth/authorize/consent-client.tsx',sdk,async(_url,init)=>{
+  const action=JSON.parse(init.body).action;actions.push(action);
+  return response(action==='preview'?workosPending:action==='pair_status'?{approved:true,expires_at:'2099-01-01T00:00:00Z'}:{connection_id:'22222222-2222-4222-8222-222222222222',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER});
+ });
+ await h.start();h.states[0].code='ABCDEFGHJKLM';h.states[0].expiresAt='2099-01-01T00:00:00Z';
+ buttons(h.render()).find(b=>b.props.children==='Check phone approval').props.onClick();
+ await flush();assert.equal(h.states[0].kind,'message');assert.match(h.states[0].text,/Connected/);
+ assert.deepEqual(actions,['preview','pair_status','approve']);
+});
+
+function anchors(node) {
+ if(!node || typeof node!=='object') return [];
+ if(Array.isArray(node))return node.flatMap(anchors);
+ return [...(node.type==='a'?[node]:[]),...anchors(node.props?.children)];
+}
+test('phone approval offers an explicit app link with manual desktop code fallback',async()=>{
+ const actions=[];
+ const h=clientHarness('src/app/oauth/authorize/consent-client.tsx',fakeSupabase(),async(_url,init)=>{
+ const action=JSON.parse(init.body).action;actions.push(action);
+ return response(action==='preview'?workosPending:{code:'ABCDEFGHJKLM',expires_at:'2099-01-01T00:00:00Z'});
+ });
+ await h.start();buttons(h.render()).find(b=>b.props.children==='Start phone approval').props.onClick();await flush();
+ const ui=h.render();const link=anchors(ui).find(a=>a.props.children==='Open PharmaGuide');
+ assert.equal(link?.props.href,'pharmaguide:///ai-connections?code=ABCDEFGHJKLM');
+ assert.match(JSON.stringify(ui),/ABCD-EFGH-JKLM/);
+ assert.deepEqual(actions,['preview','pair_start']);
+});
+test('connected page opens app connections without carrying the expired approval code',async()=>{
+ const h=clientHarness('src/app/oauth/authorize/consent-client.tsx',fakeSupabase(),async(_url,init)=>response(JSON.parse(init.body).action==='preview'?workosPending:{connection_id:'22222222-2222-4222-8222-222222222222',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER}));
+ await h.start();h.states[0].approved=true;h.states[0].expiresAt='2099-01-01T00:00:00Z';h.states[0].code='ABCDEFGHJKLM';
+ buttons(h.render()).find(b=>b.props.children==='Finish connecting').props.onClick();await flush();
+ const ui=h.render();assert.equal(anchors(ui).find(a=>a.props.children==='Open PharmaGuide')?.props.href,'pharmaguide:///ai-connections');
+ assert.match(JSON.stringify(ui),/Return to your assistant/);assert.doesNotMatch(JSON.stringify(ui),/ABCDEFGHJKLM/);
+});
+
+test('completed phone approval is visible after the challenge expires and remains session-bound',async()=>{
+ const cid='22222222-2222-4222-8222-222222222222';
+ for(const mismatch of [false,true]){
+ const h=routeHarness({env:workosEnv,fetch:async url=>{
+ if(url.endsWith('/auth/v1/user'))return response({id:'user-1'});
+ if(url.endsWith('/preview_workos_ai_pairing'))return response({...workosPending,connection_id:cid,expires_at:'2000-01-01T00:00:00Z'});
+ if(url.endsWith('/ai_connection_pairing_status'))return response(mismatch?{error:'pairing_unavailable'}:{approved:true,connection_id:cid,expires_at:'2000-01-01T00:00:00Z'});
+ throw Error(url);
+ }});
+ const r=await h.post({action:'preview',authorization_id:'authorization-1'});
+ assert.equal(r.status,mismatch?503:200);if(!mismatch)assert.equal((await r.json()).connected,true);
+ }
+});
+test('phone completion between preview and status is accepted through exact binding owner',async()=>{
+ const cid='22222222-2222-4222-8222-222222222222';
+ const h=routeHarness({env:workosEnv,fetch:async url=>{
+ if(url.endsWith('/auth/v1/user'))return response({id:'user-1'});
+ if(url.endsWith('/preview_workos_ai_pairing'))return response(workosPending);
+ if(url.endsWith('/ai_connection_pairing_status'))return response({approved:true,connection_id:cid,expires_at:'2099-01-01T00:00:00Z'});
+ throw Error(url);
+ }});
+ const r=await h.post({action:'pair_status',authorization_id:'authorization-1'});assert.equal(r.status,200);assert.equal((await r.json()).connection_id,cid);
+});
+test('polling sees automatic phone completion, stops and never issues a second approval',async()=>{
+ const actions=[];
+ const h=clientHarness('src/app/oauth/authorize/consent-client.tsx',fakeSupabase(),async(_url,init)=>{
+ const action=JSON.parse(init.body).action;actions.push(action);
+ return response(action==='preview'?workosPending:{approved:true,connection_id:'22222222-2222-4222-8222-222222222222',expires_at:'2000-01-01T00:00:00Z'});
+ });
+ await h.start();h.states[0].code='ABCDEFGHJKLM';h.states[0].expiresAt='2000-01-01T00:00:00Z';
+ h.render();assert.equal(h.timerCount(),1);h.tick();await flush();h.render();
+ assert.equal(h.states[0].connected,true);assert.equal(h.timerCount(),0);
+ assert.deepEqual(actions,['preview','pair_status']);h.tick();assert.deepEqual(actions,['preview','pair_status']);
+});
+test('leaving approval clears polling and discards a late completion response',async()=>{
+ let resolveStatus;
+ const h=clientHarness('src/app/oauth/authorize/consent-client.tsx',fakeSupabase(),async(_url,init)=>{
+ if(JSON.parse(init.body).action==='preview')return response(workosPending);
+ return new Promise(resolve=>{resolveStatus=resolve;});
+ });
+ await h.start();h.states[0].code='ABCDEFGHJKLM';h.states[0].expiresAt='2099-01-01T00:00:00Z';
+ h.render();assert.equal(h.timerCount(),1);h.tick();await flush();h.unmount();
+ resolveStatus(response({approved:true,connection_id:'22222222-2222-4222-8222-222222222222',expires_at:'2099-01-01T00:00:00Z'}));await flush();
+ assert.equal(h.timerCount(),0);assert.notEqual(h.states[0].connected,true);
+});
+test('reloading a phone-completed setup shows success without generating another code',async()=>{
+ const actions=[];
+ const h=clientHarness('src/app/oauth/authorize/consent-client.tsx',fakeSupabase(),async(_url,init)=>{
+ actions.push(JSON.parse(init.body).action);return response({...workosPending,connected:true});
+ });
+ await h.start();assert.equal(h.states[0].connected,true);assert.deepEqual(actions,['preview']);
+ assert.equal(anchors(h.render()).find(a=>a.props.children==='Open PharmaGuide')?.props.href,'pharmaguide:///ai-connections');
+});
+
+test('access settings copy describes Save and the uploaded copy without promising live health sync',()=>{
+ assert.match(connector.CONNECTIONS_COPY.intro,/Access settings.*tap Save/);
+ assert.match(connector.CONNECTIONS_COPY.intro,/Saving uploads a separate copy/);
+ assert.match(connector.CONNECTIONS_COPY.intro,/Medications and profile details are included only when you select them/);
+ assert.doesNotMatch(connector.CONNECTIONS_COPY.intro,/snapshot|automatically sync/);
+});
+
+test('successful disconnect offers explicit return to app without an approval code',async()=>{
+ const sdk=fakeSupabase({rows:[{client_id:'c-claude',client_name:'Claude',status:'active',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER}]});
+ const h=clientHarness('src/app/account/connections/connections-client.tsx',sdk,async(_url,init)=>response(JSON.parse(init.body).action==='revocation_status'?{client_id:null}:{disconnected:true,provider_handled:true}),{workosMode:true});
+ await h.start();buttons(h.render())[0].props.onClick();await flush();
+ assert.equal(anchors(h.render()).find(a=>a.props.children==='Return to PharmaGuide')?.props.href,'pharmaguide:///ai-connections');
+});
+
+test('completed WorkOS disconnect is read-only after reload and offers return to app',async()=>{
+ const rows=[{client_id:'c-claude',client_name:'Claude',status:'revoked',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER}, {client_id:'c-claude',client_name:'Claude',status:'revoked',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER}];
+ const h=clientHarness('src/app/account/connections/connections-client.tsx',fakeSupabase({rows}),async()=>response({client_id:null}),{workosMode:true});
+ await h.start();assert.equal(h.states[0].grants.length,1,'history is grouped by provider client');
+ assert.match(JSON.stringify(h.render()),/Disconnected/);assert.equal(buttons(h.render()).length,0);
+ assert.equal(anchors(h.render()).find(a=>a.props.children==='Return to PharmaGuide')?.props.href,'pharmaguide:///ai-connections');
+});
+test('provider cleanup retry is named explicitly on a revoked WorkOS row',async()=>{
+ const h=clientHarness('src/app/account/connections/connections-client.tsx',fakeSupabase({rows:[{client_id:'c-claude',client_name:'Claude',status:'revoked',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER}]}),async()=>response({client_id:'c-claude'}),{workosMode:true});
+ await h.start();assert.equal(buttons(h.render())[0].props.children,'Retry disconnect');
+ assert.match(JSON.stringify(h.render()),/provider access removal is unfinished/);
+});
+test('legacy OAuth grant still allows cleanup when its local row is revoked',async()=>{
+ const h=clientHarness('src/app/account/connections/connections-client.tsx',fakeSupabase({rows:[{client_id:'c-claude',client_name:'Claude',status:'revoked',expires_at:null}],grants:[{client:{id:'c-claude',name:'Claude'},granted_at:'2026-10-23'}]}));
+ await h.start();assert.equal(buttons(h.render())[0].props.children,'Disconnect');
+});
+test('phone setup leads with an enabled approval action and no premature finish button',async()=>{
+ const h=clientHarness('src/app/oauth/authorize/consent-client.tsx',fakeSupabase(),async()=>response(workosPending));
+ await h.start();const ui=h.render();const start=buttons(ui).find(b=>b.props.children==='Start phone approval');
+ assert.ok(start);assert.equal(start.props.disabled,false);assert.match(start.props.className,/bg-neutral-900/);
+ assert.ok(!buttons(ui).some(b=>b.props.children==='Finish connecting'));
+ const children=ui.props.children;assert.equal(children[2].props['aria-label'],'Phone approval','next step precedes long detail copy');
+});
+test('disconnect has a clear destructive target and blocks duplicate taps while pending',async()=>{
+ let finish, disconnects=0;
+ const pending=new Promise(resolve=>{finish=resolve;});
+ const rows=[{client_id:'c-claude',client_name:'Claude',status:'active',expires_at:null,oauth_issuer:workosEnv.WORKOS_ISSUER}];
+ const h=clientHarness('src/app/account/connections/connections-client.tsx',fakeSupabase({rows}),async(_url,init)=>{
+   if(JSON.parse(init.body).action==='revocation_status')return response({client_id:null});
+   disconnects++;return pending;
+ },{workosMode:true});
+ await h.start();const button=buttons(h.render())[0];
+ assert.match(button.props.className,/bg-red-700/);assert.match(button.props.className,/min-h-12/);
+ button.props.onClick();button.props.onClick();
+ const busy=buttons(h.render())[0];assert.equal(busy.props.children,'Disconnecting…');assert.equal(busy.props.disabled,true);assert.equal(busy.props['aria-busy'],true);
+ assert.equal(disconnects,1);
+ finish(response({error:'Retry required',provider_handled:true},503));await flush();
+ assert.equal(buttons(h.render())[0].props.disabled,false);
+ buttons(h.render())[0].props.onClick();await flush();assert.equal(disconnects,2,'failure unlocks explicit retry');
 });

@@ -148,7 +148,7 @@ export function consentCopy(clientName: string, durable = false) {
     categoriesIncluded: "Your supplement list and PharmaGuide product facts.",
     categoriesExcluded: "Medications and your health profile are not included.",
     durationHeading: "How long",
-    duration: durable ? "Until you disconnect. Any snapshot you share has its own expiry." : `${CONNECTION_HOURS} hours. After that, ${clientName} needs your approval again.`,
+    duration: durable ? "Until you disconnect. Additional information you allow in Access settings has its own access end time." : `${CONNECTION_HOURS} hours. After that, ${clientName} needs your approval again.`,
     locationsHeading: "Where your supplement list goes",
     locations: [
       {
@@ -174,7 +174,7 @@ export function consentCopy(clientName: string, durable = false) {
 export const CONNECTIONS_COPY = {
   title: "Connected AI assistants",
   intro:
-    "These assistants can read your supplement list while their connection lasts, plus any snapshot you separately share from the app. Medications and profile details are included only when you explicitly select them in that snapshot.",
+    "These assistants can read your supplement list while their connection lasts. In the app, open an assistant’s Access settings, choose any additional information to allow, and tap Save. Saving uploads a separate copy of that selected information with its own access end time. Medications and profile details are included only when you select them.",
   empty: "No assistants are connected.",
   disconnect: "Disconnect",
   disconnected: "Disconnected. The assistant can no longer read your supplement list.",

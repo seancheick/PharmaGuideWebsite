@@ -38,6 +38,7 @@ function boundaryHarness(analytics) {
     exports: {},
     window: { location: { reload() { reloads++; } } },
     require(name) {
+      if (name === 'next/link') return {__esModule:true, default:'a'};
       if (name === '@/lib/analytics') return { privatePageNeedsReload: analytics.reload };
       if (name === 'react') return {
         useState(initial) {
@@ -106,4 +107,32 @@ test('private connection routes use the shared private shell without marketing n
   const boundary = fs.readFileSync('src/components/ai-connector/PrivatePageBoundary.tsx', 'utf8');
   assert.match(boundary, /id="main"/);
   assert.doesNotMatch(boundary, /fixed|sticky|pt-40|pt-44/);
+});
+
+test('connector privacy disclosure names processors and durable access without promising assistant deletion', () => {
+  const context = {exports: {}};
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/lib/privacy.ts','utf8'), {compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText, context);
+  const policy=JSON.stringify(context.exports.PRIVACY_DOC);
+  assert.match(policy,/WorkOS/);assert.match(policy,/Supabase/);
+  assert.match(policy,/until you disconnect/);assert.doesNotMatch(policy,/currently 24 hours/);
+  assert.match(policy,/independent provider/);assert.doesNotMatch(policy,/All vendors are bound/);
+  assert.match(policy,/training settings/);assert.match(policy,/without unreasonable delay/);
+  assert.doesNotMatch(policy,/notify you within 72 hours/);
+  const shell=fs.readFileSync('src/components/ai-connector/PrivatePageBoundary.tsx','utf8');
+  assert.match(shell,/href="\/privacy"/);
+});
+
+test('privacy does not advertise unavailable export or unverified compliance and retention guarantees', () => {
+  const context={exports:{}};
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/lib/privacy.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText,context);
+  const policy=JSON.stringify(context.exports.PRIVACY_DOC);
+  for(const claim of ['We comply with COPPA, CCPA/CPRA, and GDPR','regular security audits','we rely on Standard Contractual Clauses','Settings → Privacy → Export my data','permanently remove your account record and email within 30 days','wiped immediately when you uninstall','longer than 30 days','Disable usage analytics']) assert.ok(!policy.includes(claim),claim);
+  assert.match(policy,/full in-app export is not yet available/);
+  assert.match(policy,/privacy@pharmaguide.io/);
+  assert.match(policy,/Uninstalling the app does not delete your account/);
+  assert.match(policy,/adults aged 18 and over/);
+  assert.doesNotMatch(policy,/For users 13–17/);
+  const terms=fs.readFileSync('src/lib/terms.ts','utf8');
+  assert.match(terms,/People under 18.*you may not create an account/);
+  assert.doesNotMatch(terms,/Minors \(13–17\)|Minors 13–17/);
 });

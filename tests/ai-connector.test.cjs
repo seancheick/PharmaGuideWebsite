@@ -545,7 +545,7 @@ test('WorkOS wrong-user pending and wrong issuer fail closed',async()=>{
 });
 test('WorkOS login uses verified account email and rejects unsafe hosted redirects',async()=>{
  for(const redirect of ['https://auth.example.test/oauth2/external/callback?state=x','https://auth.example.test/application-authorization?state=x','https://auth.example.test/oauth/authorize/complete?state=x','https://evil.test/oauth/authorize/complete','https://evil.test/oauth2/external/callback','https://auth.example.test/oauth2/external/callback#fragment','https://user@auth.example.test/oauth2/external/callback','https://auth.example.test/other']){
- const h=routeHarness({env:workosEnv,fetch:async url=>response(url.endsWith('/user')?{id:'11111111-1111-4111-8111-111111111111',email:'verified@example.test'}:{redirect_uri:redirect})});
+ const h=routeHarness({env:workosEnv,fetch:async url=>response(url.includes('/ai_connection_pairing_limits?')?[]:url.includes('/admin/users/')||url.endsWith('/user')?{id:'11111111-1111-4111-8111-111111111111',email:'verified@example.test'}:{redirect_uri:redirect})});
  const r=await h.post({action:'workos_login',external_auth_id:'ext_auth_fixture',email:'forged@example.test'});
  assert.equal(r.status,['https://auth.example.test/oauth2/external/callback?state=x','https://auth.example.test/oauth/authorize/complete?state=x','https://auth.example.test/application-authorization?state=x'].includes(redirect)?200:503);
  const sent=JSON.parse(h.calls.find(c=>c.url.includes('api.workos.com')).body);
@@ -795,4 +795,53 @@ test('disconnect has a clear destructive target and blocks duplicate taps while 
  finish(response({error:'Retry required',provider_handled:true},503));await flush();
  assert.equal(buttons(h.render())[0].props.disabled,false);
  buttons(h.render())[0].props.onClick();await flush();assert.equal(disconnects,2,'failure unlocks explicit retry');
+});
+
+
+test('standalone login rejects deletion and compensates a concurrent account deletion without returning a redirect', async()=>{
+ const id='11111111-1111-4111-8111-111111111111';
+ for(const mode of ['before','during','deleted','cleanup_failure','wrong_provider','missing_provider','auth_unavailable','timeout']){
+ let reads=0;
+ const h=routeHarness({env:workosEnv,fetch:async(url,init)=>{
+ if(url.endsWith('/auth/v1/user'))return response({id,email:'verified@example.test'});
+ if(url.includes('/ai_connection_pairing_limits?'))return response((mode==='before'||(++reads>1&&mode!=='deleted'))?[{revoking_client_id:'!'.repeat(256)}]:[]);
+ if(url.includes('/admin/users/'))return response(mode==='deleted'?{}:{id},mode==='deleted'?404:mode==='auth_unavailable'?503:200);
+ if(url.endsWith('/authkit/oauth2/complete')){if(mode==='timeout')throw new Error('timeout');return response({redirect_uri:'https://auth.example.test/application-authorization?state=x'});}
+ if(url.includes('/external_id/'))return response({id:'user_fixture',external_id:mode==='wrong_provider'?'other':id},mode==='missing_provider'?404:200);
+ if(init.method==='DELETE')return response({},mode==='cleanup_failure'?500:200);
+ throw new Error('Unexpected request '+url);
+ }});
+ const result=await h.post({action:'workos_login',external_auth_id:'ext_auth_fixture'});
+ assert.notEqual(result.status,200);
+ const body=await result.json();
+ assert.equal(body.redirect_uri,undefined);
+ assert.equal(h.calls.some(c=>c.url.endsWith('/authkit/oauth2/complete')),mode!=='before');
+ assert.equal(h.calls.some(c=>c.method==='DELETE'),!['before','wrong_provider','missing_provider','auth_unavailable','timeout'].includes(mode));
+ if(mode==='cleanup_failure')assert.match(body.error,/cleanup could not be confirmed/);
+ }
+});
+
+test('account existence verification rejects redirects and times out without returning the hosted redirect', async()=>{
+ const id='11111111-1111-4111-8111-111111111111';
+ for(const mode of ['redirect','timeout']){
+ let accountRequest;
+ const h=routeHarness({env:workosEnv,fetch:async(url,init)=>{
+ if(url.endsWith('/auth/v1/user'))return response({id,email:'verified@example.test'});
+ if(url.includes('/ai_connection_pairing_limits?'))return response([]);
+ if(url.endsWith('/authkit/oauth2/complete'))return response({redirect_uri:'https://auth.example.test/application-authorization?state=x'});
+ if(url.includes('/admin/users/')){
+   accountRequest=init;
+   if(mode==='timeout')throw new DOMException('Timed out','TimeoutError');
+   if(init.redirect==='error')throw new TypeError('Redirect rejected');
+   return response({id});
+ }
+ throw new Error('Unexpected request');
+ }});
+ const result=await h.post({action:'workos_login',external_auth_id:'ext_auth_fixture'});
+ assert.equal(accountRequest.redirect,'error');
+ assert.ok(accountRequest.signal instanceof AbortSignal);
+ assert.equal(result.status,503);
+ assert.equal((await result.json()).redirect_uri,undefined);
+ assert.ok(!h.calls.some(c=>c.url.includes('evil.test')));
+ }
 });

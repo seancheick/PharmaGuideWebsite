@@ -7,7 +7,9 @@ and tracks one concern. Don't lose track — this file is the entry point.
 
 ## AI connector execution register — closed October 24, 2026
 
-**Current state:** source/technical S9 disclosures are reviewed, merged and published; controlled production Codex/phone acceptance passed and temporary qualification settings were removed. Normal personal access remains 503/off and global website pairing remains false. This is private technical qualification, not legal certification, public activation, approval of another assistant or personal directory listing.
+**Current state, October24:** public Codex personal access is enabled with Sean's explicit authorization. Website PR14/maina790dd4 (candidate d68630b, CI40119305487) and app PR144/main9ace97a5 (candidate cd608862, CI40118612663) are merged. Both existing production handlers and website setup use the explicit AI_CONNECTOR_PAIRING_ENABLED switch; the final public phone build is installed. Two disposable real WorkOS OAuth accounts, cross-account isolation, scoped encrypted snapshots, still-unexpired old-token replay after reconnect, installed Codex automatic renewal and final immediate revocation passed. Test accounts/snapshots were purged; temporary test-user keys were removed. Adult-DTC S9 technical/source review remains bounded, not legal certification. The app threat-model production release boundary and personal MCP README own the detailed receipt/setup/rollback record.
+
+Claude's exact static public client and branded connection are prepared but unconnected; Sean explicitly chose to test Claude himself. Other assistants and Muse are not claimed qualified and do not hold up the active Codex release. Historical containment receipts below describe their dated state, not the current rollout switch.
 
 ### Historical containment baseline — October 13, 2026
 

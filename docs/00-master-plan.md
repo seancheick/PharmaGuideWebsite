@@ -17,7 +17,7 @@ Owner: `next.config.ts` owns host routing; `src/lib/ai-connector.ts` and `src/ap
 
 ## Personal phone approval — October 23–24, 2026
 
-The WorkOS connector is implemented and privately qualified with the existing hosted Supabase project, WorkOS staging issuer, protected website preview and physical iPhone. Public personal access remains disabled. The initial integration is on main through PR8; the phone completion, private-page layout and disconnect usability follow-up is the current integration candidate.
+The WorkOS connector is implemented and privately qualified with the existing hosted Supabase project, WorkOS staging issuer, protected website preview and physical iPhone. Public personal access remains disabled. The initial integration is on main through PR8; [PR9](https://github.com/seancheick/PharmaGuideWebsite/pull/9) tracks the phone completion, private-page layout and disconnect usability follow-up.
 
 Owner: existing `src/app/api/ai-connections/route.ts`, `src/lib/ai-connector.ts`, consent/connections UI and `PrivatePageBoundary`; coordinated app connection, snapshot and navigation owners. Evidence: route/helper callers, SQL contracts, focused regressions and the app `docs/security/ai-connector-threat-model.md` execution register. Will NOT create another auth issuer, clinical engine, medication sync, connection authority or snapshot format.
 
@@ -27,7 +27,7 @@ Disconnect blocks local access first, deletes the exact WorkOS application resol
 
 Private acceptance: desktop and phone Google sign-in, hosted WorkOS review, Safari approval deep link, explicit app approval and Codex supplement reads passed. Save/persistence, automatic selected-copy updates enabled/disabled and stale-copy behavior were exercised. Physical disconnect ended access: both personal tools returned401 with an unexpired original token, original refresh returned400, server snapshots were purged and the revocation barrier cleared. The physical Return to PharmaGuide test passed after the coordinated Flutter owner added native-browser dismissal and provider refresh on the exact return deep link. This is private qualification, not public activation.
 
-Verification: fail-first regressions; `pnpm test:ai-connector` (56 passed), `pnpm test:ai-privacy` (9 passed), `pnpm test:mcp-routing` (2 passed), typecheck, focused ESLint and diff check passed. Protected preview build `dpl_CpEKRKzomA53EcmqJtH8AK9UaGDD` passed. The integration PR must pass its full CI build/checks before merge. The ordinary local Turbopack build cannot use the inherited external node_modules symlink; hosted builds and CI use normal dependency installs.
+Verification: fail-first regressions; `pnpm test:ai-connector` (56 passed), `pnpm test:ai-privacy` (9 passed), `pnpm test:mcp-routing` (2 passed), typecheck, focused ESLint and diff check passed. Protected preview build `dpl_CpEKRKzomA53EcmqJtH8AK9UaGDD` passed. PR9 records the full CI build/checks for its integration candidate; passing checks are required before merge. The ordinary local Turbopack build cannot use the inherited external node_modules symlink; hosted builds and CI use normal dependency installs.
 
 ### Configuration and activation boundary
 

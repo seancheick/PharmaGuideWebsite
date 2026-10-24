@@ -9,5 +9,10 @@ export function PrivatePageBoundary({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (reload) window.location.reload();
   }, [reload]);
-  return reload ? <p>Opening your private connection page…</p> : children;
+  return (
+    <main id="main" data-clarity-mask="true" className="mx-auto min-h-screen max-w-xl px-5 pb-16 pt-8 sm:pt-12">
+      <p className="mb-8 inline-block text-lg font-semibold tracking-tight text-neutral-900">PharmaGuide</p>
+      {reload ? <p>Opening your private connection page…</p> : children}
+    </main>
+  );
 }

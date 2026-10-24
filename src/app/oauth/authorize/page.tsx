@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import ConsentClient from "./consent-client";
 import { PrivatePageBoundary } from "@/components/ai-connector/PrivatePageBoundary";
 
@@ -18,14 +16,10 @@ export const metadata: Metadata = {
 
 export default function AuthorizePage() {
   return (
-    <>
-      <Header />
-      <main id="main" data-clarity-mask="true" className="mx-auto min-h-[70vh] max-w-xl px-5 pb-16 pt-40 sm:pt-44">
-        <PrivatePageBoundary><Suspense fallback={<p className="text-neutral-500">Loading…</p>}>
-          <ConsentClient />
-        </Suspense></PrivatePageBoundary>
-      </main>
-      <Footer />
-    </>
+    <PrivatePageBoundary>
+      <Suspense fallback={<p className="text-neutral-500">Loading…</p>}>
+        <ConsentClient />
+      </Suspense>
+    </PrivatePageBoundary>
   );
 }

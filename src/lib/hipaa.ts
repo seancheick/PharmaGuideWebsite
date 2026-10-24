@@ -1,33 +1,23 @@
 import type { LegalDocument } from "./legal";
 
-/**
- * HIPAA Statement — refreshed from the legacy WordPress version.
- *
- * Important framing: PharmaGuide is consumer-facing and not directly
- * subject to HIPAA in most user contexts. We use HIPAA as a design
- * baseline (encryption, access control, retention discipline) rather
- * than as a compliance shield, and this page is honest about that
- * distinction. Most users assume HIPAA covers everything; it doesn't.
- *
- * If we later ship the Healthcare Pros tier (referenced as "2026" in
- * the footer), that surface will be a covered entity / business
- * associate scenario and warrants a fuller compliance posture.
+/** Consumer health-data disclosure. This is not a compliance certification.
+ * The Privacy Policy owns the detailed data inventory and retention controls.
  */
 
 export const HIPAA_DOC: LegalDocument = {
   eyebrow: "HIPAA Statement",
-  titleLead: "HIPAA-aligned by design.",
-  titleEm: "Honest about the rest.",
+  titleLead: "Health data deserves care.",
+  titleEm: "Clear about our scope.",
   subhead:
-    "How PharmaGuide thinks about health-data protection — what's HIPAA-aligned, what's beyond HIPAA, and where the line actually sits.",
-  lastUpdated: "2026-10-13",
+    "How HIPAA relates to our consumer service, what we protect, and where to find your privacy controls.",
+  lastUpdated: "2026-10-23",
   summary: {
     title: "The short version",
     points: [
-      "HIPAA primarily applies to **covered entities** (providers, payers, clearinghouses) and their business associates. PharmaGuide consumer apps are usually outside that scope — a fact most apps quietly bury.",
-      "We design **as if** HIPAA's Security Rule applies — encryption, access control, audit logging, breach response within 72 hours.",
+      "PharmaGuide is a **direct-to-consumer service for adults**. We do not currently operate on behalf of a healthcare organization or under business associate contracts.",
+      "This statement is **not a HIPAA compliance certification**. HIPAA applicability depends on the data and the relationships involved, not just whether an app contains health information.",
       "Your **medications, conditions and health profile stay on your device by default**. An optional, explicitly shared AI snapshot is stored encrypted on our server and disclosed to your chosen assistant.",
-      "If/when **PharmaGuide for Healthcare Pros** ships, that product will operate as a HIPAA business associate with full BAA support.",
+      "Our [Privacy Policy](/privacy) explains account backups, assistant access, retention, deletion and incident notification.",
     ],
   },
   sections: [
@@ -35,29 +25,23 @@ export const HIPAA_DOC: LegalDocument = {
       id: "scope",
       num: "1",
       title: "Where HIPAA actually applies",
-      body: `The Health Insurance Portability and Accountability Act (HIPAA) governs Protected Health Information (PHI) held by **covered entities** (healthcare providers, health plans, clearinghouses) and their **business associates** (vendors that process PHI on a covered entity's behalf).
+      body: `HIPAA applies to covered entities, including health plans and certain healthcare providers, and to business associates handling protected health information (PHI) on their behalf.
 
-Most consumer health and wellness apps — including PharmaGuide's consumer tier — are **not** covered entities. The information you put into PharmaGuide is **consumer health data**, which is regulated by other frameworks (state consumer privacy laws like California's CCPA/CPRA, the FTC Act, and the FTC's Health Breach Notification Rule) — but not by HIPAA itself.
+PharmaGuide currently provides a direct-to-consumer service for adults. We do not receive records supplied by healthcare organizations or provide the service under business associate contracts. This operating scope differs from an app handling patient information on behalf of a healthcare organization. [HHS health-app scenarios](https://www.hhs.gov/sites/default/files/ocr-health-app-developer-scenarios-2-2016.pdf) explain why the relationships and circumstances matter.
 
-We are telling you this directly because the industry standard is to wave the HIPAA flag without explaining what's actually covered. We'd rather give you the truth and let you decide.`,
+Consumer health information still deserves protection. Other privacy obligations, including the FTC Act and applicable Health Breach Notification Rule requirements, can apply outside HIPAA. We do not classify every possible user submission as outside HIPAA or promise HIPAA coverage for this service.`,
     },
     {
       id: "design-baseline",
       num: "2",
-      title: "Why we use HIPAA as a design baseline anyway",
-      body: `Even though HIPAA's letter doesn't apply to most of what we do, its **Security Rule** is one of the most thoughtful frameworks ever written for protecting sensitive personal health information. We treat it as the floor, not the ceiling.
+      title: "Current protection measures",
+      body: `**Encryption:** your phone's built-in storage encryption protects local data. Server data travels over encrypted connections and is encrypted at rest. Optional AI snapshots are encrypted by our server, which can decrypt them to provide authorized access; they are not end-to-end encrypted.
 
-What that means in practice:
+**Access control:** server operations use scoped service access. Personal assistant access requires a verified account, explicit approval and an active connection. Extra health details require a separate selection and Save action in the app.
 
-**Encryption** — your on-device data is protected by your phone's built-in storage encryption; the account data we hold is encrypted in transit and at rest.
+**Incident notification:** we investigate suspected unauthorized access or disclosure. When notice is required, we notify affected people and relevant authorities without unreasonable delay and within the applicable deadlines. See [our incident disclosure](/privacy#security-incidents).
 
-**Access control** — scoped service accounts. Engineers cannot read individual user data. There is no admin "look up Sean's stack" panel.
-
-**Audit logging** — every administrative action on our servers is logged. We can answer "who touched what, when?" — for our own accountability, not surveillance.
-
-**Workforce training** — every team member completes security training on hire and annually.
-
-**Breach response** — incident playbook tested quarterly. If there is ever an incident, you hear from us within 72 hours.`,
+These are descriptions of current controls, not a claim that we have completed a HIPAA Security Rule audit or certification.`,
     },
     {
       id: "on-device",
@@ -77,43 +61,27 @@ AI sharing creates an additional disclosure of health information. The consent p
       title: "What we do hold (and how it's protected)",
       body: `On our servers we hold your **email address** (required for account auth), the **supplement backup** if you have an account, **product submissions** you choose to send, **anonymized usage logs** (server logs, crash reports, aggregated analytics), **opt-in newsletter subscription records**, **AI connection/access metadata**, and any **temporary AI-share snapshot** you explicitly send.
 
-For these:
-- Encrypted at rest and in transit
-- Access logged at the database level
-- Retained only as long as your account is active, deleted within 30 days of account deletion
-- Vendors handling any of this (email delivery, hosting) sign data-processing agreements aligned with GDPR Article 28 and CCPA's service-provider standard
+Server data is encrypted in transit and at rest. Optional snapshots can contain selected health information, and our server can read them for the authorized assistant. Connection lifetime, snapshot expiry and account deletion are distinct controls.
 
-None of that data, individually or in combination, would qualify as PHI under HIPAA. But we treat it with the same security discipline.`,
+The [Privacy Policy](/privacy) explains the precise data inventory, infrastructure providers, retention and deletion limits. Assistant-held copies and infrastructure records can have separate retention. This statement does not guarantee that every record disappears when an account is deleted.`,
     },
     {
       id: "professional-tier",
       num: "5",
-      title: "PharmaGuide for Healthcare Pros (2026)",
-      body: `We're working on a separate product for clinicians, pharmacists, and integrative health practitioners — referenced in the footer nav as **"Healthcare Pros · 2026"**.
+      title: "Healthcare professional use",
+      body: `The current consumer service is not offered for handling patient records on behalf of healthcare organizations. We do not offer a BAA or claim HIPAA-covered service support for this consumer product.
 
-That product **will** be designed for HIPAA-covered use. Specifically:
+Any future professional service would need its own defined scope, applicable agreements and verified safeguards before it could support that use. This page does not promise a launch date, BAA availability or completed compliance review.
 
-- Operating as a **business associate** for healthcare providers who use it on behalf of their patients
-- Standard **Business Associate Agreement (BAA)** support
-- A comprehensive Security Rule audit before launch
-- Access control, audit logging, and breach response calibrated for PHI handling
-
-Prefer email? Reach us at [providers@pharmaguide.io](mailto:providers@pharmaguide.io) — a human reads every message within 5 business days. The form below routes to the same inbox.`,
+For professional-use questions, contact [providers@pharmaguide.io](mailto:providers@pharmaguide.io).`,
     },
     {
       id: "your-rights",
       num: "6",
       title: "Your rights, regardless of HIPAA",
-      body: `Whether or not HIPAA technically applies, you have the rights described in the [Privacy Policy](/privacy):
+      body: `The [Privacy Policy](/privacy) explains available account controls and how to request access, correction, deletion or portability. Rights and notification duties depend on the applicable law and circumstances.
 
-- **Access** — get a copy of everything we hold about you
-- **Correct** — fix what's inaccurate
-- **Delete** — wipe your account permanently
-- **Port** — receive your data in a portable format
-- **Opt out** — of marketing, analytics, anything optional
-- **Be told** — within 72 hours if there is ever a security incident affecting you
-
-These rights apply regardless of jurisdiction or which framework technically governs the underlying data.`,
+You can disconnect an assistant to stop future access through PharmaGuide. This does not erase information already received by the assistant. Contact [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io) for a privacy request; we may need to verify your identity.`,
     },
     {
       id: "questions",
@@ -125,7 +93,7 @@ These rights apply regardless of jurisdiction or which framework technically gov
 - **Privacy rights requests** (access, deletion, portability): [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io)
 - **Security incidents and disclosure:** [security@pharmaguide.io](mailto:security@pharmaguide.io)
 
-We aim to respond within 5 business days. A human reads every email.`,
+Please do not send passwords or unnecessary health details.`,
     },
   ],
 };

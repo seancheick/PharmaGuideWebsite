@@ -897,3 +897,28 @@ test('qualification expiry during provider completion cannot return a hosted red
  assert.equal(result.status,503);assert.equal((await result.json()).redirect_uri,undefined);
  assert.ok(h.calls.some(c=>c.url.endsWith('/authkit/oauth2/complete')));
 });
+
+// WorkOS setup stores one exact operator-reviewed callback per client.
+test("registered hosted clients preserve their exact callback binding", () => {
+  for (const [kind, redirect_uri] of [["claude","https://claude.ai/api/mcp/auth_callback"],["chatgpt","https://chatgpt.com/connector/oauth/test-id"],["claude_code","http://localhost:4545/callback"]]) {
+    const clients = parseTrustedClients(JSON.stringify([{client_id:"registered",name:"Reviewed",kind,redirect_uri}]));
+    assert.equal(clients[0].redirect_uri, redirect_uri);
+    assert.deepEqual(parseTrustedClients(JSON.stringify([{client_id:"registered",name:"Reviewed",kind,redirect_uri:redirect_uri+"?extra=1"}])), []);
+  }
+});
+
+test("registered clients reject another valid callback of the same kind", async () => {
+  for (const [kind, configured, presented] of [
+    ["chatgpt", "https://chatgpt.com/connector/oauth/registered", "https://chatgpt.com/connector/oauth/other"],
+    ["claude_code", "http://localhost:4545/callback", "http://localhost:4546/callback"],
+  ]) {
+    assert.equal(verifyCallback(presented, kind).ok, true);
+    const h = routeHarness({
+      env: {AI_CONNECTOR_TRUSTED_CLIENTS: JSON.stringify([{client_id:"registered", name:"Reviewed",kind,redirect_uri:configured}])},
+      details: {client:{id:"registered"},redirect_uri:presented},
+    });
+    assert.equal((await h.post({action:"approve",authorization_id:"authorization-1"})).status, 403);
+    assert.equal(h.calls.some(c=>c.url.includes('/rest/v1/')), false);
+    assert.equal(h.calls.some(c=>c.url.endsWith('/consent')), false);
+  }
+});

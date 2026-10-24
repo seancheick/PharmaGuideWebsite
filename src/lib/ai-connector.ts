@@ -49,8 +49,9 @@ export function parseTrustedClients(raw: string | undefined): TrustedClient[] {
     if (typeof client_id !== "string" || client_id.trim() === "") return [];
     if (typeof name !== "string" || name.trim() === "") return [];
     if (typeof kind !== "string" || !KINDS.includes(kind as AssistantKind)) return [];
-    if (kind === "codex" && (typeof redirect_uri !== "string" || !verifyCallback(redirect_uri, "codex").ok)) return [];
-    return [{ client_id, name: name.trim(), kind: kind as AssistantKind, ...(kind === "codex" ? {redirect_uri: redirect_uri as string} : {}) }];
+    if (kind === "codex" && typeof redirect_uri !== "string") return [];
+    if (redirect_uri !== undefined && (typeof redirect_uri !== "string" || !verifyCallback(redirect_uri, kind as AssistantKind).ok)) return [];
+    return [{ client_id, name: name.trim(), kind: kind as AssistantKind, ...(typeof redirect_uri === "string" ? {redirect_uri} : {}) }];
   });
 }
 
@@ -76,7 +77,7 @@ export function verifyCallback(redirectUri: string, kind: AssistantKind): Callba
   } catch {
     return REFUSED;
   }
-  if (url.username || url.password || url.hash) return REFUSED;
+  if (url.username || url.password || url.hash || url.search) return REFUSED;
   if (kind === "codex") {
     // Codex MCP native callback (rmcp-client/oauth_callback.rs), not account login.
     if (url.protocol !== "http:" || url.hostname !== "127.0.0.1" || url.search ||

@@ -121,7 +121,7 @@ async function verifiedAuthorization(token: string, authorizationId: string): Pr
   if (!client) {
     return { ok: false, status: 403, error: "PharmaGuide does not recognise this assistant." };
   }
-  if (client.kind === "codex" && details.redirect_uri !== client.redirect_uri) {
+  if (client.redirect_uri && details.redirect_uri !== client.redirect_uri) {
     return {ok: false, status: 403, error: "This assistant callback is not registered."};
   }
   const callback = verifyCallback(details.redirect_uri, client.kind);

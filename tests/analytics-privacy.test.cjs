@@ -136,3 +136,16 @@ test('privacy does not advertise unavailable export or unverified compliance and
   assert.match(terms,/People under 18.*you may not create an account/);
   assert.doesNotMatch(terms,/Minors \(13–17\)|Minors 13–17/);
 });
+
+test('linked HIPAA statement uses consumer scope and actual controls without certification or future guarantees', () => {
+  const context={exports:{}};
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/lib/hipaa.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText,context);
+  const policy=JSON.stringify(context.exports.HIPAA_DOC);
+  for(const claim of ['HIPAA-aligned','as if','72 hours','None of that data','Engineers cannot read','every administrative action','annually','tested quarterly','within 30 days','will operate','full BAA support','That product **will**','regardless of jurisdiction']) assert.ok(!policy.includes(claim),claim);
+  assert.match(policy,/direct-to-consumer/);
+  assert.match(policy,/not a HIPAA compliance certification/);
+  assert.match(policy,/not end-to-end encrypted/);
+  assert.match(policy,/without unreasonable delay/);
+  assert.match(policy,/\/privacy/);
+  assert.match(policy,/on behalf of a healthcare organization/);
+});

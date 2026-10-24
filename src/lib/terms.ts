@@ -21,7 +21,7 @@ export const TERMS_DOC: LegalDocument = {
   titleEm: "in plain English.",
   subhead:
     "What you can expect from us, what we expect from you, and the boring legal disclaimers we have to put somewhere — without the wall of capital letters.",
-  lastUpdated: "2026-10-24",
+  lastUpdated: "2026-10-23",
   summary: {
     title: "The short version",
     points: [

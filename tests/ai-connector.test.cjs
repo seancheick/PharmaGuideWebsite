@@ -906,3 +906,19 @@ test("registered hosted clients preserve their exact callback binding", () => {
     assert.deepEqual(parseTrustedClients(JSON.stringify([{client_id:"registered",name:"Reviewed",kind,redirect_uri:redirect_uri+"?extra=1"}])), []);
   }
 });
+
+test("registered clients reject another valid callback of the same kind", async () => {
+  for (const [kind, configured, presented] of [
+    ["chatgpt", "https://chatgpt.com/connector/oauth/registered", "https://chatgpt.com/connector/oauth/other"],
+    ["claude_code", "http://localhost:4545/callback", "http://localhost:4546/callback"],
+  ]) {
+    assert.equal(verifyCallback(presented, kind).ok, true);
+    const h = routeHarness({
+      env: {AI_CONNECTOR_TRUSTED_CLIENTS: JSON.stringify([{client_id:"registered", name:"Reviewed",kind,redirect_uri:configured}])},
+      details: {client:{id:"registered"},redirect_uri:presented},
+    });
+    assert.equal((await h.post({action:"approve",authorization_id:"authorization-1"})).status, 403);
+    assert.equal(h.calls.some(c=>c.url.includes('/rest/v1/')), false);
+    assert.equal(h.calls.some(c=>c.url.endsWith('/consent')), false);
+  }
+});

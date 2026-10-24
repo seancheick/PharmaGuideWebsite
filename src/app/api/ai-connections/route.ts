@@ -144,12 +144,39 @@ function workosIssuer(): string {
   return raw;
 }
 
-async function workos(path: string, init: RequestInit = {}) {
+async function workos(path: string, init: RequestInit = {}, allowMissing = false) {
   if (!process.env.WORKOS_API_KEY) throw new Error("WorkOS unavailable");
   const response = await fetch(`https://api.workos.com${path}`, {...init, redirect: "error", cache: "no-store", signal: AbortSignal.timeout(10_000),
     headers: {Authorization: `Bearer ${process.env.WORKOS_API_KEY}`, "content-type": "application/json"}});
-  if (!response.ok) throw new Error("WorkOS unavailable");
+  if (!response.ok && !(allowMissing && response.status === 404)) throw new Error("WorkOS unavailable");
   return response;
+}
+
+/** Account deletion reuses the revocation owner; this sentinel cannot be a client ID. */
+async function accountDeletionPending(userId: string): Promise<boolean> {
+  const rows = await (await rest(`ai_connection_pairing_limits?user_id=eq.${encodeURIComponent(userId)}&select=revoking_client_id`, {headers: serviceHeaders()})).json();
+  if (!Array.isArray(rows) || rows.length > 1) throw new Error("Invalid deletion state");
+  const value = rows[0]?.revoking_client_id ?? null;
+  if (value === "!".repeat(256)) return true;
+  if (value !== null && (typeof value !== "string" || !ID_PATTERN.test(value))) throw new Error("Invalid deletion state");
+  return false;
+}
+
+async function accountStillExists(userId: string): Promise<boolean> {
+  const response = await fetch(authUrl(`admin/users/${encodeURIComponent(userId)}`), {headers: serviceHeaders(), cache: "no-store", redirect: "error", signal: AbortSignal.timeout(10_000)});
+  if (response.status === 404) return false;
+  if (!response.ok) throw new Error("Account verification unavailable");
+  const user = await response.json();
+  if (user.id !== userId) throw new Error("Account identity mismatch");
+  return true;
+}
+
+async function removeDeletedAccountIdentity(userId: string) {
+  const lookup = await workos(`/user_management/users/external_id/${encodeURIComponent(userId)}`, {}, true);
+  if (lookup.status === 404) return;
+  const user = await lookup.json();
+  if (user.external_id !== userId || typeof user.id !== "string" || !/^user_[A-Za-z0-9]+$/.test(user.id)) throw new Error("Wrong provider user");
+  await workos(`/user_management/users/${encodeURIComponent(user.id)}`, {method: "DELETE"}, true);
 }
 
 async function workosAuthorization(userId: string, authorizationId: string): Promise<Verified> {
@@ -239,7 +266,27 @@ export async function POST(request: Request) {
       const issuer = workosIssuer();
       if (typeof body.external_auth_id !== "string" || !ID_PATTERN.test(body.external_auth_id)) return fail(400, "Invalid request.");
       if (!/^[0-9a-f-]{36}$/i.test(user.id) || !user.email) return fail(401, "Sign in again to continue.");
-      const result = await (await workos("/authkit/oauth2/complete", {method: "POST", body: JSON.stringify({external_auth_id: body.external_auth_id, user: {id: user.id, email: user.email}})})).json();
+      if (await accountDeletionPending(user.id)) return fail(409, "Account deletion is in progress. Connecting is unavailable.");
+      let result: {redirect_uri: string};
+      try {
+        result = await (await workos("/authkit/oauth2/complete", {method: "POST", body: JSON.stringify({external_auth_id: body.external_auth_id, user: {id: user.id, email: user.email}})})).json();
+      } catch {
+        log.error("ai_connection.identity_completion_unconfirmed", {});
+        return fail(503, "Sign-in completion could not be confirmed. If you are deleting your account, contact support to confirm provider cleanup.");
+      }
+      // Recheck after provisioning: deletion can start while WorkOS is in flight.
+      // An ambiguous provider timeout still requires operator reconciliation;
+      // these checks never restore the local revoked access.
+      const deleting = await accountDeletionPending(user.id);
+      const exists = await accountStillExists(user.id);
+      if (deleting || !exists) {
+        try { await removeDeletedAccountIdentity(user.id); }
+        catch {
+          log.error("ai_connection.identity_cleanup_failed", {});
+          return fail(503, "Account deletion is in progress, but provider cleanup could not be confirmed. Contact support before trying again.");
+        }
+        return fail(409, "This account is being deleted. Connecting is unavailable.");
+      }
       const redirect = new URL(result.redirect_uri);
       if (redirect.origin !== issuer || !["/oauth/authorize/complete", "/application-authorization", "/oauth2/external/callback"].includes(redirect.pathname) || redirect.username || redirect.password || redirect.hash) throw new Error("Invalid hosted redirect");
       return NextResponse.json({redirect_uri: redirect.href});

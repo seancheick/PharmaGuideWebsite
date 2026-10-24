@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 import { privatePageNeedsReload } from "@/lib/analytics";
 
@@ -11,7 +12,7 @@ export function PrivatePageBoundary({ children }: { children: ReactNode }) {
   }, [reload]);
   return (
     <main id="main" data-clarity-mask="true" className="mx-auto min-h-screen max-w-xl px-5 pb-16 pt-8 sm:pt-12">
-      <p className="mb-8 inline-block text-lg font-semibold tracking-tight text-neutral-900">PharmaGuide</p>
+      <p className="mb-8 inline-block text-lg font-semibold tracking-tight text-neutral-900">PharmaGuide <Link href="/privacy" className="ml-4 text-sm font-normal underline">Privacy</Link></p>
       {reload ? <p>Opening your private connection page…</p> : children}
     </main>
   );

@@ -47,6 +47,59 @@ const BOILERPLATE = {
     `Most consumer health apps check one supplement at a time. PharmaGuide reads the full stack — multi-way interactions, dose accumulation across products, timing conflicts, and the depletion patterns of common prescriptions (statins → CoQ10, metformin → B12, PPIs → iron). Live FDA recall monitoring surfaces alerts on the products you actually scanned. A PG Score out of 100 evaluates six parts — formulation, dose, evidence, transparency, verification, and safety and hygiene — and reads proprietary blends exactly as disclosed, never guessing hidden amounts. The catalog is sourced from NIH's Dietary Supplement Label Database (${SOURCE_LABEL_COUNT} labels) and is reviewed continuously by ${displayName(LEAD_REVIEWER)} (Clinical Pharmacist) and ${displayName(PEOPLE["miriam-farez"])} (Nurse Practitioner). Interaction analysis runs on-device, and medications, conditions and health profiles stay on the user's phone by default unless explicitly shared with an AI assistant; a signed-in user's supplement list is backed up to their account. The architecture is HIPAA-aligned. Founded in ${site.foundingDate} by ${FOUNDER.name} and ${site.parentCompany}, headquartered in Boston, MA. Mobile apps open in waves through 2026.`,
 };
 
+const FOUNDER_STORY =
+  "Sean Cheick Baradji built PharmaGuide after the same failure happened twice in his family. His father was hospitalized while on blood pressure medication and prescribed a new drug with a documented interaction with his existing prescription, a conflict a simple cross-reference would have caught. Later, after his own diagnosis and prescription, Cheick discovered by accident that a supplement he was taking was interfering with his medication. The information existed in both cases. Nobody had connected the dots, because prescriptions live in one system and supplements in another, and no one reads the whole stack. A self-taught developer based in Boston, he built PharmaGuide to be that cross-reference, with interaction guidance reviewed by Laurie Pham, PharmD, before it ships. He also founded Keniya Health, a condition-aware snack box company built on the same screening approach. PharmaGuide opens in waves through 2026.";
+
+const PULL_QUOTES = [
+  {
+    quote:
+      "Nobody was reading my whole stack. The pharmacist saw the prescriptions, the label showed the supplement, and the interaction lived in the gap between them.",
+    attribution: "Sean Cheick Baradji, on why he built PharmaGuide",
+  },
+  {
+    quote:
+      "Supplements are the only health products in America that reach the shelf first and get tested later, if they get tested at all. We built the second look the system never gave them.",
+    attribution: "Sean Cheick Baradji, on the industry",
+  },
+  {
+    quote:
+      "High-risk questions should never be an AI's freehand answer. In PharmaGuide the dangerous routes are deterministic and clinician-reviewed. The AI works inside guardrails, not instead of them.",
+    attribution: "Sean Cheick Baradji, on AI in health",
+  },
+];
+
+const STORY_ANGLES = [
+  {
+    title: "The gummy problem",
+    body: "A 2023 JAMA study found 22 of 25 melatonin gummies mislabeled, one with no melatonin at all. We can walk through what our catalog shows about gummy labeling and dose accuracy across categories. Data and founder interview available.",
+  },
+  {
+    title: "The depletion patterns nobody mentions",
+    body: "Common prescriptions quietly drain nutrients: statins and CoQ10, metformin and B12, acid blockers and iron. We can share the patterns our system flags most often and what the evidence says.",
+  },
+  {
+    title: "What proprietary blends hide",
+    body: "Labels can list ingredients without amounts, legally. We can show how often key ingredients sit inside blends in popular categories, and what that means for dose claims.",
+  },
+  {
+    title: "The recall gap",
+    body: "When a drug is recalled, systems notify you. When a supplement is recalled, almost nothing does. We can explain the gap and what closing it takes.",
+  },
+];
+
+const INTERVIEW_TOPICS = [
+  {
+    name: "Sean Cheick Baradji (founder)",
+    topics:
+      "Building a clinician-reviewed AI health product as a self-taught solo founder; supplement safety and the regulatory gap; privacy-first health data, on-device by design; founding while managing a chronic condition and a household business portfolio.",
+  },
+  {
+    name: "Laurie Pham, PharmD (clinical review)",
+    topics:
+      "Drug and supplement interactions clinicians worry about most; how to read a supplement label like a pharmacist; nutrient depletion from common prescriptions.",
+  },
+];
+
 export function PressClient() {
   return (
     <main id="main">
@@ -196,6 +249,62 @@ export function PressClient() {
               <BoilerplateBlock label="One-liner" text={BOILERPLATE.oneLiner} />
               <BoilerplateBlock label="One paragraph" text={BOILERPLATE.paragraph} />
               <BoilerplateBlock label="Longer description" text={BOILERPLATE.longer} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━━━━━━━━━ FOUNDER STORY + PULL QUOTES ━━━━━━━━━━━━━━━━━━ */}
+      <section
+        aria-labelledby="press-founder-story-heading"
+        className="relative section-y-sm"
+      >
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-border" />
+
+        <div className="container relative mx-auto">
+          <div className="mx-auto max-w-4xl">
+            <m.div
+              variants={fadeUpContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-15%" }}
+              className="flex flex-col items-start gap-3"
+            >
+              <m.p
+                variants={fadeUpItem}
+                className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
+              >
+                The founder story
+              </m.p>
+              <m.h2
+                variants={fadeUpItem}
+                id="press-founder-story-heading"
+                className="text-balance text-display-md text-ink"
+              >
+                It happened twice.{" "}
+                <span className="font-serif italic">Then he built the fix.</span>
+              </m.h2>
+            </m.div>
+
+            <p className="mt-10 max-w-prose text-body-lg leading-relaxed text-muted">
+              {FOUNDER_STORY}
+            </p>
+
+            <div className="mt-12 flex flex-col gap-6">
+              {PULL_QUOTES.map((item) => (
+                <figure
+                  key={item.quote}
+                  className="rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
+                >
+                  <blockquote className="font-serif text-h3 italic leading-snug text-ink">
+                    &ldquo;{item.quote}&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-4 font-mono text-[10.5px] uppercase tracking-[0.14em] text-subtle">
+                    {item.attribution}
+                  </figcaption>
+                </figure>
+              ))}
             </div>
           </div>
         </div>
@@ -447,6 +556,64 @@ export function PressClient() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━━━━━━━━━ STORY ANGLES + INTERVIEW TOPICS ━━━━━━━━━━━━━━━━━━ */}
+      <section
+        aria-labelledby="press-angles-heading"
+        className="relative section-y-sm"
+      >
+        <div className="container relative mx-auto">
+          <div className="mx-auto max-w-4xl">
+            <m.div
+              variants={fadeUpContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-15%" }}
+              className="flex flex-col items-start gap-3"
+            >
+              <m.p
+                variants={fadeUpItem}
+                className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
+              >
+                Story angles we can help with
+              </m.p>
+              <m.h2
+                variants={fadeUpItem}
+                id="press-angles-heading"
+                className="text-balance text-display-md text-ink"
+              >
+                Bring us a story.{" "}
+                <span className="font-serif italic">We will bring the data.</span>
+              </m.h2>
+            </m.div>
+
+            <div className="mt-12 grid gap-5 md:mt-14 md:grid-cols-2 md:gap-6">
+              {STORY_ANGLES.map((angle) => (
+                <div
+                  key={angle.title}
+                  className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"
+                >
+                  <p className="font-serif text-h3 italic leading-tight text-ink">{angle.title}</p>
+                  <p className="text-body-sm leading-relaxed text-muted">{angle.body}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-12 flex flex-col gap-6">
+              {INTERVIEW_TOPICS.map((person) => (
+                <div key={person.name} className="flex flex-col gap-2">
+                  <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.14em] text-accent">
+                    Interview topics: {person.name}
+                  </p>
+                  <p className="max-w-prose text-body leading-relaxed text-foreground/85">
+                    {person.topics}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

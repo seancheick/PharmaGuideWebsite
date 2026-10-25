@@ -39,7 +39,26 @@ const FOUNDER_STORY = [
   },
   {
     quote: "Then it happened to me.",
-    body: "After being diagnosed with a metabolic condition and starting prescription medication, I discovered something troubling: **a supplement I was taking was interfering with how my medication worked — and I only found out by accident.** The information existed. Nobody had connected the dots.",
+    body: "After being diagnosed with a metabolic condition and starting prescription medication, I kept taking my supplements without a second thought. Then I discovered something troubling: **a supplement I was taking was interfering with how my medication worked, and I only found out by accident.** No warning, no flag, nobody whose job it was to notice. I manage my health closely every single day, and I still missed it. The information existed. Nobody had connected the dots.",
+  },
+];
+
+const STATS = [
+  {
+    value: "200,000+",
+    label: "supplement labels in the source catalog, from NIH's Dietary Supplement Label Database",
+  },
+  {
+    value: "6",
+    label: "scoring dimensions in every PG Score out of 100, from formulation to safety",
+  },
+  {
+    value: "2",
+    label: "clinicians review the guidance: a Doctor of Pharmacy and a Nurse Practitioner",
+  },
+  {
+    value: "0",
+    label: "brand sponsorships, affiliate commissions, or paid placements. Ever.",
   },
 ];
 
@@ -187,6 +206,24 @@ export function AboutClient() {
         </div>
       </section>
 
+      {/* ━━━━━━━━━━━━━━━━━━ STATS BAND ━━━━━━━━━━━━━━━━━━ */}
+      <section aria-label="PharmaGuide in numbers" className="relative">
+        <div className="container relative mx-auto">
+          <dl className="mx-auto grid max-w-5xl grid-cols-2 gap-x-6 gap-y-10 py-14 md:py-16 lg:grid-cols-4">
+            {STATS.map((stat) => (
+              <div key={stat.label} className="flex flex-col items-center gap-2 text-center">
+                <dd className="font-serif text-display-md italic leading-none text-ink">
+                  {stat.value}
+                </dd>
+                <dt className="max-w-[26ch] text-body-sm leading-relaxed text-muted">
+                  {stat.label}
+                </dt>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
       {/* ━━━━━━━━━━━━━━━━━━ 01 WHY WE BUILT IT (founder story) ━━━━━━━━ */}
       <section
         aria-labelledby="about-founder-heading"
@@ -263,6 +300,26 @@ export function AboutClient() {
             />
             <p className="font-mono text-eyebrow uppercase text-subtle">
               {FOUNDER.name}, {FOUNDER.role}
+            </p>
+          </m.div>
+
+          <m.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={transitions.ambient}
+            className="mx-auto mt-14 flex max-w-3xl flex-col items-center gap-6 text-center md:mt-16"
+          >
+            <p className="text-balance font-serif text-h2 italic leading-snug text-ink">
+              &ldquo;Every supplement decision deserves a pharmacist&apos;s second look before it
+              deserves your money.&rdquo;
+            </p>
+            <p className="max-w-prose text-body-lg leading-relaxed text-muted">
+              PharmaGuide is that cross-reference. It reads your full stack the way a careful
+              pharmacist would: multi-way interactions, doses adding up across products, nutrients
+              your prescriptions quietly deplete, and FDA recalls on the products you actually
+              take. It runs on your device, it shows its evidence, and a licensed pharmacist
+              reviews the guidance before it reaches you.
             </p>
           </m.div>
         </div>
@@ -690,6 +747,17 @@ export function AboutClient() {
             <p className="max-w-prose text-body-lg leading-relaxed text-muted">
               Opening in waves through 2026. Be among the first to use PharmaGuide as we prepare for
               launch.
+            </p>
+            <p className="max-w-prose text-body-sm leading-relaxed text-subtle">
+              Writing about supplement safety, AI in health, or building as a solo founder? Founder
+              interviews:{" "}
+              <a
+                href="mailto:press@pharmaguide.io"
+                className="font-medium text-accent underline-offset-4 hover:underline"
+              >
+                press@pharmaguide.io
+              </a>
+              . We respond within one business day.
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-5">
               <WaitlistLink className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent">

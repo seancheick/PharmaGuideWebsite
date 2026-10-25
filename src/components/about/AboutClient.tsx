@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { m } from "framer-motion";
 import { WaitlistLink } from "@/components/shared/WaitlistLink";
-import { FOUNDER, TEAM, displayName } from "@/lib/people";
+import { CLINICIANS, FOUNDER, TEAM, displayName } from "@/lib/people";
+import { SOURCE_LABEL_COUNT } from "@/lib/site";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 
 /**
@@ -45,7 +46,7 @@ const FOUNDER_STORY = [
 
 const STATS = [
   {
-    value: "200,000+",
+    value: SOURCE_LABEL_COUNT,
     label: "supplement labels in the source catalog, from NIH's Dietary Supplement Label Database",
   },
   {
@@ -53,12 +54,12 @@ const STATS = [
     label: "scoring dimensions in every PG Score out of 100, from formulation to safety",
   },
   {
-    value: "2",
-    label: "clinicians review the guidance: a Doctor of Pharmacy and a Nurse Practitioner",
+    value: String(CLINICIANS.length),
+    label: "clinical advisors listed on our team, bringing pharmacy and nursing perspectives",
   },
   {
     value: "0",
-    label: "brand sponsorships, affiliate commissions, or paid placements. Ever.",
+    label: "brand sponsorships, affiliate commissions, or paid placements",
   },
 ];
 
@@ -67,7 +68,7 @@ const INDUSTRY_LIES = [
     badge: "Zero pre-market approval",
     lie: "FDA Approved",
     truth:
-      'The FDA does not approve supplements before they hit shelves. **Most supplements enter the market without pre-market safety testing.** They are "presumed safe" until proven harmful — sometimes years later, after the harm.',
+      'The FDA does not approve dietary supplements before they are sold. Manufacturers are responsible for evaluating safety and labeling. **A product being on the shelf is not the same as FDA approval.**',
     source: {
       label: "FDA — Information for Consumers on Using Dietary Supplements",
       href: "https://www.fda.gov/food/dietary-supplements/information-consumers-using-dietary-supplements",
@@ -123,8 +124,8 @@ const VALUES = [
   },
   {
     num: "04",
-    title: "Clinician-reviewed",
-    body: "Clinical guidance is reviewed by licensed healthcare professionals before release. Not just AI, not just engineers — actual clinical judgment.",
+    title: "Clinical perspectives",
+    body: "A small group, including clinicians, is testing PharmaGuide. Their feedback helps us refine the explanations and how warnings are presented.",
   },
 ];
 
@@ -315,12 +316,23 @@ export function AboutClient() {
               deserves your money.&rdquo;
             </p>
             <p className="max-w-prose text-body-lg leading-relaxed text-muted">
-              PharmaGuide is that cross-reference. It reads your full stack the way a careful
-              pharmacist would: multi-way interactions, doses adding up across products, nutrients
-              your prescriptions quietly deplete, and FDA recalls on the products you actually
-              take. It runs on your device, it shows its evidence, and a licensed pharmacist
-              reviews the guidance before it reaches you.
+              PharmaGuide brings product information and stack checks together: known interaction
+              warnings, overlapping nutrients across products, and medication and nutrient links.
+              Core stack checks run on your device, with explanations to help you understand the
+              results. What we can show depends on the product data and the details you enter.
             </p>
+            <div className="w-full rounded-2xl border border-border bg-surface p-7 text-left shadow-sm md:p-8">
+              <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-accent">
+                In development
+              </p>
+              <h3 className="mt-3 font-serif text-h3 italic leading-snug text-ink">
+                FDA recall alerts
+              </h3>
+              <p className="mt-3 text-body leading-relaxed text-muted">
+                We&apos;re building a way to make FDA recall notices easier to follow. FDA recall
+                alerts are in development and are not available in the current beta.
+              </p>
+            </div>
           </m.div>
         </div>
       </section>
@@ -458,12 +470,12 @@ export function AboutClient() {
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              Two systems. <span className="font-serif italic">Wildly different rules.</span>
+              Two systems. <span className="font-serif italic">Different paths to a warning.</span>
             </m.h2>
 
             <m.p variants={fadeUpItem} className="max-w-prose text-body leading-relaxed text-muted">
-              Compare what happens when a prescription drug is recalled vs. when a supplement is
-              recalled. The gap is the entire reason PharmaGuide exists.
+              A recall notice only helps if you see it and can tell whether it applies to your
+              product. Notification routes differ, and neither path guarantees a personal alert.
             </m.p>
           </m.div>
 
@@ -488,14 +500,14 @@ export function AboutClient() {
                 If your prescription drug is recalled
               </p>
               <h3 className="mt-4 font-serif text-h2 italic leading-tight text-ink">
-                There are established systems to identify and respond.
+                Your pharmacy or manufacturer may contact you.
               </h3>
               <ul className="mt-5 flex flex-col gap-2.5 text-body leading-relaxed text-foreground/85">
                 {[
-                  "Pharmacy has your record on file",
-                  "FDA mandates direct notification",
-                  "Insurance flags the prescription",
-                  "Your prescriber is informed",
+                  "Your pharmacy may hold a dispensing record",
+                  "A manufacturer, pharmacy or healthcare provider may notify you",
+                  "FDA publishes recall information",
+                  "The notice may identify specific product lots",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <span
@@ -517,14 +529,14 @@ export function AboutClient() {
                 If your supplement is recalled
               </p>
               <h3 className="mt-4 font-serif text-h2 italic leading-tight text-ink">
-                You may never hear about it.
+                You may need to check a public notice yourself.
               </h3>
               <ul className="mt-5 flex flex-col gap-2.5 text-body leading-relaxed text-foreground/85">
                 {[
-                  "No purchase record connects you to the brand",
-                  "FDA recalls reach industry, not consumers",
-                  "No insurer or prescriber flags it",
-                  "You learn from a news article — if at all",
+                  "FDA and brands publish public recall notices",
+                  "A retailer or brand may contact customers",
+                  "The product name and lot number can matter",
+                  "There may be no direct link to your current stack",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <svg
@@ -556,8 +568,14 @@ export function AboutClient() {
             transition={transitions.ambient}
             className="mx-auto mt-12 max-w-2xl text-balance text-center font-serif text-body-lg italic leading-relaxed text-ink md:mt-14"
           >
-            We built PharmaGuide to close this gap.
+            We&apos;re building FDA recall alerts to help with this gap. They are not available in the current beta.
           </m.p>
+          <p className="mx-auto mt-5 max-w-2xl text-center text-body-sm leading-relaxed text-muted">
+            Sources:{" "}
+            <a href="https://www.fda.gov/drugs/drug-recalls/understanding-drug-recalls-what-know-and-what-do" className="text-link underline underline-offset-4" target="_blank" rel="noopener noreferrer">FDA drug recall guidance</a>
+            {" and "}
+            <a href="https://www.fda.gov/food/recalls-outbreaks-emergencies/recalls-foods-dietary-supplements" className="text-link underline underline-offset-4" target="_blank" rel="noopener noreferrer">food and supplement recalls</a>.
+          </p>
         </div>
       </section>
 
@@ -757,7 +775,7 @@ export function AboutClient() {
               >
                 press@pharmaguide.io
               </a>
-              . We respond within one business day.
+              . Tell us your topic and deadline, and we&apos;ll get back to you.
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-5">
               <WaitlistLink className="focus-visible:outline-offset-3 inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent">

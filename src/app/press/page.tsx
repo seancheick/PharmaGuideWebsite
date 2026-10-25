@@ -37,16 +37,16 @@ export default function PressPage() {
           },
           {
             label: "Methodology",
-            title: "How we verify every interaction",
+            title: "The information behind the results",
             description:
-              "Sources, the 5-step process, the medical advisory team, AI transparency. The proof behind every claim.",
+              "Sources, methodology, clinical perspectives and the limits of the information available.",
             href: "/methodology",
           },
           {
             label: "Features",
             title: "What the product actually does",
             description:
-              "Medication depletion, stack intelligence, ingredient transparency, recall monitoring — pillar by pillar.",
+              "Product information, stack checks and ingredient transparency, with limits explained.",
             href: "/features",
           },
         ]}

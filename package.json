@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:share": "tsc -p tests/tsconfig.share.json && node --test tests/share-contract.test.cjs",
-    "test:catalog-claim": "node --test tests/catalog-size-contract.test.cjs",
+    "test:catalog-claim": "node --test tests/catalog-size-contract.test.cjs tests/about-press-claims.test.cjs",
     "format": "prettier --write \"**/*.{ts,tsx,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,css}\"",
     "blog:list": "node scripts/blog.mjs list",

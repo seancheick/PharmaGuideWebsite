@@ -36,16 +36,16 @@ export default function AboutPage() {
         links={[
           {
             label: "Methodology",
-            title: "How we verify every interaction",
+            title: "The information behind the results",
             description:
-              "Sources, the 5-step verification process, the clinical advisory team, AI transparency.",
+              "Sources, methodology, clinical perspectives and the limits of the information available.",
             href: "/methodology",
           },
           {
             label: "Features",
             title: "What PharmaGuide actually does",
             description:
-              "Six pillars: depletion detection, stack intelligence, ingredient transparency, fit, accumulation, recalls.",
+              "Product information, stack checks and ingredient transparency, with limits explained.",
             href: "/features",
           },
           {

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getAllPosts, getCategory, getPostBySlug } from "@/lib/blog";
+import { getCategory, getPostBySlug, getRenderableSlugs } from "@/lib/blog";
 import { renderOgCard, splitTitle } from "@/lib/og";
 import { PEOPLE, displayName } from "@/lib/people";
 
@@ -9,7 +9,7 @@ export const dynamic = "force-static";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getAllPosts().map((post) => ({ slug: post.slug }));
+  return getRenderableSlugs().map((slug) => ({ slug }));
 }
 
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {

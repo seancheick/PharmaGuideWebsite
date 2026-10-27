@@ -92,6 +92,8 @@ export interface BlogPost {
   // blog.ts maps to these camelCase keys on load. evidence_level shares the
   // <EvidencePill> vocabulary (scripts/validate-blog.mjs EVIDENCE_LEVELS).
   reviewRequired?: boolean;
+  /** A content/blog/.drafts/ post, rendered on preview deployments only. */
+  isDraft?: boolean;
   evidenceLevel?: "Established" | "Moderate" | "Limited" | "Mixed" | "Conditional";
 }
 

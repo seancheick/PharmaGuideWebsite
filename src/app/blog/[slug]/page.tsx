@@ -15,10 +15,10 @@ import { ClinicianBadge } from "@/components/shared/ClinicianBadge";
 import { JsonLd } from "@/components/shared/JsonLd";
 import {
   formatBlogDate,
-  getAllPosts,
   getCategory,
   getPostBySlug,
   getRelatedPosts,
+  getRenderableSlugs,
   postModified,
 } from "@/lib/blog";
 import { PEOPLE, displayName, profilePath } from "@/lib/people";
@@ -48,7 +48,7 @@ export const revalidate = 432000; // 5 days
 
 // Static-generation: emit a route per post at build time
 export async function generateStaticParams() {
-  return getAllPosts().map((post) => ({ slug: post.slug }));
+  return getRenderableSlugs().map((slug) => ({ slug }));
 }
 
 // Per-post metadata — drives <title>, OG, Twitter, canonical
@@ -73,6 +73,8 @@ export async function generateMetadata({
       section: getCategory(post.category)?.label,
       tags: post.tags,
     },
+    // Drafts exist only on preview deployments; never index one.
+    ...(post.isDraft ? { robots: { index: false, follow: false } } : {}),
   });
 }
 
@@ -143,6 +145,16 @@ export default async function BlogPostPage({
     <>
       <Header />
       <main id="main">
+        {post.isDraft && (
+          <div
+            role="note"
+            className="fixed inset-x-0 bottom-0 z-50 border-t border-severity-caution/40 bg-[rgb(var(--color-severity-caution-bg))] px-4 py-3 text-center text-body-sm text-ink shadow-lg"
+          >
+            <strong className="font-medium">Draft for clinical review, not published.</strong>{" "}
+            This page exists only on this preview link. After sign-off:{" "}
+            <code className="font-mono text-[0.9em]">pnpm blog:approve {post.slug} --reviewer laurie-pham --date &lt;date&gt;</code>
+          </div>
+        )}
         {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}
         <section
           aria-labelledby="post-hero-heading"

@@ -57,15 +57,48 @@ function resolvePersonId(value: unknown, field: string, filename: string): Perso
 /**
  * Read all posts from /content/blog. Returns posts sorted newest-first.
  */
+/**
+ * Drafts (content/blog/.drafts/) render only on Vercel preview deployments,
+ * so the PharmD can review a post on a real URL before `pnpm blog:approve`.
+ * Never in production, whatever else is set. BLOG_SHOW_DRAFTS=1 does the
+ * same for a local `pnpm build && pnpm start`.
+ */
+export function draftsVisible(): boolean {
+  if (process.env.VERCEL_ENV === "production") return false;
+  return process.env.VERCEL_ENV === "preview" || process.env.BLOG_SHOW_DRAFTS === "1";
+}
+
+/**
+ * Published posts only. Everything that lists posts (hub, sitemap, feed,
+ * llms.txt, related posts) uses this, so a draft never appears in an index,
+ * even on a preview.
+ */
 export function getAllPosts(): BlogPost[] {
-  if (!fs.existsSync(BLOG_DIR)) return [];
+  return readPosts(BLOG_DIR, false);
+}
+
+/** Drafts, on preview deployments only (see draftsVisible). */
+function getDraftPosts(): BlogPost[] {
+  return draftsVisible() ? readPosts(path.join(BLOG_DIR, ".drafts"), true) : [];
+}
+
+/**
+ * Every slug the post route renders: published posts plus, on previews,
+ * drafts (a draft of a live post shares its slug).
+ */
+export function getRenderableSlugs(): string[] {
+  return [...new Set([...getAllPosts(), ...getDraftPosts()].map((p) => p.slug))];
+}
+
+function readPosts(dir: string, isDraft: boolean): BlogPost[] {
+  if (!fs.existsSync(dir)) return [];
 
   const files = fs
-    .readdirSync(BLOG_DIR)
+    .readdirSync(dir)
     .filter((f) => f.endsWith(".mdx") || f.endsWith(".md"));
 
   const posts = files.map((filename) => {
-    const filePath = path.join(BLOG_DIR, filename);
+    const filePath = path.join(dir, filename);
     const source = fs.readFileSync(filePath, "utf8");
     const { data, content } = matter(source);
     const stats = readingTime(content);
@@ -105,14 +138,16 @@ export function getAllPosts(): BlogPost[] {
       content,
       reviewRequired,
       evidenceLevel,
+      ...(isDraft ? { isDraft } : {}),
     } satisfies BlogPost;
   });
 
   return posts.sort((a, b) => b.date.localeCompare(a.date));
 }
 
+/** On previews a draft wins, so an update to a live post shows the new version. */
 export function getPostBySlug(slug: string): BlogPost | undefined {
-  return getAllPosts().find((p) => p.slug === slug);
+  return getDraftPosts().find((p) => p.slug === slug) ?? getAllPosts().find((p) => p.slug === slug);
 }
 
 export function getPostsByCategory(categoryId: string): BlogPost[] {

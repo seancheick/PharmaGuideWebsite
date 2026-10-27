@@ -85,7 +85,10 @@ touch "content/blog/.drafts/your-post-slug.mdx"
 # 2. Add frontmatter + body (see "Post structure" below); images under public/blog/your-post-slug/
 pnpm blog:validate .drafts/your-post-slug
 
-# 3. Laurie reviews this exact version. After her sign-off:
+# 3. Laurie reviews this exact version, on the Vercel preview URL of the branch
+#    (<preview-domain>/blog/your-post-slug) or as the MDX file. Drafts render only on
+#    preview deployments: noindexed, with a draft banner, never in production or any
+#    index. Locally: BLOG_SHOW_DRAFTS=1 pnpm build && pnpm start. After her sign-off:
 pnpm blog:approve your-post-slug --reviewer laurie-pham --date 2026-10-27
 #    → records reviewer + reviewed_at, moves the draft to content/blog/,
 #      runs publish-check, and rolls everything back if it fails

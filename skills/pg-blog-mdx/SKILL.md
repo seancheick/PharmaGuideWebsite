@@ -372,8 +372,8 @@ Write `content/blog/.review/<slug>.review.md`:
 
 ## Next steps
 1. `pnpm blog:validate .drafts/<slug>`
-2. Preview: copy the draft to `content/blog/` temporarily, `pnpm build && pnpm start`, check the post and its figure exports at ~800px and 375px, then remove the copy
-3. Send this exact version (post + figures) for PharmD review
+2. Preview: `BLOG_SHOW_DRAFTS=1 pnpm build && pnpm start`, open `/blog/<slug>`, check the post and its figure exports at ~800px and 375px
+3. Send this exact version for PharmD review: the Vercel **preview** URL of the branch (`<preview-domain>/blog/<slug>`; drafts render only on preview deployments, noindexed, with a draft banner, never in production or in any index) or the MDX file
 4. After sign-off: `pnpm blog:approve <slug> --reviewer laurie-pham --date <actual sign-off date>` (records the review, moves the draft live, runs publish-check, rolls back if it fails). Never add a reviewer to clear the validator.
 ```
 

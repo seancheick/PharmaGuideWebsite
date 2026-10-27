@@ -8,10 +8,8 @@ import type { LegalDocument } from "./legal";
  *   • Concrete, verifiable product claims
  *   • Restraint: no doom phrasing, no marketing inside legal copy
  *
- * Compliance baseline covered:
- *   GDPR, CCPA/CPRA, COPPA, HIPAA-aligned design,
- *   data subject rights, retention, third-parties, children,
- *   security measures, contact + complaint paths.
+ * Disclosures cover data flows, rights requests, retention, third parties,
+ * children, security and contact paths; this is not a compliance certification.
  *
  * IMPORTANT: this page reflects the data flow the app actually has
  * (verified against ADR-009 and app code 2026-10-13): the health profile,
@@ -27,7 +25,7 @@ export const PRIVACY_DOC: LegalDocument = {
   titleEm: "By design.",
   subhead:
     "Your health details stay on your device unless you choose to share them. This page explains account backups, optional AI-assistant sharing, and your controls.",
-  lastUpdated: "2026-10-13",
+  lastUpdated: "2026-10-23",
   summary: {
     title: "The short version",
     points: [
@@ -36,7 +34,7 @@ export const PRIVACY_DOC: LegalDocument = {
       "We **never sell** your data. We don't share it with advertisers, brokers, or insurance companies.",
       "The **website chat** doesn't save your conversations: they stay in your browser until you close the page, and the text is processed by AI service providers to write each reply.",
       "You can **delete your account** and the data we hold at any time. A full in-app data export is on the way.",
-      "Children under 13 may not use PharmaGuide. We comply with COPPA, CCPA/CPRA, and GDPR.",
+      "PharmaGuide is for adults aged 18 and over. Privacy rights depend on your location; the request contacts below are available to you.",
     ],
   },
   sections: [
@@ -56,7 +54,7 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
       title: "What we collect",
       body: `**Information you provide directly:** your email address (required for account creation), and any feedback or support messages you send us.
 
-**Information collected automatically:** standard server logs (IP address, device type, app version, crash reports). Used to keep the service running and diagnose bugs. We don't tie these logs to your identity longer than 30 days.
+**Information collected automatically:** standard server logs (IP address, device type, app version, crash reports). Used to keep the service running and diagnose bugs.
 
 **If you create an account:** we back up the supplement products in your stack (the product name and catalog ID, the ingredient identifiers we use for checks, and when you added or removed it) so you can restore your stack. Doses, schedules, notes and medications are not included. Without an account, your stack is not sent to us.
 
@@ -66,9 +64,9 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
 
 **When you use the chat on this website:** the messages you type, and the last few messages from the same visit, are sent to our server and on to an AI service provider so it can write a reply. There is no account for chat, and we don't save your messages in a database. The conversation stays in your browser's memory for the current visit only; closing or reloading the page clears it. To limit abuse we rate-limit requests using a one-way hash of your IP address, not the address itself. We keep anonymous, topic-level usage statistics, never the messages. The chat window is masked from our session recordings.
 
-**Optional AI-assistant sharing:** connecting an assistant lets it read your synced supplement list for the duration shown on the approval screen (currently 24 hours). Connecting alone does not share medications or your health profile. In the app you can separately choose categories, review the exact text, and share a snapshot with one connected assistant. Medication and profile switches start off. The snapshot may contain the categories and derived findings you explicitly selected. Copying a brief into another app sends it through that app, without storing an AI-share snapshot on PharmaGuide.
+**Optional AI-assistant sharing:** connecting an assistant lets it read your synced supplement list until you disconnect for a durable connection, or until the expiry shown for a time-limited connection. Connecting alone does not share medications or your health profile. In the app, Access settings lets you separately choose categories, review the text, and tap Save to upload a temporary copy for one connected assistant. Medication and profile switches start off. The snapshot may contain the categories and derived findings you explicitly selected. Copying a brief into another app sends it through that app, without storing an AI-share snapshot on PharmaGuide.
 
-**Keep updated:** this separate option starts off. When enabled, local stack changes can refresh the snapshot using the last selected categories and duration, including new entries within those categories. Turning it off stops future automatic updates; use Disconnect to remove the existing server copy.
+**Automatic updates:** this separate option starts off. When enabled, local stack changes can refresh the snapshot using the last selected categories and duration, including new entries within those categories. Turning it off stops future automatic updates; use Disconnect to remove the existing server copy.
 
 **Outside those choices:** medications, conditions, age, goals, allergies and other health-profile details are not part of ordinary account backup. Scan history stays on your device.
 
@@ -84,7 +82,7 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
 
 **To improve the product:** anonymized, aggregated usage patterns (e.g. "X% of users scanned a barcode this week") help us prioritize what to build next. We do not link these aggregates back to individual users.
 
-**What we do NOT do:** we do not use your data to train AI models. We do not sell or rent your data. We do not target ads at you. We do not allow third parties to track you across the web from PharmaGuide.`,
+**What we do NOT do:** PharmaGuide does not use your data to train AI models. An assistant provider you choose handles the information it receives under its own terms and training settings. We do not sell or rent your data. We do not target ads at you. We do not allow third parties to track you across the web from PharmaGuide.`,
     },
     {
       id: "storage-security",
@@ -94,17 +92,19 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
 On your device (protected by your phone's built-in storage encryption): your full supplement stack, medications, conditions, profile, scan history and interaction history.
 On our servers (encrypted in transit and at rest): your email, account metadata, the supplement backup described above if you have an account, product submissions you send, anonymized usage logs, assistant connection/access metadata, and any AI-share snapshot you explicitly send. Snapshot text travels over an encrypted connection and is encrypted with AES-GCM by our server before storage. PharmaGuide can decrypt it to provide the authorized assistant access; this is not end-to-end encryption.
 
-**Security measures:** encryption in transit and at rest on our servers, the platform's secure keystore for sign-in credentials on your device, scoped service-account access for our servers, regular security audits, and a coordinated disclosure policy at [security@pharmaguide.io](mailto:security@pharmaguide.io).
+**Security measures:** encryption in transit and at rest on our servers, the platform's secure keystore for sign-in credentials on your device, scoped service-account access for our servers, and a security reporting contact at [security@pharmaguide.io](mailto:security@pharmaguide.io).
 
-**AI-share retention and removal:** snapshots default to 24 hours and support a maximum of 30 days; access also requires an active, unexpired assistant connection. Expired snapshots are refused immediately and a scheduled job removes expired rows every 15 minutes. Disconnecting or removing a share deletes its server snapshot. App sign-out attempts to delete snapshots before signing out; if the device is offline or deletion fails, expiry still limits access, and you can disconnect from the website. Deleting your account removes its snapshots and connections. These controls cannot erase information the assistant already received or retained in chat history.
+**AI-share retention and removal:** snapshots default to 24 hours and support a maximum of 30 days; access also requires an active assistant connection; a durable connection does not extend a snapshot’s expiry. Expired snapshots are refused immediately and a scheduled job removes expired rows every 15 minutes. Disconnecting or removing a share deletes its server snapshot. App sign-out attempts to delete snapshots before signing out; if the device is offline or deletion fails, expiry still limits access, and you can disconnect from the website. Deleting your account removes its snapshots and connections. These controls cannot erase information the assistant already received or retained in chat history.
 
-**Other data retention:** server-side data is retained as long as your account is active. When you delete your account, we permanently remove your account record and email within 30 days. On-device data is wiped immediately when you uninstall the app or tap "delete all my data" in settings.`,
+**Other data retention:** account data supports your account until you request deletion. Settings → Delete account starts deletion of your sign-in account and associated application records and attempts local cleanup; the app reports if it cannot confirm completion. Infrastructure logs and backups have separate retention, and assistant chat copies are controlled by the assistant provider. Contact [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io) for a deletion request covering remaining provider records or details of applicable retention. Uninstalling the app does not delete your account or server-side copies.`,
     },
     {
       id: "sharing",
       num: "5",
       title: "Who we share with",
-      body: `**Service providers:** the small number of vendors we use (email delivery, app hosting, error monitoring) only see what they need to do their job. Optional AI sharing is an exception to device-only storage: our hosting provider stores the encrypted snapshot, and the assistant provider you choose receives the selected text. The assistant handles and retains that text under its own policies. All vendors are bound by data-processing agreements aligned with GDPR / CCPA standards.
+      body: `**Service providers:** the small number of vendors we use (email delivery, app hosting, error monitoring) only see what they need to do their job. Optional AI sharing is an exception to device-only storage: our hosting provider stores the encrypted snapshot, and the assistant provider you choose receives the selected text. The assistant handles and retains that text under its own policies. Our infrastructure providers process data under their applicable service and data-processing terms. A connected assistant is an independent provider chosen by you, not a processor acting solely on our instructions.
+
+**Assistant connection infrastructure:** Supabase provides account sign-in, the synced supplement backup, connection records and encrypted snapshot storage. WorkOS manages assistant authorization; we send it your verified account ID and email, and it processes authorization and connection metadata. We do not send your supplement list, medications or snapshot text to WorkOS as part of this authorization flow. Vercel hosts the website and connection-management endpoints. See [Supabase’s data-processing terms](https://supabase.com/legal/customer-resources/data-processing-addendum) and [WorkOS’s data-processing terms](https://workos.com/legal/data-processing-addendum).
 
 **Optional beta poll:** if you confirm an answer, we store your latest general testing interest and its submission date with your Resend contact. Opening a poll link does not save an answer. The poll collects no personal medical details and does not change your subscriptions.
 
@@ -122,17 +122,17 @@ On our servers (encrypted in transit and at rest): your email, account metadata,
       title: "Your rights",
       body: `Regardless of where you live, you can:
 
-**Access** — get a copy of everything we have on you. Settings → Privacy → Export my data.
+**Access** — request a copy of personal information we hold by emailing [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io). A full in-app export is not yet available; the app currently offers a clinician PDF report.
 
 **Correct** — fix anything that's wrong. Most fields you can edit directly.
 
-**Delete** — wipe your account and any associated server data. Settings → Privacy → Delete account. Takes effect within 30 days.
+**Delete** — use Settings → Delete account, or email [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io) to request deletion. See Storage and security above for the distinction between application data, infrastructure records and assistant-held copies.
 
-**Port** — receive your data in a portable JSON format you can take elsewhere.
+**Portability** — contact [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io) to request a portable copy where applicable. A full self-service JSON export is not currently provided.
 
 **Opt out of marketing** — use the unsubscribe link in our marketing emails. A visible link asks you to confirm; your email app may also offer one-click unsubscribe. Contact info@pharmaguide.io if a link fails.
 
-**Opt out of analytics** — Settings → Privacy → Disable usage analytics.
+**Website analytics** — we honor your browser’s Do Not Track setting. Private connection pages exclude marketing analytics and session replay.
 
 If you're in California, the EU, the UK, or another jurisdiction with additional rights, those rights apply too. See the [California Privacy Rights](#california-rights) and [European Privacy Rights](#european-rights) sections below.`,
     },
@@ -142,7 +142,7 @@ If you're in California, the EU, the UK, or another jurisdiction with additional
       title: "Third parties and tracking",
       body: `**Email subscriptions:** Resend stores your email address, list membership, unsubscribe preference, general beta testing stage, and email delivery records. Our existing Upstash store keeps a keyed identifier and welcome-send status so a retry does not send another accepted welcome. Until a welcome is accepted, it also stores the original email message, including your address, so a retry sends the same message. The message is removed from that receipt once accepted; the identifier and status remain to prevent duplicate welcomes. Unresolved sends are reviewed before retrying after the provider's deduplication window. Minimal delivery-event records, containing message/contact identifiers, status and timestamp, are kept for 90 days. These tracking records do not contain email bodies, your medication list, or other health details. A newsletter subscription does not tell us which products you take.
 
-**Sign-in on the website:** consent and connections pages use browser storage for your Supabase session and the PKCE sign-in verifier.
+**Sign-in on the website:** consent and connections pages use browser storage for your Supabase session and the PKCE sign-in verifier. These private pages do not load our marketing analytics or session replay.
 
 **Cookies on the website:** we use a minimal set of essential cookies (session, security). We use privacy-friendly analytics (Vercel Analytics, Microsoft Clarity for session replay). No cross-site advertising trackers. No Facebook pixel. No data brokers.
 
@@ -158,9 +158,7 @@ If you're in California, the EU, the UK, or another jurisdiction with additional
       id: "children",
       num: "8",
       title: "Children's privacy",
-      body: `PharmaGuide is not intended for children under 13. We do not knowingly collect personal information from anyone under 13. If you believe we have, contact us at [info@pharmaguide.io](mailto:info@pharmaguide.io) and we will delete the data immediately.
-
-For users 13–17, a parent or legal guardian must approve account creation, and the user should consult their healthcare provider before relying on any PharmaGuide guidance.`,
+      body: `PharmaGuide is intended for adults aged 18 and over. People under 18 may not create an account or use the service. If you believe a person under 18 has provided personal information, contact [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io) so we can investigate and arrange deletion.`,
     },
     {
       id: "california-rights",
@@ -180,7 +178,7 @@ For users 13–17, a parent or legal guardian must approve account creation, and
 
 **Right to non-discrimination** — exercising your rights does not affect your access to PharmaGuide.
 
-To exercise any of these, email [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io) or use the in-app Settings → Privacy controls.`,
+To exercise any of these, email [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io) or use the available account controls in Settings.`,
     },
     {
       id: "european-rights",
@@ -190,9 +188,9 @@ To exercise any of these, email [privacy@pharmaguide.io](mailto:privacy@pharmagu
 
 **Lawful basis:** we process your minimal account data on the lawful basis of (a) contractual necessity (you can't have an account without an email), (b) legitimate interest (running the service securely), and (c) your consent for any optional processing such as the newsletter.
 
-**International transfers:** our servers are located in the United States. Where we transfer EU/UK personal data to the US, we rely on Standard Contractual Clauses approved by the European Commission and the UK ICO.
+**International processing:** our infrastructure and assistant providers may process information outside your country, including in the United States. Their applicable terms describe processing locations and transfer safeguards. Contact [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io) for information about the providers and safeguards relevant to your data.
 
-**Data Protection Officer:** for GDPR-related queries, email [dpo@pharmaguide.io](mailto:dpo@pharmaguide.io).
+**European privacy contact:** for GDPR-related queries, email [dpo@pharmaguide.io](mailto:dpo@pharmaguide.io).
 
 **Right to lodge a complaint:** you can complain to your local data protection authority. For EU residents this is your country's DPA; for UK residents this is the ICO.`,
     },
@@ -200,9 +198,9 @@ To exercise any of these, email [privacy@pharmaguide.io](mailto:privacy@pharmagu
       id: "security-incidents",
       num: "11",
       title: "Security incidents",
-      body: `If we ever discover a security incident affecting your information, we will notify you within 72 hours of discovery (or sooner where required by law), explain what happened, what data was affected, what we're doing about it, and what you can do.
+      body: `We investigate suspected unauthorized access or disclosure of personal information. When notification is required, we notify affected people and the relevant authorities without unreasonable delay and within the deadlines that apply to the incident. Notices explain what happened, the information involved, the steps we are taking and what affected people can do. Health-data notification duties can apply to unauthorized disclosures as well as security intrusions; report suspected incidents to the contact below.
 
-We test our systems regularly and run a coordinated disclosure program. Researchers can report findings to [security@pharmaguide.io](mailto:security@pharmaguide.io).`,
+Researchers can report suspected vulnerabilities to [security@pharmaguide.io](mailto:security@pharmaguide.io).`,
     },
     {
       id: "changes",
@@ -210,7 +208,7 @@ We test our systems regularly and run a coordinated disclosure program. Research
       title: "Changes to this policy",
       body: `We update this policy when our practices change or when laws change. The "Last updated" date at the top reflects the most recent revision.
 
-For material changes (anything that meaningfully affects what we do with your data), we will email you at least 30 days before the change takes effect, and you will have the opportunity to delete your account before it does.
+We post updated disclosures on this page and provide additional notice or request consent when required for a material change to how we process your information.
 
 We will never quietly change this policy in a way that reduces your privacy and hope you don't notice.`,
     },
@@ -224,11 +222,11 @@ We will never quietly change this policy in a way that reduces your privacy and 
 
 **Security incidents and responsible disclosure:** [security@pharmaguide.io](mailto:security@pharmaguide.io)
 
-**EU/UK Data Protection Officer:** [dpo@pharmaguide.io](mailto:dpo@pharmaguide.io)
+**EU/UK privacy questions:** [dpo@pharmaguide.io](mailto:dpo@pharmaguide.io)
 
 **Mailing address:** PharmaGuide Inc., Boston, MA, United States.
 
-We respond to every privacy email within 5 business days. A human reads every one.`,
+Include enough information for us to identify your request, but do not send passwords or unnecessary health details. We may need to verify your identity before providing or deleting account information.`,
     },
   ],
 };

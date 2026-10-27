@@ -2,26 +2,33 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { SignInPanel } from "@/components/ai-connector/SignInPanel";
 import { CONNECTIONS_PATH, consentCopy, redirectMatchesCallback } from "@/lib/ai-connector";
 import { browserSupabase } from "@/lib/supabase-browser";
 
-type Preview = { client_name: string; callback_host: string; redirect_uri: string };
+type Preview = { client_name: string; callback_host: string; redirect_uri: string; oauth_issuer?: string };
 
 type View =
   | { kind: "loading" }
-  | { kind: "message"; text: string }
+  | { kind: "message"; text: string; connected?: boolean }
   | { kind: "signin" }
+  | { kind: "login"; session: Session; busy: boolean; error?: string }
   | {
       kind: "consent";
       session: Session;
+      authorizationId: string;
       preview: Preview;
       busy: boolean;
+      code?: string;
+      approved?: boolean;
+      expiresAt?: string;
       error?: string;
     };
 
+const CONNECTED_MESSAGE = "Connected. Return to your assistant to continue. You can disconnect at any time.";
+const APP_CONNECTIONS_URL = "pharmaguide:///ai-connections";
 const ID_PATTERN = /^[A-Za-z0-9_-]{1,255}$/;
 
 async function callRoute(session: Session, payload: Record<string, string>) {
@@ -35,10 +42,20 @@ async function callRoute(session: Session, payload: Record<string, string>) {
 }
 
 export default function ConsentClient() {
-  const authorizationId = useSearchParams().get("authorization_id") ?? "";
+  const params = useSearchParams();
+  const authorizationId = params.get("authorization_id") ?? "";
+  const externalAuthId = params.get("external_auth_id") ?? "";
+  return <ConsentRequest key={`${authorizationId}:${externalAuthId}`} authorizationId={authorizationId} externalAuthId={externalAuthId} />;
+}
+
+function ConsentRequest({authorizationId, externalAuthId = ""}: {authorizationId: string; externalAuthId?: string}) {
+  const lifecycle = useRef({active: false});
+  const actionPending = useRef(false);
   const [view, setView] = useState<View>({ kind: "loading" });
 
   useEffect(() => {
+    const lifetime = lifecycle.current;
+    lifetime.active = true;
     const supabase = browserSupabase();
     let cancelled = false;
     const show = (next: View) => {
@@ -46,18 +63,20 @@ export default function ConsentClient() {
     };
     async function load() {
       if (!supabase) return show({ kind: "message", text: "Connecting assistants is not available right now." });
-      if (!ID_PATTERN.test(authorizationId)) {
+      if ((!ID_PATTERN.test(authorizationId) && !ID_PATTERN.test(externalAuthId)) || (authorizationId && externalAuthId)) {
         return show({ kind: "message", text: "This link is incomplete. Start the connection again from the assistant." });
       }
       try {
         const { data: sessionData } = await supabase.auth.getSession();
         const session = sessionData.session;
         if (!session) return show({ kind: "signin" });
+        if (externalAuthId) return show({kind: "login", session, busy: false});
         // The route is the only reader: details lookup can complete a
         // returning authorization, so it must not run twice in parallel.
         const { ok, json } = await callRoute(session, { action: "preview", authorization_id: authorizationId });
         if (!ok) return show({ kind: "message", text: String(json.error ?? "This connection cannot be approved.") });
-        show({ kind: "consent", session, preview: json as unknown as Preview, busy: false });
+        if (json.connected === true && typeof json.oauth_issuer === "string") return show({kind: "message", text: CONNECTED_MESSAGE, connected: true});
+        show({ kind: "consent", authorizationId, session, preview: json as unknown as Preview, busy: false });
       } catch {
         show({ kind: "message", text: "The connection could not be loaded. Try again from the assistant." });
       }
@@ -65,47 +84,153 @@ export default function ConsentClient() {
     void load();
     return () => {
       cancelled = true;
+      lifetime.active = false;
     };
-  }, [authorizationId]);
+  }, [authorizationId, externalAuthId]);
 
-  async function decide(approve: boolean) {
-    if (view.kind !== "consent") return;
+  async function currentSession(original: Session): Promise<Session> {
+    const current = (await browserSupabase()?.auth.getSession())?.data.session;
+    const identity = (session: Session) => {
+      const claims = JSON.parse(atob((session.access_token.split(".")[1] ?? "").replace(/-/g, "+").replace(/_/g, "/")));
+      if (!claims.sub || !claims.session_id || claims.client_id || claims.is_anonymous) throw new Error("Invalid session");
+      return `${claims.sub}:${claims.session_id}`;
+    };
+    if (!current || identity(current) !== identity(original)) throw new Error("Session changed");
+    return current;
+  }
+
+  async function pair(action: "pair_start" | "pair_status") {
+    if (view.kind !== "consent" || view.authorizationId !== authorizationId || view.busy || actionPending.current) return;
+    actionPending.current = true;
+    const lifetime = lifecycle.current;
+    const live = () => lifetime.active;
+    setView({...view, busy: true, error: undefined});
+    try {
+      const session = await currentSession(view.session);
+      if (!live()) return;
+      const {ok, json} = await callRoute(session, {action, authorization_id: authorizationId});
+      await currentSession(view.session);
+      if (!live()) return;
+      if (!ok) throw new Error(String(json.error ?? "Phone approval is unavailable. Try again."));
+      if (action === "pair_status" && view.preview.oauth_issuer && json.approved === true && typeof json.connection_id === "string") {
+        setView({kind: "message", text: CONNECTED_MESSAGE, connected: true});
+        return;
+      }
+      if (action === "pair_start" && (typeof json.code !== "string" || !/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{12}$/.test(json.code))) throw new Error("Invalid approval code");
+      if (typeof json.expires_at !== "string" || !Number.isFinite(Date.parse(json.expires_at)) || Date.parse(json.expires_at) <= Date.now()) throw new Error("Expired approval");
+      const next = {...view, busy: false, code: action === "pair_start" ? String(json.code) : view.code,
+        expiresAt: String(json.expires_at), approved: action === "pair_status" && json.approved === true,
+        error: action === "pair_status" && json.approved !== true ? "Waiting for approval in the PharmaGuide app." : undefined};
+      setView(next);
+      if (next.approved && next.preview.oauth_issuer) {
+        actionPending.current = false;
+        await decide(true, next);
+      }
+    } catch {
+      if (!live()) return;
+      setView({...view, busy: false, approved: false, error: "Phone approval could not finish. Restart this connection from the assistant."});
+    } finally { if (live()) actionPending.current = false; }
+  }
+
+  async function decide(approve: boolean, currentView: View = view) {
+    const view = currentView;
+    if (view.kind !== "consent" || view.authorizationId !== authorizationId || view.busy || actionPending.current) return;
+    actionPending.current = true;
+    const lifetime = lifecycle.current;
+    const live = () => lifetime.active;
     const supabase = browserSupabase();
     if (!supabase) {
+      actionPending.current = false;
       setView({ ...view, busy: false, error: "Connecting assistants is unavailable right now." });
       return;
     }
     setView({ ...view, busy: true, error: undefined });
     try {
+      const session = await currentSession(view.session);
+      if (!live()) return;
       let redirectUrl: unknown;
       if (approve) {
+        if (!view.approved || !view.expiresAt || !Number.isFinite(Date.parse(view.expiresAt)) || Date.parse(view.expiresAt) <= Date.now()) throw new Error("Approval expired");
         // The route creates the connection, approves with Auth and closes
         // the new connection on an approval failure before responding.
-        const written = await callRoute(view.session, { action: "approve", authorization_id: authorizationId });
+        const written = await callRoute(session, { action: "approve", authorization_id: authorizationId });
+        if (!live()) return;
         if (!written.ok) {
           setView({ ...view, busy: false, error: String(written.json.error ?? "PharmaGuide could not record this connection.") });
           return;
         }
+        if (view.preview.oauth_issuer) {
+          await currentSession(view.session);
+          if (live()) setView({kind: "message", text: CONNECTED_MESSAGE, connected: true});
+          return;
+        }
         redirectUrl = written.json.redirect_url;
       } else {
+        const cancelled = await callRoute(session, {action: "pair_cancel", authorization_id: authorizationId});
+        if (!live()) return;
+        if (!cancelled.ok) {
+          if (view.preview.oauth_issuer && cancelled.json.local_access_ended === true) {
+            setView({kind: "message", text: String(cancelled.json.error)});
+            return;
+          }
+          throw new Error("Cancellation failed");
+        }
+        if (view.preview.oauth_issuer) {
+          if (live()) setView({kind: "message", text: "Phone approval cancelled. No personal access was approved."});
+          return;
+        }
         const result = await supabase.auth.oauth.denyAuthorization(authorizationId, { skipBrowserRedirect: true });
         if (result.error) throw new Error("denial failed");
         redirectUrl = result.data?.redirect_url;
       }
+      await currentSession(view.session);
+      if (!live()) return;
       if (typeof redirectUrl !== "string" || !redirectMatchesCallback(redirectUrl, view.preview.redirect_uri)) {
         throw new Error("callback unavailable");
       }
       window.location.assign(redirectUrl);
     } catch {
+      if (!live()) return;
       setView({ ...view, busy: false, error: "The connection could not finish. Check your connections page before trying again from the assistant." });
-    }
+    } finally { if (live()) actionPending.current = false; }
   }
+
+  async function continueLogin() {
+    if (view.kind !== "login" || view.busy || actionPending.current) return;
+    actionPending.current = true;
+    setView({...view, busy: true});
+    try {
+      const session = await currentSession(view.session);
+      const result = await callRoute(session, {action: "workos_login", external_auth_id: externalAuthId});
+      await currentSession(view.session);
+      if (!lifecycle.current.active) return;
+      if (!result.ok || typeof result.json.redirect_uri !== "string") throw new Error("Login unavailable");
+      window.location.assign(result.json.redirect_uri);
+    } catch {
+      if (lifecycle.current.active) setView({...view, busy: false, error: "You are signed in, but the assistant connection could not continue. Start a new connection from your assistant, then use the new browser tab."});
+    } finally { actionPending.current = false; }
+  }
+
+  useEffect(() => {
+    if (view.kind !== "consent" || !view.code || view.approved || view.busy || !view.expiresAt ||
+        (view.error && view.error !== "Waiting for approval in the PharmaGuide app.")) return;
+    const timer = setTimeout(() => { void pair("pair_status"); }, 15_000);
+    return () => clearTimeout(timer);
+  });
+
+  if (view.kind === "login") return <article className="space-y-5 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 sm:p-8">
+    <h1 className="text-2xl font-semibold">Review your assistant connection</h1>
+    <p>You’re signed in. Next, review which assistant is requesting a connection. You’ll then approve access separately in the PharmaGuide app on your phone.</p>
+    {view.error ? <p role="alert">{view.error}</p> : null}
+    <button type="button" disabled={view.busy} onClick={() => void continueLogin()} className="rounded-lg bg-neutral-900 px-5 py-3 text-white disabled:opacity-50">{view.busy ? "Opening review…" : "Review connection"}</button>
+  </article>;
 
   if (view.kind === "loading") return <p className="text-neutral-500">Loading…</p>;
   if (view.kind === "message") {
     return (
       <div className="space-y-4">
         <p className="text-base text-neutral-700 dark:text-neutral-300">{view.text}</p>
+        {view.connected ? <a href={APP_CONNECTIONS_URL} className="inline-flex w-full justify-center rounded-lg bg-neutral-900 px-5 py-3 font-semibold text-white dark:bg-white dark:text-neutral-900">Open PharmaGuide</a> : null}
         <Link href={CONNECTIONS_PATH} className="text-sm font-semibold underline">
           Your connections
         </Link>
@@ -119,13 +244,26 @@ export default function ConsentClient() {
     ) : null;
   }
 
-  const copy = consentCopy(view.preview.client_name);
+  const copy = consentCopy(view.preview.client_name, Boolean(view.preview.oauth_issuer));
   return (
     <article className="space-y-6">
       <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white">{copy.title}</h1>
       <section aria-label="Destination" className="rounded-xl border border-neutral-200 p-5 dark:border-neutral-700">
         <p className="text-sm text-neutral-600 dark:text-neutral-400">{copy.destinationLabel}</p>
         <p className="mt-1 break-all text-3xl font-bold text-neutral-900 dark:text-white">{view.preview.callback_host}</p>
+      </section>
+      <section className="space-y-3" aria-label="Phone approval">
+        <h2 className="font-semibold">Approve in PharmaGuide on your phone</h2>
+        <p>Open PharmaGuide on your phone and sign in to the same account. Review the assistant and destination in the app, then approve the connection.</p>
+        {view.code ? <><a href={`${APP_CONNECTIONS_URL}?code=${encodeURIComponent(view.code)}`} className="inline-flex w-full justify-center rounded-lg bg-neutral-900 px-5 py-3 font-semibold text-white dark:bg-white dark:text-neutral-900">Open PharmaGuide</a><p>On a computer, open AI connections in the app on your phone and enter this code:</p><p className="font-mono text-2xl" aria-label="Pairing code">{view.code.match(/.{1,4}/g)?.join("-")}</p><p>This code expires at {view.expiresAt ? new Date(view.expiresAt).toLocaleTimeString() : "the time shown in the app"}. Approval connects the assistant. To allow additional information, open Access settings in the app, review your choices and tap Save.</p></> : null}
+        {!view.code ? <button type="button" disabled={view.busy} onClick={() => void pair("pair_start")} className="inline-flex w-full justify-center rounded-lg bg-neutral-900 px-5 py-3 font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900">Start phone approval</button> : <p>If the code expires, ask your assistant to start a new connection, then open the new approval link.</p>}
+        {view.code ? <button type="button" disabled={view.busy} onClick={() => void pair("pair_status")} className="ml-4 underline">Check phone approval</button> : null}
+      {view.error ? (
+        <p role="alert" className="text-sm text-neutral-900 dark:text-white">
+          {view.error}
+        </p>
+      ) : null}
+        {view.approved ? <p role="status">Approved. Finish connecting below.</p> : null}
       </section>
       <section className="space-y-1">
         <h2 className="text-base font-semibold text-neutral-900 dark:text-white">{copy.categoriesHeading}</h2>
@@ -152,20 +290,15 @@ export default function ConsentClient() {
           Your connections
         </Link>
       </p>
-      {view.error ? (
-        <p role="alert" className="text-sm text-neutral-900 dark:text-white">
-          {view.error}
-        </p>
-      ) : null}
       <div className="flex flex-col gap-3 sm:flex-row">
-        <button
+        {view.approved ? <button
           type="button"
-          disabled={view.busy}
+          disabled={view.busy || !view.approved}
           onClick={() => void decide(true)}
           className="rounded-lg bg-neutral-900 px-5 py-3 text-sm font-semibold text-white disabled:opacity-50 dark:bg-white dark:text-neutral-900"
         >
-          {copy.approve}
-        </button>
+          Finish connecting
+        </button> : null}
         <button
           type="button"
           disabled={view.busy}

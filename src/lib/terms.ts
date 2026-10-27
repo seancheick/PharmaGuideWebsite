@@ -21,11 +21,11 @@ export const TERMS_DOC: LegalDocument = {
   titleEm: "in plain English.",
   subhead:
     "What you can expect from us, what we expect from you, and the boring legal disclaimers we have to put somewhere — without the wall of capital letters.",
-  lastUpdated: "2026-05-08",
+  lastUpdated: "2026-10-23",
   summary: {
     title: "The short version",
     points: [
-      "**You must be 18+** to use PharmaGuide. Minors 13–17 need a parent's permission.",
+      "**You must be 18+** to use PharmaGuide.",
       "PharmaGuide is **educational, not medical advice**. Always consult your healthcare provider before changing what you take.",
       "**You own your data.** We just process it as described in the [Privacy Policy](/privacy).",
       "**Don't try to break the system** — no scraping, no reverse engineering, no abusing the API. Standard stuff.",
@@ -49,9 +49,7 @@ These terms reference our [Privacy Policy](/privacy), which describes how we han
       title: "Who can use PharmaGuide",
       body: `**Adults (18+):** you can create an account and use all features.
 
-**Minors (13–17):** you may use PharmaGuide only with your parent or legal guardian's permission, and we strongly recommend involving them in any decisions about supplements or medications.
-
-**Children under 13:** PharmaGuide is not for you. Please don't create an account. If you do, we are required by law to delete it.
+**People under 18:** you may not create an account or use PharmaGuide. If you believe someone under 18 has provided personal information, contact [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io).
 
 **Healthcare professionals:** the consumer-facing service is not designed for clinical practice. We're working on a separate professional offering (see [Healthcare Pros — 2026](/hipaa#professional-tier) in our HIPAA statement). Until that ships, do not rely on the consumer app for clinical decision-making.`,
     },

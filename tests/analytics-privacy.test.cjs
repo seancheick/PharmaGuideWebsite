@@ -38,6 +38,7 @@ function boundaryHarness(analytics) {
     exports: {},
     window: { location: { reload() { reloads++; } } },
     require(name) {
+      if (name === 'next/link') return {__esModule:true, default:'a'};
       if (name === '@/lib/analytics') return { privatePageNeedsReload: analytics.reload };
       if (name === 'react') return {
         useState(initial) {
@@ -47,7 +48,7 @@ function boundaryHarness(analytics) {
         },
         useEffect(callback) { effects.push(callback); },
       };
-      if (name === 'react/jsx-runtime') return { jsx: (type, props) => ({ type, props }) };
+      if (name === 'react/jsx-runtime') return { jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }) };
       throw new Error(`Unexpected dependency ${name}`);
     },
   };
@@ -65,7 +66,7 @@ test('private boundary allows a clean private document without a reload loop', (
   const analytics = gate('/account/connections');
   const boundary = boundaryHarness(analytics);
   const privateContent = { sensitive: 'fixture only' };
-  assert.equal(boundary.render(privateContent), privateContent);
+  assert.equal(boundary.render(privateContent).props.children[1], privateContent);
   boundary.commit();
   assert.equal(boundary.reloads, 0);
 });
@@ -76,7 +77,7 @@ test('private boundary never mounts private content in an already tracked docume
   analytics.location.pathname = '/account/connections';
   const boundary = boundaryHarness(analytics);
   const privateContent = { sensitive: 'fixture only' };
-  assert.notEqual(boundary.render(privateContent), privateContent);
+  assert.notEqual(boundary.render(privateContent).props.children[1], privateContent);
   boundary.commit();
   assert.equal(boundary.reloads, 1);
 });
@@ -91,7 +92,60 @@ test('private boundary protects content even when the next route renders before 
   const first = boundary.render(privateContent);
   analytics.location.pathname = '/oauth/authorize';
   boundary.commit();
-  assert.notEqual(first, privateContent, 'no private children before the new URL commits');
+  assert.notEqual(first.props.children[1], privateContent, 'no private children before the new URL commits');
   assert.equal(boundary.reloads, 1);
-  assert.notEqual(boundary.render(privateContent), privateContent, 'private children stay suppressed until reload');
+  assert.notEqual(boundary.render(privateContent).props.children[1], privateContent, 'private children stay suppressed until reload');
+});
+
+
+test('private connection routes use the shared private shell without marketing navigation', () => {
+  for (const page of ['src/app/oauth/authorize/page.tsx', 'src/app/account/connections/page.tsx']) {
+    const source = fs.readFileSync(page, 'utf8');
+    assert.doesNotMatch(source, /components\/layout\/(Header|Footer)/);
+    assert.match(source, /<PrivatePageBoundary>/);
+  }
+  const boundary = fs.readFileSync('src/components/ai-connector/PrivatePageBoundary.tsx', 'utf8');
+  assert.match(boundary, /id="main"/);
+  assert.doesNotMatch(boundary, /fixed|sticky|pt-40|pt-44/);
+});
+
+test('connector privacy disclosure names processors and durable access without promising assistant deletion', () => {
+  const context = {exports: {}};
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/lib/privacy.ts','utf8'), {compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText, context);
+  const policy=JSON.stringify(context.exports.PRIVACY_DOC);
+  assert.match(policy,/WorkOS/);assert.match(policy,/Supabase/);
+  assert.match(policy,/until you disconnect/);assert.doesNotMatch(policy,/currently 24 hours/);
+  assert.match(policy,/independent provider/);assert.doesNotMatch(policy,/All vendors are bound/);
+  assert.match(policy,/training settings/);assert.match(policy,/without unreasonable delay/);
+  assert.doesNotMatch(policy,/notify you within 72 hours/);
+  const shell=fs.readFileSync('src/components/ai-connector/PrivatePageBoundary.tsx','utf8');
+  assert.match(shell,/href="\/privacy"/);
+});
+
+test('privacy does not advertise unavailable export or unverified compliance and retention guarantees', () => {
+  const context={exports:{}};
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/lib/privacy.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText,context);
+  const policy=JSON.stringify(context.exports.PRIVACY_DOC);
+  for(const claim of ['We comply with COPPA, CCPA/CPRA, and GDPR','regular security audits','we rely on Standard Contractual Clauses','Settings → Privacy → Export my data','permanently remove your account record and email within 30 days','wiped immediately when you uninstall','longer than 30 days','Disable usage analytics']) assert.ok(!policy.includes(claim),claim);
+  assert.match(policy,/full in-app export is not yet available/);
+  assert.match(policy,/privacy@pharmaguide.io/);
+  assert.match(policy,/Uninstalling the app does not delete your account/);
+  assert.match(policy,/adults aged 18 and over/);
+  assert.doesNotMatch(policy,/For users 13–17/);
+  const terms=fs.readFileSync('src/lib/terms.ts','utf8');
+  assert.match(terms,/People under 18.*you may not create an account/);
+  assert.doesNotMatch(terms,/Minors \(13–17\)|Minors 13–17/);
+});
+
+test('linked HIPAA statement uses consumer scope and actual controls without certification or future guarantees', () => {
+  const context={exports:{}};
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/lib/hipaa.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText,context);
+  const policy=JSON.stringify(context.exports.HIPAA_DOC);
+  for(const claim of ['HIPAA-aligned','as if','72 hours','None of that data','Engineers cannot read','every administrative action','annually','tested quarterly','within 30 days','will operate','full BAA support','That product **will**','regardless of jurisdiction']) assert.ok(!policy.includes(claim),claim);
+  assert.match(policy,/direct-to-consumer/);
+  assert.match(policy,/not a HIPAA compliance certification/);
+  assert.match(policy,/not end-to-end encrypted/);
+  assert.match(policy,/without unreasonable delay/);
+  assert.match(policy,/\/privacy/);
+  assert.match(policy,/on behalf of a healthcare organization/);
 });

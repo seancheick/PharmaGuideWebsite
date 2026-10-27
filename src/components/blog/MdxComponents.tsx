@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { MDXComponents } from "mdx/types";
 import { cn } from "@/lib/utils";
+import * as shilajitFigures from "./figures/ShilajitFigures";
 
 /**
  * Custom MDX components for blog posts.
@@ -215,10 +216,13 @@ export const mdxComponents: MDXComponents = {
   ),
 
   /**
-   * Source citation — small, structured chip for academic-style
-   * footnotes. Replaces the pattern of using a `> **Source:** [link]`
-   * blockquote (which compiles to an oversized italic-serif pull quote
-   * that overwhelms the citation tone).
+   * Source citation — one line of metadata under the paragraph it backs:
+   * 15px muted text with a mono eyebrow label, so it reads as supporting
+   * material rather than prose, and mt-3 (tighter than paragraph rhythm)
+   * so it attaches to the claim above. MDX wraps the children in a <p>;
+   * the [&_p] overrides make it inline and drop the body-text styling.
+   * Use this rather than an inline **Source:** line, so every citation
+   * looks the same.
    *
    * Usage in MDX:
    *   <Source>
@@ -226,17 +230,10 @@ export const mdxComponents: MDXComponents = {
    *   </Source>
    */
   Source: ({ children }: { children: React.ReactNode }) => (
-    <aside className="my-6 flex items-start gap-3 rounded-xl border border-border bg-surface-subtle px-4 py-3">
-      <span
-        aria-hidden="true"
-        className="mt-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-accent"
-      >
-        Source
-      </span>
-      <span className="text-body-sm leading-relaxed text-muted [&_a]:text-link [&_a]:underline [&_a]:decoration-link/60 [&_a]:underline-offset-[3px] [&_a:hover]:text-link-strong [&_a:hover]:decoration-link">
-        {children}
-      </span>
-    </aside>
+    <div className="mt-3 text-body-sm leading-relaxed text-muted [&_p]:mt-0 [&_p]:inline [&_p]:text-body-sm [&_p]:leading-relaxed [&_p]:text-muted [&_em]:text-muted">
+      <span className="mr-2 font-mono text-nano uppercase text-accent">Source</span>
+      {children}
+    </div>
   ),
 
   /**
@@ -366,4 +363,14 @@ export const mdxComponents: MDXComponents = {
       )}
     </figure>
   ),
+
+  /**
+   * `<SvgStyle css="..." />` — a <style> block for an inline SVG.
+   * next-mdx-remote strips every {expression} (blockJS), so the old
+   * <style>{`...`}</style> pattern rendered empty. A string prop survives.
+   */
+  SvgStyle: ({ css }: { css: string }) => <style>{css}</style>,
+
+  // Post-specific teaching figures (HTML, so text reflows on phones).
+  ...shilajitFigures,
 };

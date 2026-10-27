@@ -127,8 +127,8 @@ The skill runs an 8-phase pipeline:
 3. **Claim validation** — each claim is graded VERIFIED / SUPPORTED / WEAK / UNVERIFIABLE / CONTRADICTED. Unverifiable claims are dropped.
 4. **Risk gate** — computes a Risk Score (0–100). High-risk topics (Risk Score ≥ 71) produce a brief only, not a publishable draft.
 5. **Outline** — heading plan per category guide
-6. **Draft MDX** — uses the 5-component vocabulary (`Callout`, `EvidencePill`, `Source`, `PostImage`, `Illustration`) plus plain markdown
-7. **Images** — `<Illustration>` (inline SVG) by default; editorial mood photos via Gemini Nano Banana (`GEMINI_API_KEY`); never fake clinical scenes
+6. **Draft MDX** — uses the component vocabulary (`Callout`, `EvidencePill`, `Source`, `Sources`, `PostImage`, `Illustration`, `SvgStyle`, plus teaching-figure components from `src/components/blog/figures/`) plus plain markdown
+7. **Images** — `<Illustration>` wrapping a React teaching figure by default (see below); editorial mood photos via Gemini Nano Banana (`GEMINI_API_KEY`); never fake clinical scenes
 8. **Editor sidecar** — writes `content/blog/.review/<slug>.review.md` with claim audit + Risk Score + SEO package
 
 ### After generation
@@ -173,7 +173,7 @@ For end-to-end (blog + social in one session):
 - **Banned marketing words** — AI-powered, revolutionary, synergy, seamless, etc. flagged
 - **Banned medical-advice phrases** — "you should take," "cures," "prevents disease," "the best supplement" etc. flagged
 - **Brand-recommendation guards** — "buy this brand," "our top pick," "we recommend" etc. flagged. Factual brand mentions are allowed (e.g., naming a recalled brand in a safety alert).
-- **Citation rule (risk-based)** — inline `<Source>` chips required for dosing / interactions / FDA / pregnancy / mechanism-driving-recommendation claims; section-level `**Source:**` line is fine for background framing
+- **Citation rule (risk-based)** — inline `<Source>` chips required for dosing / interactions / FDA / pregnancy / mechanism-driving-recommendation claims; background framing gets one `<Source>` line at the end of the section. Every citation uses `<Source>`, never a bold `**Source:**` line
 - **Image policy** — illustrations preferred over AI-generated photos; AI photos limited to editorial-mood imagery (no fake pills, doctors, bottles, labels, lab settings)
 - **Reviewer requirement** — posts with Risk Score 31–70 get `review_required: true` in frontmatter; `blog:publish-check` fails until a `reviewer:` field is set
 
@@ -457,9 +457,9 @@ Levels: `Established` · `Probable` · `Moderate` · `Limited` · `Theoretical`
 
 ### `<PostImage>` — see Images section above.
 
-### `<Source>` — inline citation chip
+### `<Source>` — one-line citation
 
-For high-stakes clinical claims (dosing, interactions, FDA actions, pregnancy, mechanism-driving recommendations). Use the chip inline next to the claim; reserve section-level `**Source:** [link](url)` for background framing.
+Renders directly under the paragraph it backs as one line of metadata: a mono "SOURCE" label, then the citation in 15px muted text (body is 18px), tighter to the paragraph above than paragraphs are to each other, with no box. Required under high-stakes clinical claims (dosing, interactions, FDA actions, pregnancy, mechanism-driving recommendations); also used once at the end of a section for background framing. Don't write bold `**Source:** [link]` lines — they render as body text.
 
 ```mdx
 The literature on CoQ10 reversing statin-associated muscle symptoms is mixed.
@@ -469,21 +469,26 @@ The literature on CoQ10 reversing statin-associated muscle symptoms is mixed.
 </Source>
 ```
 
-### `<Illustration>` — inline SVG / HTML diagram
+### `<Illustration>` — teaching figures
 
-The default image type for PharmaGuide. Use for mechanism diagrams, severity ladders, dose-response curves, comparison charts, decision flows, and pathway visuals. Inline SVG so readers can interact / share / reuse, and so the diagram scales cleanly on every device.
+The default image type for PharmaGuide. A figure is a **React component** in `src/components/blog/figures/<Topic>Figures.tsx`, registered in `MdxComponents.tsx`; `<Illustration>` supplies the caption. The validator allows every function exported from that folder.
 
 ```mdx
-<Illustration caption="How statins can affect CoQ10 synthesis" credit="PharmaGuide">
-  <svg viewBox="0 0 800 400" role="img" aria-label="Statin pathway diagram">
-    <title>Statin pathway diagram</title>
-    <desc>HMG-CoA reductase blocks both cholesterol and CoQ10 synthesis</desc>
-    {/* path / rect / text elements */}
-  </svg>
+<Illustration caption="Anatomy of a certificate of analysis, using a fictional report">
+  <ShilajitLabReport />
 </Illustration>
 ```
 
-**Accessibility:** the root `<svg>` must include `role="img"` and `aria-label="<short description>"`. Add `<title>` and `<desc>` as the first children so screen readers can announce the diagram. Never put critical information in color alone.
+Reference implementation: `src/components/blog/figures/ShilajitFigures.tsx`. Rules (full version in the `/pg-blog-mdx` skill, Phase 7):
+
+- **Readable text is HTML**, using the site's type scale, so it reflows and stays legible at 375px. Small SVG `<text>` in a wide viewBox shrinks to unreadable on phones.
+- **Each figure stands alone** when screenshotted: "Figure N · …" eyebrow, serif-italic title, units, a "fictional"/"hypothetical" tag where anything is invented, the key limitation, source and page URL (the `Frame` shell does this).
+- **Teach, don't summarise:** annotate a realistic object with numbered pins, show worked arithmetic, show what a document establishes and what it leaves open.
+- **Layout:** `repeat(auto-fit, minmax(…))` grids; Tailwind `sm:` is 1200px here. Wide compositions use `.fig-stage` / `.fig-wide` / `.fig-narrow` (container queries in `globals.css`).
+- **Inline SVG only for drawn shapes**, with JSX presentation attributes. **Never `<style>{`…`}</style>` in MDX**: next-mdx-remote strips `{expressions}` (`blockJS`), which left every older diagram unstyled until October 2026. Legacy SVGs use `<SvgStyle css="…" />`.
+- **Product photo as a base:** a front-on, text-free, blank-label prop may sit behind a figure, with all wording overlaid as live text and a "Fictional label for teaching" tag. Never a real brand or baked-in text. Web-sized copy under `public/images/blog/`.
+- **Check it in a production build** (`pnpm build`, then `next start`) at about 800px and 375px; the dev server does not render MDX.
+- **Accessibility:** decorative SVG gets `aria-hidden="true"`; a drawing that carries meaning gets `role="img"` + `aria-label`. Never put critical information in colour alone.
 
 **Use illustrations over AI-generated photos for clinical content.** AI photos are limited to editorial-mood imagery (lifestyle context, no clinical scenes) — see [Images](#images-publicblog-slug) above.
 

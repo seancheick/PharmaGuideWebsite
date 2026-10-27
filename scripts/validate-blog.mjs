@@ -58,6 +58,19 @@ const HIGH_RISK_CATEGORIES = new Set([
   "safety-alerts",
 ]);
 
+// Teaching figures are React components in src/components/blog/figures/,
+// registered in MdxComponents.tsx. Every exported function there is
+// allowed, so a new figure needs no edit here.
+const FIGURES_DIR = path.join(ROOT, "src", "components", "blog", "figures");
+const FIGURE_COMPONENTS = fs.existsSync(FIGURES_DIR)
+  ? fs
+      .readdirSync(FIGURES_DIR)
+      .filter((f) => f.endsWith(".tsx"))
+      .flatMap((f) =>
+        [...fs.readFileSync(path.join(FIGURES_DIR, f), "utf8").matchAll(/^export function ([A-Z]\w*)/gm)].map((m) => m[1])
+      )
+  : [];
+
 const ALLOWED_MDX_COMPONENTS = new Set([
   "Callout",
   "EvidencePill",
@@ -65,6 +78,8 @@ const ALLOWED_MDX_COMPONENTS = new Set([
   "PostImage",
   "Illustration",
   "Sources",
+  "SvgStyle",
+  ...FIGURE_COMPONENTS,
 ]);
 
 // Banned marketing words (from docs/03-content-spec.md + master prompt v3.2)
@@ -173,6 +188,7 @@ const AUTHORITATIVE_DOMAINS = [
   "cdc.gov",
   "who.int",
   "nice.org.uk",
+  "ecfr.gov",              // official U.S. Code of Federal Regulations
   // Peer-reviewed journals
   "nejm.org",
   "thelancet.com",

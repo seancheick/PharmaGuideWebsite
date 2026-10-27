@@ -416,6 +416,23 @@
     background-image: var(--gradient-cta-glow);
   }
 
+  /* Blog teaching figures: switch layout on the figure's own width,
+     since the site's Tailwind breakpoints all sit at 1200px. */
+  .fig-stage {
+    container-type: inline-size;
+  }
+  .fig-wide {
+    display: none;
+  }
+  @container (min-width: 600px) {
+    .fig-wide {
+      display: block;
+    }
+    .fig-narrow {
+      display: none;
+    }
+  }
+
   /* Number tabular — for FitScore counters */
   .tnum {
     font-variant-numeric: tabular-nums;

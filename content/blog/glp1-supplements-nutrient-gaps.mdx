@@ -70,14 +70,14 @@ Research consistently identifies the same cluster of nutrients at risk:
   <svg viewBox="0 0 800 400" role="img" aria-label="Nutrient gap chart for GLP-1 medication users showing five nutrients, their evidence level, and primary mechanism of depletion">
     <title>Nutrient gaps in GLP-1 users</title>
     <desc>Chart showing vitamin D, B12, iron, magnesium, and zinc with evidence levels and depletion mechanisms</desc>
-    <style>{`
+    <SvgStyle css="
       .label { font-family: system-ui, sans-serif; font-size: 14px; fill: #1e293b; }
       .sublabel { font-family: system-ui, sans-serif; font-size: 11.5px; fill: #64748b; }
       .header { font-family: system-ui, sans-serif; font-size: 12px; fill: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
       .bar-strong { fill: #0d9488; }
       .bar-moderate { fill: #f59e0b; }
       .pill-text { font-family: system-ui, sans-serif; font-size: 10.5px; fill: white; font-weight: 600; }
-    `}</style>
+    " />
     <text x="20" y="30" className="header">Nutrient</text>
     <text x="260" y="30" className="header">Evidence</text>
     <text x="380" y="30" className="header">Primary mechanism</text>
@@ -107,7 +107,9 @@ Research consistently identifies the same cluster of nutrients at risk:
   </svg>
 </Illustration>
 
-**Source:** [NIH Office of Dietary Supplements](https://ods.od.nih.gov/) · [ASPEN Nutritional Considerations for Weight Loss Therapies](https://nutritioncare.org/)
+<Source>
+  [NIH Office of Dietary Supplements](https://ods.od.nih.gov/) · [ASPEN Nutritional Considerations for Weight Loss Therapies](https://nutritioncare.org/)
+</Source>
 
 ## How much protein do you need on a GLP-1 medication?
 
@@ -125,11 +127,11 @@ A 2025 joint advisory from four obesity and nutrition societies notes that highe
   <svg viewBox="0 0 700 240" role="img" aria-label="Bar chart: in a 2025 survey of 69 GLP-1 users, 43 percent reached 1.2 grams of protein per kilogram per day and 10 percent reached 1.6 grams per kilogram">
     <title>Protein targets reached by GLP-1 users</title>
     <desc>43% of surveyed GLP-1 users reached 1.2 g/kg/day of protein; 10% reached 1.6 g/kg/day</desc>
-    <style>{`
+    <SvgStyle css="
       .bar-label { font-family: system-ui, sans-serif; font-size: 13px; fill: #1e293b; font-weight: 600; }
       .bar-val-dark { font-family: system-ui, sans-serif; font-size: 14px; fill: #1e293b; font-weight: 700; }
       .note { font-family: system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
-    `}</style>
+    " />
     <text x="20" y="40" className="bar-label">Reached 1.2 g/kg per day</text>
     <rect x="20" y="52" width="500" height="36" rx="6" fill="#e2e8f0" />
     <rect x="20" y="52" width="215" height="36" rx="6" fill="#0d9488" opacity="0.8" />
@@ -175,13 +177,13 @@ Some clinicians suggest **vitamin B6 (25–50 mg)** for nausea, borrowing from t
   <svg viewBox="0 0 740 320" role="img" aria-label="Diagram mapping common GLP-1 side effects to evidence-based support strategies">
     <title>GLP-1 side-effect support map</title>
     <desc>Nausea maps to ginger, small meals, and B6. Constipation maps to fiber and hydration. Vomiting and diarrhea map to electrolytes and prescriber escalation.</desc>
-    <style>{`
+    <SvgStyle css="
       .s-head { font-family: system-ui, sans-serif; font-size: 13px; fill: white; font-weight: 700; }
       .s-label { font-family: system-ui, sans-serif; font-size: 12px; fill: #1e293b; }
       .s-sub { font-family: system-ui, sans-serif; font-size: 10.5px; fill: #64748b; }
       .s-warn { font-family: system-ui, sans-serif; font-size: 10.5px; fill: #b45309; font-weight: 600; }
       .line { stroke: #cbd5e1; stroke-width: 1.5; fill: none; }
-    `}</style>
+    " />
     <rect x="10" y="20" width="140" height="40" rx="8" fill="#0d9488" />
     <text x="80" y="45" className="s-head" textAnchor="middle">Nausea</text>
     <rect x="10" y="120" width="140" height="40" rx="8" fill="#0d9488" />

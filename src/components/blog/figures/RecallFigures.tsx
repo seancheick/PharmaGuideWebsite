@@ -51,6 +51,11 @@ export function RecallCard({
       <h3 id={`${anchor}-title`} className="mt-2 text-balance font-serif text-h3 italic leading-snug text-ink">
         {product}
       </h3>
+      {/* The company is who issued the recall: readable, not footnote-sized. */}
+      <p className="mt-1.5 text-body-sm text-foreground/85">
+        <span className="text-subtle">Recalled by </span>
+        <span className="font-medium text-ink">{company}</span>
+      </p>
       {scope && (
         <p className="mt-2 inline-flex rounded-pill border border-severity-avoid/30 bg-severity-avoid/[0.06] px-2.5 py-0.5 font-mono text-nano uppercase text-severity-avoid">
           {scope}
@@ -77,7 +82,6 @@ export function RecallCard({
       )}
 
       <div className="mt-5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-border pt-3 font-mono text-nano text-subtle">
-        <span>Company: {company}</span>
         <span className="flex flex-wrap gap-x-3">
           <FigureUpdated />
           {page && <span>{page}</span>}

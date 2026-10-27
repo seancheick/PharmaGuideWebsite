@@ -6,7 +6,7 @@ Generated 2026-10-27 by `pnpm recalls:digest`. Week: Oct 19–25, 2026.
 
 | Source | Required | Status | Attempts | Records | Supplement records | Detail |
 | --- | --- | --- | --- | --- | --- | --- |
-| FDA Recalls, Market Withdrawals & Safety Alerts | yes | ok | 1 | 1095 | 57 | newest posting 2026-10-27 |
+| FDA Recalls, Market Withdrawals & Safety Alerts | yes | ok | 1 | 1096 | 57 | newest posting 2026-10-27 |
 | FDA-posted company announcement pages | yes | ok | 1 | 8 | 8 | pages posted since 2026-07-21 |
 | FDA Enforcement Report: reports with updated records | yes | ok | 1 |  |  |  |
 | FDA Enforcement Report, 2026-09-23 | yes | ok | 1 | 172 | 3 | has updated records |
@@ -53,5 +53,5 @@ Full notice text as fetched:
 - [ ] Every card checked against its official notice (above)
 - [ ] Coverage note matches the table above; never publish "no recalls" on incomplete coverage
 - [ ] Every record listed under Possible supplements / Only in openFDA is classified; re-render (`pnpm recalls:digest --week-ending <Sunday>`) once none are left, so the post can drop its "still being checked" note
-- [ ] PharmD sign-off on this exact version (any sentence that interprets risk beyond quoting the notice especially)
-- [ ] After sign-off: `pnpm blog:approve supplement-recalls-week-of-2026-10-19 --reviewer laurie-pham --date <sign-off date>` (moves the draft live, runs publish-check, rolls back on failure)
+- [ ] Nothing interprets risk beyond quoting the notice (that needs a regular, PharmD-reviewed post; digests are team-checked only)
+- [ ] After checking: `pnpm blog:approve supplement-recalls-week-of-2026-10-19` (moves the draft live, runs publish-check, rolls back on failure)

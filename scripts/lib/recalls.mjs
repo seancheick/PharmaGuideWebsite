@@ -797,11 +797,17 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
   const items = [...selection.newAnnouncements, ...selection.updates, ...selection.enforcementListings, ...selection.classifications];
   const firms = [...new Set(items.map(({ entry }) => entry.company || entry.firm))];
   const products = countProducts(selection);
-  const quiet = coverage.complete && items.length === 0;
+  // Unclassified records keep the week unsettled even when every source was
+  // read: no "every recall", no "no recalls" until a person classifies them.
+  const unresolved = (coverage.possibleSupplements?.length || 0) + (coverage.openFdaOnly?.length || 0);
+  const settled = coverage.complete && unresolved === 0;
+  const quiet = settled && items.length === 0;
 
   const description = !coverage.complete
     ? `FDA dietary-supplement recall notices for ${label}. Coverage for this week is incomplete; see the note in the post.`
-    : quiet
+    : !settled
+      ? `FDA dietary-supplement recall notices for ${label} confirmed so far; ${unresolved} more record${unresolved === 1 ? " is" : "s are"} still being checked.`
+      : quiet
       ? `FDA posted no new dietary-supplement recall notices, Enforcement Report listings or updates for ${label} in the sources we check.`
       : `FDA dietary-supplement recall notices for ${label}: ${products} product listing${products === 1 ? "" : "s"} from ${firms.length} compan${firms.length === 1 ? "y" : "ies"}, with exact lots and the official notice for each.`;
 
@@ -827,7 +833,7 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
   const sourcesLine = `We checked FDA's [Recalls, Market Withdrawals & Safety Alerts](${SOURCES.listing.url}) list and the [FDA Enforcement Report](${SOURCES.enforcement.url}) for ${enforcementWeeks.map(formatLongDate).join(" and ") || "this week"}.`;
 
   const body = [
-    `Every dietary-supplement recall FDA posted between ${formatLongDate(window.start)} and ${formatLongDate(window.end)}, product by product. Each recall covers only the products, lots and sizes listed in its notice. It does not mean every product containing the same ingredient is affected.`,
+    `${settled ? "Every dietary-supplement recall" : "The dietary-supplement recalls we could confirm that"} FDA posted between ${formatLongDate(window.start)} and ${formatLongDate(window.end)}, product by product. Each recall covers only the products, lots and sizes listed in its notice. It does not mean every product containing the same ingredient is affected.`,
     "",
     `<Callout tone="info">`,
     `This roundup restates official FDA notices; it is not medical advice. If you have one of these products, check the lot and size against the notice and follow its instructions. A pharmacist or your clinician can help if you have taken it and have questions.`,
@@ -842,12 +848,19 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
       `</Callout>`,
       ""
     );
+  } else if (!settled) {
+    body.push(
+      `<Callout tone="warn">`,
+      `**${unresolved} FDA record${unresolved === 1 ? "" : "s"} from this week may involve a dietary supplement and ${unresolved === 1 ? "is" : "are"} still being checked.** Until ${unresolved === 1 ? "it is" : "they are"}, this is not a complete list, and an empty section below does not mean there were no recalls.`,
+      `</Callout>`,
+      ""
+    );
   }
 
   const section = (heading, intro, entries, render, emptyText) => {
     body.push(`## ${heading}`, "", intro, "");
     if (entries.length) for (const { entry, event } of entries) body.push(...render(entry, event));
-    else body.push(coverage.complete ? emptyText : `Nothing confirmed; coverage is incomplete this week (see the note above).`, "");
+    else body.push(settled ? emptyText : `Nothing confirmed yet (see the note above).`, "");
   };
 
   if (quiet) {
@@ -904,13 +917,15 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
   return { slug, mdx: [...fm, ...body].join("\n"), review, selection, quiet };
 }
 
+const unresolvedCount = (coverage) => (coverage.possibleSupplements?.length || 0) + (coverage.openFdaOnly?.length || 0);
+
 function renderReview({ slug, label, coverage, selection, generatedOn, quiet }) {
   const lines = [
     `# Review: ${slug}`,
     "",
     `Generated ${generatedOn} by \`pnpm recalls:digest\`. Week: ${label}.`,
     "",
-    `## Coverage: ${coverage.complete ? "complete" : "INCOMPLETE"}${quiet ? " (quiet week)" : ""}`,
+    `## Coverage: ${coverage.complete ? "complete" : "INCOMPLETE"}${quiet ? " (quiet week)" : ""}${unresolvedCount(coverage) ? ` — ${unresolvedCount(coverage)} record(s) need classifying before the week is complete` : ""}`,
     "",
     "| Source | Required | Status | Attempts | Records | Supplement records | Detail |",
     "| --- | --- | --- | --- | --- | --- | --- |",
@@ -920,6 +935,11 @@ function renderReview({ slug, label, coverage, selection, generatedOn, quiet }) 
   if (coverage.possibleSupplements?.length) {
     lines.push("## Possible supplements: confirm or ignore", "", "Enforcement Report records this week that read like supplements but don't say so. They are not in the post. If one is a dietary supplement, add a card by hand.", "");
     for (const p of coverage.possibleSupplements) lines.push(`- ${p.firm} (Event ${p.eventId}, ${p.recallNumber || "no recall number"}): ${p.productDescription.slice(0, 160)}`);
+    lines.push("");
+  }
+  if (coverage.openFdaOnly?.length) {
+    lines.push("## Only in openFDA: classify each", "", "openFDA lists these supplement enforcement records for the week but the Enforcement Report CSVs did not. Find each in the Enforcement Report; add a card if it is a dietary supplement this week.", "");
+    for (const n of coverage.openFdaOnly) lines.push(`- ${n}`);
     lines.push("");
   }
   if (coverage.crossCheck) {
@@ -939,8 +959,9 @@ function renderReview({ slug, label, coverage, selection, generatedOn, quiet }) 
     "",
     "- [ ] Every card checked against its official notice (above)",
     "- [ ] Coverage note matches the table above; never publish \"no recalls\" on incomplete coverage",
-    "- [ ] Any sentence that interprets risk (beyond quoting the notice) has PharmD sign-off; add `reviewer: \"laurie-pham\"` and `reviewed_at`",
-    `- [ ] Move \`content/blog/.drafts/${slug}.mdx\` to \`content/blog/${slug}.mdx\`, run \`pnpm blog:publish-check ${slug}\``,
+    "- [ ] Every record listed under Possible supplements / Only in openFDA is classified; re-render (`pnpm recalls:digest --week-ending <Sunday>`) once none are left, so the post can drop its \"still being checked\" note",
+    "- [ ] PharmD sign-off on this exact version (any sentence that interprets risk beyond quoting the notice especially)",
+    `- [ ] After sign-off: \`pnpm blog:approve ${slug} --reviewer laurie-pham --date <sign-off date>\` (moves the draft live, runs publish-check, rolls back on failure)`,
     ""
   );
   return lines.join("\n");

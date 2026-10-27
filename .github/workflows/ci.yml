@@ -54,6 +54,14 @@ jobs:
       - name: AI connector authorization and privacy
         run: pnpm test:ai-connector && pnpm test:ai-privacy && pnpm test:mcp-routing
 
+      - name: Recall digest
+        run: pnpm test:recalls
+
+      # Every post the site loads must carry a completed clinical review
+      # record. `pnpm build` runs the same gate, so Vercel can't deploy past it.
+      - name: Review records
+        run: pnpm blog:check-reviews
+
       # Build last: it is the slowest step and the one most likely to be
       # fixed by whatever lint or typecheck already caught.
       - name: Build

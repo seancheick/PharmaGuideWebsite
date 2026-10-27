@@ -675,6 +675,19 @@ const MANUALLY_VERIFIED_URLS = {
     "2026-10-27, Claude in browser: page titled '2026 Guideline on the Management of Dyslipidemia' (AHA Professional Heart Daily); returns 403 to scripts",
 };
 
+// Numbers a person found in a study's FULL TEXT when the abstract (all the
+// citation-support check reads) doesn't state them. Each entry: the exact
+// passage, where it is, who checked and when. The check still warns on any
+// other number beside the citation.
+const FULL_TEXT_VERIFIED = {
+  40352260: {
+    numbers: ["69", "43", "1.2", "10", "1.6"],
+    passage: "only 43% consumed at least 1.2 g/kg of protein, 10% consumed at least 1.6 g/kg, and 5% consumed at least 2.0 g/kg, calculated based on adjusted body weight",
+    where: "Discussion; n = 69 in Results 3.1 (PMC12062175)",
+    checked: "2026-10-27, Claude via PubMed Central full text",
+  },
+};
+
 async function checkUrls(content, { skip = false } = {}) {
   if (skip) return [];
   const issues = [];
@@ -959,7 +972,8 @@ async function checkCitationSupport(content, { skip = false } = {}) {
     // sentence beside the chip — attributing every digit in a paragraph to one
     // study produced false positives on real posts.
     const sentNoTable = sentence.replace(/\|[^|]*\|/g, " ");
-    const missing = numbersIn(sentNoTable).filter(({ n }) => !new RegExp(`(?<![\\w.])${n.replace(".", "\\.")}`).test(r.abstract));
+    const fullText = FULL_TEXT_VERIFIED[pmid]?.numbers ?? [];
+    const missing = numbersIn(sentNoTable).filter(({ n }) => !fullText.includes(n) && !new RegExp(`(?<![\\w.])${n.replace(".", "\\.")}`).test(r.abstract));
     if (missing.length) {
       issues.push(warn(`PMID ${pmid}: number(s) ${missing.map((x) => x.n + x.unit).join(", ")} are not in this study's abstract — confirm the figure belongs to this source`));
     }

@@ -262,6 +262,46 @@ test("a quiet week with every source read is reported as quiet", async () => {
   assert.match(mdx, /Were there any supplement recalls this week\?\n\nNo\./);
 });
 
+test("an unresolved possible supplement blocks 'no recalls' and 'every recall' until someone classifies it", async () => {
+  const { impl } = fakeFetch([
+    ["datatables-json", () => ({ body: "[]" })],
+    ["getWeeklyExportCSVResult", () => ({ body: csv(csvRow({ desc: "Elderberry gummies, 60 count", firm: "Berry Farm" })) })],
+    ["ires/index.cfm", () => ({ body: UPDATED })],
+    ["api.fda.gov", () => ({ status: 404, body: JSON.stringify({ error: { code: "NOT_FOUND" } }) })],
+  ]);
+  const h = history1();
+  const coverage = await collect({ history: h, window: WEEK, today: RUN, fetchOpts: fetchOpts(impl), openFdaKey: "" });
+  assert.equal(coverage.complete, true, "every source was read");
+  assert.equal(coverage.classified, false, "but one record still needs classifying");
+  const { mdx, quiet, review } = renderDigest({ history: h, window: WEEK, coverage, generatedOn: RUN });
+  assert.equal(quiet, false);
+  assert.doesNotMatch(mdx, /Were there any supplement recalls this week|No dietary-supplement recalls this week|^Every dietary-supplement recall/m);
+  assert.match(mdx, /still being checked/);
+  assert.match(review, /need classifying/);
+});
+
+test("a person's classification settles the week: not-supplement drops the record, supplement makes it a card", async () => {
+  const route = () => fakeFetch([
+    ["datatables-json", () => ({ body: "[]" })],
+    ["getWeeklyExportCSVResult", () => ({ body: csv(csvRow({ desc: "Elderberry gummies, 60 count", firm: "Berry Farm", event: "77001" })) })],
+    ["ires/index.cfm", () => ({ body: UPDATED })],
+    ["api.fda.gov", () => ({ status: 404, body: JSON.stringify({ error: { code: "NOT_FOUND" } }) })],
+  ]).impl;
+  const no = history1();
+  no.classified = { 77001: { supplement: false, by: "sean", date: RUN, note: "fruit snack" } };
+  const c1 = await collect({ history: no, window: WEEK, today: RUN, fetchOpts: fetchOpts(route()), openFdaKey: "" });
+  assert.equal(c1.classified, true);
+  assert.equal(renderDigest({ history: no, window: WEEK, coverage: c1, generatedOn: RUN }).quiet, true);
+
+  const yes = history1();
+  yes.classified = { 77001: { supplement: true, by: "sean", date: RUN, note: "" } };
+  const c2 = await collect({ history: yes, window: WEEK, today: RUN, fetchOpts: fetchOpts(route()), openFdaKey: "" });
+  assert.equal(c2.classified, true);
+  const { mdx, quiet } = renderDigest({ history: yes, window: WEEK, coverage: c2, generatedOn: RUN });
+  assert.equal(quiet, false);
+  assert.match(mdx, /Berry Farm/);
+});
+
 test("a full run: supplement announcement and enforcement row become one new card plus a 'previously announced' listing", async () => {
   const { impl } = fakeFetch([
     ["datatables-json", () => ({ body: LISTING })],

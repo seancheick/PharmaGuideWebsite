@@ -23,7 +23,8 @@ Publishing is not part of a run: a push to `main` deploys production. Finish wit
 
 ## Repo contract
 
-- **Post:** `content/blog/<slug>.mdx` (YAML frontmatter + MDX body)
+- **Drafts:** `content/blog/.drafts/<slug>.mdx` — every new post *and* every update to a live post is written here; the site doesn't load this folder
+- **Live posts:** `content/blog/<slug>.mdx` — only `pnpm blog:approve` puts a file here, after the PharmD sign-off is recorded. `pnpm blog:check-reviews` fails if a live post lacks a completed review record
 - **Catalog:** `pnpm blog:catalog` (`--json` for data) — every post's questions answered, figures, links in/out, review record
 - **Backlog:** `docs/13-blog-topic-backlog.md`
 - **Figures:** `src/components/blog/figures/<Topic>Figures.tsx`, registered in `src/components/blog/figures/index.ts`
@@ -53,7 +54,7 @@ Run `pnpm blog:catalog`. Read the full text of the 1–3 posts closest to the to
 
 | Situation | Action |
 |---|---|
-| An existing article answers the same reader question, but incompletely or out of date | **Update** it: targeted edits, `updated_at` only for substantive changes, a "what changed" note in the sidecar |
+| An existing article answers the same reader question, but incompletely or out of date | **Update** it: copy the live post to `content/blog/.drafts/<slug>.mdx` and make targeted edits there (the live version stays up until the update is approved); `updated_at` only for substantive changes; a "what changed" note in the sidecar |
 | The topic serves a distinct reader task | **Create** a new article |
 | Two planned or existing pieces substantially overlap | **Combine** into the stronger one |
 | The angle adds little beyond existing coverage, or no supportable answer exists | **Decline**: pick a more useful angle on the same topic, or report that no new page is warranted |
@@ -162,7 +163,7 @@ These rules are non-negotiable. A single fabricated source destroys PharmaGuide'
 
 1. **Every PMID must be verified.** Before including *any* PubMed ID in the post or Sources section, call `esearch` or `efetch` via the PubMed API (or WebFetch `https://pubmed.ncbi.nlm.nih.gov/<PMID>/`) to confirm the article exists and its title matches your description. If the fetch fails or the title doesn't match, **do not use that PMID.**
 
-2. **Every URL must resolve.** Before including any source URL, fetch it (HEAD or GET). If it 404s, 500s, or times out, **do not include it.** Use the parent resource URL instead (e.g., `https://ods.od.nih.gov/` rather than a broken sub-page).
+2. **Every URL must resolve, to the precise page that supports the claim.** Fetch it before including it. A dead link (404, gone) means find the moved page or another source that supports the same claim; never fall back to a homepage or parent page, which doesn't support the specific claim. A timeout, 5xx or bot block (401/403/429) is an access problem, not a dead link: retry, open it in a browser, and if it says what the post claims, record it in `MANUALLY_VERIFIED_URLS` (rule 8).
 
 3. **No duplicate PMIDs.** Every source in the `<Sources>` section must have a unique URL. If two different claims point to the same PMID, cite it once and reference that number from both claims.
 
@@ -370,10 +371,10 @@ Write `content/blog/.review/<slug>.review.md`:
 - `pnpm blog:validate`: …
 
 ## Next steps
-1. `pnpm blog:validate <slug>`
-2. `pnpm build && pnpm start`; check the post and its figure exports at ~800px and 375px
-3. Send this exact version (post + figures) for PharmD review. After sign-off on it, add `reviewer: "laurie-pham"` and `reviewed_at: "<actual sign-off date>"`. Never add a reviewer to clear the validator.
-4. `pnpm blog:publish-check <slug>`
+1. `pnpm blog:validate .drafts/<slug>`
+2. Preview: copy the draft to `content/blog/` temporarily, `pnpm build && pnpm start`, check the post and its figure exports at ~800px and 375px, then remove the copy
+3. Send this exact version (post + figures) for PharmD review
+4. After sign-off: `pnpm blog:approve <slug> --reviewer laurie-pham --date <actual sign-off date>` (records the review, moves the draft live, runs publish-check, rolls back if it fails). Never add a reviewer to clear the validator.
 ```
 
 List the numbered source URLs at the bottom of the sidecar.
@@ -412,7 +413,7 @@ evidence_level: "Moderate"   # Established | Moderate | Limited | Mixed | Condit
 
 - **`author` and `reviewer` are `PersonId` slugs**, resolved by `resolvePersonId()` against [src/lib/people.ts](/Users/seancheick/PharmaGuide%20Website/src/lib/people.ts); an unknown value fails the build. Read that file for current ids.
 - `featured: false` always; Editor's Pick is set later with `pnpm blog:feature <slug>`.
-- Omit `reviewer` entirely until sign-off. `publish-check` fails until `reviewer` and `reviewed_at` record a real review — surface that, don't fake it.
+- Omit `reviewer` and `reviewed_at` in drafts; `pnpm blog:approve` writes them from the actual sign-off. Never write them by hand to clear a check.
 - `slug` matches the filename.
 - `risk_score` is retired; don't write it.
 
@@ -443,11 +444,12 @@ Next.js needs Node 20+; the repo pins 22 in `.nvmrc`, so run `nvm use` first.
 
 ```bash
 nvm use
-pnpm blog:validate <slug>          # structural + clinical + URL checks
+pnpm blog:validate .drafts/<slug>  # structural + clinical + URL checks
 pnpm typecheck
 pnpm build                         # the real compile gate
 pnpm blog:catalog                  # confirm the post and its links appear
-pnpm blog:publish-check <slug>     # fails until the PharmD review is recorded — expected
+# after sign-off, not before:
+pnpm blog:approve <slug> --reviewer laurie-pham --date <sign-off date>
 ```
 
 **`pnpm build` is non-negotiable**: the validator can pass while MDX/React compilation fails. Never claim success without these commands' output; report publish-check's review failure as the pending review it is.

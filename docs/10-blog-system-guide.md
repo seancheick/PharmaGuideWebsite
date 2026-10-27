@@ -79,23 +79,26 @@ Next:
 ## TL;DR — Publishing a new post
 
 ```bash
-# 1. Create the file
-touch "content/blog/your-post-slug.mdx"
+# 1. Write the draft (the site doesn't load .drafts/) — or let /pg-blog-mdx do it
+touch "content/blog/.drafts/your-post-slug.mdx"
 
-# 2. Add frontmatter + body (see "Post structure" below)
+# 2. Add frontmatter + body (see "Post structure" below); images under public/blog/your-post-slug/
+pnpm blog:validate .drafts/your-post-slug
 
-# 3. Drop images into a folder named after the slug
-mkdir -p "public/blog/your-post-slug"
-# (then add your-image.jpg etc.)
+# 3. Laurie reviews this exact version. After her sign-off:
+pnpm blog:approve your-post-slug --reviewer laurie-pham --date 2026-10-27
+#    → records reviewer + reviewed_at, moves the draft to content/blog/,
+#      runs publish-check, and rolls everything back if it fails
 
-# 4. Reference images in the post:
-#    <PostImage src="/blog/your-post-slug/hero.jpg" alt="..." caption="..." />
-
-# 5. Push to main — Vercel builds and deploys production
+# 4. Commit and push to main — Vercel builds and deploys production
 git add content/blog/your-post-slug.mdx public/blog/your-post-slug/
 git commit -m "post: your-post-slug"
 git push
 ```
+
+Updates to a live post follow the same path: copy it to `content/blog/.drafts/`, edit there, and
+approve. The live version stays up until the update is approved. `pnpm blog:check-reviews` fails if
+any post in `content/blog/` lacks a completed review record.
 
 That's it. The hub picks it up automatically. The sitemap auto-updates. Every
 SEO + JSON-LD schema generates from the frontmatter.

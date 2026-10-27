@@ -52,5 +52,6 @@ Full notice text as fetched:
 
 - [ ] Every card checked against its official notice (above)
 - [ ] Coverage note matches the table above; never publish "no recalls" on incomplete coverage
-- [ ] Any sentence that interprets risk (beyond quoting the notice) has PharmD sign-off; add `reviewer: "laurie-pham"` and `reviewed_at`
-- [ ] Move `content/blog/.drafts/supplement-recalls-week-of-2026-10-19.mdx` to `content/blog/supplement-recalls-week-of-2026-10-19.mdx`, run `pnpm blog:publish-check supplement-recalls-week-of-2026-10-19`
+- [ ] Every record listed under Possible supplements / Only in openFDA is classified; re-render (`pnpm recalls:digest --week-ending <Sunday>`) once none are left, so the post can drop its "still being checked" note
+- [ ] PharmD sign-off on this exact version (any sentence that interprets risk beyond quoting the notice especially)
+- [ ] After sign-off: `pnpm blog:approve supplement-recalls-week-of-2026-10-19 --reviewer laurie-pham --date <sign-off date>` (moves the draft live, runs publish-check, rolls back on failure)

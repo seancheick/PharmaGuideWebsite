@@ -5,6 +5,9 @@
  *   pnpm recalls:digest                         # last complete Mon–Sun week
  *   pnpm recalls:digest --week-ending 2026-10-25
  *   pnpm recalls:digest --collect-only          # update history, no draft
+ *   pnpm recalls:digest --classify 99001=not-supplement:"elderberry jam" --by sean
+ *                                               # record a person's decision on a
+ *                                               # "possible supplement", then re-render
  *
  * Reads FDA's recalls listing and announcement pages plus the weekly
  * Enforcement Report CSVs, merges them into content/recalls/history.json,
@@ -12,8 +15,9 @@
  * sidecar in content/blog/.review/. Drafts under .drafts/ are not loaded by
  * the site; publishing is a human step (see the sidecar checklist).
  *
- * Exit codes: 0 complete coverage, 3 coverage incomplete (draft still
- * written, flagged), 2 bad arguments.
+ * Exit codes: 0 complete coverage with every record classified, 3 a source
+ * failed or records still need classifying (draft still written, flagged),
+ * 2 bad arguments.
  */
 
 import fs from "node:fs";
@@ -158,9 +162,17 @@ export async function collect({ history, window, today, fetchOpts = {}, openFdaK
       continue;
     }
     const rows = parseEnforcementCsv(res.text);
-    const matched = rows.map((r) => ({ r, matchReason: supplementEnforcementMatch(r, supplementAnnouncements) })).filter((x) => x.matchReason);
+    // A person's classification (history.classified, set with --classify)
+    // overrides the heuristics in both directions.
+    const decided = (r) => history.classified?.[r.eventId];
+    const reasonFor = (r) => {
+      const d = decided(r);
+      if (d) return d.supplement ? `classified as a dietary supplement by ${d.by} on ${d.date}` : null;
+      return supplementEnforcementMatch(r, supplementAnnouncements);
+    };
+    const matched = rows.map((r) => ({ r, matchReason: reasonFor(r) })).filter((x) => x.matchReason);
     supplementRecords.push(...matched.map((m) => ({ ...m, date })));
-    if (inWindow(date, window)) possible.push(...rows.filter((r) => !supplementEnforcementMatch(r, supplementAnnouncements) && possibleSupplement(r)));
+    if (inWindow(date, window)) possible.push(...rows.filter((r) => !decided(r) && !supplementEnforcementMatch(r, supplementAnnouncements) && possibleSupplement(r)));
     sources.push({ id: `${SOURCES.enforcement.id}:${date}`, label: `${SOURCES.enforcement.label}, ${date}`, required, status: "ok", attempts: res.attempts, records: rows.length, supplementRecords: matched.length, detail: why });
   }
   const byEvent = new Map();
@@ -175,6 +187,7 @@ export async function collect({ history, window, today, fetchOpts = {}, openFdaK
   // 3. openFDA cross-check (optional; never a source of entries).
   const coverage = summarizeCoverage(sources);
   coverage.possibleSupplements = possible;
+  coverage.openFdaOnly = [];
   const q = `report_date:[${window.start.replaceAll("-", "")}+TO+${window.end.replaceAll("-", "")}]+AND+product_description:"supplement"`;
   const ofRes = await fetchWithRetry(`https://api.fda.gov/food/enforcement.json?search=${q}&limit=1000${openFdaKey ? `&api_key=${openFdaKey}` : ""}`, {
     ...fetchOpts,
@@ -187,18 +200,30 @@ export async function collect({ history, window, today, fetchOpts = {}, openFdaK
     const theirs = new Set(results.map((r) => r.recall_number));
     const onlyOpen = [...theirs].filter((n) => !ours.has(n));
     const onlyOurs = [...ours].filter((n) => !theirs.has(n));
+    coverage.openFdaOnly = onlyOpen.filter((n) => !history.classified?.[n]);
     coverage.crossCheck = `openFDA lists ${theirs.size} food enforcement record(s) mentioning "supplement" with a report date in this week; the Enforcement Report CSVs gave ${ours.size} classified supplement record(s). Only in openFDA: ${onlyOpen.join(", ") || "none"}. Only in the Enforcement Report: ${onlyOurs.join(", ") || "none"}. openFDA lags and is cross-check only; investigate any record only in openFDA.`;
   }
   coverage.sources.push({ id: SOURCES.openfda.id, label: SOURCES.openfda.label, required: false, status: ofRes.ok ? "ok" : "failed", attempts: ofRes.attempts, error: ofRes.ok ? undefined : ofRes.error });
+  // Reading every source is not the same as recognising every recall: a
+  // record that may be a supplement, or one only openFDA lists, keeps the
+  // week unsettled until a person classifies it.
+  coverage.classified = coverage.possibleSupplements.length === 0 && coverage.openFdaOnly.length === 0;
   return coverage;
 }
 
 function parseArgs(argv) {
-  const args = { collectOnly: false };
+  const args = { collectOnly: false, classify: [] };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--week-ending") args.weekEnding = argv[++i];
     else if (argv[i] === "--collect-only") args.collectOnly = true;
     else if (argv[i] === "--history") args.history = argv[++i];
+    else if (argv[i] === "--classify") {
+      // --classify <Event ID or recall number>=supplement|not-supplement[:note]
+      const m = /^([^=]+)=(supplement|not-supplement)(?::(.*))?$/.exec(argv[++i] || "");
+      if (!m) throw new Error("--classify takes <event id or recall number>=supplement|not-supplement[:note]");
+      args.classify.push({ id: m[1], supplement: m[2] === "supplement", note: m[3] || "" });
+    }
+    else if (argv[i] === "--by") args.by = argv[++i];
     else throw new Error(`unknown argument ${argv[i]}`);
   }
   return args;
@@ -217,6 +242,11 @@ async function main() {
   }
   const historyPath = args.history ? path.resolve(args.history) : HISTORY;
   const history = fs.existsSync(historyPath) ? JSON.parse(fs.readFileSync(historyPath, "utf8")) : emptyHistory();
+  if (args.classify.length) {
+    if (!args.by) { console.error("--classify needs --by <person> (recorded with the decision)"); process.exit(2); }
+    history.classified ??= {};
+    for (const c of args.classify) history.classified[c.id] = { supplement: c.supplement, by: args.by, date: today, note: c.note };
+  }
 
   const coverage = await collect({ history, window, today });
   const selection = selectWeek(history, window);
@@ -236,6 +266,7 @@ async function main() {
 
   console.log(`Week ${window.start} → ${window.end}: coverage ${coverage.complete ? "complete" : "INCOMPLETE"}`);
   for (const s of coverage.sources) console.log(`  ${s.status === "ok" ? "✓" : s.required ? "✕" : "·"} ${s.label}${s.records !== undefined ? `: ${s.records} records, ${s.supplementRecords} supplement` : ""}${s.error ? ` — ${s.error}` : ""}`);
+  if (!coverage.classified) console.log(`  ${coverage.possibleSupplements.length + coverage.openFdaOnly.length} record(s) need classifying before the week can be called complete`);
   console.log(`  new ${counts.newAnnouncements}, updates ${counts.updates}, enforcement listings ${counts.enforcementListings}, classifications ${counts.classifications}`);
   console.log(`History: ${path.relative(ROOT, historyPath)}`);
 
@@ -249,7 +280,7 @@ async function main() {
     console.log(`Review: content/blog/.review/${slug}.review.md`);
     console.log(`Check:  node scripts/validate-blog.mjs .drafts/${slug}`);
   }
-  process.exit(coverage.complete ? 0 : 3);
+  process.exit(coverage.complete && coverage.classified ? 0 : 3);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

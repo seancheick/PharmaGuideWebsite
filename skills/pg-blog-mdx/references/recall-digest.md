@@ -64,18 +64,25 @@ an `enforcement_listed` or `classified` item as new.
 - **Never generalise to an ingredient.** "Ultimate Forza Male Supplement recalled", never
   "sildenafil supplements recalled" or "magnesium recalled".
 - **Coverage first.** A failed source makes coverage incomplete; the post says which source and
-  never says "no recalls". A quiet week is stated only when every required source was read.
+  never says "no recalls". A quiet week is stated only when every required source was read **and
+  every candidate record is classified**.
+- **Unresolved records block "every" and "no".** Enforcement rows that read like supplements but
+  don't say so, and records only openFDA lists, keep the week unsettled: the post says they are
+  still being checked, never "every recall" or "no recalls", and the script exits 3. A person
+  classifies each one, recorded with who and when, then re-renders:
+  `pnpm recalls:digest --week-ending <Sunday> --classify <Event ID or recall number>=not-supplement:"why" --by sean`
+  (`=supplement` makes it a card).
 - Factual restatement of notices is the default. Any sentence that interprets risk needs PharmD
   (Laurie Pham) sign-off; the draft sets `review_required: true` either way.
 
 ## Publishing (a human step)
 
-1. Check every card against its notice using the sidecar checklist.
-2. Add `reviewer` and `reviewed_at` on sign-off.
-3. Move the draft to `content/blog/<slug>.mdx` and run `pnpm blog:publish-check <slug>`.
-4. Commit and open a PR. A push to `main` deploys production.
+1. Check every card against its notice using the sidecar checklist; classify any unresolved records.
+2. After sign-off: `pnpm blog:approve <slug> --reviewer laurie-pham --date <sign-off date>`
+   (records the review, moves the draft live, runs publish-check, rolls back on failure).
+3. Commit to the weekly PR branch and merge it. A merge to `main` deploys production.
 
-## Schedule (not built yet)
+## Schedule (`.github/workflows/recalls.yml`)
 
 Collect daily, publish weekly:
 
@@ -86,4 +93,10 @@ Collect daily, publish weekly:
 - The runner needs network access to fda.gov, accessdata.fda.gov and api.fda.gov, write access
   to commit `content/recalls/history.json` on a branch (never `main`), an optional
   `OPENFDA_API_KEY`, and an alert when the script exits 3 (incomplete coverage) or 1 (crash).
-  A GitHub Actions cron or a Vercel cron that opens a PR both fit; nothing should auto-merge.
+  Built as a GitHub Actions workflow: daily collection force-pushes the history to
+  `automation/recall-history` (main + one data commit; Vercel skips this branch); Monday renders
+  the previous week, validates it and opens a **draft PR** from `recalls/<slug>`. Nothing
+  auto-merges. If the repo setting "Allow GitHub Actions to create and approve pull requests" is
+  off, the run opens an issue with a one-click link to create the PR instead. PRs opened by the
+  workflow's token don't trigger CI, so the run puts the recall tests and validator results in
+  the PR body. Run it by hand from the Actions tab (`collect` or `weekly`).

@@ -248,7 +248,7 @@ output. An invented identifier never is. Drop the claim and mark it UNVERIFIABLE
 
 1. **Every PMID must be verified before inclusion.** Call PubMed E-utilities (`esearch`/`efetch`) or WebFetch the URL (`https://pubmed.ncbi.nlm.nih.gov/<PMID>/`) and confirm the article exists and its title matches your description. If the fetch fails or the title doesn't match, **do not use that PMID.**
 
-2. **Every URL must resolve.** HEAD or GET the URL before including it. 404, 500, or timeout → **do not include.** Fall back to the parent resource URL (e.g., `https://ods.od.nih.gov/` instead of a broken sub-page).
+2. **Every URL must resolve, to the precise page that supports the claim.** Fetch it before including it. A dead link (404, gone) means find the moved page or another source that supports the same claim; never fall back to a homepage or parent page, which doesn't support the specific claim. A timeout, 5xx or bot block (401/403/429) is an access problem, not a dead link: retry, open it in a browser, and if it says what the post claims, record it in `MANUALLY_VERIFIED_URLS` (SKILL.md source rule 8).
 
 3. **No duplicate PMIDs in a single Sources section.** Each source entry must have a unique URL. If two claims reference the same PMID, cite it once and reference that number from both claims.
 

@@ -1,0 +1,2461 @@
+{
+  "schema": 1,
+  "entries": {
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/kiriko-llc-issues-voluntary-nationwide-recall-a1-slim-due-undeclared-sibutramine-phenolphthalein-and": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/kiriko-llc-issues-voluntary-nationwide-recall-a1-slim-due-undeclared-sibutramine-phenolphthalein-and",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/kiriko-llc-issues-voluntary-nationwide-recall-a1-slim-due-undeclared-sibutramine-phenolphthalein-and",
+      "title": null,
+      "company": "Kiriko, LLC",
+      "brand": "A1",
+      "productDescription": "Dietary Supplement A1 Slim",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Unapproved new drug; tainted with sibutramine, phenolphthalein and N-Desmethyl sibutramine",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2017-10-19",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "99a99e279843088a",
+          "kind": "new_announcement",
+          "date": "2017-10-19",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ultra-shop-supplement-issues-voluntary-nationwide-recall-super-panther-7k-due-presence-undeclared": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ultra-shop-supplement-issues-voluntary-nationwide-recall-super-panther-7k-due-presence-undeclared",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/ultra-shop-supplement-issues-voluntary-nationwide-recall-super-panther-7k-due-presence-undeclared",
+      "title": null,
+      "company": "Ultra Shop Supplement",
+      "brand": "Super Panther 7K",
+      "productDescription": "Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Unapproved new drug",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2018-02-08",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "8a3e064411229ae6",
+          "kind": "new_announcement",
+          "date": "2018-02-08",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/stiff-boy-llc-issues-voluntary-nationwide-recall-beast-capsules-due-presence-undeclared-sildenafil": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/stiff-boy-llc-issues-voluntary-nationwide-recall-beast-capsules-due-presence-undeclared-sildenafil",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/stiff-boy-llc-issues-voluntary-nationwide-recall-beast-capsules-due-presence-undeclared-sildenafil",
+      "title": null,
+      "company": "STIFF BOY, LLC",
+      "brand": "THE BEAST",
+      "productDescription": "THE BEAST capsules",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Contains undeclared sildenafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2019-05-07",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "3e34167f338fafa1",
+          "kind": "new_announcement",
+          "date": "2019-05-07",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/gl-holdings-issues-voluntary-worldwide-recall-green-lumber-products-due-presence-undeclared": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/gl-holdings-issues-voluntary-worldwide-recall-green-lumber-products-due-presence-undeclared",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gl-holdings-issues-voluntary-worldwide-recall-green-lumber-products-due-presence-undeclared",
+      "title": null,
+      "company": "GL Holdings",
+      "brand": "Green Lumber",
+      "productDescription": "Dietary supplements for male sexual enhancement",
+      "reasonCategory": "Device & Drug Safety",
+      "reasonDescription": "Contains Tadalafil",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2019-10-22",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "40e4cb1f8ebe71d7",
+          "kind": "new_announcement",
+          "date": "2019-10-22",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/sb-shopper-llc-issues-voluntary-nationwide-recall-imperial-extreme-2000mg-due-presence-undeclared": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/sb-shopper-llc-issues-voluntary-nationwide-recall-imperial-extreme-2000mg-due-presence-undeclared",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/sb-shopper-llc-issues-voluntary-nationwide-recall-imperial-extreme-2000mg-due-presence-undeclared",
+      "title": null,
+      "company": "S&B Shopper LLC",
+      "brand": "Imperial",
+      "productDescription": "Dietary Supplement for Male Enhancement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Sildenafil & Tadalafil",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2021-03-25",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "14a6a26eb80653a1",
+          "kind": "new_announcement",
+          "date": "2021-03-25",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/family-dollar-stores-issues-voluntary-recall-certain-fda-regulated-products-six-states-including": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/family-dollar-stores-issues-voluntary-recall-certain-fda-regulated-products-six-states-including",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-dollar-stores-issues-voluntary-recall-certain-fda-regulated-products-six-states-including",
+      "title": null,
+      "company": "Family Dollar, Inc.",
+      "brand": "Numerous brand names",
+      "productDescription": "Numerous human food, animal (pet) food, medical devices, and drug products",
+      "reasonCategory": "Salmonella",
+      "reasonDescription": "Potential Salmonella contamination and presence of rodent activity at the distribution center",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2022-02-18",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "48d236ac2329e910",
+          "kind": "new_announcement",
+          "date": "2022-02-18",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/pyramid-wholesale-issues-recall-various-brands-products-sold-dietary-supplements-sexual-enhancement": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/pyramid-wholesale-issues-recall-various-brands-products-sold-dietary-supplements-sexual-enhancement",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pyramid-wholesale-issues-recall-various-brands-products-sold-dietary-supplements-sexual-enhancement",
+      "title": null,
+      "company": "Pyramid Wholesale",
+      "brand": "Various",
+      "productDescription": "Dietary supplements for sexual enhancement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Sildenafil and/or Tadalafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-03-20",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "8c81e12d710c0659",
+          "kind": "new_announcement",
+          "date": "2024-03-20",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/forevermen-supplements-recalled": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/forevermen-supplements-recalled",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/forevermen-supplements-recalled",
+      "title": null,
+      "company": "FAonline Inc",
+      "brand": "ForeverMen",
+      "productDescription": "Natural Energy Boost",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Product is tainted with sildenafil and tadalafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-04-02",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "52b422574134fd03",
+          "kind": "new_announcement",
+          "date": "2024-04-02",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/global-mix-inc-recalls-tejocote-products-because-possible-health-risk": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/global-mix-inc-recalls-tejocote-products-because-possible-health-risk",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/global-mix-inc-recalls-tejocote-products-because-possible-health-risk",
+      "title": null,
+      "company": "Global Mix, Inc.",
+      "brand": "Eva Nutrition, Science of Alpha, Niwali, NWL Nutra",
+      "productDescription": "Tejocote Dietary Supplements",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Product contains toxic yellow oleander.",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-04-10",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "6d24af5247241220",
+          "kind": "new_announcement",
+          "date": "2024-04-10",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/stop-clopez-corp-issues-voluntary-worldwide-recall-schwinnng-capsules-due-presence-undeclared": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/stop-clopez-corp-issues-voluntary-worldwide-recall-schwinnng-capsules-due-presence-undeclared",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/stop-clopez-corp-issues-voluntary-worldwide-recall-schwinnng-capsules-due-presence-undeclared",
+      "title": null,
+      "company": "STOP CLOPEZ CORP",
+      "brand": "Schwinnng",
+      "productDescription": "Herbal Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Product is tainted with Nortadalafil",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2024-04-23",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "5541f1dd0bf222bf",
+          "kind": "new_announcement",
+          "date": "2024-04-23",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/davinci-laboratories-issues-allergy-alert-undeclared-shellfish-allergen-amyloid-complete-product-lot": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/davinci-laboratories-issues-allergy-alert-undeclared-shellfish-allergen-amyloid-complete-product-lot",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/davinci-laboratories-issues-allergy-alert-undeclared-shellfish-allergen-amyloid-complete-product-lot",
+      "title": null,
+      "company": "FoodScience, LLC",
+      "brand": "FoodScience, LLC",
+      "productDescription": "Amyloid Complete dietary supplement capsules",
+      "reasonCategory": "Crustacean Shellfish",
+      "reasonDescription": "Undeclared shellfish (shrimp, crab) allergens",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2024-05-09",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "00eaa4284d07ec8a",
+          "kind": "new_announcement",
+          "date": "2024-05-09",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/male-enhancement-supplements-recalled": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/male-enhancement-supplements-recalled",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/male-enhancement-supplements-recalled",
+      "title": null,
+      "company": "Integrity Products",
+      "brand": "Ram It, To The Moon",
+      "productDescription": "Dietary Supplements for Male Sexual Enhancement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Product is tainted with sildenafil and tadalafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-06-11",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "b0216059db8ccaa5",
+          "kind": "new_announcement",
+          "date": "2024-06-11",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/penn-herb-company-ltd-recalls-natures-wonderland-thyroid-formula-because-possible-health-risk": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/penn-herb-company-ltd-recalls-natures-wonderland-thyroid-formula-because-possible-health-risk",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/penn-herb-company-ltd-recalls-natures-wonderland-thyroid-formula-because-possible-health-risk",
+      "title": null,
+      "company": "Penn Herb Company Ltd",
+      "brand": "Nature’s Wonderland",
+      "productDescription": "Nature’s Wonderland Thyroid Formula",
+      "reasonCategory": "Salmonella",
+      "reasonDescription": "Potential to be contaminated with Salmonella",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-06-12",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "d2ba779af0b24ce8",
+          "kind": "new_announcement",
+          "date": "2024-06-12",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/supercore-products-group-inc-issues-voluntary-worldwide-recall-hard-steel-capsules-gold-hard-steel": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/supercore-products-group-inc-issues-voluntary-worldwide-recall-hard-steel-capsules-gold-hard-steel",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/supercore-products-group-inc-issues-voluntary-worldwide-recall-hard-steel-capsules-gold-hard-steel",
+      "title": null,
+      "company": "Supercore Products Group",
+      "brand": "Supercore Products Group",
+      "productDescription": "Dietary Supplements for Male Sexual Enhancement.",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Tainted with Sildenafil and Acetaminophen.",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-07-12",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "182e7128a189252a",
+          "kind": "new_announcement",
+          "date": "2024-07-12",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/guru-inc-issues-voluntary-nationwide-recall-infla-650-herbal-dietary-supplement-capsules-due-hidden": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/guru-inc-issues-voluntary-nationwide-recall-infla-650-herbal-dietary-supplement-capsules-due-hidden",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/guru-inc-issues-voluntary-nationwide-recall-infla-650-herbal-dietary-supplement-capsules-due-hidden",
+      "title": null,
+      "company": "Guru Inc.",
+      "brand": "Infla-650",
+      "productDescription": "Infla-650 Herbal Dietary Supplement Capsules",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Tainted with the drug ingredients: acetaminophen, diclofenac and phenylbutazone",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-07-16",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "e1cf70fa89a6de45",
+          "kind": "new_announcement",
+          "date": "2024-07-16",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/123herbals-llc-123herbalscom-issues-voluntary-nationwide-recall-vail-bon-jie-yang-wan-capsules-due": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/123herbals-llc-123herbalscom-issues-voluntary-nationwide-recall-vail-bon-jie-yang-wan-capsules-due",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/123herbals-llc-123herbalscom-issues-voluntary-nationwide-recall-vail-bon-jie-yang-wan-capsules-due",
+      "title": null,
+      "company": "123herbals",
+      "brand": "Vail-Bon",
+      "productDescription": "Vail-Bon Jie Yang Wan",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Product is tainted with dexamethasone and chlorpheniramine",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-09-20",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "fdcff7003721677d",
+          "kind": "new_announcement",
+          "date": "2024-09-20",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ca-naturistics-issues-voluntary-nationwide-recall-ak-forte-tablets-con-ortiga-y-omega-3-due-presence": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ca-naturistics-issues-voluntary-nationwide-recall-ak-forte-tablets-con-ortiga-y-omega-3-due-presence",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/ca-naturistics-issues-voluntary-nationwide-recall-ak-forte-tablets-con-ortiga-y-omega-3-due-presence",
+      "title": null,
+      "company": "C&A Naturistics",
+      "brand": "AK Forte",
+      "productDescription": "AK Forte Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Device & Drug Safety – Unapproved Drug",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2024-10-16",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "3ac17d88c43e5c7a",
+          "kind": "new_announcement",
+          "date": "2024-10-16",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/boulla-llc-issues-voluntary-nationwide-recall-zoommax-and-zapmax-capsules-due-presence-undeclared": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/boulla-llc-issues-voluntary-nationwide-recall-zoommax-and-zapmax-capsules-due-presence-undeclared",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/boulla-llc-issues-voluntary-nationwide-recall-zoommax-and-zapmax-capsules-due-presence-undeclared",
+      "title": null,
+      "company": "Boulla LLC",
+      "brand": "Boulla LLC",
+      "productDescription": "Marketed as Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Sildenafil and Diclofenac",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-11-05",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "9612721bd4d01125",
+          "kind": "new_announcement",
+          "date": "2024-11-05",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/vitalityvita-issues-voluntary-nationwide-recall-vitalityxtra-and-peakmax-capsules-due-presence": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/vitalityvita-issues-voluntary-nationwide-recall-vitalityxtra-and-peakmax-capsules-due-presence",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/vitalityvita-issues-voluntary-nationwide-recall-vitalityxtra-and-peakmax-capsules-due-presence",
+      "title": null,
+      "company": "VitalityVita",
+      "brand": "VitalityVita",
+      "productDescription": "Marketed as Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Sildenafil and Diclofenac",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-11-06",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "f11670d16346b86a",
+          "kind": "new_announcement",
+          "date": "2024-11-06",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/buy-herbalcom-issues-voluntary-nationwide-recall-nhan-sam-tuyet-lien-truy-phong-hoan-capsules-due": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/buy-herbalcom-issues-voluntary-nationwide-recall-nhan-sam-tuyet-lien-truy-phong-hoan-capsules-due",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/buy-herbalcom-issues-voluntary-nationwide-recall-nhan-sam-tuyet-lien-truy-phong-hoan-capsules-due",
+      "title": null,
+      "company": "Buy-herbal.com",
+      "brand": "Buy-herbal.com",
+      "productDescription": "Nhan Sam Tuyet Lien Truy Phong Hoan dietary supplement capsules",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Device & Drug Safety – Unapproved Drug",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2024-12-13",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "82da29384bf8d5cb",
+          "kind": "new_announcement",
+          "date": "2024-12-13",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/motivate-me-ashley-llc-recalling-vidaslim-brand-90-day-30-day-and-7-day-original-root-root-plus-and": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/motivate-me-ashley-llc-recalling-vidaslim-brand-90-day-30-day-and-7-day-original-root-root-plus-and",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/motivate-me-ashley-llc-recalling-vidaslim-brand-90-day-30-day-and-7-day-original-root-root-plus-and",
+      "title": null,
+      "company": "Motivate Me Ashley, LLC",
+      "brand": "VidaSlim",
+      "productDescription": "VidaSlim Brand 90-day, 30-day and 7-day Original Root, Root Plus, and Root Capsules & VidaSlim Hot Body Brew Dietary Supplements",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Product contains toxic yellow oleander.",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2024-12-13",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "82da29384bf8d5cb",
+          "kind": "new_announcement",
+          "date": "2024-12-13",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/gnmart-inc-issues-voluntary-nationwide-recall-force-forever-due-undeclared-drug-ingredients": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/gnmart-inc-issues-voluntary-nationwide-recall-force-forever-due-undeclared-drug-ingredients",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gnmart-inc-issues-voluntary-nationwide-recall-force-forever-due-undeclared-drug-ingredients",
+      "title": null,
+      "company": "GNMART Inc",
+      "brand": "Force Forever",
+      "productDescription": "Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Product contains undeclared diclofenac and dexamethasone",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2024-12-16",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "c499234ad9590276",
+          "kind": "new_announcement",
+          "date": "2024-12-16",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/shoppers-plaza-issues-voluntary-nationwide-recall-fouzee-sugarlin-herbal-formula-due-presence": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/shoppers-plaza-issues-voluntary-nationwide-recall-fouzee-sugarlin-herbal-formula-due-presence",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/shoppers-plaza-issues-voluntary-nationwide-recall-fouzee-sugarlin-herbal-formula-due-presence",
+      "title": null,
+      "company": "Shoppers-Plaza",
+      "brand": "Fouzee",
+      "productDescription": "SugarLin Herbal Formula Herbal Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Product contains undeclared Metformin and Glyburide",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2024-12-18",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "8705be91cbe0be70",
+          "kind": "new_announcement",
+          "date": "2024-12-18",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/one-source-nutrition-inc-issues-voluntary-nationwide-recall-vitality-capsules-due-presence": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/one-source-nutrition-inc-issues-voluntary-nationwide-recall-vitality-capsules-due-presence",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/one-source-nutrition-inc-issues-voluntary-nationwide-recall-vitality-capsules-due-presence",
+      "title": null,
+      "company": "One Source Nutrition",
+      "brand": "Vitality",
+      "productDescription": "Vitality male enhancement dietary supplement capsules",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Sildenafil and Tadalafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2025-02-20",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "17135cf89d45d32f",
+          "kind": "new_announcement",
+          "date": "2025-02-20",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/natural-dior-llc-issues-voluntary-nationwide-recall-vitafer-l-gold-liquid-due-presence-undeclared": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/natural-dior-llc-issues-voluntary-nationwide-recall-vitafer-l-gold-liquid-due-presence-undeclared",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/natural-dior-llc-issues-voluntary-nationwide-recall-vitafer-l-gold-liquid-due-presence-undeclared",
+      "title": null,
+      "company": "Natural Dior LLC",
+      "brand": "Natural Dior LLC",
+      "productDescription": "Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Tadalafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2025-02-26",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "8efe716374c954ab",
+          "kind": "new_announcement",
+          "date": "2025-02-26",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/one-source-nutrition-inc-issues-voluntary-nationwide-recall-vitality-capsules-due-presence-0": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/one-source-nutrition-inc-issues-voluntary-nationwide-recall-vitality-capsules-due-presence-0",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/one-source-nutrition-inc-issues-voluntary-nationwide-recall-vitality-capsules-due-presence-0",
+      "title": null,
+      "company": "One Source Nutrition",
+      "brand": "Vitality",
+      "productDescription": "Vitality male enhancement dietary supplement capsules",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Sildenafil and Tadalafil",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2025-03-03",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "8912cd3caf996ea6",
+          "kind": "new_announcement",
+          "date": "2025-03-03",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/new-york-wholesale-group-recalls-zaarah-herbals-rasayan-churan-zaarah-herbals-gurmar-powder-zaarah": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/new-york-wholesale-group-recalls-zaarah-herbals-rasayan-churan-zaarah-herbals-gurmar-powder-zaarah",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/new-york-wholesale-group-recalls-zaarah-herbals-rasayan-churan-zaarah-herbals-gurmar-powder-zaarah",
+      "title": null,
+      "company": "New York Wholesale Group",
+      "brand": "Zaarah Herbals",
+      "productDescription": "Dietary Supplements",
+      "reasonCategory": "Lead, Potential Foodborne Illness",
+      "reasonDescription": "Product may be contaminated with elevated levels of lead and arsenic",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2025-03-10",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "52f4f551183083f7",
+          "kind": "new_announcement",
+          "date": "2025-03-10",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/health-fixer-issues-voluntary-nationwide-recall-male-ultra-malextra-electro-buzz-ultra-armor-and": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/health-fixer-issues-voluntary-nationwide-recall-male-ultra-malextra-electro-buzz-ultra-armor-and",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/health-fixer-issues-voluntary-nationwide-recall-male-ultra-malextra-electro-buzz-ultra-armor-and",
+      "title": null,
+      "company": "Health Fixer",
+      "brand": "Health Fixer",
+      "productDescription": "Male Enhancement Dietary Supplements",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Chloropretadalafil, Propoxyphenylsildenafil, Sildenafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2025-04-29",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "bfe443f5448809f7",
+          "kind": "new_announcement",
+          "date": "2025-04-29",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/enshishixiangnishangmaoyouxiangongsi-issues-voluntary-nationwide-recall-endurance-boost-horny-goat": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/enshishixiangnishangmaoyouxiangongsi-issues-voluntary-nationwide-recall-endurance-boost-horny-goat",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/enshishixiangnishangmaoyouxiangongsi-issues-voluntary-nationwide-recall-endurance-boost-horny-goat",
+      "title": null,
+      "company": "EnShiShiXiangNiShangMaoYouXianGongSi",
+      "brand": "Endurance Boost",
+      "productDescription": "Dietary supplement for male performance and energy",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Propoxyphenylsildenafil, Sildenafil",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2025-05-06",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "0672b02a026f534a",
+          "kind": "new_announcement",
+          "date": "2025-05-06",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/publix-voluntarily-recalls-greenwise-pear-kiwi-spinach-pea-baby-food-pouches-due-lead": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/publix-voluntarily-recalls-greenwise-pear-kiwi-spinach-pea-baby-food-pouches-due-lead",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/publix-voluntarily-recalls-greenwise-pear-kiwi-spinach-pea-baby-food-pouches-due-lead",
+      "title": null,
+      "company": "Publix",
+      "brand": "GreenWise",
+      "productDescription": "Pear, Kiwi, Spinach & Pea Baby Food pouches",
+      "reasonCategory": "Lead",
+      "reasonDescription": "Product may be contaminated with elevated levels of lead",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2025-05-22",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "9256ad20785c601b",
+          "kind": "new_announcement",
+          "date": "2025-05-22",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/green-lumber-holding-llc-issues-consumer-alert-counterfeit-products-following-fda-findings": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/green-lumber-holding-llc-issues-consumer-alert-counterfeit-products-following-fda-findings",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/green-lumber-holding-llc-issues-consumer-alert-counterfeit-products-following-fda-findings",
+      "title": null,
+      "company": "Green Lumber Holding, LLC.",
+      "brand": "Green Lumber",
+      "productDescription": "Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared prescription drug-Tadalafil",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2025-08-29",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "6b083c3f3d61c14f",
+          "kind": "new_announcement",
+          "date": "2025-08-29",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/purity-products-announces-recall-dietary-supplement-my-bladder-because-possible-health-risk": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/purity-products-announces-recall-dietary-supplement-my-bladder-because-possible-health-risk",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/purity-products-announces-recall-dietary-supplement-my-bladder-because-possible-health-risk",
+      "title": null,
+      "company": "Dwater",
+      "brand": "Purity Products",
+      "productDescription": "Dietary Supplement for bladder support",
+      "reasonCategory": "E. coli",
+      "reasonDescription": "Potential contamination with Escherichia coli O7:K1 and 1303",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2025-10-28",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "43fe92b2e0fb8605",
+          "kind": "new_announcement",
+          "date": "2025-10-28",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/siluetaya-recalls-tejocote-product-because-possible-health-risk": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/siluetaya-recalls-tejocote-product-because-possible-health-risk",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/siluetaya-recalls-tejocote-product-because-possible-health-risk",
+      "title": null,
+      "company": "SiluetaYa",
+      "brand": "SiluetaYa",
+      "productDescription": "Tejocote Root dietary supplement",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Product contains yellow oleander",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2025-11-04",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "b0fb6179a8e27d8a",
+          "kind": "new_announcement",
+          "date": "2025-11-04",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/stuffbynainax-llc-issues-voluntary-nationwide-recall-mr7-super-700000-dietary-supplement-due": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/stuffbynainax-llc-issues-voluntary-nationwide-recall-mr7-super-700000-dietary-supplement-due",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/stuffbynainax-llc-issues-voluntary-nationwide-recall-mr7-super-700000-dietary-supplement-due",
+      "title": null,
+      "company": "StuffbyNainax LLC",
+      "brand": "MR7 Super 700000",
+      "productDescription": "Dietary supplement for male enhancement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Sildenafil and Tadalafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2025-12-16",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "9beec26e7d405bb0",
+          "kind": "new_announcement",
+          "date": "2025-12-16",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/gold-star-distribution-inc-issues-recall-certain-fda-regulated-products-three-states-including-drugs": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/gold-star-distribution-inc-issues-recall-certain-fda-regulated-products-three-states-including-drugs",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gold-star-distribution-inc-issues-recall-certain-fda-regulated-products-three-states-including-drugs",
+      "title": null,
+      "company": "Gold Star Distribution, Inc.",
+      "brand": "Multiple brand names",
+      "productDescription": "All FDA-regulated products held at facility including drugs, medical devices, cosmetics, dietary supplements, human food, and pet food",
+      "reasonCategory": "Microbial Contamination, Salmonella",
+      "reasonDescription": "Potential Salmonella contamination, presence of rodent and avian contamination and insanitary conditions during the storage process.",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2025-12-26",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "f3e6216446a7767b",
+          "kind": "new_announcement",
+          "date": "2025-12-26",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/anthony-trinh-123herbals-llc-123herbalscom-issues-nationwide-recall-silintan-capsules-due-presence": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/anthony-trinh-123herbals-llc-123herbalscom-issues-nationwide-recall-silintan-capsules-due-presence",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/anthony-trinh-123herbals-llc-123herbalscom-issues-nationwide-recall-silintan-capsules-due-presence",
+      "title": null,
+      "company": "Anthony Trinh, 123Herbals LLC",
+      "brand": "Silintan",
+      "productDescription": "Dietary supplement capsules marketed for relief of joint and body aches",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Unapproved new drug found to contain undeclared meloxicam",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-01-09",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "4b4f12f3456ac7ca",
+          "kind": "new_announcement",
+          "date": "2026-01-09",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/herbsforever-llc-issues-allergy-alert-undeclared-wheat-herbsforever-brand-dietary-supplements": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/herbsforever-llc-issues-allergy-alert-undeclared-wheat-herbsforever-brand-dietary-supplements",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/herbsforever-llc-issues-allergy-alert-undeclared-wheat-herbsforever-brand-dietary-supplements",
+      "title": null,
+      "company": "HerbsForever LLC",
+      "brand": "HerbsForever LLC",
+      "productDescription": "Gastro Care capsule and Hingwastika powder and capsule dietary supplements",
+      "reasonCategory": "Wheat",
+      "reasonDescription": "Potential or Undeclared Allergen – Wheat",
+      "matchReason": "product description says dietary supplement",
+      "listingDate": "2026-01-09",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "4b4f12f3456ac7ca",
+          "kind": "new_announcement",
+          "date": "2026-01-09",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/modern-warrior-recalls-modern-warrior-ready-dietary-supplement-due-undeclared-14-dmaa-and-aniracetam": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/modern-warrior-recalls-modern-warrior-ready-dietary-supplement-due-undeclared-14-dmaa-and-aniracetam",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/modern-warrior-recalls-modern-warrior-ready-dietary-supplement-due-undeclared-14-dmaa-and-aniracetam",
+      "title": null,
+      "company": "Modern Warrior",
+      "brand": "Modern Warrior",
+      "productDescription": "Dietary supplement capsules marketed for metabolism moosting, improving brain function, and reducing cravings",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Unapproved new drug found to contain undeclared 1,4-DMAA and aniracetam, and tianeptine",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-01-09",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "4b4f12f3456ac7ca",
+          "kind": "new_announcement",
+          "date": "2026-01-09",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/superfoods-inc-dba-live-it-recalls-live-it-super-greens-because-possible-health-risk": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/superfoods-inc-dba-live-it-recalls-live-it-super-greens-because-possible-health-risk",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/superfoods-inc-dba-live-it-recalls-live-it-super-greens-because-possible-health-risk",
+      "title": null,
+      "company": "Superfoods, Inc. DBA as Live it Up",
+      "brand": "Live it Up",
+      "productDescription": "Super Greens Original and Wild Berry Flavored pouches and packs",
+      "reasonCategory": "Salmonella",
+      "reasonDescription": "Potential Foodborne Illness - Salmonella",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-01-20",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "b24f7e1587fea746",
+          "kind": "new_announcement",
+          "date": "2026-01-20",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/updated-company-announcement-august-28-2025-recall-announcement": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/updated-company-announcement-august-28-2025-recall-announcement",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-company-announcement-august-28-2025-recall-announcement",
+      "title": null,
+      "company": "Green Lumber Holding, LLC.",
+      "brand": "Green Lumber",
+      "productDescription": "Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared prescription drug-Tadalafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-02-13",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "5eb383442445c6d2",
+          "kind": "new_announcement",
+          "date": "2026-02-13",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/shaman-botanicals-llc-issues-voluntary-nationwide-recall-alkaloids-chewable-tablets-white-vein-due": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/shaman-botanicals-llc-issues-voluntary-nationwide-recall-alkaloids-chewable-tablets-white-vein-due",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/shaman-botanicals-llc-issues-voluntary-nationwide-recall-alkaloids-chewable-tablets-white-vein-due",
+      "title": null,
+      "company": "Shaman Botanicals, LLC",
+      "brand": "Advanced Alkaloids",
+      "productDescription": "Alkaloids Chewable Tablets—White Vein",
+      "reasonCategory": "Ingredient Level",
+      "reasonDescription": "Product contains 7-Hydroxymitragynine (7-OH) in an amount more than the declared value of 7.5 mg/tablet.",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-02-17",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "7bfcbcc91dcd7285",
+          "kind": "new_announcement",
+          "date": "2026-02-17",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/primal-herbs-issues-voluntary-nationwide-recall-primal-herbs-volume-due-undeclared-sildenafil": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/primal-herbs-issues-voluntary-nationwide-recall-primal-herbs-volume-due-undeclared-sildenafil",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/primal-herbs-issues-voluntary-nationwide-recall-primal-herbs-volume-due-undeclared-sildenafil",
+      "title": null,
+      "company": "Primal Supplements Group LLC",
+      "brand": "Primal Herbs",
+      "productDescription": "Dietary supplement",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Product contains sildenafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-03-11",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "690589c2fb07dddf",
+          "kind": "new_announcement",
+          "date": "2026-03-11",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/pure-vitamins-and-natural-supplements-llc-issues-voluntary-nationwide-recall-honey-products-due": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/pure-vitamins-and-natural-supplements-llc-issues-voluntary-nationwide-recall-honey-products-due",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pure-vitamins-and-natural-supplements-llc-issues-voluntary-nationwide-recall-honey-products-due",
+      "title": null,
+      "company": "Pure Vitamins and Natural Supplements, LLC",
+      "brand": "Boner Bear, Red Bull and Blue Bull",
+      "productDescription": "Honey dietary supplement",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Product contains sildenafil and tadalafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-03-14",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "a801e0799e591286",
+          "kind": "new_announcement",
+          "date": "2026-03-14",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/blueroot-health-issues-voluntary-allergy-alert-undeclared-egg-hazelnut-and-soy-vital-nutrients-aller": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/blueroot-health-issues-voluntary-allergy-alert-undeclared-egg-hazelnut-and-soy-vital-nutrients-aller",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/blueroot-health-issues-voluntary-allergy-alert-undeclared-egg-hazelnut-and-soy-vital-nutrients-aller",
+      "title": null,
+      "company": "Blueroot Health",
+      "brand": "Vital Nutrient",
+      "productDescription": "Aller-C Dietary Supplement",
+      "reasonCategory": "Eggs",
+      "reasonDescription": "Undeclared egg, hazelnut and soy",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-03-27",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "94e1c914a3eefda7",
+          "kind": "new_announcement",
+          "date": "2026-03-27",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/aphreseller-buy-herbalcom-issues-voluntary-nationwide-recall-kian-pee-wan-capsules-due-presence": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/aphreseller-buy-herbalcom-issues-voluntary-nationwide-recall-kian-pee-wan-capsules-due-presence",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/aphreseller-buy-herbalcom-issues-voluntary-nationwide-recall-kian-pee-wan-capsules-due-presence",
+      "title": null,
+      "company": "Aphreseller",
+      "brand": "Kian Pee Wan",
+      "productDescription": "Dietary supplement capsules marketed for treatment for gaining weight and stimulating appetite.",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Device & Drug Safety/Unapproved Drug",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-04-01",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "307115c3d72e4efc",
+          "kind": "new_announcement",
+          "date": "2026-04-01",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/blueroot-health-expands-voluntary-allergy-alert-undeclared-egg-hazelnut-and-soy-vital-nutrients": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/blueroot-health-expands-voluntary-allergy-alert-undeclared-egg-hazelnut-and-soy-vital-nutrients",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/blueroot-health-expands-voluntary-allergy-alert-undeclared-egg-hazelnut-and-soy-vital-nutrients",
+      "title": null,
+      "company": "Blueroot Health",
+      "brand": "Vital Nutrient",
+      "productDescription": "Aller-C Dietary Supplement",
+      "reasonCategory": "Eggs",
+      "reasonDescription": "Undeclared egg, hazelnut and soy",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-04-10",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "faf165b7e69141c1",
+          "kind": "new_announcement",
+          "date": "2026-04-10",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/xd-investments-llc-recalls-better-weather-fix-elixir-products-due-undeclared-mitragynine-and": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/xd-investments-llc-recalls-better-weather-fix-elixir-products-due-undeclared-mitragynine-and",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/xd-investments-llc-recalls-better-weather-fix-elixir-products-due-undeclared-mitragynine-and",
+      "title": null,
+      "company": "XD Investments LLC",
+      "brand": "Better Weather",
+      "productDescription": "Fix Elixir dietary supplements",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Undeclared Mitragynine and Mitragynine Pseudoindoxyl (Kratom)",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-05-11",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "44015ba40daa71cd",
+          "kind": "new_announcement",
+          "date": "2026-05-11",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/best-supplements-best-prices-issues-voluntary-nationwide-recall-wap-sensual-enhancement-capsules-due": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/best-supplements-best-prices-issues-voluntary-nationwide-recall-wap-sensual-enhancement-capsules-due",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/best-supplements-best-prices-issues-voluntary-nationwide-recall-wap-sensual-enhancement-capsules-due",
+      "title": null,
+      "company": "Best Supplements Best Prices",
+      "brand": "Best Supplements Best Prices",
+      "productDescription": "Dietary supplement for sexual enhancement",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Undeclared Sildenafil, Tadalafil, and Flibanserin",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-05-18",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "c2074c7a327eb7b8",
+          "kind": "new_announcement",
+          "date": "2026-05-18",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/better-weather-actives-llc-recalls-better-weather-fix-elixir-due-undeclared-mitragynine-and": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/better-weather-actives-llc-recalls-better-weather-fix-elixir-due-undeclared-mitragynine-and",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/better-weather-actives-llc-recalls-better-weather-fix-elixir-due-undeclared-mitragynine-and",
+      "title": null,
+      "company": "Better Weather Activities LLC",
+      "brand": "Better Weather",
+      "productDescription": "Fix Elixir 15ml",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Undeclared Mitragynine and Mitragynine Pseudoindoxyl (Kratom)",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-05-28",
+      "companyAnnouncementDate": null,
+      "fdaPublishDate": null,
+      "contentCurrentAsOf": null,
+      "notice": null,
+      "noticeText": null,
+      "scopeHash": null,
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "13fc76454a943fe7",
+          "kind": "new_announcement",
+          "date": "2026-05-28",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": null
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ana-salazar-modela-tu-cuerpo-inc-issues-nationwide-voluntary-recall-lipofit-extreme-fat-burner-20": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ana-salazar-modela-tu-cuerpo-inc-issues-nationwide-voluntary-recall-lipofit-extreme-fat-burner-20",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/ana-salazar-modela-tu-cuerpo-inc-issues-nationwide-voluntary-recall-lipofit-extreme-fat-burner-20",
+      "title": "Ana Salazar Modela Tu Cuerpo Inc. Issues Nationwide Voluntary Recall of Lipofit Extreme Fat Burner 2.0 Due to Presence of Undeclared Fluoxetine and 2,4-Dinitrophenol (DNP)",
+      "company": "Ana Salazar Modela Tu Cuerpo Inc.",
+      "brand": "Lipofit",
+      "productDescription": "Lipofit Extreme 2.0 Fat Burner Dietary Supplement",
+      "reasonCategory": "Unapproved Drug",
+      "reasonDescription": "Undeclared Fluoxetine and 2,4-Dinitrophenol (DNP)",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-08-31",
+      "companyAnnouncementDate": "2026-08-27",
+      "fdaPublishDate": "2026-08-31",
+      "contentCurrentAsOf": "2026-08-31",
+      "notice": {
+        "brands": [
+          "Lipofit"
+        ],
+        "productDescriptions": [
+          "Lipofit Extreme 2.0 Fat Burner Dietary Supplement"
+        ],
+        "reason": "Undeclared Fluoxetine and 2,4-Dinitrophenol (DNP)",
+        "identifiers": [
+          "FOR IMMEDIATE RELEASE - August 27, 2026 - Davie, Florida – Ana Salazar Modela Tu Cuerpo Inc. is recalling Lipofit Extreme Fat Burner 2.0, Lot 25M12F, expiration date 09/2027, to the consumer level.",
+          "The recalled product is identified as Lot 25M12F, expiration date 09/2027."
+        ],
+        "distribution": [
+          "The product was distributed in the United States directly to individual consumers through online sales."
+        ],
+        "instructions": [
+          "Consumers who have the affected product should stop using it immediately, keep it separated from children and other people, and should not sell, give, or transfer it to anyone else.",
+          "Consumers who purchased the recalled product should contact Ana Salazar Modela Tu Cuerpo Inc. at (954) 305-1004 or yandrydy@gmail.com for instructions regarding the disposition of the recalled product.",
+          "Consumers should not mail or dispose of the product until appropriate return or disposition instructions are provided.",
+          "Consumers should contact their physician or healthcare provider if they have experienced any problems that may be related to taking or using this product."
+        ],
+        "tables": []
+      },
+      "noticeText": [
+        "FOR IMMEDIATE RELEASE - August 27, 2026 - Davie, Florida – Ana Salazar Modela Tu Cuerpo Inc. is recalling Lipofit Extreme Fat Burner 2.0, Lot 25M12F, expiration date 09/2027, to the consumer level. The Food and Drug Administration (FDA) laboratory analysis has found Lipofit Extreme Fat Burner 2.0 to be tainted with undeclared fluoxetine in the daytime (AM) tablets and undeclared 2,4-dinitrophenol (DNP) in the nighttime (PM) tablets. Fluoxetine is an active ingredient in an FDA-approved drug used to treat conditions including depression, bulimia and obsessive-compulsive disorder. 2,4-Dinitrophenol (DNP) is a toxic substance (commonly used as a pesticide, dye, wood preservative and herbicide) that is illegally marketed as a weight-loss product and is not approved by the FDA for any use. Products containing fluoxetine and DNP cannot be marketed as dietary supplements. Lipofit Extreme Fat Burner 2.0 is an unapproved new drug for which safety and efficacy have not been established and, therefore, subject to recall.",
+        "Risk Statement:",
+        "Lipofit Extreme 2.0 Fat Burner, is a product promoted and sold for weight loss. When tainted with both fluoxetine and DNP, Lipofit Extreme 2.0 Fat Burner can cause a wide range of serious and potentially life-threatening adverse effects. Users may experience nausea, vomiting, sweating, dizziness, and headaches, as well as dangerous heart rhythm problems, rapid heart rate, and cardiac arrest, which can result in sudden death. Neurological effects including seizures may also occur, along with abnormal bleeding and suicidal thoughts. Long-term exposure carries additional risks, including damage to the eyes, skin, bone marrow, nervous system, and heart, as well as dangerously high body temperature and rapid breathing. When combined with certain other medications, the risk of fatal cardiac events is further elevated. To date, Ana Salazar Modela Tu Cuerpo Inc. has not received any known reports of adverse events related to this recall.",
+        "The tainted Lipofit Extreme Fat Burner 2.0 is marketed as a dietary supplement and is packaged as AM and PM tablets. The recalled product is identified as Lot 25M12F, expiration date 09/2027.",
+        "The product was distributed in the United States directly to individual consumers through online sales.",
+        "Ana Salazar Modela Tu Cuerpo Inc. has stopped selling and promoting the affected product and has quarantined all remaining inventory under its control. Consumers who have the affected product should stop using it immediately, keep it separated from children and other people, and should not sell, give, or transfer it to anyone else.",
+        "Consumers who purchased the recalled product should contact Ana Salazar Modela Tu Cuerpo Inc. at (954) 305-1004 or yandrydy@gmail.com for instructions regarding the disposition of the recalled product. Consumers should not mail or dispose of the product until appropriate return or disposition instructions are provided. Consumers should contact their physician or healthcare provider if they have experienced any problems that may be related to taking or using this product.",
+        "Adverse reactions or quality problems experienced with the use of this product may be reported to the FDA's MedWatch Adverse Event Reporting program either online, by regular mail or by fax.",
+        "Complete and submit the report Online: www.fda.gov/medwatch/report.htm",
+        "Regular Mail or Fax: Download form www.fda.gov/MedWatch/getforms.htm or call 1- 800-332-1088 to request a reporting form, then complete and return to the address on the pre-addressed form, or submit by fax to 1-800-FDA-0178. This recall is being conducted with the knowledge of the U.S. Food and Drug Administration."
+      ],
+      "scopeHash": "398b934061e72fb9",
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "2edc344020017de6",
+          "kind": "new_announcement",
+          "date": "2026-08-31",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": "398b934061e72fb9"
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/supplxcom-issues-voluntary-nationwide-recall-business-pill-and-branch-manager-men-due-undeclared": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/supplxcom-issues-voluntary-nationwide-recall-business-pill-and-branch-manager-men-due-undeclared",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/supplxcom-issues-voluntary-nationwide-recall-business-pill-and-branch-manager-men-due-undeclared",
+      "title": "SUPPLX.com Issues Voluntary Nationwide Recall of Business Pill and Branch Manager for Men Due to Undeclared Yohimbine",
+      "company": "SUPPLX.com",
+      "brand": "Business Pill, Branch Manager for Men",
+      "productDescription": "dietary supplements marketed for male sexual enhancement",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Products contain undeclared yohimbine",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-09-04",
+      "companyAnnouncementDate": "2026-09-03",
+      "fdaPublishDate": "2026-09-04",
+      "contentCurrentAsOf": "2026-09-04",
+      "notice": {
+        "brands": [
+          "Business Pill, Branch Manager for Men"
+        ],
+        "productDescriptions": [
+          "dietary supplements marketed for male sexual enhancement"
+        ],
+        "reason": "Products contain undeclared yohimbine",
+        "identifiers": [
+          "The recalled products were packaged in single-capsule blister cards and sold in 24-count retail boxes through SUPPLX.com.",
+          "The recall covers all lots and expiration or best-by dates distributed from September 16, 2023, through June 11, 2026.",
+          "Lot and expiration or best-by information appears on the back of each individual blister card."
+        ],
+        "distribution": [],
+        "instructions": [
+          "Consumers who possess Business Pill or Branch Manager for Men should stop using the product immediately and dispose of any remaining product.",
+          "Consumers who have experienced health problems that may be related to use of either product should contact a physician or other health care provider.",
+          "Consumers with questions may contact SUPPLX Recall at (321) 341-9501 or SupplxRecall@gmail.com."
+        ],
+        "tables": []
+      },
+      "noticeText": [
+        "Grant-Valkaria, Florida - SUPPLX.com is voluntarily recalling Business Pill and Branch Manager for Men, products marketed as dietary supplements for male sexual enhancement, because FDA laboratory analysis confirmed that both products contain yohimbine that is not declared on the product labels.",
+        "Yohimbine is a plant-derived alkaloid formulated for use as a prescription medication, generally as a treatment for erectile dysfunction. It has also been studied for use to promote blood flow and support athletic performance. FDA found dangerously high levels of yohimbine in the recalled products. Yohimbine can cause severe hypertension, tachycardia, and possibly cardiac arrhythmia and myocardial infarction (heart attacks), especially if the consumer is taking other stimulants such as caffeine or ephedra-containing products or prescription drugs used to treat ADHD. Severe gastrointestinal distress, including nausea, vomiting, diarrhea and stomach pain are typical side effects of high doses. It can also cause acute neurologic and psychiatric effects, including anxiety, insomnia, mania, psychosis in schizophrenic patients, drowsiness, disorientation, tremors and seizures. Death has been reported in cases of severe overdose.",
+        "The recalled products were packaged in single-capsule blister cards and sold in 24-count retail boxes through SUPPLX.com. The recall covers all lots and expiration or best-by dates distributed from September 16, 2023, through June 11, 2026. Lot and expiration or best-by information appears on the back of each individual blister card. On Business Pill, it appears in the upper-right corner; on Branch Manager for Men, it appears directly above the barcode. No other SUPPLX.com products are included in this recall.",
+        "SUPPLX.com is notifying affected customers directly. Consumers who possess Business Pill or Branch Manager for Men should stop using the product immediately and dispose of any remaining product. Consumers who have experienced health problems that may be related to use of either product should contact a physician or other health care provider.",
+        "Consumers with questions may contact SUPPLX Recall at (321) 341-9501 or SupplxRecall@gmail.com.",
+        "Health care professionals and consumers are encouraged to report adverse events or side effects related to use of these products to FDA's MedWatch Safety Information and Adverse Event Reporting Program online at www.fda.gov/medwatch/report.htm or by fax at 1-800-FDA-0178.",
+        "This recall is being conducted with the knowledge of the U.S. Food and Drug Administration."
+      ],
+      "scopeHash": "7f8ebb4d3c5bc848",
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "546d92cd63bde9cb",
+          "kind": "new_announcement",
+          "date": "2026-09-04",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": "7f8ebb4d3c5bc848"
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-x10-natural-enhancement-supplement-due-undeclared": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-x10-natural-enhancement-supplement-due-undeclared",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-x10-natural-enhancement-supplement-due-undeclared",
+      "title": "A&P Creations LLC Issues Nationwide Recall of X10 Natural Enhancement Supplement Due to Undeclared Sildenafil and Tadalafil",
+      "company": "A&P Creations LLC",
+      "brand": "X10",
+      "productDescription": "X10 Natural Enhancement Supplement",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Product contains sildenafil and tadalafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-09-15",
+      "companyAnnouncementDate": "2026-09-14",
+      "fdaPublishDate": "2026-09-15",
+      "contentCurrentAsOf": "2026-09-15",
+      "notice": {
+        "brands": [
+          "X10"
+        ],
+        "productDescriptions": [
+          "X10 Natural Enhancement Supplement"
+        ],
+        "reason": "Product contains sildenafil and tadalafil",
+        "identifiers": [],
+        "distribution": [
+          "The affected product was distributed to consumers in the United States through Amazon, Walmart.com, and naturefuel.us between December 15, 2024 and June 11, 2026.",
+          "A&P Creations LLC purchased and distributed X10 Natural Enhancement Supplement as a finished product and did not manufacture or formulate the product."
+        ],
+        "instructions": [
+          "Consumers who have the recalled X10 Natural Enhancement Supplement are urged to stop using the product immediately and destroy or dispose product.",
+          "Consumers with questions regarding this recall may contact A&P Creations LLC at ecommerce@naturefuel.us, Monday through Friday, 9:00 a.m. to 4:00 p.m.",
+          "Consumers should contact their physician or healthcare provider if they have experienced any problems that may be related to taking or using this product."
+        ],
+        "tables": [
+          [
+            [
+              "Product Description",
+              "Lot Number",
+              "Expiration br> Date"
+            ],
+            [
+              "X10 is a liquid product packaged in a red and gold box containing 7 red lightning bolt-shaped sachets, 15 mL each (105 mL total), with UPC 7708075247094. The original Spanish-language package identifies the product as “X10” and describes it as “Bebida energizante” (energy beverage).",
+              "F090824LN16",
+              "08/2026"
+            ],
+            [
+              "F170325LN19",
+              "03/2027"
+            ],
+            [
+              "F300326LN28",
+              "03/2028"
+            ]
+          ]
+        ]
+      },
+      "noticeText": [
+        "Clermont, Florida – A&P Creations LLC is recalling X10 Natural Enhancement Supplement to the consumer level because it has been found to contain undeclared sildenafil and tadalafil.",
+        "Sildenafil and tadalafil are active ingredients in the FDA-approved prescription drugs Viagra and Cialis, respectively, used to treat erectile dysfunction. FDA approval of Viagra and Cialis is restricted to use under the supervision of a licensed health care professional. These undeclared ingredients may interact with nitrates found in some prescription drugs, such as nitroglycerin, and may lower blood pressure to dangerous levels. People with diabetes, high blood pressure, high cholesterol, or heart disease often take nitrates.",
+        "As of September 14, 2026, A&P Creations LLC has not received any reports of adverse events related to this recall.",
+        "The recalled product be identified as follows:",
+        "The affected product was distributed to consumers in the United States through Amazon, Walmart.com, and naturefuel.us between December 15, 2024 and June 11, 2026.",
+        "A&P Creations LLC purchased and distributed X10 Natural Enhancement Supplement as a finished product and did not manufacture or formulate the product. The company decided to initiate the recall after U.S. Food and Drug Administration (FDA) laboratory analysis identified sildenafil and tadalafil that were not listed on the product labeling.",
+        "A&P Creations LLC has ceased distribution of X10 Natural Enhancement Supplement and is notifying affected customers through direct electronic notifications and applicable marketplace customer notification procedures. Consumers who have the recalled X10 Natural Enhancement Supplement are urged to stop using the product immediately and destroy or dispose product.",
+        "Consumers with questions regarding this recall may contact A&P Creations LLC at ecommerce@naturefuel.us, Monday through Friday, 9:00 a.m. to 4:00 p.m. Eastern Time.",
+        "Consumers should contact their physician or healthcare provider if they have experienced any problems that may be related to taking or using this product.",
+        "Adverse reactions or quality problems experienced with the use of this product may be reported to the FDA MedWatch Adverse Event Reporting Program online: www.fda.gov/medwatch/report.htm. Download form www.fda.gov/MedWatch/getforms.htm or call 1-800-332-1088 to request a reporting form, then complete and return to the address on the pre-addressed form, or submit by fax to 1-800-FDA-0178.",
+        "This recall is being conducted with the knowledge of the U.S. Food and Drug Administration."
+      ],
+      "scopeHash": "ff0c24cfaead0537",
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "eb889f606da790b4",
+          "kind": "new_announcement",
+          "date": "2026-09-15",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": "ff0c24cfaead0537"
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-biq-fel-due-undeclared-sildenafil-and-tadalafil": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-biq-fel-due-undeclared-sildenafil-and-tadalafil",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-biq-fel-due-undeclared-sildenafil-and-tadalafil",
+      "title": "A&P Creations LLC Issues Nationwide Recall of biQ-FEL Due to Undeclared Sildenafil and Tadalafil",
+      "company": "A&P Creations LLC",
+      "brand": "biQ-FEL",
+      "productDescription": "biQ-FEL 500mL supplement bottle",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Product contains sildenafil and tadalafil",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-09-15",
+      "companyAnnouncementDate": "2026-09-14",
+      "fdaPublishDate": "2026-09-15",
+      "contentCurrentAsOf": "2026-09-15",
+      "notice": {
+        "brands": [
+          "biQ-FEL"
+        ],
+        "productDescriptions": [
+          "biQ-FEL 500mL supplement bottle"
+        ],
+        "reason": "Product contains sildenafil and tadalafil",
+        "identifiers": [
+          "CLERMONT, Florida - A&P Creations LLC is recalling certain lots of dietary supplement biQ-FEL 500 mL at the consumer level because it has been found to contain undeclared Sildenafil and Tadalafil.",
+          "The recalled product is biQ-FEL, a liquid packaged in a 500 mL bottle bearing the biQ-FEL name.",
+          "A&P Creations LLC decided to recall biQ-FEL 500 mL after U.S. Food and Drug Administration (FDA) laboratory analysis identified sildenafil and tadalafil that were not listed on the product labeling.",
+          "A&P Creations LLC has ceased distribution of biQ-FEL 500 mL and is notifying affected customers through direct electronic notifications and applicable marketplace customer notification procedures as part of this voluntary recall."
+        ],
+        "distribution": [
+          "The product label includes Spanish-language text, including “Sabor artificial Hierbabuena” and was distributed to consumers in the U.S. through Amazon, Walmart.com, and naturefuel.us.",
+          "A&P Creations LLC distributed biQ-FEL as a finished product and did not manufacture or formulate the product."
+        ],
+        "instructions": [
+          "Consumers who have the recalled biQ-FEL 500 mL product should stop using it immediately and are urged to destroy the product.",
+          "Consumers with questions regarding this recall may contact A&P Creations LLC at ecommerce@naturefuel.us Monday to Friday from 9:00 am to 4:00 pm ET.",
+          "Consumers should contact their physician or healthcare provider if they have experienced any problems that may be related to taking or using this product."
+        ],
+        "tables": [
+          [
+            [
+              "Lot Number",
+              "Expiration Date",
+              "UPC/Barcode Identifier"
+            ],
+            [
+              "biQ-f001-06-25",
+              "05/06/27",
+              "biQ-FEL"
+            ],
+            [
+              "biQ-003-01-26",
+              "01/01/28",
+              "7709799120663"
+            ]
+          ]
+        ]
+      },
+      "noticeText": [
+        "CLERMONT, Florida - A&P Creations LLC is recalling certain lots of dietary supplement biQ-FEL 500 mL at the consumer level because it has been found to contain undeclared Sildenafil and Tadalafil.",
+        "Sildenafil and Tadalafil are active ingredients in FDA-approved prescription drugs Viagra and Cialis, respectively, used to treat erectile dysfunction. FDA approval of Viagra and Cialis is restricted to use under the supervision of a licensed health care professional. These undeclared ingredients may interact with nitrates found in some prescription drugs, such as nitroglycerin, and may lower blood pressure to dangerous levels. People with diabetes, high blood pressure, high cholesterol, or heart disease often take nitrates.",
+        "As of September 14, 2026, A&P Creations LLC has not received any reports of adverse events related to this recall.",
+        "The recalled product is biQ-FEL, a liquid packaged in a 500 mL bottle bearing the biQ-FEL name. The product label includes Spanish-language text, including “Sabor artificial Hierbabuena” and was distributed to consumers in the U.S. through Amazon, Walmart.com, and naturefuel.us. It includes:",
+        "A&P Creations LLC distributed biQ-FEL as a finished product and did not manufacture or formulate the product. A&P Creations LLC decided to recall biQ-FEL 500 mL after U.S. Food and Drug Administration (FDA) laboratory analysis identified sildenafil and tadalafil that were not listed on the product labeling.",
+        "A&P Creations LLC has ceased distribution of biQ-FEL 500 mL and is notifying affected customers through direct electronic notifications and applicable marketplace customer notification procedures as part of this voluntary recall. Consumers who have the recalled biQ-FEL 500 mL product should stop using it immediately and are urged to destroy the product.",
+        "Consumers with questions regarding this recall may contact A&P Creations LLC at ecommerce@naturefuel.us Monday to Friday from 9:00 am to 4:00 pm ET.",
+        "Consumers should contact their physician or healthcare provider if they have experienced any problems that may be related to taking or using this product.",
+        "Adverse reactions or quality problems experienced with the use of this product may be reported to FDA's MedWatch Adverse Event Reporting Program online at www.fda.gov/medwatch/report.htm.",
+        "This recall is being conducted with the knowledge of the U.S. Food and Drug Administration."
+      ],
+      "scopeHash": "bf8032b75fde7fae",
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "e61bb7b5faf1828a",
+          "kind": "new_announcement",
+          "date": "2026-09-15",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": "bf8032b75fde7fae"
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/global-mix-inc-recalls-niwali-tejocote-capsules-and-niwali-tejocote-pieces-because-possible-health": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/global-mix-inc-recalls-niwali-tejocote-capsules-and-niwali-tejocote-pieces-because-possible-health",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/global-mix-inc-recalls-niwali-tejocote-capsules-and-niwali-tejocote-pieces-because-possible-health",
+      "title": "Global Mix Inc. Recalls Niwali Tejocote Capsules and Niwali Tejocote Pieces Because of Possible Health Risk",
+      "company": "Global Mix Inc.",
+      "brand": "Niwali",
+      "productDescription": "Tejocote Capsules and Pieces",
+      "reasonCategory": "Unapproved Use",
+      "reasonDescription": "Products contain yellow oleander (Thevetia peruviana).",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-09-21",
+      "companyAnnouncementDate": "2026-09-21",
+      "fdaPublishDate": "2026-09-21",
+      "contentCurrentAsOf": "2026-09-21",
+      "notice": {
+        "brands": [
+          "Niwali"
+        ],
+        "productDescriptions": [
+          "Tejocote Capsules and Pieces"
+        ],
+        "reason": "Products contain yellow oleander (Thevetia peruviana).",
+        "identifiers": [],
+        "distribution": [
+          "The products were distributed nationwide within the United States through ebay.com and Everymarket.com.",
+          "Further information about this recall is available at www.globalmixinc.com."
+        ],
+        "instructions": [
+          "Consumers who have purchased niwali Tejocote Capsules or niwali Tejocote Pieces should stop using them immediately and should not consume any remaining product.",
+          "Consumers should return the products to the place of purchase for a full refund, or contact the company at the number below to arrange a refund.",
+          "Consumers with questions may contact Global Mix Inc. Customer Service at (646) 419-5884 Monday to Friday, 9:00 a.m. to 5:00 p.m.",
+          "Consumers who have consumed the product and who have concerns about their health should contact a healthcare provider."
+        ],
+        "tables": [
+          [
+            [
+              "Product name",
+              "niwali Tejocote Capsules – 90 Count, Herbal Supplement"
+            ],
+            [
+              "Brand",
+              "Niwali"
+            ],
+            [
+              "Package",
+              "White plastic bottle with white screw cap, blue and green label bearing the \"niwali\" logo, marked \"Tejocote Capsules\", \"90 CAPSULES\", \"HERBAL SUPPLEMENT\""
+            ],
+            [
+              "UPC / item code",
+              "N/A"
+            ],
+            [
+              "Lot / batch code",
+              "RM500925"
+            ],
+            [
+              "Best by / expiration date",
+              "03/03/2028"
+            ],
+            [
+              "Where sold",
+              "Ebay.com and Everymarket.com"
+            ]
+          ],
+          [
+            [
+              "Product name",
+              "niwali Tejocote Pieces – 90 Day Supply, Herbal Supplement"
+            ],
+            [
+              "Brand",
+              "Niwali"
+            ],
+            [
+              "Package",
+              "Bottle with a blue and white wrap-around label bearing the \"niwali\" logo, marked \"Tejocote Pieces\", \"90 DAY SUPPLY\", \"HERBAL SUPPLEMENT\". The Supplement Facts panel states serving size 1 piece, 90 servings per container, TejoMax Formula (Tejocote root) 78 mg. The label carries the statement \"Distributed by Niwali, 20533 Biscayne Bay Drive, Suite 4, Aventura, Florida 33180\"."
+            ],
+            [
+              "UPC / item code",
+              "1 99284 23789 6"
+            ],
+            [
+              "Lot / batch code",
+              "RM400925"
+            ],
+            [
+              "Best by / expiration date",
+              "03/03/2028"
+            ],
+            [
+              "Where sold",
+              "Ebay.com and Everymarket.com"
+            ]
+          ]
+        ]
+      },
+      "noticeText": [
+        "Global Mix Inc. of Middle Village, New York, is recalling niwali Tejocote Capsules (90 capsules, Herbal Supplement) and niwali Tejocote Pieces (90 Day Supply, Herbal Supplement) because FDA analysis has determined that the products appear to be Thevetia peruviana, or yellow oleander. All parts of the yellow oleander plant are known to contain cardiac glycosides, which are highly toxic to humans and animals. Ingestion of yellow oleander can cause severe or even fatal neurologic, gastrointestinal, and cardiovascular adverse health effects. Symptoms may include nausea, vomiting, dizziness, diarrhea, abdominal pain, changes in heart rhythm, arrhythmia, and more.",
+        "The products were distributed nationwide within the United States through ebay.com and Everymarket.com. A total of five units of the recalled products were sold, consisting of two (2) units of capsules and three (3) units of pieces. Because the sales were made through an online marketplace that does not release purchaser contact details to the seller, the company is unable to identify or notify every purchaser individually. The company is therefore issuing this press release so that any consumer who purchased the products can identify them and act on this notice.",
+        "Product identification",
+        "niwali Tejocote Capsules",
+        "niwali Tejocote Pieces",
+        "Reported illnesses",
+        "No illnesses or adverse events have been reported to the company to date in connection with the recalled products.",
+        "How the problem was discovered",
+        "The recall was initiated after the U.S. Food and Drug Administration advised the company of laboratory results for two samples collected by the agency on June 19, 2026, which showed that the products labeled as tejocote were in fact toxic yellow oleander. The company acted promptly on that information, ceased distribution of the affected products, removed the listings from sale, and is conducting this voluntary recall while it investigates the problem.",
+        "What consumers should do",
+        "Consumers who have purchased niwali Tejocote Capsules or niwali Tejocote Pieces should stop using them immediately and should not consume any remaining product. Consumers should return the products to the place of purchase for a full refund, or contact the company at the number below to arrange a refund. Consumers with questions may contact Global Mix Inc. Customer Service at (646) 419-5884 Monday to Friday, 9:00 a.m. to 5:00 p.m. Eastern Time, or by email at office@unitedlegalexperts.com. Further information about this recall is available at www.globalmixinc.com.",
+        "Consumers who have consumed the product and who have concerns about their health should contact a healthcare provider. Adverse reactions or quality problems experienced with the use of these products may be reported to the FDA’s MedWatch Adverse Event Reporting program by telephone at 1-800-FDA-1088.",
+        "This recall is being conducted with the knowledge of the U.S. Food and Drug Administration."
+      ],
+      "scopeHash": "1e0aebd35886501f",
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "a8f575c642f004db",
+          "kind": "new_announcement",
+          "date": "2026-09-21",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": "1e0aebd35886501f"
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/leader-formulas-llc-issues-voluntary-nationwide-recall-rapture-preworkout-due-presence-13": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/leader-formulas-llc-issues-voluntary-nationwide-recall-rapture-preworkout-due-presence-13",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/leader-formulas-llc-issues-voluntary-nationwide-recall-rapture-preworkout-due-presence-13",
+      "title": "Leader Formulas, LLC. Issues Voluntary Nationwide Recall of RAPTURE Preworkout Due to the Presence of 1,3-Dimethylamylamine (DMAA)",
+      "company": "Leader Formulas, LLC.",
+      "brand": "RAPTURE",
+      "productDescription": "Preworkout Dietary Supplement Powder",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Product contains 1,3-Dimethylamylamine (DMAA)",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-10-07",
+      "companyAnnouncementDate": "2026-10-06",
+      "fdaPublishDate": "2026-10-07",
+      "contentCurrentAsOf": "2026-10-07",
+      "notice": {
+        "brands": [
+          "RAPTURE"
+        ],
+        "productDescriptions": [
+          "Preworkout Dietary Supplement Powder"
+        ],
+        "reason": "Product contains 1,3-Dimethylamylamine (DMAA)",
+        "identifiers": [
+          "Leader Formulas, LLC. of Tomball, TX, is voluntarily recalling one (1) lot of RAPTURE Pre workout, a dietary supplement powder because it was found to contain 1,3-Dimethylamylamine (DMAA) and sold at the consumer level.",
+          "The affected RAPTURE Preworkout lots include the following lot number (260327-4)."
+        ],
+        "distribution": [
+          "RAPTURE Preworkout was distributed between 1/29/25 to 5/25/26 Nationwide to retail and via internet through the company website ( www.leaderformulas.com)."
+        ],
+        "instructions": [
+          "Consumers who have purchased the RAPTURE Preworkout products which are being recalled should stop using the products and return to the place of purchase for a full refund.",
+          "Consumers with questions regarding this recall may contact Leader Formulas, LLC. by email at Patrick@leaderformulas.com or by phone at 832-855-7562 Monday through Friday 9 AM to 5 PM CT.",
+          "Consumers should contact their physician or healthcare provider if they have experienced any problems that may be related to taking or using this drug product."
+        ],
+        "tables": [
+          [
+            [
+              "PRODUCT",
+              "UPC"
+            ],
+            [
+              "Rainbow Twist",
+              "710154236506"
+            ],
+            [
+              "Electric Lemonade",
+              "710143 236513"
+            ],
+            [
+              "Berry Mojito",
+              "710154236544"
+            ]
+          ]
+        ]
+      },
+      "noticeText": [
+        "Leader Formulas, LLC. of Tomball, TX, is voluntarily recalling one (1) lot of RAPTURE Pre workout, a dietary supplement powder because it was found to contain 1,3-Dimethylamylamine (DMAA) and sold at the consumer level. Using DMAA can result in elevated blood pressure and could lead to cardiovascular problems, including heart attack, shortness of breath and tightening of the chest.",
+        "The product is used as a dietary supplement and is packaged in 450g round plastic containers with red and black lettering and a rhinoceros print seal on top of the container. The affected RAPTURE Preworkout lots include the following lot number (260327-4). The product can be identified by the following:",
+        "RAPTURE Preworkout was distributed between 1/29/25 to 5/25/26 Nationwide to retail and via internet through the company website ( www.leaderformulas.com).",
+        "The issue was discovered in the product during testing by the FDA. Leader Formulas, LLC. is notifying its distributors and customers by mail and is arranging for return of all recalled products. Consumers who have purchased the RAPTURE Preworkout products which are being recalled should stop using the products and return to the place of purchase for a full refund.",
+        "Leader Formulas, LLC. has not received any reports of adverse events related to this recall.",
+        "Consumers with questions regarding this recall may contact Leader Formulas, LLC. by email at Patrick@leaderformulas.com or by phone at 832-855-7562 Monday through Friday 9 AM to 5 PM CT.",
+        "Consumers should contact their physician or healthcare provider if they have experienced any problems that may be related to taking or using this drug product. Adverse reactions or quality problems experienced with the use of this product may be reported to the FDA's MedWatch Adverse Event Reporting program either online, by regular mail or by fax.",
+        "Online: Complete and submit the report: www.fda.gov/medwatch/report.htm",
+        "Regular Mail or Fax: Download form www.fda.gov/MedWatch/getforms.htm or call 1-800-3321088 to request a reporting form, then complete and return to the address on the pre-addressed form, or submit by fax to 1-800-FDA-0178.",
+        "This recall is being conducted with the knowledge of the U.S. Food and Drug Administration."
+      ],
+      "scopeHash": "641599f95aa35709",
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "04020c1bdd793564",
+          "kind": "new_announcement",
+          "date": "2026-10-07",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": "641599f95aa35709"
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/pacific-health-sciences-voluntarily-recalls-one-lot-babies-magic-tea-brand-baby-sleep-gripe-water": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/pacific-health-sciences-voluntarily-recalls-one-lot-babies-magic-tea-brand-baby-sleep-gripe-water",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pacific-health-sciences-voluntarily-recalls-one-lot-babies-magic-tea-brand-baby-sleep-gripe-water",
+      "title": "Pacific Health Sciences Voluntarily Recalls One Lot of Babies' Magic Tea Brand Baby Sleep Gripe Water Dietary Supplement",
+      "company": "Pacific Health Sciences",
+      "brand": "Babies' Magic Tea",
+      "productDescription": "Babies' Magic Tea brand Baby Sleep Gripe Water 4 oz bottle",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Product contains undeclared ethanol, methanol, and isopropanol",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-10-07",
+      "companyAnnouncementDate": "2026-10-06",
+      "fdaPublishDate": "2026-10-07",
+      "contentCurrentAsOf": "2026-10-07",
+      "notice": {
+        "brands": [
+          "Babies' Magic Tea"
+        ],
+        "productDescriptions": [
+          "Babies' Magic Tea brand Baby Sleep Gripe Water 4 oz bottle"
+        ],
+        "reason": "Product contains undeclared ethanol, methanol, and isopropanol",
+        "identifiers": [
+          "Pacific Health Sciences is voluntarily recalling one lot of Babies' Magic Tea brand Baby Sleep Gripe Water dietary supplement.",
+          "Lot Number: 25122bw",
+          "Package: 4 fl oz (approximately 118 mL) amber bottle inside a blue cardboard box.",
+          "The lot number appears on the bottom of the box and on a side panel of the bottle.",
+          "An oral syringe is included in the box.",
+          "FDA testing of this lot identified ethanol, methanol, and isopropanol that were not declared on the product label.",
+          "To date, Pacific Health Sciences has received no reports of adverse events associated with this lot."
+        ],
+        "distribution": [
+          "The affected product was distributed to Secrets of Tea for subsequent distribution through online retailers, including www.secretsoftea.com and Amazon."
+        ],
+        "instructions": [
+          "Consumers, parents, and caregivers should stop using any product from Lot 25122bw and either discard it or return it to the place of purchase for a refund.",
+          "Anyone who experiences symptoms after using the product should seek medical attention and contact Pacific Health Sciences."
+        ],
+        "tables": []
+      },
+      "noticeText": [
+        "“This is an update to the company’s press release, previously issued on 10/06/2026, to clearly explain the hazard associated with the consumption or use of the product.”",
+        "Pacific Health Sciences is voluntarily recalling one lot of Babies' Magic Tea brand Baby Sleep Gripe Water dietary supplement.",
+        "Product Information",
+        "Product: Babies' Magic Tea brand Baby Sleep Gripe Water",
+        "Lot Number: 25122bw",
+        "Best Before: 12/2028",
+        "Package: 4 fl oz (approximately 118 mL) amber bottle inside a blue cardboard box. The lot number appears on the bottom of the box and on a side panel of the bottle. An oral syringe is included in the box.",
+        "Reason for Recall",
+        "FDA testing of this lot identified ethanol, methanol, and isopropanol that were not declared on the product label. Measured levels were approximately 8.3% ethanol, 0.35% methanol, and 0.48% isopropanol. These substances were not listed on the label. Their presence may pose a risk depending on the amount consumed and the age and body weight of the person using the product.",
+        "[Hazard statement]:",
+        "Organic alcohols such as ethanol, methanol, and isopropanol are known to impair normal functioning of the central nervous system, while infant ethanol exposure has been linked to long-term developmental consequences. Exposure to the amounts recommended on this product’s packaging can induce drowsiness, incoordination, behavioral changes, nausea, vomiting, and abdominal pain. Exposure to higher amounts can increase risk of respiratory depression and other serious adverse health consequences.",
+        "To date, Pacific Health Sciences has received no reports of adverse events associated with this lot.",
+        "Distribution",
+        "The affected product was distributed to Secrets of Tea for subsequent distribution through online retailers, including www.secretsoftea.com and Amazon.",
+        "What Consumers Should Do",
+        "Consumers, parents, and caregivers should stop using any product from Lot 25122bw and either discard it or return it to the place of purchase for a refund.",
+        "Anyone who experiences symptoms after using the product should seek medical attention and contact Pacific Health Sciences.",
+        "Contact Information",
+        "For questions or to report a reaction, contact Pacific Health Sciences at 310-457-1775 or myorder@pacifichealth.com, Monday through Thursday, 9:30 a.m. to 5:00 p.m. Pacific Time.",
+        "Adverse reactions may also be reported to the FDA MedWatch Adverse Event Reporting program online at www.fda.gov/medwatch/report.htm. To report by mail or fax, download a form at www.fda.gov/MedWatch/getforms.htm or call 1-800-332-1088 to request one.",
+        "This voluntary recall is being conducted with the knowledge of the U.S. Food and Drug Administration."
+      ],
+      "scopeHash": "dfc49c6db002b7d7",
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "e69526d7d234de5d",
+          "kind": "new_announcement",
+          "date": "2026-10-07",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": true,
+          "hash": "dfc49c6db002b7d7"
+        }
+      ]
+    },
+    "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/tonight-we-ride-llc-issues-voluntary-recall-ultimate-forza-male-supplement-due-presence-undeclared": {
+      "key": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/tonight-we-ride-llc-issues-voluntary-recall-ultimate-forza-male-supplement-due-presence-undeclared",
+      "source": "fda_recalls_listing",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/tonight-we-ride-llc-issues-voluntary-recall-ultimate-forza-male-supplement-due-presence-undeclared",
+      "title": "Tonight We Ride, LLC Issues Voluntary Recall of Ultimate Forza Male Supplement Due to Presence of Undeclared Sildenafil, Tadalafil, and Dapoxetine",
+      "company": "Tonight We Ride, LLC",
+      "brand": "Ultimate Forza",
+      "productDescription": "Male Supplement",
+      "reasonCategory": "Unapproved Ingredient",
+      "reasonDescription": "Product contains undeclared Sildenafil, Tadalafil, and Dapoxetine",
+      "matchReason": "FDA product type: Dietary Supplements",
+      "listingDate": "2026-10-24",
+      "companyAnnouncementDate": "2026-10-24",
+      "fdaPublishDate": "2026-10-24",
+      "contentCurrentAsOf": "2026-10-24",
+      "notice": {
+        "brands": [
+          "Ultimate Forza"
+        ],
+        "productDescriptions": [
+          "Male Supplement"
+        ],
+        "reason": "Product contains undeclared Sildenafil, Tadalafil, and Dapoxetine",
+        "identifiers": [
+          "October 24, 2026, Tonight We Ride, LLC of Lakeville, Minnesota is voluntarily recalling all lots of Ultimate Forza Male Supplement capsules to the consumer level because it has been found to contain undeclared Sildenafil, Tadalafil, and Dapoxetine.",
+          "Ultimate Forza products subject to the recall include the Ultimate Forza Multi-Capsule/Box (Item #810208, UPC 868592000002) and the Ultimate Forza Single Pack (Item #810222, UPC 868592000040).",
+          "The Multi-Capsule/Box configuration contains ten blue hard-shell capsules, and the Single Pack contains one capsule."
+        ],
+        "distribution": [
+          "These items were distributed through certain independently owned and operated GNC franchise locations in the United States from 2017 to October 1, 2026.",
+          "The products were not sold through GNC corporate stores."
+        ],
+        "instructions": [
+          "Consumers should stop using Ultimate Forza Male Supplement immediately.",
+          "Consumers may return unopened or partially used product to a GNC store for a full refund.",
+          "Consumers with questions may contact GNC Customer Service at 1-877-462-4700 or GNCRecalls@gnc-hq.com.",
+          "Consumers should contact their physician or healthcare provider if they have experienced any problems that may be related to taking or using this product."
+        ],
+        "tables": []
+      },
+      "noticeText": [
+        "October 24, 2026, Tonight We Ride, LLC of Lakeville, Minnesota is voluntarily recalling all lots of Ultimate Forza Male Supplement capsules to the consumer level because it has been found to contain undeclared Sildenafil, Tadalafil, and Dapoxetine.",
+        "The presence of Sildenafil, Tadalafil, and Dapoxetine in this product renders them unapproved drugs for which the safety and efficacy have not been established.",
+        "Sildenafil and Tadalafil are active ingredients in FDA-approved prescription drugs Viagra and Cialis, respectively, used to treat erectile dysfunction. FDA approval of Viagra and Cialis is restricted to use under the supervision of a licensed health care professional. These undeclared ingredients may interact with nitrates found in some prescription drugs, such as nitroglycerin, and may lower blood pressure to dangerous levels. People with diabetes, high blood pressure, high cholesterol, or heart disease often take nitrates.",
+        "Dapoxetine is an active ingredient not approved by the U.S. FDA and therefore its safety or efficacy has not been established. Chemically, dapoxetine belongs to a class of drugs known as selective serotonin reuptake inhibitors (SSRIs) used to treat depression. Consumption has been shown to increase the risk of suicidal thinking and behavior in children, adolescents, and young adults.",
+        "Ultimate Forza products subject to the recall include the Ultimate Forza Multi-Capsule/Box (Item #810208, UPC 868592000002) and the Ultimate Forza Single Pack (Item #810222, UPC 868592000040). These items were distributed through certain independently owned and operated GNC franchise locations in the United States from 2017 to October 1, 2026. The products were not sold through GNC corporate stores.",
+        "Ultimate Forza Male Supplement capsules are marketed as male performance dietary supplements. The Multi-Capsule/Box configuration contains ten blue hard-shell capsules, and the Single Pack contains one capsule.",
+        "No adverse events or complaints have been reported to date.",
+        "The recall was initiated after GNC's third-party product testing identified undeclared sildenafil, tadalafil, and dapoxetine. Sales were stopped, affected products were quarantined at franchise locations, and customers were notified to discontinue use and return remaining product.",
+        "Consumers should stop using Ultimate Forza Male Supplement immediately. Consumers may return unopened or partially used product to a GNC store for a full refund. A receipt or the phone number or email address associated with the loyalty account used for the purchase should be provided so the purchase can be verified.",
+        "Consumers with questions may contact GNC Customer Service at 1-877-462-4700 or GNCRecalls@gnc-hq.com.",
+        "Consumers should contact their physician or healthcare provider if they have experienced any problems that may be related to taking or using this product.",
+        "Adverse reactions or quality problems experienced with the use of this product may be reported to the FDA's MedWatch Adverse Event Reporting program either online, by regular mail or by fax.",
+        "Complete and submit the report Online: www.fda.gov/medwatch/report.htm",
+        "Regular Mail or Fax: Download form www.fda.gov/MedWatch/getforms.htm or call 1-800-332-1088 to request a reporting form, then complete and return to the address on the pre-addressed form, or submit by fax to 1-800-FDA-0178."
+      ],
+      "scopeHash": "e930b29bb62e9109",
+      "extractorVersion": 1,
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "52631035b7f227b2",
+          "kind": "new_announcement",
+          "date": "2026-10-24",
+          "detectedAt": "2026-10-27",
+          "describesExpansion": false,
+          "hash": "e930b29bb62e9109"
+        }
+      ]
+    },
+    "fda-enforcement:98691": {
+      "key": "fda-enforcement:98691",
+      "source": "fda_enforcement_report",
+      "eventId": "98691",
+      "firm": "ZMB Enterprises",
+      "location": "Carlsbad, CA, United States",
+      "voluntary": "Voluntary: Firm initiated",
+      "distribution": "The firm markets their products online via their website addallxr.com",
+      "initiationDate": "2026-04-03",
+      "firstReportDate": "2026-09-02",
+      "matchReason": "product description names a supplement",
+      "products": [
+        {
+          "recallNumber": "H-1263-2026",
+          "productDescription": "Addall XR Shot 1 single bottle, 2 fl. oz., liquid dietary supplement",
+          "codeInfo": "Sold between July - December 2025",
+          "quantity": "unknown",
+          "reason": "The product contains 1,4-DMAA, Phenylethylamine and Phenibut.",
+          "classification": "Class I",
+          "classificationDate": "2026-08-24",
+          "status": "Ongoing",
+          "reportDate": "2026-09-02",
+          "lastModifiedDate": null
+        }
+      ],
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "e270866fb053dda4",
+          "kind": "enforcement_listed",
+          "date": "2026-09-02",
+          "detectedAt": "2026-10-27",
+          "priorAnnouncement": null
+        }
+      ]
+    },
+    "fda-enforcement:99629": {
+      "key": "fda-enforcement:99629",
+      "source": "fda_enforcement_report",
+      "eventId": "99629",
+      "firm": "Byron White Formulas, Inc.",
+      "location": "Santa Rosa, CA, United States",
+      "voluntary": "Voluntary: Firm initiated",
+      "distribution": "Domestic: AK, AL, AR, AZ, CA, CO, CT, DC, DE, FL, GA, HI, IA, ID, IL, IN, KS, KY, LA, MA, MD, ME, MI, MN, MO, MT, NC, NE, NH, NJ, NM, NV, NY, OH, OK, OR, PA, PR, RI, SC, SD, TN, TX, UT, VA, VT, WA, WI, WV, WY. Foreign: Canada, Switzerland, Colombia, Germany, Spain, United Kingdom, Japan, Norway, New Zealand, Saudi Arabia.",
+      "initiationDate": "2026-08-11",
+      "firstReportDate": "2026-09-02",
+      "matchReason": "product description names a supplement",
+      "products": [
+        {
+          "recallNumber": "H-1276-2026",
+          "productDescription": "Byron White FORMULAS A-L Complex Herbal Supplement 1.0 fl. oz./30 mL May Contain Nuts (Juglans nigra hull) Byron White Formulas Inc. 3315 Chanate Rd. Suite 1C Santa Rosa, CA 95404",
+          "codeInfo": "Lot Code Format = MMD,DYY: 012,324. 041,924. 062,824. 092,024. 101,624. 111,324. 071,425. 093,025. 012,026. 042,826.",
+          "quantity": "18,791 units",
+          "reason": "Label does not declare walnuts in English",
+          "classification": "Class II",
+          "classificationDate": "2026-08-26",
+          "status": "Ongoing",
+          "reportDate": "2026-09-02",
+          "lastModifiedDate": null
+        },
+        {
+          "recallNumber": "H-1277-2026",
+          "productDescription": "Byron White FORMULAS A-P Herbal Supplement 1.0 fl. oz./30 mL May Contain Nuts (Juglans nigra hull) Byron White Formulas Inc. 3315 Chanate Rd. Suite 1C Santa Rosa, CA 95404",
+          "codeInfo": "Lot Code Format = MMD,DYY: 120,623. 031,824. 070,324. 100,224. 041,425. 101,625.",
+          "quantity": "3,486 units",
+          "reason": "Label does not declare walnuts in English",
+          "classification": "Class II",
+          "classificationDate": "2026-08-26",
+          "status": "Ongoing",
+          "reportDate": "2026-09-02",
+          "lastModifiedDate": null
+        },
+        {
+          "recallNumber": "H-1278-2026",
+          "productDescription": "Byron White FORMULAS A-FNG Herbal Supplement 1.0 fl. oz./30 mL May Contain Nuts (Juglans nigra hull) Byron White Formulas Inc. 3315 Chanate Rd. Suite 1C Santa Rosa, CA 95404",
+          "codeInfo": "Lot Code Format = MMD,DYY: 022,224. 061,424. 092,324. 022,125. 071,825. 112,125. 040,826.",
+          "quantity": "10,403 units",
+          "reason": "Label does not declare walnuts in English",
+          "classification": "Class II",
+          "classificationDate": "2026-08-26",
+          "status": "Ongoing",
+          "reportDate": "2026-09-02",
+          "lastModifiedDate": null
+        }
+      ],
+      "firstSeen": "2026-10-27",
+      "related": [],
+      "events": [
+        {
+          "id": "e270866fb053dda4",
+          "kind": "enforcement_listed",
+          "date": "2026-09-02",
+          "detectedAt": "2026-10-27",
+          "priorAnnouncement": null
+        }
+      ]
+    },
+    "fda-enforcement:99852": {
+      "key": "fda-enforcement:99852",
+      "source": "fda_enforcement_report",
+      "eventId": "99852",
+      "firm": "Leader Formulas",
+      "location": "Tomball, TX, United States",
+      "voluntary": "Voluntary: Firm initiated",
+      "distribution": "Nationwide by internet sales.",
+      "initiationDate": "2026-06-25",
+      "firstReportDate": "2026-09-23",
+      "matchReason": "product description names a supplement",
+      "products": [
+        {
+          "recallNumber": "",
+          "productDescription": "Rapture Pre Workout Berry Mojito Dietary Supplement, 30 servings, NET WT. 450G, UPC# 7 10154 23654 4",
+          "codeInfo": "Lot Number: 260327-4",
+          "quantity": "75 Units",
+          "reason": "FDA discovered presence of 1,3-dimethylamylamine (DMAA) in the product during product testing.",
+          "classification": "Not Yet Classified",
+          "classificationDate": null,
+          "status": "Ongoing",
+          "reportDate": "2026-09-23",
+          "lastModifiedDate": null
+        },
+        {
+          "recallNumber": "",
+          "productDescription": "Rapture Pre Workout Rainbow Twist Dietary Supplement, 30 servings, NET WT. 450G, UPC# 7 10154 23650 6)",
+          "codeInfo": "Lot Number: 260327-4",
+          "quantity": "52 units",
+          "reason": "FDA discovered presence of 1,3-dimethylamylamine (DMAA) in the product during product testing.",
+          "classification": "Not Yet Classified",
+          "classificationDate": null,
+          "status": "Ongoing",
+          "reportDate": "2026-09-23",
+          "lastModifiedDate": null
+        },
+        {
+          "recallNumber": "",
+          "productDescription": "Rapture Pre Workout Electric Lemonade Dietary Supplement, 30 servings, NET WT. 450G, UPC# 7 10143 23651 3",
+          "codeInfo": "Lot Number: 260327-4",
+          "quantity": "43 Units",
+          "reason": "FDA discovered presence of 1,3-dimethylamylamine (DMAA) in the product during product testing.",
+          "classification": "Not Yet Classified",
+          "classificationDate": null,
+          "status": "Ongoing",
+          "reportDate": "2026-09-23",
+          "lastModifiedDate": null
+        }
+      ],
+      "firstSeen": "2026-10-27",
+      "related": [
+        "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/leader-formulas-llc-issues-voluntary-nationwide-recall-rapture-preworkout-due-presence-13"
+      ],
+      "events": [
+        {
+          "id": "f76ddaa7195b37b6",
+          "kind": "enforcement_listed",
+          "date": "2026-09-23",
+          "detectedAt": "2026-10-27",
+          "priorAnnouncement": null
+        }
+      ]
+    },
+    "fda-enforcement:99872": {
+      "key": "fda-enforcement:99872",
+      "source": "fda_enforcement_report",
+      "eventId": "99872",
+      "firm": "A&P CREATIONS",
+      "location": "Clermont, FL, United States",
+      "voluntary": "Voluntary: Firm initiated",
+      "distribution": "Distributed nationwide (US).",
+      "initiationDate": "2026-09-14",
+      "firstReportDate": "2026-10-14",
+      "matchReason": "product description names a supplement",
+      "products": [
+        {
+          "recallNumber": "H-0016-2027",
+          "productDescription": "X10 Natural Enhancement Supplement, 0.5 fl oz/sachet (15 mL), 7 sachets/box, UPC: 7708075247094, Manufactured by FutuPro S.A.S., Colombian Industry; Distributed by Natur Fuel, 2725 Armstrong Avenue, Clermont, FL 34714.",
+          "codeInfo": "Lot # F090824LN16, Expiry: 8/2026; Lot # F170325LN19, Expiry: 03/2027; Lot # 300326LN28, Expiry: 03/2028.",
+          "quantity": "1,283 retail units",
+          "reason": "Product contains undeclared Sildenafil and Tadalafil.",
+          "classification": "Class I",
+          "classificationDate": "2026-10-07",
+          "status": "Ongoing",
+          "reportDate": "2026-10-14",
+          "lastModifiedDate": "2026-10-07"
+        },
+        {
+          "recallNumber": "H-0017-2027",
+          "productDescription": "biQ-FEL, 16.9 fl oz (500 mL), 17 servings per bottle, Manufactured by ALMENAT SAS AV 39 OESTE No 10 OESTE-18 CALI VALLE INDUSTRIA COLOMBIANA; Distributed by: Biofel",
+          "codeInfo": "Lot # biQ-f001-06-25, Expiry: 05/06/2027; Lot # biQ-003-01-26, Expiry: 01/01/28",
+          "quantity": "3,116 bottles",
+          "reason": "Product contains undeclared Sildenafil and Tadalafil.",
+          "classification": "Class I",
+          "classificationDate": "2026-10-07",
+          "status": "Ongoing",
+          "reportDate": "2026-10-14",
+          "lastModifiedDate": "2026-10-07"
+        }
+      ],
+      "firstSeen": "2026-10-27",
+      "related": [
+        "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-x10-natural-enhancement-supplement-due-undeclared",
+        "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-biq-fel-due-undeclared-sildenafil-and-tadalafil"
+      ],
+      "events": [
+        {
+          "id": "24af4ee5d4053feb",
+          "kind": "enforcement_listed",
+          "date": "2026-10-14",
+          "detectedAt": "2026-10-27",
+          "priorAnnouncement": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-x10-natural-enhancement-supplement-due-undeclared"
+        }
+      ]
+    }
+  },
+  "weeks": {
+    "2026-10-25": {
+      "window": {
+        "start": "2026-10-19",
+        "end": "2026-10-25"
+      },
+      "lastRun": "2026-10-27",
+      "coverageComplete": true,
+      "gaps": [],
+      "counts": {
+        "newAnnouncements": 1,
+        "updates": 0,
+        "enforcementListings": 0,
+        "classifications": 0
+      },
+      "quietWeek": false,
+      "events": [
+        "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/tonight-we-ride-llc-issues-voluntary-recall-ultimate-forza-male-supplement-due-presence-undeclared#52631035b7f227b2"
+      ]
+    }
+  }
+}

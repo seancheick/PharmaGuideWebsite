@@ -1010,7 +1010,8 @@ async function validate(slug, { publishCheck = false, acceptWarnings = false, sk
   push("post-images", checkPostImageFiles(content, slug));
   push("internal-links", checkInternalLinks(content));
   push("sources-section", checkSourcesSection(content));
-  if (data.category) push("word-count", checkWordCount(content, data.category));
+  // A recall digest is as long as the week's notices: no word-count floor.
+  if (data.category && data.format !== "recall-digest") push("word-count", checkWordCount(content, data.category));
   push("banned-marketing", checkBannedPhrases(content, BANNED_MARKETING_WORDS, "banned marketing word"));
   push("banned-medical-advice", checkBannedPhrases(content, BANNED_MEDICAL_ADVICE, "banned medical-advice phrase"));
   push("banned-medical-advice", checkMedicalAdviceContextual(content));

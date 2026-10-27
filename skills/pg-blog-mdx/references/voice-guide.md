@@ -52,7 +52,9 @@ NOT: "Many medications can cause nutrient depletion."
 
 `_italic-serif_` (single underscores in MDX) for key concepts the reader should slow down on. Sparingly.
 
-> "You won't feel it the day you start the medication. You'll feel it eight months in, when your energy isn't quite what it used to be, or your hair is thinner, or your sleep is off — and you'll blame anything _but_ the prescription."
+> "A depletion builds slowly, over the months and years a medicine is taken, which is _why_ it's easy to miss."
+
+Concrete, but no invented timeline or symptom: a specific time frame, symptom or outcome only appears when a cited source states it for that medicine and population.
 
 ### Use **bold** for decision-bearing terms
 
@@ -60,13 +62,13 @@ NOT: "Many medications can cause nutrient depletion."
 
 ### Contrast moves
 
-These three patterns earn trust by holding two ideas at once:
+These patterns earn trust by holding two ideas at once. They are optional tools, not a checklist:
 
 - "**Both can be true.**" — used after stating two facts that seem to conflict
 - "**the catch:**" — used when introducing a downside of an otherwise-good thing
 - "**the gap most people miss**" — used when introducing a non-obvious insight
 
-Don't use all three in one post. Pick one or two; vary across posts.
+Use at most one or two in a post, only where the content genuinely has that shape, and vary them across posts so they don't become a tic.
 
 ### YMYL disclaimer near the top
 
@@ -167,7 +169,7 @@ These phrases are conditionally allowed:
 - "the safest"
 - "the most effective"
 
-**Rule:** only acceptable if a `<Source>` chip, `**Source:**` line, or `](https://` link appears within ~80 characters. The validator enforces this.
+**Rule:** only acceptable if a `<Source>` line or `](https://` link appears within ~80 characters. The validator enforces this (it also still accepts a legacy `**Source:**` line, but new posts use `<Source>`).
 
 In practice: if you write "the most effective dose for X," your next move must be either a citation or a rephrase to "the dose with the most evidence behind it."
 
@@ -177,13 +179,15 @@ In practice: if you write "the most effective dose for X," your next move must b
 
 The evidence-strength assigned during claim validation drives the language you use:
 
-| Evidence | Validation status | Qualifier language |
-|---|---|---|
-| Strong | VERIFIED + multiple RCTs/meta-analyses | "Research shows" / "Evidence supports" |
-| Moderate | VERIFIED + single RCT, or SUPPORTED with strong observational | "Studies suggest" / "Research indicates" |
-| Limited | WEAK or SUPPORTED with caveats | "Early research suggests" / "Preliminary evidence" |
-| Mixed | Multiple conflicting findings | "Results are mixed" / "Some studies show X while others…" |
-| Insufficient | UNVERIFIABLE | **Do not make the claim.** Drop it. |
+| Confidence (from the claim record) | Qualifier language |
+|---|---|
+| Established | "Research shows" / "Evidence supports" |
+| Moderate | "Studies suggest" / "Research indicates" |
+| Limited | "Early research suggests" / "Preliminary evidence" — and name what kind (one small trial, in rats, in vitro) |
+| Mixed | "Results are mixed" / "Some studies show X while others…" |
+| Not supported | **Do not make the claim.** |
+
+**A qualifier never rescues an unsupported claim.** "May", "early research suggests" or a Limited pill only describe a claim that a source actually supports, weakly. If no source supports the sentence, or the best source says the opposite, the claim goes, whatever the hedge.
 
 Never invent studies, statistics, expert quotes, or URLs. If you cannot confirm a specific claim, describe the general evidence landscape instead.
 
@@ -222,11 +226,16 @@ The voice is **smart pharmacist friend texting in clear paragraphs**, not medica
 
 ### Plain language
 
-- **Default to the common word.** "Absorption" beats "bioavailability" in body text (use bioavailability in technical asides or LinkedIn audiences). "Side effect" beats "adverse event." "Test" beats "assay."
+- **Default to the common word only when it means the same thing.** "Test" for "assay" is fine. Some plain words are *not* synonyms, and swapping them changes the claim:
+  - **Adverse event ≠ side effect.** An adverse event is a health problem reported during use; the report alone doesn't establish that the product caused it. Write "a health problem reported while taking it" (and say a report isn't proof of cause), not "side effect".
+  - **Bioavailability ≠ absorption.** Bioavailability is how much reaches the bloodstream or site of action, and how fast. Use the term with a gloss ("bioavailability, how much of a dose your body can actually use") rather than swapping in "absorption".
+  - **"Associated with" ≠ "causes"; "no significant effect" ≠ "works a little"; "in rats" ≠ "in people".
 - **When a technical term is the right word, put the plain-language gloss in parentheses on first use:** "Coenzyme Q10 (the molecule cells use to make energy)…"
-- **Translate dose language:** "200–400 mg/day, split into two doses with food" beats "BID administration of 400 mg with concurrent meals."
+- **Translate dose language without changing the dose:** "BID administration of 400 mg with concurrent meals" becomes "400 mg twice a day with food — 800 mg a day in total."
+
+**Simplifying must preserve the meaning.** A plain-language version keeps the amount, units, frequency, duration, preparation, population and strength of the conclusion exactly as the source states them. This applies to headlines, figures, captions, FAQs and social derivatives too. If the plain version can't hold all of that, keep the precise version and add a gloss.
 - **Active voice.** "Statins block CoQ10 production" beats "CoQ10 production is blocked by statins."
-- **Concrete over abstract.** "You'll feel it eight months in, when your energy isn't quite what it used to be" beats "Long-term users may experience symptomatic manifestations."
+- **Concrete over abstract, within what the source says.** "In the trial, men aged 45–55 took 250 mg twice a day for 90 days" beats "Long-term users may experience benefits." Never invent a timeline, symptom or outcome to make a sentence vivid.
 
 ### Modern phrasing
 

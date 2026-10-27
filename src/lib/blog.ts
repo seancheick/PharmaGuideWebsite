@@ -81,12 +81,6 @@ export function getAllPosts(): BlogPost[] {
         : data.reviewRequired !== undefined
           ? Boolean(data.reviewRequired)
           : undefined;
-    const riskScore =
-      data.risk_score !== undefined
-        ? Number(data.risk_score)
-        : data.riskScore !== undefined
-          ? Number(data.riskScore)
-          : undefined;
     const evidenceLevel = (data.evidence_level ??
       data.evidenceLevel) as BlogPost["evidenceLevel"];
 
@@ -110,7 +104,6 @@ export function getAllPosts(): BlogPost[] {
       wordCount: stats.words,
       content,
       reviewRequired,
-      riskScore,
       evidenceLevel,
     } satisfies BlogPost;
   });

@@ -121,16 +121,18 @@ or just describe what you want:
 
 > "Write a blog post for the new site about magnesium and antibiotic timing"
 
-The skill runs an 8-phase pipeline:
+A topic is a complete brief: the skill runs the whole pipeline without asking for a subtopic or outline (full detail in `skills/pg-blog-mdx/SKILL.md`):
 
-1. **Research** — parallel WebSearches + direct PubMed (`PUBMED_API_KEY`) and OpenFDA (`OPENFDA_API_KEY`) API queries
-2. **Classify** — picks one of 5 categories, evidence level, depth
-3. **Claim validation** — each claim is graded VERIFIED / SUPPORTED / WEAK / UNVERIFIABLE / CONTRADICTED. Unverifiable claims are dropped.
-4. **Risk gate** — computes a Risk Score (0–100). High-risk topics (Risk Score ≥ 71) produce a brief only, not a publishable draft.
-5. **Outline** — heading plan per category guide
-6. **Draft MDX** — uses the component vocabulary (`Callout`, `EvidencePill`, `Source`, `Sources`, `PostImage`, `Illustration`, `SvgStyle`, plus teaching-figure components from `src/components/blog/figures/`) plus plain markdown
-7. **Images** — `<Illustration>` wrapping a React teaching figure by default (see below); editorial mood photos via Gemini Nano Banana (`GEMINI_API_KEY`); never fake clinical scenes
-8. **Editor sidecar** — writes `content/blog/.review/<slug>.review.md` with claim audit + Risk Score + SEO package
+0. **Catalog and decision** — `pnpm blog:catalog`, then create / update / combine / decline
+1. **Reader brief** — demand scan (`pg-trends`, Search Console, autocomplete, forums) and the brief: reader, question, observable learning outcome, original contribution, take-home resource, next lesson
+2. **Format and category** — focused answer, label workshop, practical guide, evidence comparison, reference guide, research/safety update or recall digest; length follows the question
+3. **Research** — PubMed, openFDA (food endpoints for supplements), NIH ODS, DailyMed, the FDA notice itself for recalls
+4. **Claim records** — source passage, applicability, finding, confidence and allowed wording for every claim
+5. **Review routing** — every post `review_required: true`; clinical conclusions listed for PharmD sign-off; unresolved decision-changing claims held out
+6–7. **Outline and draft** — component vocabulary (`Callout`, `EvidencePill`, `Source`, `Sources`, `PostImage`, `Illustration`, `SvgStyle`, registered teaching figures) plus plain markdown
+8. **Teaching figures** — React figures with Save image / Print / Copy link, exports checked at desktop and 375px
+9. **Links and backlog** — contextual links both ways, follow-up topics added to `docs/13`
+10. **Editor sidecar** — `content/blog/.review/<slug>.review.md` with the brief, claim audit, reviewer list and links changed
 
 ### After generation
 
@@ -169,14 +171,15 @@ For end-to-end (blog + social in one session):
 
 ### What the skills enforce (clinical governance)
 
-- **Risk gate** — high-risk topics (Risk Score ≥ 71) cannot produce a publishable MDX; the skill writes a research brief at `content/blog/.briefs/<slug>.brief.md` instead and exits with a notice that human PharmD authorship is required
+- **Review routing** — every post carries `review_required: true` (Laurie Pham, PharmD reviews all PharmaGuide content). Interactions, dosing, contraindications, pregnancy and children are listed for her as clinical conclusions; a claim that could change a health decision and can't be resolved stays out of the draft until it is. (This replaced a numeric Risk Score in October 2026, which let a well-evidenced serious interaction score "Low" and skip review.)
+- **Evidence vs severity vs review** — `<EvidencePill>` and `evidence_level` grade evidence only (Established · Moderate · Limited · Mixed · Conditional; the validator rejects anything else); interaction severity is said in words; review status lives in frontmatter
 - **YMYL disclaimer** — every post has `<Callout tone="info">` within first 300 words
 - **Banned marketing words** — AI-powered, revolutionary, synergy, seamless, etc. flagged
 - **Banned medical-advice phrases** — "you should take," "cures," "prevents disease," "the best supplement" etc. flagged
 - **Brand-recommendation guards** — "buy this brand," "our top pick," "we recommend" etc. flagged. Factual brand mentions are allowed (e.g., naming a recalled brand in a safety alert).
 - **Citation rule (risk-based)** — inline `<Source>` chips required for dosing / interactions / FDA / pregnancy / mechanism-driving-recommendation claims; background framing gets one `<Source>` line at the end of the section. Every citation uses `<Source>`, never a bold `**Source:**` line
 - **Image policy** — illustrations preferred over AI-generated photos; AI photos limited to editorial-mood imagery (no fake pills, doctors, bottles, labels, lab settings). Sole exception: a text-free, blank-label product prop as the base of a teaching figure, with all wording as live text and a visible "fictional" tag
-- **Reviewer requirement** — posts with Risk Score 31–70 get `review_required: true` in frontmatter; `blog:publish-check` fails until a `reviewer:` field is set. The field is a public claim (the page shows "Clinically reviewed" and emits `reviewedBy`), so set it only once the PharmD has signed off on the exact version being published, with `reviewed_at` taken from the review record
+- **Reviewer requirement** — `blog:publish-check` fails until `reviewer:` and `reviewed_at:` are set. The field is a public claim (the page shows "Clinically reviewed" and emits `reviewedBy`), so set it only once the PharmD has signed off on the exact version being published, with `reviewed_at` taken from the review record
 
 ### Validator commands
 
@@ -184,12 +187,12 @@ For end-to-end (blog + social in one session):
 |---|---|---|
 | `pnpm blog:list` | List all posts, see which is Editor's Pick | Anytime |
 | `pnpm blog:validate <slug>` | Structural + clinical + URL checks | After any edit; daily |
-| `pnpm blog:publish-check <slug>` | Stricter ship gate (also fails on missing reviewer, high risk, URL warnings) | Before every commit that publishes |
+| `pnpm blog:publish-check <slug>` | Stricter ship gate (also fails on a missing reviewer or review date, and URL warnings) | Before every commit that publishes |
 | `pnpm blog:feature <slug>` | Set the Editor's Pick (auto-unsets the previous) | When promoting a post |
 
 `blog:validate` runs **structural, clinical-governance, and URL checks** — frontmatter shape, component allowlist, image-file resolution, internal-link count, sources section, word-count floor, banned marketing/medical-advice/brand phrases, YMYL disclaimer presence, per-section citations for high-risk categories, fake-clinical-asset filename patterns, reviewer invariants, URL reachability, authoritative-domain hint for clinical citations, and PubMed citation identity: every PubMed/PMC link is fetched from NCBI and fails when its real title, first author (including an author named beside the link), year or journal does not match the post's label. Identity is not support: the drafter still reads each abstract for the numbers it attributes. A URL that carries a DOI is confirmed through Crossref when the publisher blocks bots; any other 401/403/429 is a warning to open the link by hand, not a dead link. Once a person has opened such a link and matched it to its citation, record it in `MANUALLY_VERIFIED_URLS` in `scripts/validate-blog.mjs` (who, when, what the page showed) instead of passing `--accept-warnings`, which silences every URL warning. A humanizer check warns on machine-sounding phrases ("it's important to note", "when it comes to", "deep dive"…). Run with Node 22 (`nvm use`); Next.js fails on Node 18. Readability warnings (long paragraphs, long sentences, academic connectives) print as warnings but don't fail the build.
 
-`blog:publish-check` adds: reviewer-field gating, Risk Score ≥ 71 hard fail, URL warnings as failures (unless `--accept-warnings`).
+`blog:publish-check` adds: reviewer and `reviewed_at` gating, and URL warnings as failures (record a browser-checked blocked link in `MANUALLY_VERIFIED_URLS` rather than passing `--accept-warnings`). Length: the only floor is a 300-word stub check; format decides length.
 
 ### The full ship gate (run before every publishing commit)
 
@@ -218,9 +221,8 @@ author: "sean-cheick-baradji"       # PersonId from src/lib/people.ts
 # reviewed_at: "2026-05-20"        # the actual sign-off date from the review record
 featured: false
 tags: ["…"]
-review_required: true              # set by skill when Risk Score 31–70
-risk_score: 45                     # computed Risk Score
-evidence_level: "Moderate"         # whole-post rating: Strong | Moderate | Limited | Mixed
+review_required: true              # every post
+evidence_level: "Moderate"         # whole-post rating: Established | Moderate | Limited | Mixed | Conditional
                                    # (<EvidencePill> rates one claim; its own levels are listed below)
 ---
 ```
@@ -242,7 +244,7 @@ skills/pg-blog-mdx/               (→ ~/.claude/skills/pg-blog-mdx)
     voice-guide.md                  ← Voice + banned words/phrases
     category-guide.md               ← 5 categories with decision objectives
     mdx-component-reference.md      ← Exact MDX component syntax
-    claim-validation-rules.md       ← Validation matrix + Risk Score
+    claim-validation-rules.md       ← Claim records + review routing
 
 ~/.claude/skills/pg-social-mdx/
   SKILL.md                          ← Social orchestrator
@@ -477,7 +479,7 @@ Renders directly under the paragraph it backs as one line of metadata: a mono "S
 The literature on CoQ10 reversing statin-associated muscle symptoms is mixed.
 
 <Source>
-  Banach et al., Mayo Clinic Proceedings 2018 — [pubmed.ncbi.nlm.nih.gov/29545008](https://pubmed.ncbi.nlm.nih.gov/29545008/)
+  Pandit S, et al., *Andrologia* 2016 — [pubmed.ncbi.nlm.nih.gov/26395129](https://pubmed.ncbi.nlm.nih.gov/26395129/)
 </Source>
 ```
 

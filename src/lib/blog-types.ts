@@ -88,11 +88,11 @@ export interface BlogPost {
   wordCount: number;
   content: string;
   // Governance fields (written by pg-blog-mdx skill).
-  // YAML uses snake_case (review_required, risk_score, evidence_level);
-  // the parser in blog.ts maps to these camelCase keys on load.
+  // YAML uses snake_case (review_required, evidence_level); the parser in
+  // blog.ts maps to these camelCase keys on load. evidence_level shares the
+  // <EvidencePill> vocabulary (scripts/validate-blog.mjs EVIDENCE_LEVELS).
   reviewRequired?: boolean;
-  riskScore?: number;
-  evidenceLevel?: "Strong" | "Moderate" | "Limited" | "Mixed";
+  evidenceLevel?: "Established" | "Moderate" | "Limited" | "Mixed" | "Conditional";
 }
 
 export function formatBlogDate(iso: string): string {

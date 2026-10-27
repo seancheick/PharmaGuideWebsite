@@ -1,6 +1,6 @@
 # PharmaGuide Category Guide (new MDX site)
 
-5 categories. Each has a different decision objective, length target, and recommended MDX component pattern. Read the row for your topic's category before outlining.
+5 categories. A **category** is the subject area (where the post lives on the hub). A **format** (SKILL.md, Phase 2) is the shape of the article: focused answer, label workshop, practical guide, evidence comparison, reference guide, research or safety update, recall digest. Pick both. Length comes from the format and the reader's question, never from the category: there are no word floors beyond the validator's 300-word stub check.
 
 The schema id (used in frontmatter `category:` field) is in **bold**; the visible site label is in parentheses.
 
@@ -19,7 +19,7 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 
 **Tone.** Friendly teacher with pharmacist-level caution.
 
-**Length.** 1,600–2,200 words target. Validator minimum: 1,400 (tight depletion-style posts pass; padded ones don't earn extra credit).
+**Typical formats.** Focused answer, practical guide, reference guide.
 
 **Required patterns:**
 - Fast answer in first paragraph
@@ -39,12 +39,12 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 - `<EvidencePill level="…">` next to a claim to label evidence strength
 - `<PostImage>` editorial-mood image at the open (medication-depletion-guide uses this pattern)
 
-**Internal-link priorities:**
+**Internal-link priorities:** first, the post that answers the reader's next question (the next lesson); then:
 - `/methodology/` when explaining evidence
 - `/how-it-works/` for interaction system explanations
 - `/blog/` as fallback or for related articles
 
-**Schema (JSON-LD):** Article. `FAQPage` only if a visible FAQ section exists. `HowTo` only if truly procedural.
+**Schema (JSON-LD):** Article. `FAQPage` only if a visible FAQ section exists (include an FAQ when useful questions remain unanswered, not for a search feature). `HowTo` only if truly procedural.
 
 **Image style.** Clean educational visuals, mechanism diagrams, comparison illustrations. Avoid generic wellness photos.
 
@@ -65,12 +65,12 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 
 **Tone.** Curious but skeptical. Practical, not academic.
 
-**Length.** 1,900–2,600 words. Validator minimum: 1,900.
+**Typical formats.** Evidence comparison, label workshop, focused answer, reference guide.
 
 **Required patterns:**
 - Fast verdict early
-- Mechanism explanation
-- Evidence framing (Strong / Moderate / Limited / Mixed)
+- Mechanism explanation, when it helps the reader decide (skip it when it doesn't)
+- Evidence framing (Established / Moderate / Limited / Mixed)
 - Form and dose guidance with `<Source>` chips
 - Safety section with `<Callout tone="warn">` if relevant
 - Bottom-line / decision summary
@@ -84,7 +84,7 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 **Optional MDX:**
 - `<PostImage>` editorial image (lifestyle context only, no fake clinical scenes)
 
-**Internal-link priorities:**
+**Internal-link priorities:** first, the post that answers the reader's next question (the next lesson); then:
 - `/methodology/` for evidence framing
 - `/about/` for credibility context
 - `/blog/` for related deep dives
@@ -110,11 +110,11 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 
 **Tone.** Careful pharmacist. Direct. Calm. Not alarmist.
 
-**Length.** 1,400–2,000 words. Validator minimum: 1,400.
+**Typical formats.** Focused answer, practical guide, evidence comparison.
 
 **Required patterns:**
 - Immediate answer in first paragraph (safety verdict)
-- Clear interaction severity using `<EvidencePill level>` (High Risk / Moderate / Low Risk / Generally Safe)
+- Clear interaction severity in words, matching the app (Contraindicated / Avoid / Caution / Monitor / No known concerns), usually in a `<Callout tone="warn">`; never "safe". Evidence confidence is a separate `<EvidencePill>`
 - Who is at risk
 - What to do next (timing change? dose adjust? avoid combo?)
 - Safer alternatives where applicable
@@ -125,14 +125,14 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 **Recommended MDX components:**
 - `<Callout tone="info">` for YMYL disclaimer
 - `<Callout tone="warn">` for caution callouts
-- `<EvidencePill level="High Risk">` / `<EvidencePill level="Monitor">` etc. for severity
+- `<EvidencePill level>` for evidence confidence only (severity goes in the text)
 - `<Source>` inline for every interaction claim
 - `<Illustration>` for severity ladders, decision flows, timing diagrams
 
 **Optional MDX:**
 - `<PostImage>` lifestyle context only
 
-**Internal-link priorities:**
+**Internal-link priorities:** first, the post that answers the reader's next question (the next lesson); then:
 - `/how-it-works/` for interaction system context
 - `/methodology/` for evidence framing
 - `/blog/` for related interaction articles
@@ -158,7 +158,7 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 
 **Tone.** Urgent but controlled. Clear, factual. No alarm.
 
-**Length.** 700–1,200 words. Validator minimum: 700. **Shorter posts are intentional for this category.**
+**Typical formats.** Research or safety update; recall digest for the weekly roundup (see `recall-digest.md`). **Short is intentional here.**
 
 **Required patterns:**
 - Immediate alert summary
@@ -166,20 +166,20 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 - Affected groups
 - Issue details (mechanism of harm if known)
 - Action steps (return product? contact provider? FDA reporting?)
-- Sources (FDA enforcement records, FAERS, NIH)
+- Sources: the FDA notice itself first; Enforcement Reports and openFDA records as cross-checks
 
 **Special citation rule:** Every H2 section must have at least one `<Source>` line. Same as interactions-stacks.
 
 **Recommended MDX components:**
 - `<Callout tone="warn">` for the alert summary at top (in place of standard YMYL `<Callout tone="info">` if alert is urgent — but still include an `info` callout somewhere in first 300 words for compliance)
-- `<EvidencePill level="High Risk">` / `<EvidencePill level="Recall">` for severity
+- State recall status and severity in words from the official notice (no pill)
 - `<Source>` inline for every fact tied to the recall
 - `<Illustration>` for product-identification visuals if needed
 
 **Optional MDX:**
 - Short `<PostImage>` for non-clinical visual context
 
-**Internal-link priorities:**
+**Internal-link priorities:** first, the post that answers the reader's next question (the next lesson); then:
 - `/methodology/`
 - `/blog/`
 
@@ -189,7 +189,7 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 
 **Brand-naming rule:** Brand names ARE allowed in this category when they're the subject of the FDA action. The brand-recommendation guard applies to recommendation language, not factual mentions.
 
-**Do NOT:** add long explanations, soften the risk, include unnecessary MDX components, write more than 1,200 words.
+**Do NOT:** add long explanations, soften the risk, include unnecessary MDX components, or widen a product/lot recall into an ingredient ("magnesium recalled").
 
 ---
 
@@ -204,7 +204,7 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 
 **Tone.** Smart health journalist. Evidence-aware. Restrained.
 
-**Length.** 1,100–1,800 words. Validator minimum: 1,100.
+**Typical formats.** Research or safety update, evidence comparison.
 
 **Required patterns:**
 - Clear summary of the finding
@@ -215,14 +215,14 @@ The schema id (used in frontmatter `category:` field) is in **bold**; the visibl
 
 **Recommended MDX components:**
 - `<Callout tone="info">` for YMYL disclaimer
-- `<EvidencePill level="Limited">` / `<EvidencePill level="Preliminary">` to grade the new finding
+- `<EvidencePill level="Limited">` (or the level the claim record supports) to grade the new finding
 - `<Source>` inline for the cited study and any supporting research
 - `<Illustration>` for study-design visuals or data visualizations
 
 **Optional MDX:**
 - `<PostImage>` editorial-mood imagery for context
 
-**Internal-link priorities:**
+**Internal-link priorities:** first, the post that answers the reader's next question (the next lesson); then:
 - `/methodology/` for evidence framing
 - `/about/` for credibility
 - `/blog/` for related coverage

@@ -1,56 +1,84 @@
-# Claim Validation & Risk Score (new MDX pipeline)
+# Claim Validation & Review Routing (new MDX pipeline)
 
-This is the medical-credibility guard. Every post produced by `pg-blog-mdx` or repurposed by `pg-social-mdx` runs through claim validation before drafting. The Risk Score gates publishability.
+This is the medical-credibility guard. Every post produced by `pg-blog-mdx` runs its claims through this before and after drafting. It answers five separate questions for each claim, and routes the post to the right review. (It replaced a numeric Risk Score in October 2026: that formula let a serious, well-evidenced drug interaction score "Low" and skip clinical review.)
 
-Ported from `pg-social` Phase 2.5 (old WordPress system) and tightened for the new site.
+`pg-social-mdx` keeps its own older copy of this file; when you change the rules here, update it or point it here.
 
 ---
 
 ## When this runs
 
-In `pg-blog-mdx`: Phase 3 (after research, before risk gate)
-In `pg-social-mdx`: Phase 2.5 (after intelligence extraction, before generation)
-
-Both skills use this same matrix and scoring formula.
+1. **Before drafting** (Phase 4 of SKILL.md): build a claim record for every candidate claim.
+2. **After drafting**: re-check the *final* article, including figures, captions and FAQs, for any claim that was added or reworded during writing. New wording needs its own record.
 
 ---
 
-## The validation matrix
+## The claim record
 
-For each candidate claim extracted from research, assign one of five statuses:
+One row per claim. Five things, kept separate because they fail separately:
 
-| Status | Definition | Acceptable evidence qualifier | Action |
-|---|---|---|---|
-| **VERIFIED** | Exact quote found in source + cross-confirmed by independent source (PubMed, FDA, NIH ODS) | "Research shows" / "Evidence supports" | Use freely in MDX with `<Source>` chip |
-| **SUPPORTED** | Source supports the claim with caveats; single RCT, observational study, or single high-quality review | "Studies suggest" / "Research indicates" | Use with evidence qualifier and `<Source>` chip |
-| **WEAK** | Low-confidence evidence, observational only, small sample, conflicting findings | "Early research suggests" / "Preliminary evidence" / "Some studies indicate" | Use SPARINGLY with `<EvidencePill level="Limited">` chip + explicit caveat |
-| **UNVERIFIABLE** | Cannot trace to a specific source passage; claim might be true but is not citable | None | **DROP from draft.** Do not include. |
-| **CONTRADICTED** | PubMed / OpenFDA cross-check disagrees with the claim | None | **DROP from draft.** Flag in `.review.md` for human review. |
+| Field | Question it answers | Example |
+|---|---|---|
+| **Source + passage** | Does a real, verified source say this? Identifier (PMID/DOI/URL), title as fetched, and the exact supporting sentence or table | PMID 26395129, "…significantly (P < 0.05) increased total testosterone…" |
+| **Applicability** | Does it apply to *this* claim's subject? Preparation, population, dose, duration, outcome | Purified shilajit, healthy men 45–55, 250 mg twice daily, 90 days, serum hormones |
+| **Finding** | What did it show? Benefit · harm · no clear effect · inconsistent · insufficient | Benefit (hormone levels) |
+| **Confidence** | How convincing is the body of evidence *for this outcome*? Established · Moderate · Limited · Mixed — with the reason (bias, inconsistency, indirectness, imprecision) | Limited: one small RCT, one preparation, surrogate outcome |
+| **Allowed wording** | The sentence the article may say, no stronger | "One trial in healthy men aged 45–55 found higher testosterone after 90 days on one purified preparation." |
 
-**The dropping rule is strict:** UNVERIFIABLE and CONTRADICTED claims do not appear in the body draft. They appear ONLY in the `.review.md` claim audit table for transparency.
+**Rules:**
+
+- **Identity is not support.** A real, correctly cited paper can still fail to support the sentence. The passage must state the population, dose, duration and direction you write.
+- **Two pages repeating one trial are one source.** Independent confirmation means independent data.
+- **Study type is not confidence.** A meta-analysis of small, biased trials can be Limited. Judge the evidence for the specific outcome.
+- **A qualifier never rescues an unsupported claim.** "May" or "early research suggests" describe weak support; they do not create it. No supporting passage → the claim goes.
+- **Unsupported or contradicted claims stay out of the body.** List them in the sidecar with why (no passage found / source says otherwise / doesn't apply to this population).
+
+### Statuses for the sidecar
+
+The record determines a status, which the sidecar shows at a glance:
+
+| Status | Meaning | In the article? |
+|---|---|---|
+| **SUPPORTED** | Passage supports the allowed wording; applicability matches | Yes, at the recorded confidence and wording |
+| **SUPPORTED, NARROWED** | Supports a narrower claim than drafted (population, preparation, dose) | Yes, narrowed to what the source covers |
+| **UNSUPPORTED** | No passage supports it | No |
+| **CONTRADICTED** | The best evidence says otherwise | No; consider saying what the evidence does show |
+| **UNRESOLVED** | Could change a health decision and can't yet be settled | Not until resolved (see routing) |
 
 ---
 
-## How to validate a claim
+## Research coverage (budgets, not completeness)
 
-For each candidate claim:
+"Top 3–5 papers" or "5–8 sources" are starting budgets for effort, not proof the research is complete. Before drafting, the evidence must cover:
 
-1. **Find the source citation** that supposedly supports it
-2. **Verify the URL** is real and the page exists
-3. **Read the source's relevant passage** — extract the exact quote that supports the claim
-4. **Cross-check** against an independent authoritative source (PubMed, OpenFDA, NIH ODS, DailyMed, Cochrane). If the claim involves:
-   - **Dosing** → cross-check via PubMed for the most cited dosing study
-   - **Drug interaction** → cross-check via DailyMed drug labeling
-   - **Adverse event / recall** → cross-check via OpenFDA `/drug/enforcement.json` or `/drug/event.json`
-   - **General efficacy** → cross-check via PubMed for systematic reviews or meta-analyses
-5. **Assign status** per the matrix above
-6. **Record** in `.review.md` claim audit table with: claim text, status, source number, evidence level
+- the best relevant synthesis or official guidance (systematic review, NIH ODS fact sheet, label, guideline);
+- the primary studies behind every key number or preparation-specific conclusion;
+- important contrary findings and harms;
+- relevant older human evidence, not only the newest paper;
+- newer evidence published after the main review;
+- any material question that remains open, named as open.
+
+Phrases like "the only", "no studies", "nobody has followed up" need an exhaustive search to be true. Prefer "the studies discussed here".
 
 ---
 
-## API-driven cross-checking
+## Where to cross-check each kind of claim
 
-The new pipeline has direct access to authoritative APIs. Use them.
+| Claim | Primary source | Cross-check |
+|---|---|---|
+| Dosing | The trial or label that used the dose; NIH ODS | PubMed for the most-cited dosing study |
+| Drug–supplement interaction | DailyMed / drug label; interaction reviews | PubMed; the app's interaction rules as a lead, not a citation |
+| Supplement adverse events | FDA CAERS records, stated with search date, field and terms | openFDA `food/event`; never imply incidence or cause |
+| Drug adverse events | Drug label; FAERS records | openFDA `drug/event` |
+| Supplement recall / safety notice | **The FDA notice page itself** (fda.gov recall announcement or safety communication) | FDA Enforcement Report; openFDA `food/enforcement` for record checks only |
+| Drug recall | FDA notice / Enforcement Report | openFDA `drug/enforcement` |
+| General efficacy | Systematic reviews, then key RCTs | Cochrane where available |
+
+**Use the precise source that supports the claim.** If an fda.gov page fails an automated check, open it in a browser, confirm it matches, and record it in the validator's `MANUALLY_VERIFIED_URLS` (who, when, what the page showed). Never substitute an API query for an FDA notice or regulatory explanation. openFDA's food-enforcement documentation warns against using that dataset to issue public alerts or track a recall's lifecycle.
+
+---
+
+## API reference
 
 ### PubMed E-utilities (`PUBMED_API_KEY` in `.env`)
 
@@ -62,136 +90,107 @@ curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=
 curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=<PMID>&retmode=xml&api_key=$PUBMED_API_KEY"
 ```
 
-Use to: find systematic reviews and RCTs for any clinical claim, get abstracts to verify exact wording, confirm publication dates and journal.
-
-### OpenFDA (`OPENFDA_API_KEY` in `.env`)
+### openFDA (`OPENFDA_API_KEY` in `.env`) — supplements are *food* endpoints
 
 ```bash
+# Supplement adverse-event reports (CAERS)
+curl "https://api.fda.gov/food/event.json?search=products.name_brand:<term>&limit=100&api_key=$OPENFDA_API_KEY"
+
+# Supplement / food recall records (record checks only — not an alert feed)
+curl "https://api.fda.gov/food/enforcement.json?search=product_description:<term>&limit=100&api_key=$OPENFDA_API_KEY"
+
 # Drug labels (mechanism, indications, contraindications, warnings)
 curl "https://api.fda.gov/drug/label.json?search=openfda.generic_name:<drug>&api_key=$OPENFDA_API_KEY"
 
-# Recalls (enforcement actions on supplements, drugs)
-curl "https://api.fda.gov/drug/enforcement.json?search=product_description:<term>&api_key=$OPENFDA_API_KEY"
-
-# Adverse events (FAERS)
+# Drug adverse events (FAERS) and drug recalls
 curl "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.generic_name:<drug>&api_key=$OPENFDA_API_KEY"
+curl "https://api.fda.gov/drug/enforcement.json?search=product_description:<drug>&api_key=$OPENFDA_API_KEY"
 ```
 
-Use to: confirm FDA recall status, get exact recall lot numbers and reasons, verify drug labeling claims, retrieve FAERS adverse-event signals.
+When a post states a count from these, it says the search date, field and terms, and calls them records returned by that search.
 
 ### NIH ODS Health Professional fact sheets
 
-Not an API but the authoritative reference for vitamins/minerals. URLs follow:
-
-```
-https://ods.od.nih.gov/factsheets/<Nutrient>-HealthProfessional/
-```
-
-Examples that work: `CoenzymeQ10`, `Magnesium`, `VitaminB12`, `VitaminD`, `Iron`, `Calcium`, `Folate`, `Selenium`, `Zinc`.
+`https://ods.od.nih.gov/factsheets/<Nutrient>-HealthProfessional/` — e.g. `CoenzymeQ10`, `Magnesium`, `VitaminB12`, `VitaminD`, `Iron`, `Calcium`, `Folate`, `Selenium`, `Zinc`.
 
 ### DailyMed (drug labels)
 
-```
-https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=<drug>
-```
-
-Use to: verify drug indications, contraindications, full prescribing information.
+`https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=<drug>`
 
 ---
 
-## Risk Score formula (0–100)
+## Review routing (replaces the Risk Score)
 
-Computed at the end of claim validation. Five factors, weighted, summed, capped at 100.
+Three labels stay separate everywhere — never merge them into one score or one pill:
 
-| Factor | Weight | Calculation |
-|---|---|---|
-| Evidence strength (avg across claims) | 30% | Strong=0, Moderate=15, Limited=25, Mixed=30 |
-| WEAK or UNVERIFIABLE claims count | 25% | 0 claims=0, 1=10, 2=20, 3+=25 |
-| Drug interaction warnings present | 15% | No=0, Yes=15 |
-| Pregnancy/nursing cautions | 15% | No=0, Yes=15 |
-| Conflicting studies / contradictions found | 15% | No=0, Yes=15 |
+1. **Evidence confidence** — Established · Moderate · Limited · Mixed · Conditional (claim record; `<EvidencePill>`; frontmatter `evidence_level`).
+2. **Interaction severity / recommended action** — Contraindicated · Avoid · Caution · Monitor · No known concerns (the app's vocabulary). Said in text and callouts, never in an evidence pill. Never write "safe": write "no known concerns".
+3. **Editorial review status** — `review_required`, `reviewer`, `reviewed_at` in frontmatter.
 
-Round to nearest integer. Score interpretation gates publishability:
+**Routing:**
 
-| Score | Risk band | Pipeline action |
-|---|---|---|
-| **0–30** | Low | Auto-draft. `featured: false`, no `review_required` flag. |
-| **31–70** | Moderate | Draft allowed. Set `review_required: true` in frontmatter. Banner in `.review.md`. Human PharmD must sign off before `pnpm blog:publish-check` passes. |
-| **71–100** | High | **No body draft generated.** Output a research brief only at `content/blog/.briefs/<slug>.brief.md`. The topic requires human PharmD authorship. |
+| Content | Route |
+|---|---|
+| Every post | `review_required: true`. Laurie Pham, PharmD reviews all PharmaGuide content (Sean, 2026-10-11). |
+| Clinical efficacy, dosing, interactions, contraindications, pregnancy/breastfeeding, children, chronic disease | Clinical review of those conclusions, on the exact version to be published |
+| General literacy and document interpretation (label reading, units, how a report works) | Same review; the claim records will be short |
+| A claim that could change a health decision and is **UNRESOLVED** | Draft everything else; leave that claim out or mark its section as pending; list the exact claim and what would resolve it in the sidecar. Don't publish until it's resolved. |
+
+Drafting and permission to publish are separate. A hard topic still gets a full research record and a carefully scoped draft; publication waits for the review. `reviewer` and `reviewed_at` are added only after the PharmD signs off on that version: the page shows a "Clinically reviewed" badge and `reviewedBy` data from them. Never add a reviewer to clear the validator.
 
 ---
 
 ## Worked example
 
-Topic: "Metformin and B12 depletion"
+Topic: "Metformin and B12"
 
-| # | Claim | Source | Validation | Evidence |
+| # | Drafted claim | Record | Status | In the article |
 |---|---|---|---|---|
-| 1 | Metformin reduces B12 absorption in long-term users | NIH ODS B12 fact sheet + multiple RCTs | VERIFIED | Strong |
-| 2 | The mechanism involves calcium-dependent B12 uptake in the ileum | DailyMed metformin labeling | VERIFIED | Strong |
-| 3 | 30% of long-term metformin users develop B12 deficiency | Cited from single observational study | SUPPORTED | Moderate (single source) |
-| 4 | Methylcobalamin is more bioavailable than cyanocobalamin | PubMed has mixed RCT data | WEAK | Mixed |
-| 5 | B12 deficiency from metformin can cause irreversible neuropathy | One review mentions; not strongly corroborated | UNVERIFIABLE | — |
+| 1 | Long-term metformin use is associated with lower B12 levels | NIH ODS B12 fact sheet + cited studies; adults with type 2 diabetes on metformin | SUPPORTED · Established | "Long-term metformin use is linked to lower vitamin B12 levels." |
+| 2 | About 30% of long-term users become deficient | One observational study; population and definition of deficiency specific to it | SUPPORTED, NARROWED · Limited | "In one observational study of [population], about 30% met its definition of deficiency." |
+| 3 | Methylcobalamin is better absorbed than cyanocobalamin | NIH ODS: no evidence that absorption differs by supplemental form | CONTRADICTED | Not as drafted. If useful: "Supplement forms of B12 haven't been shown to differ in how well they're absorbed." |
+| 4 | B12 deficiency can cause neurological damage that may be irreversible | NIH ODS B12 fact sheet describes neurological effects of deficiency, which can be irreversible | SUPPORTED · Established (general consequence of deficiency) | State it as a consequence of B12 deficiency generally, cited to ODS. Don't make a narrower metformin-specific claim unless a source covers it. |
 
-**Compute risk:**
-
-- Evidence avg: (Strong 0 + Strong 0 + Moderate 15 + Mixed 30) / 4 = 11 → 11/100 of 30% weight = ~3.3
-- WEAK/UNVERIFIABLE count: 2 → 20% weight = 20
-- Drug interaction warnings: Yes → 15
-- Pregnancy cautions: Yes (metformin label includes them) → 15
-- Conflicting studies: No → 0
-
-**Risk Score: 3.3 + 20 + 15 + 15 + 0 = ~53** → **Moderate band** → write `.mdx` with `review_required: true`, drop claim 5 from the draft, label claim 4 with `<EvidencePill level="Limited">` and "early research suggests" qualifier.
+Route: clinical review (dosing context, a medication, a chronic disease). Every post gets `review_required: true` anyway.
 
 ---
 
 ## Editor sidecar — claim audit table
 
-The `.review.md` includes the full audit for the human reviewer:
-
 ```markdown
 ## Claim audit
 
-| # | Claim | Status | Source | Evidence | In draft? |
-|---|---|---|---|---|---|
-| 1 | Metformin reduces B12 absorption… | VERIFIED | [1, 2] | Strong | Yes |
-| 2 | Mechanism: calcium-dependent ileal uptake | VERIFIED | [3] | Strong | Yes |
-| 3 | ~30% of long-term users develop deficiency | SUPPORTED | [4] | Moderate | Yes (with qualifier) |
-| 4 | Methylcobalamin > cyanocobalamin bioavailability | WEAK | [5] | Mixed | Yes (with EvidencePill "Limited") |
-| 5 | Neuropathy can be irreversible | UNVERIFIABLE | — | — | **No — dropped** |
+| # | Claim (allowed wording) | Source + passage | Applicability | Finding | Confidence | Status |
+|---|---|---|---|---|---|---|
+| 1 | Long-term metformin use is linked to lower B12 levels | [1] "…" | adults, T2D, metformin ≥ … | harm (lower B12) | Established | SUPPORTED |
+| 3 | (dropped) Methylcobalamin better absorbed | [1] "…no evidence…" | — | — | — | CONTRADICTED |
 ```
-
-The reviewer can quickly see what's strongly evidenced, what's caveated, and what was dropped.
 
 ---
 
-## Editorial qualifiers (must match validation status)
+## Editorial qualifiers (must match confidence)
 
-The exact phrasing inside the MDX maps from the validation status:
-
-| Validation status | Use this language |
+| Confidence | Use this language |
 |---|---|
-| VERIFIED + multiple RCTs | "Research shows" |
-| VERIFIED + meta-analysis | "Evidence supports" |
-| SUPPORTED | "Studies suggest" / "Research indicates" |
-| WEAK | "Early research suggests" / "Preliminary evidence" / "Some studies indicate" |
-| Mixed evidence across claims | "Results are mixed" / "Some studies show X while others…" |
+| Established | "Research shows" / "Evidence supports" |
+| Moderate | "Studies suggest" / "Research indicates" |
+| Limited | "Early research suggests" / "Preliminary evidence" — and say what kind |
+| Mixed | "Results are mixed" / "Some studies show X while others…" |
 
-Never say "proven" — that's an absolute claim no clinical literature actually supports. Never say "guaranteed."
+Never say "proven" or "guaranteed".
 
 ---
 
 ## What this layer protects against
 
-1. Fabricated studies — every claim must trace to a verifiable URL
-2. Cherry-picking — Risk Score factors in conflicting studies
-3. Over-confident dosing — dosing claims always get explicit sources
-4. Drug interaction blindness — interaction-warning factor catches these
-5. Pregnancy / pediatric blind spots — explicit factor
-6. Sensational publishing — Risk Score ≥ 71 blocks the auto-draft path entirely
-7. Brand sneak-ins — separately enforced by banned-brand validator rule
-
-If validation is followed, the worst-case output is a too-cautious post. The skill never ships an under-evidenced one.
+1. Fabricated studies — every claim traces to a fetched source and a quoted passage
+2. Right paper, wrong claim — support and applicability are checked separately from identity
+3. Cherry-picking — contrary findings and harms are part of required coverage
+4. Over-confident dosing — dosing claims need their own source, with the exact regimen
+5. Drug-interaction blindness — interaction claims always route to clinical review
+6. Pregnancy / pediatric blind spots — always routed to clinical review
+7. Hedged-in falsehoods — a qualifier never rescues an unsupported claim
+8. Brand sneak-ins — separately enforced by the banned-brand validator rule
 
 ---
 
@@ -259,4 +258,4 @@ output. An invented identifier never is. Drop the claim and mark it UNVERIFIABLE
 
 6. **If a source cannot be verified, do not include it.** Never guess a PMID. Never construct a URL from memory or pattern-matching. If you believe the research exists but cannot find it live, describe the general evidence landscape instead and mark the claim UNVERIFIABLE in the sidecar.
 
-7. **The validator enforces this at build time.** `pnpm blog:validate` fetches every URL via HEAD request and fails on 4xx/5xx responses. But the skill should never rely on the validator to catch mistakes — verify sources *during research*, not after drafting.
+7. **The validator is a net, not the check.** `pnpm blog:validate` fetches every URL and fails on dead links; 401/403/429 (bot protection) are warnings to open by hand, then record in `MANUALLY_VERIFIED_URLS`. It also checks PubMed identity and basic support. Verify sources *during research*, not after drafting.

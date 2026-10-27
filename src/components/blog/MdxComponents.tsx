@@ -226,7 +226,7 @@ export const mdxComponents: MDXComponents = {
    *
    * Usage in MDX:
    *   <Source>
-   *     Folkers et al., PNAS 1990 — [pubmed.ncbi.nlm.nih.gov/2308954](https://pubmed.ncbi.nlm.nih.gov/2308954/)
+   *     Pandit S, et al., *Andrologia* 2016 — [pubmed.ncbi.nlm.nih.gov/26395129](https://pubmed.ncbi.nlm.nih.gov/26395129/)
    *   </Source>
    */
   Source: ({ children }: { children: React.ReactNode }) => (

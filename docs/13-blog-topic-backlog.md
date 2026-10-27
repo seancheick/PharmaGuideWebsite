@@ -11,9 +11,9 @@ answers it in one scan.
 
 ## How a topic ships
 
-1. `/pg-blog-mdx <topic>` drafts the post. Its risk gate, claim validation and
-   `pnpm blog:publish-check` decide publishability ([10 — Blog system guide](./10-blog-system-guide.md)).
-   Risk 31–70 needs Laurie Pham, PharmD as `reviewer:`; risk ≥ 71 yields a brief for PharmD authorship only.
+1. `/pg-blog-mdx <topic>` drafts the post (or updates an existing one). Its claim records,
+   review routing and `pnpm blog:publish-check` decide publishability ([10 — Blog system guide](./10-blog-system-guide.md)).
+   Every post needs Laurie Pham, PharmD's sign-off recorded as `reviewer:` + `reviewed_at:`.
 2. Sean turns the same verified facts into the Instagram carousel (Red Flag / Interaction Alert /
    Myth vs Fact series, keyword CTA). One fact set feeds both, so the post and the carousel never disagree.
 3. The "PharmaGuide data" column names what the app already holds on the topic (pipeline
@@ -25,8 +25,12 @@ answers it in one scan.
 Cadence: a target of two posts a week, not a promise; accuracy wins over the calendar. The agents
 verify every clinical claim live against its source (right study by title and body; ingredient,
 population, dose, outcome and severity match), as the pipeline roadmap's Launch track L4 describes.
-**Med-heavy** marks posts likely to score risk 31–70; `blog:publish-check` needs a `reviewer:` field
-for those, so they go to Laurie in a batch for a quick double-check.
+**Med-heavy** marks posts with many clinical conclusions (interactions, dosing, pregnancy); every
+post goes to Laurie, but these take longest, so batch them.
+
+The skill adds follow-up entries after each run (topic · reader question · distinct value ·
+reason · format · linking posts · status). Entries it adds are ideas until demand and evidence are
+checked.
 
 ## Wave 1 — high demand, app data behind it
 
@@ -48,13 +52,13 @@ for those, so they go to Laurie in a batch for a quick double-check.
 | 14 | Green tea extract and your liver | Weight-loss products; liver-injury data is in the brief | Green tea: liver disease avoid; beta blockers avoid | Red Flag | yes |
 | 15 | Red yeast rice and statins: why not both | Cholesterol audience; recall news | Red yeast rice × statins: avoid; banned_recalled entries | Interaction Alert | yes |
 | 16 | Fish oil and blood thinners: what the bleeding risk really is | Very common pair | Fish oil: anticoagulants, antiplatelets, bleeding disorders caution | Myth vs Fact | yes |
-| 17 | St John's wort: birth control, antidepressants and transplant drugs | The best-documented herb–drug interaction | Contraindicated with SSRIs/SNRIs, oral contraceptives, immunosuppressants, MAOIs, anticoagulants | Interaction Alert | yes (risk ≥ 71 likely: PharmD-authored brief) |
+| 17 | St John's wort: birth control, antidepressants and transplant drugs | The best-documented herb–drug interaction | Contraindicated with SSRIs/SNRIs, oral contraceptives, immunosuppressants, MAOIs, anticoagulants | Interaction Alert | yes (many decision-changing claims: research brief first, PharmD-led) |
 
 ## Wave 2 — high risk or needs new research
 
 | # | Working title | Note |
 |---|---|---|
-| 18 | Kratom, 7-OH and tianeptine ("gas station heroin") | Risk ≥ 71 expected: PharmD-authored brief. banned_recalled has kratom, 7-hydroxymitragynine and tianeptine entries. |
+| 18 | Kratom, 7-OH and tianeptine ("gas station heroin") | Many decision-changing claims expected: research brief first, PharmD-led. banned_recalled has kratom, 7-hydroxymitragynine and tianeptine entries. |
 | 19 | Lithium orotate: the trend and the medicine it shares a name with | Third-party estimate +309%; interacts with lithium-drug rules; PharmD-authored. |
 | 20 | SARMs and MK-677 sold as supplements | Use the FDA document that names each compound; no "ban" unless FDA said ban. |
 | 21 | Compounded or counterfeit GLP-1 products sold online | banned_recalled has a contaminated-GLP-1 high-risk entry; pairs with the GLP-1 post. |

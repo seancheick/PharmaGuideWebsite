@@ -1,17 +1,19 @@
 # MDX Component Reference (new site)
 
-The new PharmaGuide site has exactly **6 custom MDX components**. Everything else is plain markdown.
+The new PharmaGuide site has **7 general MDX components** plus the **teaching-figure components** listed in `src/components/blog/figures/index.ts`. Everything else is plain markdown. The validator allows exactly that set.
 
 This is much smaller than the old WordPress system (20+ `pg-*` modules). The discipline is intentional: the new site is premium and restrained — too many custom components recreate the old visual noise.
 
 **Allowed components:**
 
 1. `<Callout tone>` — boxed callouts in three tones
-2. `<EvidencePill level>` — inline evidence-grade or severity chip
-3. `<Source>` — structured citation chip
+2. `<EvidencePill level>` — inline evidence-confidence chip (evidence only)
+3. `<Source>` — one-line citation under the claim it backs
 4. `<Sources>` — collapsible sources dropdown
 5. `<PostImage>` — optimized image with caption
-6. `<Illustration>` — hand-built inline SVG / HTML diagram
+6. `<Illustration>` — caption frame for a teaching figure
+7. `<SvgStyle css>` — stylesheet for a legacy inline SVG (new figures don't need it)
+8. Teaching figures — one component per figure, registered in `src/components/blog/figures/index.ts` (e.g. `<ShilajitLabReport />`)
 
 **Anything else (e.g., `<div class="…">`, raw HTML tags, custom components like `<TLDR>`, `<QuickFacts>`, `<Hero>`) will fail validation.**
 
@@ -31,7 +33,7 @@ For everything else, use plain markdown — the MDX component map already styles
 | Dosage table | Plain markdown table |
 | Pull-quote | Plain markdown `>` blockquote |
 | TL;DR / orientation | First paragraph + `<Callout tone="info">` for the YMYL disclaimer |
-| Severity label | `<EvidencePill level="High Risk">` |
+| Interaction severity | Words in the text and a `<Callout tone="warn">` — e.g. "**Caution:** …". Never an evidence pill |
 | YMYL disclaimer | `<Callout tone="info">` |
 | Safety warning | `<Callout tone="warn">` |
 | Recommendation / decision summary | `<Callout tone="accent">` |
@@ -70,7 +72,7 @@ The goal is restraint. If a sentence can be plain markdown, write plain markdown
 
 ---
 
-## 2. `<EvidencePill level>` — Inline evidence / severity chip
+## 2. `<EvidencePill level>` — Inline evidence-confidence chip
 
 ```mdx
 This is consistent with multiple RCTs. <EvidencePill level="Established" /> The
@@ -78,22 +80,15 @@ question of whether supplementing reverses the symptoms is messier.
 <EvidencePill level="Mixed" />
 ```
 
-**The `level` is a free-text string** — choose one that fits the claim. Common values:
+**`level` must be one of five evidence levels** (the validator fails anything else): `Established` · `Moderate` · `Limited` · `Mixed` · `Conditional` (holds only under a stated condition, e.g. high doses or a specific population). It comes from the claim record's confidence.
 
-For **evidence grading:**
-- `Established`
-- `Probable`
-- `Moderate`
-- `Limited`
-- `Theoretical`
-- `Mixed`
+Pills grade **evidence only**. Three things stay separate on the page:
 
-For **interaction severity** (interactions-stacks category):
-- `High Risk`
-- `Avoid`
-- `Caution`
-- `Monitor`
-- `Generally Safe`
+- **Evidence confidence** → this pill.
+- **Interaction severity / action** (Contraindicated · Avoid · Caution · Monitor · No known concerns) → said in the text, usually in a `<Callout tone="warn">`. Never "safe": "no known concerns".
+- **Review status** → frontmatter only; the page shows it in the byline.
+
+A pill applies to the one claim it follows, never to the ingredient overall: "Established" beside a composition fact must not read as an endorsement of the ingredient.
 
 **Rules:**
 
@@ -108,10 +103,10 @@ For **interaction severity** (interactions-stacks category):
 Renders as one line of metadata directly under the paragraph it backs: a small mono "SOURCE" label in accent, then the citation in 15px muted text (body is 18px), with tighter spacing above than between paragraphs. No box. It must read as supporting material, never as body text, so **every in-body citation uses `<Source>`**; do not write bold `**Source:** [link]` lines.
 
 ```mdx
-The literature on CoQ10 reversing statin-associated muscle symptoms is mixed.
+One trial in healthy men aged 45–55 found higher testosterone after 90 days on one purified shilajit preparation.
 
 <Source>
-  Banach et al., Mayo Clinic Proceedings 2018 — [pubmed.ncbi.nlm.nih.gov/29545008](https://pubmed.ncbi.nlm.nih.gov/29545008/)
+  Pandit S, et al., *Andrologia* 2016 — [pubmed.ncbi.nlm.nih.gov/26395129](https://pubmed.ncbi.nlm.nih.gov/26395129/)
 </Source>
 ```
 
@@ -133,8 +128,8 @@ The literature on CoQ10 reversing statin-associated muscle symptoms is mixed.
 
 ```mdx
 <Sources>
-1. Folkers K et al. "Lovastatin decreases coenzyme Q levels in humans." _PNAS_ 1990 — [pubmed.ncbi.nlm.nih.gov/2308954](https://pubmed.ncbi.nlm.nih.gov/2308954/)
-2. NIH Office of Dietary Supplements. CoQ10 fact sheet — [ods.od.nih.gov](https://ods.od.nih.gov/factsheets/CoenzymeQ10-HealthProfessional/)
+- Pandit S, et al. (2016). [Clinical evaluation of purified Shilajit on testosterone levels in healthy volunteers.](https://pubmed.ncbi.nlm.nih.gov/26395129/) *Andrologia.*
+- NIH Office of Dietary Supplements. [Vitamin B12 — Health Professional Fact Sheet](https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/).
 3. ...
 </Sources>
 ```
@@ -165,7 +160,7 @@ Do NOT use a bare `## Sources` heading — the `<Sources>` component renders as 
 
 - Use ONLY for editorial-mood imagery: kitchen counter, evening lamp, hands on counter, abstract texture, lifestyle context
 - NEVER for: fake pills, fake supplement bottles, fake medication labels, fake doctors, fake pharmacists, fake stethoscopes, fake lab settings, fake clinical scenes
-- For Risk Score >30, AI-photo mode is disabled by default — use `<Illustration>` or no image
+- For posts with clinical claims, prefer `<Illustration>`; an editorial photo never stands in for a teaching figure
 
 **Dimensions:**
 
@@ -231,4 +226,4 @@ cd "/Users/seancheick/PharmaGuide Website"
 pnpm blog:validate <slug>
 ```
 
-If validation fails on rule 3 (allowed components), you used a tag that doesn't belong. Replace with plain markdown or one of the 5 components above.
+If validation fails on `mdx-components`, you used a tag that doesn't belong. Replace it with plain markdown or one of the components above; a new figure must be added to `src/components/blog/figures/index.ts` first.

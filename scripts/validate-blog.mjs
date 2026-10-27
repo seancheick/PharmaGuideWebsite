@@ -6,8 +6,8 @@
  *   pnpm blog:validate <slug>             — daily validity check (exits 0
  *                                           on pass, prints warnings)
  *   pnpm blog:publish-check <slug>        — stricter ship gate (also fails
- *                                           on missing reviewer, high-risk
- *                                           score, unaccepted URL warnings)
+ *                                           on missing reviewer and on
+ *                                           unaccepted URL warnings)
  *
  * Flags:
  *   --publish-check                       — enable publish-check mode
@@ -25,6 +25,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
+import { figureComponents } from "./lib/figure-registry.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -41,34 +42,25 @@ const CATEGORY_IDS = [
   "safety-alerts",
 ];
 
-// Minimum word counts per category — chosen to match the category guide
-// length ranges and the actual style of published posts on the new site.
-// Health-education at 1,400 (was 1,600) so a tight depletion-style post can
-// pass without padding; ingredient-deep-dive posts still demand depth.
-const CATEGORY_MIN_WORDS = {
-  "health-education": 1400,
-  "ingredient-spotlights": 1900,
-  "interactions-stacks": 1400,
-  "safety-alerts": 700,
-  "news-research": 1100,
-};
+// Length follows the reader's question, not the category (pg-blog-mdx
+// formats: a focused answer can be 400 words). The only floor is a stub
+// check, so an empty or half-written draft can't pass.
+const MIN_WORDS = 300;
+
+// One vocabulary for evidence, used by <EvidencePill level> (one claim)
+// and frontmatter evidence_level (the post overall). Interaction severity
+// and review status are separate and never go in a pill.
+const EVIDENCE_LEVELS = ["Established", "Moderate", "Limited", "Mixed", "Conditional"];
 
 const HIGH_RISK_CATEGORIES = new Set([
   "interactions-stacks",
   "safety-alerts",
 ]);
 
-// Teaching figures: the registry src/components/blog/figures/index.ts
-// re-exports each figure module, and MdxComponents.tsx spreads it into the
-// MDX component map. Allow exactly the functions exported by the modules
-// that registry lists, so validation and rendering agree.
-const FIGURES_DIR = path.join(ROOT, "src", "components", "blog", "figures");
-const FIGURES_REGISTRY = path.join(FIGURES_DIR, "index.ts");
-const FIGURE_COMPONENTS = fs.existsSync(FIGURES_REGISTRY)
-  ? [...fs.readFileSync(FIGURES_REGISTRY, "utf8").matchAll(/^export \* from "\.\/(\w+)";/gm)].flatMap(([, mod]) =>
-      [...fs.readFileSync(path.join(FIGURES_DIR, `${mod}.tsx`), "utf8").matchAll(/^export function ([A-Z]\w*)/gm)].map((m) => m[1])
-    )
-  : [];
+// Teaching figures: exactly the components the registry
+// src/components/blog/figures/index.ts exposes to MdxComponents.tsx, so
+// validation and rendering agree (scripts/lib/figure-registry.mjs).
+const FIGURE_COMPONENTS = figureComponents(ROOT);
 
 const ALLOWED_MDX_COMPONENTS = new Set([
   "Callout",
@@ -398,17 +390,29 @@ function checkSourcesSection(content) {
   return [];
 }
 
-function checkWordCount(content, category) {
+function checkWordCount(content, data) {
+  // A quiet-week recall digest is legitimately a few lines.
+  if (data.format === "recall-digest") return [];
   const wc = wordCount(content);
-  const min = CATEGORY_MIN_WORDS[category];
-  if (min && wc < min) {
-    return [
-      fail(
-        `word count ${wc} is below category minimum ${min} for "${category}"`
-      ),
-    ];
+  return wc < MIN_WORDS ? [fail(`word count ${wc} is below ${MIN_WORDS} — this reads as a stub`)] : [];
+}
+
+function checkEvidenceLevels(content, data) {
+  const issues = [];
+  for (const [, level] of content.matchAll(/<EvidencePill\s+level="([^"]*)"/g)) {
+    if (!EVIDENCE_LEVELS.includes(level)) {
+      issues.push(
+        fail(
+          `<EvidencePill level="${level}"> — pills grade evidence only: ${EVIDENCE_LEVELS.join(", ")}. Say interaction severity or recall status in the text.`
+        )
+      );
+    }
   }
-  return [];
+  const post = data.evidence_level ?? data.evidenceLevel;
+  if (post !== undefined && !EVIDENCE_LEVELS.includes(post)) {
+    issues.push(fail(`evidence_level "${post}" must be one of ${EVIDENCE_LEVELS.join(", ")}`));
+  }
+  return issues;
 }
 
 function checkBannedPhrases(content, phrases, label) {
@@ -622,10 +626,20 @@ function checkReadability(content) {
 
 function checkReviewerInvariants(data) {
   const issues = [];
-  if (data.reviewRequired === true && data.featured === true) {
-    issues.push(
-      fail(`reviewRequired: true is mutually exclusive with featured: true`)
-    );
+  // Laurie Pham, PharmD reviews all PharmaGuide content (Sean, 2026-10-11),
+  // so every post carries the flag; reviewer + reviewed_at record the real
+  // sign-off on the published version.
+  if (data.reviewRequired !== true) {
+    issues.push(fail(`review_required: true is required on every post (all content is clinically reviewed)`));
+  }
+  if (data.reviewer && !data.reviewed_at && !data.reviewedAt) {
+    issues.push(warn(`reviewer set without reviewed_at — record the actual sign-off date (blocks publish-check)`));
+  }
+  if (data.risk_score !== undefined || data.riskScore !== undefined) {
+    issues.push(warn(`risk_score is retired (review routing replaced the formula) — delete it`));
+  }
+  if (data.featured === true && !(data.reviewer && (data.reviewed_at || data.reviewedAt))) {
+    issues.push(fail(`featured: true needs a completed review (reviewer + reviewed_at)`));
   }
   if (data.reviewRequired === true && (!data.reviewer || !String(data.reviewer).trim())) {
     issues.push(
@@ -996,7 +1010,6 @@ async function validate(slug, { publishCheck = false, acceptWarnings = false, sk
   const normalized = {
     ...data,
     reviewRequired: data.review_required ?? data.reviewRequired,
-    riskScore: data.risk_score ?? data.riskScore,
     evidenceLevel: data.evidence_level ?? data.evidenceLevel,
   };
 
@@ -1010,7 +1023,8 @@ async function validate(slug, { publishCheck = false, acceptWarnings = false, sk
   push("post-images", checkPostImageFiles(content, slug));
   push("internal-links", checkInternalLinks(content));
   push("sources-section", checkSourcesSection(content));
-  if (data.category) push("word-count", checkWordCount(content, data.category));
+  push("word-count", checkWordCount(content, data));
+  push("evidence-levels", checkEvidenceLevels(content, data));
   push("banned-marketing", checkBannedPhrases(content, BANNED_MARKETING_WORDS, "banned marketing word"));
   push("banned-medical-advice", checkBannedPhrases(content, BANNED_MEDICAL_ADVICE, "banned medical-advice phrase"));
   push("banned-medical-advice", checkMedicalAdviceContextual(content));
@@ -1030,8 +1044,8 @@ async function validate(slug, { publishCheck = false, acceptWarnings = false, sk
     if (normalized.reviewRequired === true && (!normalized.reviewer || !String(normalized.reviewer).trim())) {
       allIssues.push({ kind: "fail", label: "publish-check", msg: "reviewer field required when reviewRequired: true" });
     }
-    if (typeof normalized.riskScore === "number" && normalized.riskScore >= 71) {
-      allIssues.push({ kind: "fail", label: "publish-check", msg: `riskScore ${normalized.riskScore} >= 71 — should not ship as an MDX post` });
+    if (normalized.reviewer && !normalized.reviewed_at && !normalized.reviewedAt) {
+      allIssues.push({ kind: "fail", label: "publish-check", msg: "reviewed_at required: the page shows the sign-off date" });
     }
     if (!acceptWarnings) {
       const urlWarn = allIssues.find((i) => i.kind === "warn" && i.label === "urls");

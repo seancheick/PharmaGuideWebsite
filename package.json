@@ -18,6 +18,7 @@
     "blog:feature": "node scripts/blog.mjs feature",
     "blog:validate": "node scripts/validate-blog.mjs",
     "blog:publish-check": "node scripts/validate-blog.mjs --publish-check",
+    "blog:catalog": "node scripts/blog-catalog.mjs",
     "test:email": "node --test tests/resend-contract.test.cjs tests/email-theme.test.cjs tests/email-poll.test.cjs",
     "test:ai-connector": "tsc -p tests/tsconfig.ai-connector.json && node --test tests/ai-connector.test.cjs",
     "test:ai-privacy": "node --test tests/analytics-privacy.test.cjs",

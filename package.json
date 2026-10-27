@@ -22,7 +22,9 @@
     "test:email": "node --test tests/resend-contract.test.cjs tests/email-theme.test.cjs tests/email-poll.test.cjs",
     "test:ai-connector": "tsc -p tests/tsconfig.ai-connector.json && node --test tests/ai-connector.test.cjs",
     "test:ai-privacy": "node --test tests/analytics-privacy.test.cjs",
-    "test:mcp-routing": "node --test tests/mcp-routing.test.cjs"
+    "test:mcp-routing": "node --test tests/mcp-routing.test.cjs",
+    "recalls:digest": "node scripts/recall-digest.mjs",
+    "test:recalls": "node --test tests/recall-digest.test.mjs"
   },
   "dependencies": {
     "@lucasmarkes/hairline": "0.5.1",

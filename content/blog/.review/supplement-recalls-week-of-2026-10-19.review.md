@@ -2,7 +2,7 @@
 
 Generated 2026-10-27 by `pnpm recalls:digest`. Week: Oct 19–25, 2026.
 
-## Coverage: complete
+## Source collection: complete
 
 | Source | Required | Status | Attempts | Records | Supplement records | Detail |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -16,6 +16,8 @@ Generated 2026-10-27 by `pnpm recalls:digest`. Week: Oct 19–25, 2026.
 | FDA Enforcement Report, 2026-10-21 | yes | ok | 1 | 134 | 0 | this week |
 | openFDA food enforcement (cross-check only) | no | ok | 1 |  |  |  |
 
+Records are what the collector read or refreshed, not this week's recall count. Source collection is not factual verification: that is recorded in the checklist below.
+
 ## openFDA cross-check
 
 openFDA lists 0 food enforcement record(s) mentioning "supplement" with a report date in this week; the Enforcement Report CSVs gave 0 classified supplement record(s). Only in openFDA: none. Only in the Enforcement Report: none. openFDA lags and is cross-check only; investigate any record only in openFDA.
@@ -27,9 +29,9 @@ openFDA lists 0 food enforcement record(s) mentioning "supplement" with a report
 - Key: `fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/tonight-we-ride-llc-issues-voluntary-recall-ultimate-forza-male-supplement-due-presence-undeclared`
 - Why included: FDA product type: Dietary Supplements
 - Notice: https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/tonight-we-ride-llc-issues-voluntary-recall-ultimate-forza-male-supplement-due-presence-undeclared
-- [ ] Brand, product, lots, sizes and identifiers match the notice
-- [ ] Reason and instructions are quoted, not paraphrased
-- [ ] Not generalised to an ingredient
+- [x] Brand, product, lots, sizes and identifiers match the notice
+- [x] Reason, affected scope and consumer instructions faithfully match the notice; no material condition or exclusion (refund requirements included) is omitted
+- [x] Not generalised to an ingredient
 
 Full notice text as fetched:
 
@@ -50,8 +52,10 @@ Full notice text as fetched:
 
 ## Before publishing
 
-- [ ] Every card checked against its official notice (above)
-- [ ] Coverage note matches the table above; never publish "no recalls" on incomplete coverage
-- [ ] Every record listed under Possible supplements / Only in openFDA is classified; re-render (`pnpm recalls:digest --week-ending <Sunday>`) once none are left, so the post can drop its "still being checked" note
-- [ ] Nothing interprets risk beyond quoting the notice (that needs a regular, PharmD-reviewed post; digests are team-checked only)
+Factual check recorded 2026-10-27: the card (product, company, all lots, announcement date, reason, both item/UPC pairs, capsule counts, distribution, action, refund with purchase verification, questions contact, physician advice) and the rest of the post were compared with the full notice text above. Nothing was left to classify (Source collection complete, no Possible supplements or openFDA-only records). Approved for publishing by Sean.
+
+- [x] Every card checked against its official notice (above)
+- [x] Coverage note matches the table above; never publish "no recalls" on incomplete coverage
+- [x] Every record listed under Possible supplements / Only in openFDA is classified; re-render (`pnpm recalls:digest --week-ending <Sunday>`) once none are left, so the post can drop its "still being checked" note
+- [x] Nothing interprets risk beyond quoting the notice (that needs a regular, PharmD-reviewed post; digests are team-checked only)
 - [ ] After checking: `pnpm blog:approve supplement-recalls-week-of-2026-10-19` (moves the draft live, runs publish-check, rolls back on failure)

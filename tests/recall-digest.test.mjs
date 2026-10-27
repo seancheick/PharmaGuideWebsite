@@ -179,6 +179,15 @@ test("instructions are the notice's words to consumers, not narration or boilerp
   assert.ok(!instructions.concat(identifiers).some((s) => /MedWatch|customers were notified/.test(s)));
 });
 
+test("what a refund requires stays with the instructions", () => {
+  const { instructions } = extractScope([
+    "Consumers may return unopened or partially used product to a GNC store for a full refund. A receipt or the phone number or email address associated with the loyalty account used for the purchase should be provided so the purchase can be verified.",
+    "The receipt printer model was not affected.",
+  ]);
+  assert.equal(instructions.length, 2);
+  assert.match(instructions[1], /^A receipt .* so the purchase can be verified\.$/);
+});
+
 test("a grocer with one supplement recall does not pull in its blueberries", () => {
   const ann = { company: "Publix Super Markets, Inc.", brand: "GreenWise", productDescription: "Vitamin D3 softgels", fdaPublishDate: "2026-08-01", url: "u" };
   const [berries] = parseEnforcementCsv(csv(csvRow({ firm: "Publix Super Markets, Inc.", desc: "Organic Whole Blueberries, Net Wt 10 oz" })));
@@ -247,7 +256,7 @@ test("a failed Enforcement Report makes coverage incomplete and the post never s
   assert.equal(quiet, false);
   assert.match(mdx, /Coverage for this week is incomplete/);
   assert.doesNotMatch(mdx, /No dietary-supplement recalls this week|Were there any supplement recalls this week/);
-  assert.match(review, /Coverage: INCOMPLETE/);
+  assert.match(review, /Source collection: INCOMPLETE/);
 });
 
 test("a failed recalls listing makes coverage incomplete even when everything else is fine", async () => {

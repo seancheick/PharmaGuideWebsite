@@ -24,7 +24,7 @@
 
 import crypto from "node:crypto";
 
-export const EXTRACTOR_VERSION = 1; // bump when extraction changes: re-baselines stored notices without update events
+export const EXTRACTOR_VERSION = 2; // bump when extraction changes: re-baselines stored notices without update events
 
 export const SOURCES = {
   listing: {
@@ -293,8 +293,10 @@ const BOILERPLATE = /MedWatch|Adverse reactions or quality problems|Complete and
 const IDENTIFIER = /\b(lots?|batch(es)?|UPC|NDC|GTIN|item\s*(#|no\.?|number)|SKU|model|expir\w*|exp\.?\s*dates?|best[- ]by|use[- ]by|sell[- ]by|net\s*wt|sizes?|ounces?|oz|mL|fl\.?\s*oz|grams?|count|ct|bottles?|packages?|pouch(es)?|box(es)?|jars?|packets?|sachets?|blister)\b/i;
 const DISTRIBUTION = /\b(distributed|sold (at|in|through|online|via|nationwide)|available (at|in|through)|shipped|nationwide|retail (stores|locations))\b/i;
 // An instruction is addressed to the reader: a consumer subject with a modal
-// verb, or an imperative. Narration ("customers were notified to…") is not.
-const INSTRUCTION = /(^(do not|don't|stop|return|discard|dispose|check|contact|call)\b)|\b(consumers?|customers?|patients?|parents?|caregivers?|retailers?|distributors?|anyone|those)\b[^.]{0,100}\b(should|are (urged|advised|asked|encouraged)|must|may (return|contact|call|obtain|discard|dispose)|can (return|contact|call|obtain|discard|dispose))\b/i;
+// verb, an imperative, or what a refund requires ("A receipt … should be
+// provided so the purchase can be verified"). Narration ("customers were
+// notified to…") is not.
+const INSTRUCTION = /(^(do not|don't|stop|return|discard|dispose|check|contact|call)\b)|\b(receipts?|proof of purchase)\b[^.]{0,160}\b(should|must|is required|are required|is needed)\b|\b(consumers?|customers?|patients?|parents?|caregivers?|retailers?|distributors?|anyone|those)\b[^.]{0,100}\b(should|are (urged|advised|asked|encouraged)|must|may (return|contact|call|obtain|discard|dispose)|can (return|contact|call|obtain|discard|dispose))\b/i;
 
 /** Verbatim sentences from the notice, sorted into scope, distribution and instructions. */
 export function extractScope(paragraphs) {
@@ -1003,11 +1005,13 @@ function renderReview({ slug, label, coverage, selection, generatedOn, quiet }) 
     "",
     `Generated ${generatedOn} by \`pnpm recalls:digest\`. Week: ${label}.`,
     "",
-    `## Coverage: ${coverage.complete ? "complete" : "INCOMPLETE"}${quiet ? " (quiet week)" : ""}${unresolvedCount(coverage) ? ` — ${unresolvedCount(coverage)} record(s) need classifying before the week is complete` : ""}`,
+    `## Source collection: ${coverage.complete ? "complete" : "INCOMPLETE"}${quiet ? " (quiet week)" : ""}${unresolvedCount(coverage) ? ` — ${unresolvedCount(coverage)} record(s) need classifying before the week is complete` : ""}`,
     "",
     "| Source | Required | Status | Attempts | Records | Supplement records | Detail |",
     "| --- | --- | --- | --- | --- | --- | --- |",
     ...coverage.sources.map((s) => `| ${s.label} | ${s.required ? "yes" : "no"} | ${s.status}${s.error ? ` (${s.error})` : ""} | ${s.attempts ?? ""} | ${s.records ?? ""} | ${s.supplementRecords ?? ""} | ${s.detail ?? ""} |`),
+    "",
+    "Records are what the collector read or refreshed, not this week's recall count. Source collection is not factual verification: that is recorded in the checklist below.",
     "",
   ];
   if (coverage.possibleSupplements?.length) {
@@ -1029,7 +1033,7 @@ function renderReview({ slug, label, coverage, selection, generatedOn, quiet }) 
   for (const { entry, event } of all) {
     lines.push(`### ${entry.company || entry.firm} — ${event.kind} (${event.date})`, "", `- Key: \`${entry.key}\``, `- Why included: ${entry.matchReason}`);
     if (entry.url) lines.push(`- Notice: ${entry.url}`);
-    lines.push("- [ ] Brand, product, lots, sizes and identifiers match the notice", "- [ ] Reason and instructions are quoted, not paraphrased", "- [ ] Not generalised to an ingredient", "");
+    lines.push("- [ ] Brand, product, lots, sizes and identifiers match the notice", "- [ ] Reason, affected scope and consumer instructions faithfully match the notice; no material condition or exclusion (refund requirements included) is omitted", "- [ ] Not generalised to an ingredient", "");
     if (entry.noticeText) lines.push("Full notice text as fetched:", "", ...entry.noticeText.map((p) => `> ${p}`), "");
   }
   lines.push(

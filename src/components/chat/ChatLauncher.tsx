@@ -120,6 +120,15 @@ export function ChatLauncher() {
     return () => window.removeEventListener("scroll", handle);
   }, [revealed]);
 
+  // ─── Tell the brief offer a chat is open (it never interrupts one) ─
+  useEffect(() => {
+    if (!isOpen) return;
+    document.documentElement.dataset.chatOpen = "";
+    return () => {
+      delete document.documentElement.dataset.chatOpen;
+    };
+  }, [isOpen]);
+
   // ─── Body scroll lock + Esc when panel is open on mobile ───────
   useEffect(() => {
     if (!isOpen) return;
@@ -284,6 +293,7 @@ export function ChatLauncher() {
             aria-label="Open PharmaGuide AI chat"
             aria-haspopup="dialog"
             aria-expanded={false}
+            data-chat-launcher=""
             className="group fixed bottom-5 right-5 z-[250] inline-flex items-center gap-2.5 rounded-pill border border-border bg-surface/95 py-2.5 pl-3 pr-4 text-body-sm font-medium text-ink shadow-lg backdrop-blur-md transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent md:bottom-6 md:right-6"
           >
             <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-accent text-background">

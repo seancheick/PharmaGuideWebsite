@@ -1,6 +1,6 @@
 import { pageMetadata } from "@/lib/pages";
 import { displayName, LEAD_REVIEWER } from "@/lib/people";
-import { ChecklistForm } from "./ChecklistForm";
+import { BriefForm } from "@/components/brief/BriefForm";
 
 export const metadata = pageMetadata("checklist");
 
@@ -41,7 +41,7 @@ export default function ChecklistPage() {
         </h1>
 
         <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
-          The Supplement Safety Intelligence Brief: 12 pharmacist-reviewed sections on labels,
+          The Supplement Safety Intelligence Brief: 12 clinician-reviewed sections on labels,
           doses, hidden ingredients, and interactions. Built on primary research, written for real
           life.
         </p>
@@ -56,7 +56,7 @@ export default function ChecklistPage() {
         </ul>
 
         <div className="mt-8 w-full">
-          <ChecklistForm />
+          <BriefForm idPrefix="checklist" placement="checklist" />
         </div>
 
         <p className="mt-8 text-xs text-muted">

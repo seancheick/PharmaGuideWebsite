@@ -2,21 +2,38 @@
 
 import { useState } from "react";
 import { requestSafetyBrief } from "@/app/actions/subscribe";
+import { track, type BriefPlacement } from "@/lib/analytics";
+import { markBriefRequested } from "@/lib/brief-offer";
 import { isValidEmail } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 
 /**
- * Email capture form for the /checklist funnel page.
+ * Safety Brief request form — the one form behind every brief offer
+ * (/checklist, the blog dialog and sheet, the end-of-article offer).
  *
  * Same defensive pattern as the other subscribe surfaces: client-side
  * format check, honeypot field named "company" (bots fill it, humans
  * never see it), server action handles rate limiting + Resend.
+ *
+ * Only a server `ok: true` counts as a request: it silences the automatic
+ * offer (lib/brief-offer.ts) and fires onSuccess. Errors stay retryable.
  */
-export function ChecklistForm() {
+interface BriefFormProps {
+  /** Prefix for element ids, so two forms on one page don't collide. */
+  idPrefix: string;
+  placement: BriefPlacement;
+  onSuccess?: () => void;
+}
+
+export function BriefForm({ idPrefix, placement, onSuccess }: BriefFormProps) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const inputId = `${idPrefix}-email`;
+  const helpId = `${idPrefix}-help`;
+  const errorId = `${idPrefix}-error`;
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -33,12 +50,16 @@ export function ChecklistForm() {
 
     try {
       const result = await requestSafetyBrief({ email, company });
+      track("brief_offer", { action: "submit", placement, ok: result.ok });
       if (result.ok) {
+        markBriefRequested();
         setSubmitted(result.message);
+        onSuccess?.();
       } else {
         setError(result.message);
       }
     } catch {
+      track("brief_offer", { action: "submit", placement, ok: false });
       setError("Something went wrong. Try again in a moment?");
     } finally {
       setSubmitting(false);
@@ -68,16 +89,18 @@ export function ChecklistForm() {
         className="absolute h-0 w-0 opacity-0"
       />
       <div className="flex flex-col gap-3 sm:flex-row">
-        <label htmlFor="checklist-email" className="sr-only">
+        <label htmlFor={inputId} className="sr-only">
           Email address
         </label>
         <input
-          id="checklist-email"
+          id={inputId}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
           autoComplete="email"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${errorId} ${helpId}` : helpId}
           className={cn(
             "w-full flex-1 rounded-full border border-border bg-white px-5 py-3.5",
             "text-ink placeholder:text-muted/60",
@@ -92,16 +115,17 @@ export function ChecklistForm() {
             "transition-opacity hover:opacity-90 disabled:opacity-60"
           )}
         >
-          {submitting ? "Sending..." : "Send me the brief"}
+          {submitting ? "Sending..." : "Email me the free brief"}
         </button>
       </div>
       {error && (
-        <p className="mt-3 text-sm text-red-700" role="alert">
+        <p id={errorId} className="mt-3 text-sm text-red-700" role="alert">
           {error}
         </p>
       )}
-      <p className="mt-3 text-sm text-muted">
-        One email with the brief, and you join the PharmaGuide beta list. Unsubscribe anytime.
+      <p id={helpId} className="mt-3 text-sm text-muted">
+        We&apos;ll email you the brief and add you to the PharmaGuide newsletter and beta list.
+        Unsubscribe anytime.
       </p>
     </form>
   );

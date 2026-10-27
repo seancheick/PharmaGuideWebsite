@@ -1,9 +1,18 @@
 import "server-only";
-import { Resend, type ErrorResponse } from "resend";
+import { Resend, type ErrorResponse, type GetContactResponseSuccess } from "resend";
 import { render } from "@react-email/render";
 import { env } from "./env";
 import { isValidEmail } from "./validation";
 import { log, hashPii } from "./logger";
+import { syncBetaContact } from "./email-tracking";
+import { pollChoices } from "./email-poll.cjs";
+import {
+  deliverWelcomeOnce,
+  reserveWelcome,
+  welcomeKey,
+  type WelcomeMessage,
+} from "./email-delivery";
+import { unsubscribeUrl, unsubscribeHeaders, type EmailPreference } from "./email-preferences";
 
 /**
  * Resend client + helpers for the email surfaces:
@@ -56,37 +65,89 @@ class ResendError extends Error {
 }
 
 /** Throws on any send failure: an email that did not go out is never a success. */
-async function sendEmail(options: Parameters<typeof resend.emails.send>[0]): Promise<void> {
-  const { data, error } = await resend.emails.send(options);
+async function sendEmail(
+  options: Parameters<typeof resend.emails.send>[0],
+  idempotencyKey?: string
+): Promise<void> {
+  const { data, error } = await resend.emails.send(options, { idempotencyKey });
   if (error) throw new ResendError("emails.send", error);
   if (!data?.id) throw new Error("emails.send: missing delivery acknowledgement");
 }
 
-/**
- * Adds a contact; returns false when it was already in the audience.
- *
- * Resend does not document what a re-add returns, and its 409/422 codes
- * also cover bad parameters and locks. So any failed add is followed by
- * a lookup: only a contact that really exists counts as "already on the
- * list". Everything else throws.
- */
-async function addContact(email: string, audienceId: string, firstName?: string): Promise<boolean> {
+function topicForAudience(audienceId: string): string {
+  return audienceId === env.RESEND_AUDIENCE_BETA_ID
+    ? env.RESEND_BETA_TOPIC_ID
+    : env.RESEND_NEWSLETTER_TOPIC_ID;
+}
+
+async function topicContact(contact: GetContactResponseSuccess, audienceId: string) {
+  const topicId = topicForAudience(audienceId);
+  if (!topicId || contact.unsubscribed) return contact;
+  const topics = await resend.contacts.topics.list({ id: contact.id, limit: 100 });
+  if (topics.error || !topics.data) throw new Error("Email preference lookup failed");
+  const subscribed = topics.data.data.some(
+    (topic) => topic.id === topicId && topic.subscription === "opt_in"
+  );
+  return { ...contact, unsubscribed: !subscribed };
+}
+
+async function addContact(
+  email: string,
+  audienceId: string,
+  firstName?: string,
+  beforeCreate?: () => Promise<void>
+) {
+  const global = await resend.contacts.get({ email });
+  if (global.error && global.error.statusCode !== 404)
+    throw new ResendError("contacts.get", global.error);
+  if (!global.error && !global.data?.id)
+    throw new Error("contacts.get: missing contact acknowledgement");
+  const ensureMembership = async (contact: GetContactResponseSuccess) => {
+    const scoped = await topicContact(contact, audienceId);
+    if (scoped.unsubscribed) return scoped;
+    const memberships = await resend.contacts.segments.list({ contactId: scoped.id, limit: 100 });
+    if (memberships.error || !memberships.data) throw new Error("Email list lookup failed");
+    if (memberships.data.data.some((segment) => segment.id === audienceId)) return scoped;
+    await beforeCreate?.();
+    if (audienceId === env.RESEND_AUDIENCE_BETA_ID && !scoped.properties?.pg_beta_joined_at?.value) {
+      const recorded = await resend.contacts.update({ id: scoped.id, properties: {
+        pg_beta_joined_at: new Date().toISOString(),
+      } });
+      if (recorded.error || recorded.data?.id !== scoped.id) throw new Error("Beta signup date was not recorded");
+    }
+    const membership = await resend.contacts.segments.add({
+      contactId: scoped.id,
+      segmentId: audienceId,
+    });
+    if (membership.error || !membership.data?.id) throw new Error("Email list enrollment failed");
+    return scoped;
+  };
+  if (global.data?.id) return ensureMembership(global.data);
+  await beforeCreate?.();
+  const topicId = topicForAudience(audienceId);
   const { data, error } = await resend.contacts.create({
     email,
-    audienceId,
+    segments: [{ id: audienceId }],
+    ...(topicId ? { topics: [{ id: topicId, subscription: "opt_in" as const }] } : {}),
+    ...(env.RESEND_BETA_WAITING_SEGMENT_ID && audienceId === env.RESEND_AUDIENCE_BETA_ID
+      ? { properties: { pg_beta_status: "waiting", pg_source: "website", pg_beta_joined_at: new Date().toISOString() } }
+      : {}),
     ...(firstName ? { firstName } : {}),
   });
   if (!error) {
     if (!data?.id) throw new Error("contacts.create: missing contact acknowledgement");
-    return true;
+    const confirmed = await resend.contacts.get({ id: data.id });
+    if (confirmed.error) throw new ResendError("contacts.get", confirmed.error);
+    if (!confirmed.data?.id) throw new Error("contacts.get: missing contact acknowledgement");
+    return ensureMembership(confirmed.data);
   }
-  const existing = await resend.contacts.get({ email, audienceId });
+  const existing = await resend.contacts.get({ email });
   if (!existing.error && existing.data?.id) {
     log.info("resend.contact_exists", {
       email_hash: hashPii(email),
       create_error: `${error.name} (${error.statusCode})`,
     });
-    return false;
+    return ensureMembership(existing.data);
   }
   throw new ResendError("contacts.create", error);
 }
@@ -96,12 +157,6 @@ const listToAudience: Record<SubscribeList, string> = {
   newsletter: env.RESEND_AUDIENCE_NEWSLETTER_ID,
 };
 
-/**
- * Add a contact to an Audience + send the welcome email.
- *
- * Idempotent at the audience layer: a contact Resend did not create
- * (see addContact) is a success that skips the second welcome email.
- */
 export async function subscribe({
   email,
   list,
@@ -118,24 +173,43 @@ export async function subscribe({
   const audienceId = listToAudience[list];
 
   try {
-    // 1. Add to audience. An existing contact is not an error; it just
-    // doesn't get a second welcome email.
-    const isNewContact = await addContact(email, audienceId, firstName);
-
-    // 2. Send welcome email (only for net-new contacts)
-    if (isNewContact) {
-      await sendWelcomeEmail({ email, list });
+    const deliveryKey = welcomeKey(email, list);
+    const contact = await addContact(email, audienceId, firstName, () =>
+      reserveWelcome(deliveryKey)
+    );
+    if (contact.unsubscribed) {
+      return {
+        ok: true,
+        message:
+          "Your email preferences are unchanged. Contact info@pharmaguide.io if you want to rejoin.",
+      };
+    }
+    const delivery = await deliverWelcomeOnce(
+      deliveryKey,
+      () => prepareWelcomeEmail({ email, list, contactId: contact.id }),
+      (message) => sendEmail(message, `welcome/${deliveryKey}`)
+    );
+    if (list === "beta") {
+      try {
+        await syncBetaContact(contact.id);
+      } catch {
+        log.error("email.beta_tracking_needs_review", { contact_id: contact.id });
+      }
     }
 
     log.info("subscribe.success", {
       list,
       email_hash: hashPii(email),
-      new_contact: isNewContact,
     });
 
     return {
       ok: true,
-      message: isNewContact ? "You're in." : "You're already on the list — see you soon.",
+      message:
+        delivery === "existing"
+          ? "You're already on the list. Your email preferences are unchanged."
+          : delivery === "processing"
+            ? "You're on the list. Your welcome email is being processed. If it doesn't arrive, try again in a minute."
+            : "You're on the list. Check your inbox for your welcome email.",
     };
   } catch (err) {
     log.error("subscribe.failed", {
@@ -161,34 +235,117 @@ export async function subscribe({
  * Resend auto-generates one when omitted, but explicit text gives
  * us control over what Apple Mail / accessibility tools read.
  */
-async function sendWelcomeEmail({ email, list }: { email: string; list: SubscribeList }) {
+async function prepareWelcomeEmail({
+  email,
+  list,
+  contactId,
+}: {
+  email: string;
+  list: SubscribeList;
+  contactId: string;
+}): Promise<WelcomeMessage> {
   const { BetaWelcomeEmail } = await import("@/emails/BetaWelcomeEmail");
   const { NewsletterWelcomeEmail } = await import("@/emails/NewsletterWelcomeEmail");
 
   const subject =
     list === "beta"
       ? "You're on the PharmaGuide beta list"
-      : "Welcome to PharmaGuide — first dispatch on the way";
+      : "Welcome to PharmaGuide's monthly notes";
 
-  const react = list === "beta" ? BetaWelcomeEmail({ email }) : NewsletterWelcomeEmail({ email });
+  const url = unsubscribeUrl({ contactId, list });
+  const react =
+    list === "beta"
+      ? BetaWelcomeEmail({ email, unsubscribeUrl: url })
+      : NewsletterWelcomeEmail({ email, unsubscribeUrl: url });
 
   const text = await render(react, { plainText: true });
+  const html = await render(react);
 
-  await sendEmail({
+  return {
     from: env.RESEND_FROM_EMAIL,
     to: email,
     replyTo: env.RESEND_REPLY_TO_EMAIL,
     subject,
-    react,
+    html,
     text,
-  });
+    headers: unsubscribeHeaders(url),
+  };
 }
 
-// ─── Safety Brief delivery (/checklist funnel) ───────────────────────
+export const unsubscribeReasons: readonly string[] = [
+  "too_many", "not_relevant", "not_using", "did_not_signup", "other",
+];
+
+export async function saveBetaInterest(contactId: string, choice: string): Promise<void> {
+  if (!pollChoices.some(({ value }) => value === choice)) throw new Error("Invalid poll choice");
+  const contact = await resend.contacts.get({ id: contactId });
+  const segments = await resend.contacts.segments.list({ contactId, limit: 100 });
+  if (contact.error || contact.data?.id !== contactId || segments.error ||
+      !segments.data?.data.some(({ id }) => id === listToAudience.beta))
+    throw new Error("Beta contact lookup failed");
+  const current = contact.data.properties?.pg_beta_interest;
+  if (current?.value === choice) return;
+  const saved = await resend.contacts.update({ id: contactId, properties: {
+    pg_beta_interest: choice,
+    pg_beta_interest_at: new Date().toISOString(),
+  } });
+  if (saved.error || saved.data?.id !== contactId) throw new Error("Poll answer save failed");
+}
+
+export async function saveUnsubscribeFeedback(
+  preference: EmailPreference,
+  reason: string
+): Promise<"saved" | "not_opted_out" | "save_failed"> {
+  if (!unsubscribeReasons.includes(reason)) throw new Error("Invalid feedback reason");
+  const topicId = topicForAudience(listToAudience[preference.list]);
+  if (!topicId) throw new Error("Email topic preferences are not configured");
+  const contact = await resend.contacts.get({ id: preference.contactId });
+  if (contact.error || contact.data?.id !== preference.contactId)
+    throw new Error("Email contact lookup failed");
+  const topics = await resend.contacts.topics.list({ id: preference.contactId, limit: 100 });
+  if (topics.error || !topics.data) throw new Error("Email preference lookup failed");
+  if (!topics.data.data.some((topic) => topic.id === topicId && topic.subscription === "opt_out"))
+    return "not_opted_out";
+  try {
+    const saved = await resend.contacts.update({
+      id: preference.contactId,
+      properties: { pg_unsubscribe_feedback: `${preference.list}:${reason}` },
+    });
+    return saved.error || saved.data?.id !== preference.contactId ? "save_failed" : "saved";
+  } catch {
+    return "save_failed";
+  }
+}
+
+export async function unsubscribeContact(preference: EmailPreference): Promise<void> {
+  const topicId = topicForAudience(listToAudience[preference.list]);
+  if (!topicId) throw new Error("Email topic preferences are not configured");
+  const { data, error } = await resend.contacts.topics.update({
+    id: preference.contactId,
+    topics: [{ id: topicId, subscription: "opt_out" }],
+  });
+  if (error) throw new ResendError("contacts.update", error);
+  if (!data?.id) throw new Error("contacts.update: missing unsubscribe acknowledgement");
+  if (preference.list === "beta") {
+    const updated = await resend.contacts.update({
+      id: preference.contactId,
+      properties: {
+        pg_beta_status: "unsubscribed",
+        pg_status_updated_at: new Date().toISOString(),
+      },
+    });
+    if (updated.error || !updated.data?.id) throw new Error("Beta preference update failed");
+    await syncBetaContact(preference.contactId);
+  }
+}
+
+// ─── Safety Brief delivery (brief request forms) ─────────────────────
 // Lead magnet: visitor requests the Supplement Safety Intelligence Brief.
-// Adds them to the beta audience (Resend dedupes re-adds) and always sends
-// the brief email — they explicitly asked for it, so unlike the welcome
-// flow this is not limited to net-new contacts.
+// Adds them to the newsletter and beta audiences (the form says so;
+// Resend dedupes re-adds, and an earlier opt-out from either list is
+// kept) and always sends the brief email — they explicitly asked for it,
+// so unlike the welcome flow this is not limited to net-new contacts.
+// No separate welcome email: the brief email covers both lists.
 
 export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
   if (!isValidEmail(email)) {
@@ -200,23 +357,49 @@ export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
   }
 
   try {
-    let audienceConfirmed = true;
-    // Add to the beta audience so brief requesters join the waitlist
-    // (the form says so). Re-requests still get the brief, and so does a
-    // visitor whose contact add failed: they asked for the PDF.
-    try {
-      await addContact(email, env.RESEND_AUDIENCE_BETA_ID);
-    } catch (err) {
-      audienceConfirmed = false;
-      log.error("brief.contact_failed", {
-        email_hash: hashPii(email),
-        error: err instanceof Error ? err.message : String(err),
-      });
-    }
+    // Re-requests still get the brief, and so does a visitor whose
+    // contact add failed: they asked for the PDF.
+    const join = async (list: SubscribeList) => {
+      try {
+        return await addContact(email, listToAudience[list]);
+      } catch (err) {
+        log.error("brief.contact_failed", {
+          list,
+          email_hash: hashPii(email),
+          error: err instanceof Error ? err.message : String(err),
+        });
+        return undefined;
+      }
+    };
+    const newsletter = await join("newsletter");
+    const contact = await join("beta");
 
     const { BriefDeliveryEmail } = await import("@/emails/BriefDeliveryEmail");
-    const react = BriefDeliveryEmail({ email });
+    const newsletterEnrolled = !!newsletter && !newsletter.unsubscribed;
+    const betaEnrolled = !!contact && !contact.unsubscribed;
+    const betaUrl = contact ? unsubscribeUrl({ contactId: contact.id, list: "beta" }) : undefined;
+    const newsletterUrl =
+      newsletter && newsletterEnrolled
+        ? unsubscribeUrl({ contactId: newsletter.id, list: "newsletter" })
+        : undefined;
+    if (betaEnrolled && contact) {
+      try {
+        await syncBetaContact(contact.id);
+      } catch {
+        log.error("email.beta_tracking_needs_review", { contact_id: contact.id });
+      }
+    }
+    const react = BriefDeliveryEmail({
+      email,
+      betaUnsubscribeUrl: betaUrl,
+      newsletterUnsubscribeUrl: newsletterUrl,
+      betaEnrolled,
+      newsletterEnrolled,
+    });
     const text = await render(react, { plainText: true });
+    // One-click unsubscribe in the inbox stops the monthly notes, the list
+    // that keeps sending; the footer links cover each list.
+    const headerUrl = newsletterUrl ?? betaUrl;
 
     await sendEmail({
       from: env.RESEND_FROM_EMAIL,
@@ -225,15 +408,18 @@ export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
       subject: "Your Supplement Safety Brief is here",
       react,
       text,
+      ...(headerUrl ? { headers: unsubscribeHeaders(headerUrl) } : {}),
     });
 
     log.info("brief.sent", { email_hash: hashPii(email) });
 
     return {
       ok: true,
-      message: audienceConfirmed
-        ? "Check your inbox — the brief is on its way."
-        : "Check your inbox for the brief. We could not confirm your beta signup; please join again.",
+      message: betaEnrolled
+        ? newsletterEnrolled
+          ? "Check your inbox. The brief is on its way, and you're on the newsletter and beta list."
+          : "Check your inbox. The brief is on its way."
+        : "Check your inbox for the brief. We could not confirm your beta signup. Contact info@pharmaguide.io to check your status or change your email preferences.",
     };
   } catch (err) {
     log.error("brief.failed", {
@@ -269,7 +455,7 @@ export async function notifyProviderInterest(inq: ProviderInquiry): Promise<Subs
     };
   }
 
-  const subject = `Healthcare Pros — early-access inquiry from a ${inq.role}`;
+  const subject = `Healthcare Pros: early-access inquiry from a ${inq.role}`;
   const lines = [
     `Role: ${inq.role}`,
     `Email: ${inq.email}`,
@@ -278,7 +464,7 @@ export async function notifyProviderInterest(inq: ProviderInquiry): Promise<Subs
     inq.notes ? "Notes from the requester:" : null,
     inq.notes ?? null,
     "",
-    "— Sent from /hipaa § PharmaGuide for Healthcare Pros",
+    "Sent from PharmaGuide for Healthcare Pros",
   ]
     .filter((l): l is string => l !== null)
     .join("\n");

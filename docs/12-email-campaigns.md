@@ -1,495 +1,335 @@
-# 12 — Email Campaigns
+# PharmaGuide email system
 
-All transactional + manual email copy lives here. Single source of truth.
-Welcome emails ship from `src/emails/*.tsx` (React Email components). Everything
-in this doc is **copy-only** — paste into Resend Automations, Resend Broadcasts,
-or your personal mail client.
+## Day 14 interest poll
 
----
+Day 14 alone offers six general testing topics: interactions, the whole stack,
+evidence, condition fit, ingredient or dose overlap, and something else.
+The condition-fit choice asks for an interest, never a diagnosis or condition name.
+The interactions choice does not promise that a combination is safe.
+Each signed link opens a branded
+confirmation page. Opening a link never records an answer. Confirming stores only
+the latest choice (`pg_beta_interest`) and date (`pg_beta_interest_at`) on the
+Resend contact. Reconfirming the same choice is a no-op. No free text, health
+details, signup, invitation, or consent change is involved.
 
-## Voice & legal quick-reference
+View answers in Resend under Contacts, then the contact's custom properties.
+For an overview, run:
 
-| Surface | Voice | Footer requirements |
-|---|---|---|
-| **Drip 1–3** (beta waitlist) | Brand voice: calm, precise, italic-serif punchlines, second-person, no exclamations | Physical address (CAN-SPAM) + unsubscribe link |
-| **Reactivation** (old subscribers) | Brand voice, warmer | Physical address + unsubscribe |
-| **Friends & Family** (Sean's personal send) | Personal, warm, genuinely excited — drop the brand restraint, you're writing to people who love you | None — personal email, not commercial |
-
-**CAN-SPAM footer** (copy-paste for any Resend send):
-```
-PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
-Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
+```sh
+node --env-file=.env --env-file=.tmp/email-review/deployment.env scripts/email-ops.mjs poll-report
 ```
 
-**Claim-language guardrails (apply to every drip, broadcast, and personal send):**
-
-PharmaGuide is decision support, not medical advice. Email copy should
-reflect that — both for clinical-risk reasons and because over-claiming
-erodes the calm-clinical credibility the brand depends on.
-
-| ❌ Avoid | ✅ Use |
-|---|---|
-| "Reduces absorption by X%" *(without a cited study in the email)* | "Can interfere with absorption when taken too close together" |
-| "FDA-aligned," "label-of-record," "ground truth" | "A major public reference," "one of the strongest public reference points" |
-| "We decompose / decode proprietary blends" | "We flag blends and surface what can and can't be verified" |
-| "Real interactions vs. chatroom rumor" | "Evidence-graded interaction signals" |
-| "Is this safe for me?" *(implies clinical answer)* | "What should I know before taking this with everything else in my stack?" |
-| "The thing the pharmacist wouldn't, the doctor couldn't" | "The tool between the pharmacy counter, the doctor's office, and the supplement aisle" |
-
-**Trust the reader.** Specifics are good; absolute claims are not. If you
-quote a study figure ("up to 30%"), the citation rides along in the same
-email or on the linked page. Otherwise, soften.
-
-**Sending map:**
-
-| Message | Tool | Trigger |
-|---|---|---|
-| Day 5 / 14 / 28 drips | Resend → Automations | Contact added to "Beta Waitlist" audience |
-| Reactivation | Resend → Broadcasts | One-off send to "Beta Waitlist" segment, filter: joined > 60 days ago |
-| Friends & Family | Your personal email (Gmail/Outlook) | BCC list, sent from seancheick@gmail.com |
-
----
-
-## Drip 1 — Day 5 — Why we built PharmaGuide
-
-**Subject:** "Probably fine" is not an answer
-**Preview text:** The pharmacy-counter question that started all this.
-**From:** Sean at PharmaGuide <info@pharmaguide.io>
-**Send when:** 5 days after waitlist signup
-**Audience:** Beta Waitlist
-**Primary KPI:** reply rate
-
----
-
-Hey —
-
-A few years ago I stood at a pharmacy counter with a bottle of fish oil
-and a prescription for atorvastatin, and asked what I thought was a simple
-question: *do these interact?*
-
-The pharmacist was generous with his time. He glanced at the bottle and
-said, "Those should be fine — maybe space them out a bit."
-
-That was the whole answer. Not because he didn't know his field — because
-the systems behind the counter aren't built for the question. Pharmacy
-software checks drugs against drugs, automatically, every time. The
-supplement half of my question wasn't in the system at all.
-
-My doctor's office, same structural problem: a fifteen-minute visit has
-room for the prescriptions, and the supplement list — if it comes up at
-all — gets a "probably fine" on the way out the door.
-
-Here's what stuck with me. When I eventually dug through the literature
-myself, the answer was mostly reassuring. The frustrating part was never
-the answer — *it was that nobody could show me the evidence.* And for
-plenty of other combinations, it isn't reassuring at all: calcium can
-interfere with thyroid medication absorption when taken too close
-together. Metformin is associated with lower B12 levels over time. It's
-all documented. It just sits where most people can't reach it.
-
-That's why PharmaGuide exists.
-
-We built the tool I wished existed between the pharmacy counter, the
-doctor's office, and the supplement aisle. *One check, across your full
-stack — medications and supplements, together.*
-
-Not a quiz. Not a vibes-based "wellness score." Evidence-graded decision
-support: interaction signals, medication-nutrient depletions, dose
-accumulation across products, ingredient quality, FDA recalls. With the
-citations attached.
-
-Beta invites go out in order of signup — you're in the first wave.
-
-One ask while you wait: **hit reply and tell me the one question about
-your stack you've never gotten a straight answer on.** An interaction, an
-ingredient's quality, a brand you're not sure about — whatever it is.
-I read every reply, and the answers shape what we build and write next.
-
-— Sean
-Founder, PharmaGuide
-
----
-
-PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
-Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
-
----
-
-> **Authenticity note:** the pharmacy scene above must be *your* real one.
-> If the actual pair wasn't fish oil + atorvastatin, swap in whatever you
-> were carrying that day — the copy works with any combination, and a true
-> detail always reads truer than an optimized one.
-
----
-
-## Drip 2 — Day 14 — Inside the database
-
-**Subject:** Inside the database — 180,000 products
-**Preview text:** Where the data comes from, and why that matters.
-**From:** Sean at PharmaGuide <info@pharmaguide.io>
-**Send when:** 14 days after waitlist signup
-**Audience:** Beta Waitlist
-**Primary KPI:** click-through to the linked post
-
----
-
-Hey again —
-
-Quick one. Got a few "how do you actually know what's in my supplement" emails
-after the last note, so here's the answer.
-
-The PharmaGuide catalog covers **180,000+ products** — supplements, OTC meds,
-and a growing prescription drug index. The data comes from four places that
-disagree with each other constantly, which is exactly the point of having
-all four:
-
-- **NIH Dietary Supplement Label Database (DSLD)** — a major public label
-  database for supplements sold in the US. One of the strongest public
-  reference points we have.
-- **FDA drug labeling + recall sources** — active drug ingredients, dose
-  strengths, and the recall pipeline.
-- **FAERS** — adverse event signals. Helps surface safety concerns that
-  require context, not just theoretical interaction risk.
-- **Manufacturer label scrapes + brand-direct integrations** — for the
-  proprietary blend gap. (We flag those blends and surface what can and
-  can't be verified.)
-
-When the same product shows up across all four sources with conflicting dose
-labels — and it happens more than you'd think — we surface the disagreement
-instead of picking one. *Your check is only as good as what's behind it.*
-
-That's also why we don't sell your stack data. You shouldn't have to wonder
-who else is reading what you swallow.
-
-If you want to see what this looks like in practice, start here:
-
-**→ [What "proprietary blend" actually hides](https://www.pharmaguide.io/blog/proprietary-blends-decoded?utm_source=resend&utm_medium=email&utm_campaign=drip-day14)**
-
-You're one of [N] people on the waitlist — invites go out in order of
-signup, and you're in the first wave.
-
-— Sean
-
----
-
-PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
-Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
-
----
-
-> **Before sending:** replace `[N]` with the real waitlist count, rounded
-> down. If the number is still small, cut the "[N] people" clause and keep
-> only the wave sentence — never inflate. Swap the linked post for whatever
-> deep-dive is actually live; keep the `utm_campaign=drip-day14` tag.
-
----
-
-## Drip 3 — Day 28 — Read while you wait
-
-**Subject:** The 5 interactions we catch most often
-**Preview text:** Evidence-graded, plus two more reads before beta opens.
-**From:** Sean at PharmaGuide <info@pharmaguide.io>
-**Send when:** 28 days after waitlist signup
-**Audience:** Beta Waitlist
-**Primary KPI:** blog click-through
-
----
-
-Hey —
-
-Beta's getting close. While you wait, three things from the blog that are
-worth the ten minutes:
-
-**→ [The interactions almost nobody warns you about](https://www.pharmaguide.io/blog/most-common-interactions?utm_source=resend&utm_medium=email&utm_campaign=drip-day28)**
-The five most common supplement-medication conflicts we catch in real user
-stacks. Evidence-graded, no fluff.
-
-**→ [What "proprietary blend" actually hides](https://www.pharmaguide.io/blog/proprietary-blends-decoded?utm_source=resend&utm_medium=email&utm_campaign=drip-day28)**
-A look at what a manufacturer is legally allowed to leave off the label,
-and what we do about it.
-
-**→ [Why your multivitamin and your statin are arguing](https://www.pharmaguide.io/blog/statins-and-coq10?utm_source=resend&utm_medium=email&utm_campaign=drip-day28)**
-Medication-nutrient depletions, the category most clinicians skip
-entirely. Worked through with one real example.
-
-If any of those resonate, hit reply and let me know — the blog roadmap is
-shaped more by what waitlist readers ask about than by SEO research.
-
-*Almost there.*
-
-— Sean
-
----
-
-PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
-Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
-
----
-
-> **Note:** Update the three blog URLs above to your actual top-performing
-> posts before sending. The titles in this draft are placeholders chosen to
-> match topics likely in the catalog — swap them for whatever's actually
-> live and getting reads at the time you wire the automation. The first
-> slot must match the subject line's promise (the 5-interactions piece);
-> keep the `utm_campaign=drip-day28` tag on whatever you swap in.
-
----
-
-## Reactivation — old subscribers
-
-**Subject:** We went quiet on purpose
-**Preview text:** Heads down for months. The result is live.
-**From:** Sean at PharmaGuide <info@pharmaguide.io>
-**Send when:** One-off broadcast, anytime post-launch
-**Primary KPI:** clicks + unsubscribes (clicks = re-engaged; unsubscribes =
-list cleaning — both are wins; complaints over 0.10% are the only failure)
-**Audience:** Beta Waitlist, filter: signed up > 60 days ago AND not engaged in last 30 days
-
----
-
-Hey —
-
-You signed up for PharmaGuide a while back, and then we went quiet. That
-wasn't an accident.
-
-We've been heads down — rebuilding the site, rewriting the engine, and
-training the chatbot so it doesn't say anything we can't back up with a
-citation. The early version we could've shipped six months ago wasn't good
-enough. So we didn't ship it.
-
-*The version we wanted to ship is now live.*
-
-A quick tour of what's new:
-
-- **A redesigned site** — the full product story, not just a signup form.
-- **A new chatbot** that can actually walk you through a real interaction
-  check, citing the evidence as it goes. Not a sales bot, not a wellness
-  chatbot — a clinical-grade engine in conversation.
-- **A live blog** with evidence-graded pieces on the interactions,
-  depletions, and ingredient-quality questions we get asked most.
-- **180,000+ products** in the catalog. Beta access opening to waitlist
-  in the coming weeks — you're still on the list.
-
-If you want to come back and look around, the door's open:
-
-**→ [pharmaguide.io](https://www.pharmaguide.io?utm_source=resend&utm_medium=email&utm_campaign=reactivation)**
-
-If your needs have shifted and you'd rather not hear from us, the
-unsubscribe link below is honest and one-click — no offense taken.
-
-Either way, thanks for waiting.
-
-— Sean
-Founder, PharmaGuide
-
----
-
-PharmaGuide Inc. · 100 Sudbury St, Boston, MA 02114
-Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
-
----
-
-## Friends & Family — personal launch announcement
-
-**Subject:** What I've been heads down on (and a gift for you)
-**Preview text:** Two years of work. Free forever for you.
-**From:** seancheick@gmail.com (your personal Gmail)
-**Send when:** Launch day, sent BCC to your personal contact list
-**Audience:** Friends, family, mentors — your people
-
-> **Note:** This is a personal email, not a marketing send. No CAN-SPAM
-> footer, no unsubscribe link, no Resend involvement. Write it from your
-> personal Gmail, BCC the list so nobody sees each other's addresses, and
-> sign it as Sean.
-
-> **Operational note — decide BEFORE sending:** "free forever" needs a
-> mechanism or it becomes support debt. Pick one: a dedicated promo code,
-> or a `friends-family` tag applied manually to their account the day they
-> sign up (keep the BCC list as your checklist). The promise is only as
-> good as the flag that honors it.
-
----
-
-Hey —
-
-You've probably heard me bring up "PharmaGuide" a few too many times over
-the last couple of years. Today's the day I get to actually show you.
-
-**[pharmaguide.io](https://www.pharmaguide.io)** is live.
-
-In one sentence: it's the supplement and medication co-pilot I wished
-existed when I first walked into a pharmacy asking whether my supplements
-were going to fight with my prescription — and got told *"we don't cover
-that."*
-
-It brings together the pieces most people still have to check separately:
-
-- Checks every supplement and medication you take, *together*, and
-  flags evidence-graded interaction signals across your full stack.
-- Catches what your medications may be quietly *taking away* from you —
-  some medications are associated with lower nutrient levels over time,
-  like metformin and B12, and most clinicians won't mention it.
-- Surfaces what's verifiable inside a "proprietary blend" — and what
-  isn't — so you can see exactly what you're paying for.
-- Flags FDA recalls and adverse-event signals on products you're already
-  taking, the moment they happen.
-
-180,000+ products in the catalog. Real citations. No vibes, no horoscope.
-Just decision support for the question *"what should I know before taking
-this with everything else in my stack?"* — finally, in one place.
-
-**Here's the part for you specifically:**
-
-PharmaGuide is **free forever** for my close people. Just sign up at
-[pharmaguide.io](https://www.pharmaguide.io) and I'll make sure your
-account is unlocked on the house — no time limit, no "free trial that
-becomes a charge" nonsense. Forever.
-
-If you have parents on five medications and a kitchen counter full of
-supplements? Sign them up too. If you have a friend who's been on
-medication for years and nobody's ever checked what else it might
-affect? Send them this email. The whole reason I built this
-is the people I love kept getting left to figure this out on their own.
-
-Reach out — text, call, email — for *anything*. Questions about the
-product, questions about how to use it, questions about what to ask
-your clinician. I'll help you understand the tool and get the most
-out of it.
-
-Thank you for putting up with me talking about this for two years. The
-work is real now. Let's get healthy together.
-
-— Sean
-
-P.S. If you have a moment and you like what you see, the single best
-thing you can do for me today is forward this to one person you think
-would actually use it. That's how things spread. ❤️
-
----
-
-## Measurement
-
-Apple Mail Privacy Protection pre-fetches images, so open rates run
-inflated and are directional at best. Judge every send by clicks and
-replies, not opens:
-
-| Email | Primary KPI | Healthy signal |
-|---|---|---|
-| Drip 1 | Reply rate | Any genuine replies — each one also boosts deliverability |
-| Drip 2 | Click-through to linked post | ~2–4% of delivered |
-| Drip 3 | Blog click-through | ~2–4% of delivered |
-| Reactivation | Clicks + unsubscribes | Clicks = re-engaged, unsubscribes = list cleaning; both fine. Spam complaints are the only failure — stay under 0.10% |
-| Friends & Family | Signups (you'll hear directly) | n/a — personal send |
-
-**UTM convention** — every link in a Resend send carries:
-`?utm_source=resend&utm_medium=email&utm_campaign=<drip-day5|drip-day14|drip-day28|reactivation>`
-
-**Reply handling:** replies to `info@pharmaguide.io` must land in a real,
-monitored inbox. Drip 1's entire CTA is "I read every reply" — that has to
-be literally true, and answered replies are the cheapest retention and
-research channel this campaign has.
-
----
-
-## After Day 28 — don't go quiet again
-
-The Reactivation email exists because the list went cold once. Don't
-rebuild the same problem behind the new sequence. Once a subscriber
-finishes Drip 3, the list needs a heartbeat until beta opens:
-
-- **Monthly safety brief** (Resend Broadcast to the full waitlist): one
-  recall worth knowing about + one evidence-graded answer to a real reader
-  question (sourced from Drip 1 replies) + one blog link. ~15 minutes to
-  assemble from content that already exists.
-- Cadence: monthly until beta opens, then shift to weekly once there's
-  product activity worth reporting.
-- Same claim-language guardrails and CAN-SPAM footer as the drips.
-
----
-
-## Wiring checklist
-
-When you sit down to actually send these, in this order:
-
-- [ ] **Drips 1–3 in Resend Automations**
-  - Open Resend → Automations → New
-  - Trigger: "Contact added to audience: Beta Waitlist"
-  - Step 1: Wait 5 days → Send email (paste Drip 1 HTML)
-  - Step 2: Wait 9 days → Send email (paste Drip 2 HTML)
-  - Step 3: Wait 14 days → Send email (paste Drip 3 HTML)
-  - Toggle ON
-  - **Important:** Before toggling on, run a test send to `seancheick+drip1@gmail.com` and verify it lands and renders in Gmail web + iOS Mail.
-- [ ] **Reactivation as a Broadcast**
-  - Resend → Broadcasts → New
-  - Audience: Beta Waitlist, filtered to "created_at > 60 days ago"
-  - Schedule for a Tuesday or Wednesday, 10am Eastern (best open rates)
-  - **Send in batches** — a 60-day-cold segment is a spam-complaint risk,
-    and Gmail's tolerance ceiling is 0.10%. First batch: ~20% of the
-    segment. Check complaint + unsubscribe rates after 24h before
-    releasing the rest.
-- [ ] **Friends & Family from personal Gmail**
-  - Compose in Gmail
-  - **BCC** everyone — never To/CC; respect their privacy
-  - Send from your personal address, not info@
-  - Don't auto-send — proofread once more before hitting go
-
----
-
-## Rendering the drip HTML
-
-Drips 1–3 are written as plain markdown above. To get sendable HTML for
-Resend, you have two options:
-
-**Option A — quick & dirty (15 min, no code):**
-Paste the markdown into a markdown-to-html converter (e.g. dillinger.io
-or hashnode's preview), strip the resulting `<html>/<body>` wrapper, and
-paste the inner HTML into Resend's "HTML" email editor. Style with their
-defaults. Good enough for v1.
-
-**Option B — branded templates (60 min, one commit):**
-Convert each drip into a React Email component under
-`src/emails/drip/Day5.tsx`, `Day14.tsx`, `Day28.tsx`. Mirror the
-`BetaWelcomeEmail.tsx` structure (logo row, Container, footer with
-address + unsubscribe). Add a `pnpm render-drips` script that outputs
-`./out/drip-day-5.html` etc. Paste those into Resend's HTML editor.
-Looks identical to the welcome email. Recommended once you have
-breathing room post-launch.
-
-The copy in this doc is the source of truth either way — if you tweak the
-words, tweak them here first, then propagate.
-
----
-
-## Changelog
-
-- **2026-05-11** — Initial draft. Drip 1/2/3 + Reactivation + Friends & Family.
-- **2026-06-08** — Clinical-risk pass per dev review. Softened nine specific
-  claims across Drip 1, Drip 2, and Friends & Family — replaced "reduces
-  absorption by 30%," "FDA-aligned label-of-record," "ground truth,"
-  "decompose proprietary blends," "decodes what's actually inside,"
-  "real interactions vs. chatroom rumor," "is this safe for me," "does
-  what nobody else will," and "hurt by a system that wasn't paying
-  attention" with decision-support framing ("interferes when too close
-  together," "major public reference," "flags / surfaces what can be
-  verified," "evidence-graded interaction signals," "what should I know,"
-  "brings together the pieces most people still have to check
-  separately," "left to figure this out on their own"). Removed
-  adversarial-toward-clinicians framing ("the thing the pharmacist
-  wouldn't, the doctor couldn't"). Added a reusable "Claim-language
-  guardrails" table so this lesson doesn't have to be relearned for the
-  next drip.
-- **2026-06-09** — Conversion pass. Rewrote the Drip 1 story for
-  credibility: the failure is now a hedged "probably fine" plus a systems
-  gap (pharmacy software doesn't see supplements), not clinicians refusing
-  to answer — with an authenticity note to swap in the real product pair.
-  Sender switched to "Sean at PharmaGuide" on all Resend sends. One CTA
-  per email: Drip 1 gains a reply-ask (any stack question — interactions,
-  ingredient quality, brands; "I read every reply"), Drip 2 a single
-  UTM-tagged deep-dive link + waitlist-count social proof placeholder,
-  Drip 3 a benefit-led subject ("The 5 interactions we catch most often")
-  + full clickable URLs, Reactivation cut to a single site CTA. Added
-  wave mechanics ("invites go out in order of signup"), a Measurement
-  section (click/reply KPIs per email, UTM convention, reply-inbox
-  requirement), an "After Day 28" warm-keeping plan (monthly safety
-  brief), reactivation batch-send guidance, and a free-forever mechanism
-  note on Friends & Family.
+This read-only command refreshes `.tmp/email-review/poll-report.html`, `.csv`,
+and `.json`. Open the HTML report locally to see counts, confirmed answers and
+people without an answer. The cohort includes current subscribed beta contacts,
+including invited testers, but excludes opt-outs, suppression and known tests.
+Only each person's latest answer counts. Earlier poll choices are shown separately,
+not reassigned to new options. The report is a dated snapshot, not live analytics.
+It contains email addresses: keep it private and never deploy it or serve its
+parent folder. Re-run the command when reviewing responses. No opens or clicks
+are counted as answers, and this command cannot send or schedule emails.
+
+Email choices use filled deep-teal, table-backed buttons. The confirmation page
+shows the selected answer and one Confirm button. Change answer reveals the
+selector. Opening either page remains read-only.
+
+The `refresh-drafts` command creates missing properties, backfills signed poll
+links for beta contacts, and updates the disabled templates and draft broadcasts.
+It does not send, schedule, or enroll anyone. New waiting contacts receive a poll
+link during normal signup synchronization. Keep the signing secret stable.
+
+
+Updated October 23, 2026. Resend handles sending and subscriber preferences.
+Hostinger remains the reply inbox. Sean approved the waiting sequence for new
+beta signups only. Broadcasts remain unscheduled drafts pending separate approval.
+
+The earlier old-lead and personal outreach plan is preserved in
+[the original outreach archive](archive/email-outreach-plan-original.md), with
+separate Reactivation and Friends & Family sections. It is reference material,
+not current approved copy. No friends are imported or subscribed automatically.
+The restored current drafts are described in
+Founder outreach drafts (kept locally, not in this public repo). The old-lead note remains a
+Resend broadcast draft; the friends-and-family message is a personal draft only.
+
+## Verified account state
+
+- `pharmaguide.io` is verified in Resend and sending is enabled for the domain.
+- The beta waiting automation is enabled for new website beta joins after the
+  activation cutoff. Its trigger is `pg.beta.waitlist_joined.v1`. Existing beta
+  contacts are not backfilled. The private activation receipt records the cutoff.
+- Two broadcast drafts are prepared: a beta signup update and a monthly note.
+- Correction, October 26, 2026: the email routes were not in git, so production
+  did not have them; `POST https://pharmaguide.io/api/email-events` returned 404.
+  Delivery tracking goes live when this work merges. The webhook must target
+  `https://pharmaguide.io/api/email-events`, without the `www` redirect.
+- One approved beta-welcome test reached Sean's Gmail inbox, in Promotions.
+  SPF, DKIM, and DMARC passed. Reply-To is `info@pharmaguide.io`.
+- The test's actual delivered event was replayed after fixing the webhook redirect.
+  Production saved its delivery receipt and the contact's delivered status.
+  Message receipts retain the newest event even when older events replay later.
+- Beta one-click and newsletter confirmation opt-outs were checked against
+  Resend. Beta opt-out removed waiting membership without changing newsletter
+  consent. Only Sean's original test preferences were restored afterward.
+- Changing the owner test contact to invited triggered waiting-list removal through
+  the live webhook without an invitation send. Its original status was restored.
+- Owner-only native tests also reached Gmail: Day 5, Day 14, the beta update,
+  and the monthly note. The subscriber automation stayed disabled during those tests.
+  A temporary automation used a unique event and an exact owner-email condition;
+  it completed and was disabled. Broadcast copies used a private, opt-out-default
+  test topic with exactly one eligible recipient, not the live subscriber topic.
+- Native topic-only unsubscribe preserved other preferences. Native global
+  unsubscribe also worked. The owner's choices from the start of this test were
+  restored, including the beta opt-out made after the earlier welcome test.
+- Shared email styling is owned by `src/emails/email-layout.cjs`. The website
+  templates and native campaign renderer use that same logo, typography, spacing,
+  signature and footer. Do not build a separate shell for a new campaign.
+- Sean confirmed the postal address: PharmaGuide Inc., 100 Sudbury St, Boston, MA 02114.
+
+The 16 supplied MailerLite contacts were confirmed by Sean for both beta and
+newsletter updates. Fourteen were new; two already existed. No import triggered
+a welcome or sequence enrollment. The resulting active lists have 28 beta
+contacts and 17 newsletter contacts. The lists overlap; do not add those counts
+to claim a total audience size. One confirmed provider bounce and two known test
+aliases are excluded. Their records remain so they are not accidentally reactivated.
+
+Subscriber addresses, import evidence, previews, provider IDs, and generated
+deployment secrets are in the ignored `.tmp/email-review/` folder. Never commit
+that folder or copy subscriber details into a public review or analytics event.
+
+## What runs where
+
+| Message                        | Owner                        | Trigger                             |
+| ------------------------------ | ---------------------------- | ----------------------------------- |
+| Beta welcome                   | Website React Email template | A successful new beta signup        |
+| Newsletter welcome             | Website React Email template | A successful new newsletter signup  |
+| Brief delivery                 | Website React Email template | An explicit brief request           |
+| Day 5 and Day 14 waiting notes | Enabled Resend automation    | New beta join after activation only |
+| Invitation                     | Sean, through Hostinger      | A testing place is actually ready   |
+| Feedback request               | Sean, through Hostinger      | About a week after confirmed access |
+| Monthly newsletter             | Resend Broadcast draft       | Sean reviews and chooses to send    |
+
+The exact immediate copy lives in `src/emails/`. The exact later copy lives in
+`scripts/lib/email-campaigns.mjs`; the operator tool renders it for Resend and
+the private review page. Edit those sources rather than keeping a second copy
+of the email text here.
+
+Brief requests join the newsletter and beta lists (the form says so, and an
+earlier opt-out from either list is kept). The brief email is the only message
+sent; it carries an unsubscribe link for each list, and the inbox one-click
+unsubscribe stops the monthly notes. Requests come from one form, `src/components/brief/BriefForm.tsx`, on three
+surfaces: `/checklist`, the end of every blog post (always shown), and the
+automatic blog offer (`BriefOffer.tsx`). The automatic offer appears after 45
+visible seconds plus the article midpoint, at most once a session, quiet for 30
+days after a dismissal and for good after a confirmed request
+(`src/lib/brief-offer.ts`). The PDF is `public/supplement-safety-brief.pdf`;
+re-render `public/images/brief-cover.webp` from its page 1 whenever it changes.
+
+From: Sean at PharmaGuide, using the verified `hello@pharmaguide.io` address.
+Reply-to: `info@pharmaguide.io`. During active testing, check replies daily or
+use Hostinger/mail-client notifications. No automatic daily inbox watcher or
+automatic reply sender has been installed. Do not promise that one exists.
+
+## The small sequence
+
+| Moment           | Subject                                       | Action                                  |
+| ---------------- | --------------------------------------------- | --------------------------------------- |
+| Signup           | You're on the PharmaGuide beta list           | Reply with one general topic            |
+| Day 5            | A missing warning isn't a guarantee of safety | Read one published guide                |
+| Day 14           | What would make your beta access useful?      | Say what they want to try               |
+| A place is ready | Your PharmaGuide beta invitation              | Use a real access link                  |
+| After access     | How did your first check go?                  | Describe one confusing or missing thing |
+
+Day 14 explicitly acknowledges the earlier signup. No promised access date,
+automatic first-wave status, invented founder anecdote, or claim of complete
+interaction coverage. Ask for general topics rather than medication lists,
+medical records, or someone else's health information.
+
+Send one feedback request, then respond personally if they reply. Do not put
+nonresponders into repeating reminders. Keep the monthly note to one useful
+article, one real product update if there is one, and one optional question.
+Skip the send when there is nothing useful. No automatic switch to weekly.
+
+## Invitation status stops waiting messages
+
+### New-signup activation boundary
+
+The enabled sequence is for new beta-list joins, not a catch-up send to existing
+contacts. `pg_beta_joined_at` is recorded only when a website visitor newly joins
+the beta segment. Resubmitting an existing beta signup does not stamp a new date.
+Enrollment requires both `RESEND_WAITING_SEQUENCE_ENABLED=true` and a valid join
+date at or after `RESEND_WAITING_SEQUENCE_STARTED_AT`. Older imported contacts
+without that date remain outside the sequence. An existing newsletter subscriber
+can still join beta for the first time after activation. Existing beta leads need
+a separately reviewed reconnect message, never a burst of overdue sequence emails.
+
+The welcome is immediate. Day 5 follows the enrollment event; Day 14 is nine days
+later, provided the person's current status remains waiting. No invitation or app
+access is granted by enrolling in the email sequence. Copy describes opening beta
+access in small groups, rather than recruiting the first testers.
+
+`pg_beta_status` is the one beta-stage field in Resend:
+
+| Value                                | Meaning                                                              |
+| ------------------------------------ | -------------------------------------------------------------------- |
+| `waiting`                            | Eligible for waiting notes, provided their beta preference is active |
+| `invited`                            | An invitation is ready or has been issued; no waiting notes          |
+| `access_confirmed`                   | The tester confirmed access; no waiting notes                        |
+| `feedback_received`                  | Feedback about using the app was received; no waiting notes          |
+| `test`, `suppressed`, `unsubscribed` | Excluded from waiting messages                                       |
+
+Use `first_check_confirmed` when a tester confirms their first product check.
+Do not infer this from email engagement. This status also stops waiting messages.
+
+Mark a person invited **before** sending their invitation. The operator action
+updates the field and removes them from the waiting segment; it does not send
+an invitation. After deployment and webhook activation, editing this field in
+Resend also removes them from the waiting segment through the signed webhook.
+
+The native sequence waits five days, checks that the current status is exactly
+`waiting`, sends Day 5, waits nine days, and checks again before Day 14. Every
+other status ends that path. A temporary workflow containing no email steps
+verified that `contact.properties.pg_beta_status` reads the updated status
+after a delay. That test was stopped and removed.
+
+The reconnect broadcast targets the waiting segment. Invitations and confirmed
+users must not remain in that segment. A message already accepted for delivery
+cannot be recalled; marking invited prevents future waiting steps and inclusion
+in future waiting broadcasts.
+
+New website signups can synchronize status when the prepared settings are
+deployed. Actual event enrollment remains off until
+`RESEND_WAITING_SEQUENCE_ENABLED=true` is deliberately configured after approval.
+An uncertain event submission is flagged `pg_sequence_status=needs_review`
+rather than blindly retried and potentially starting duplicate runs. Imports
+never send enrollment events.
+
+## Consent and unsubscribe
+
+The signed website unsubscribe page uses standalone, script-free branded HTML with
+no external requests, no-store/no-referrer/noindex and hash-authorized inline CSS.
+GET is read-only, including “Keep current preferences.” One visible confirmation
+opts out only the signed topic. After success, an optional native reason select
+can save the latest `list:reason` in Resend's `pg_unsubscribe_feedback` contact
+property, only after verifying that topic is opted out. Allowed reasons are
+`too_many`, `not_relevant`, `not_using`, `did_not_signup`, and `other`; no free text
+or medical data. Storage is disclosed beside the form and in the privacy policy.
+Feedback failure never reverses unsubscribe or claims feedback was saved.
+One-click List-Unsubscribe POST stays an empty 200 without a survey.
+There is no additional stop-all action, pause, or resubscribe flow on this page.
+
+Segments record which list someone joined. Topics hold their email preferences.
+Beta and newsletter consent are separate. A beta signup alone does not enroll
+someone into the newsletter segment. Being eligible for a topic alone never
+qualifies someone for a send; the matching list membership is also required.
+
+Existing global opt-outs and topic opt-outs are preserved, including when an
+address exists outside the requested segment. New contact creation includes
+the requested segment and topic consent in a single provider request. A later
+preference lookup failure is retryable without inventing an unsubscribe.
+Preparation never changes an existing topic preference to `opt_in`.
+
+Immediate emails use a signed, list-specific URL with contact ID rather than
+email address in the token. GET displays confirmation; POST updates only that
+topic. Beta opt-out also changes beta status and stops waiting. Failed writes
+return an error rather than claiming success. The route includes no trackers
+and sends no-store, no-referrer, and noindex headers.
+
+Broadcasts use their matching Topic and Resend's native unsubscribe link.
+Native Automation unsubscribe is global rather than topic-scoped. Waiting
+templates therefore label that link **Unsubscribe from all marketing** and also
+offer **Stop beta updates only** through the custom signed preference URL.
+Do not describe the native global action as beta-only.
+
+Never delete an opt-out record, import addresses as subscribed after they opted
+out, or treat an unusual name or foreign domain as proof of a fake address.
+Keep all app and security mail outside marketing unsubscribe decisions.
+
+## Delivery tracking and list cleaning
+
+The signed `/api/email-events` webhook accepts only supported events and
+processes PharmaGuide sends and its list members. Other businesses using the
+same Resend account are ignored. Invalid signatures cannot update contacts.
+
+- Permanent bounces and complaints are excluded from future marketing and waiting.
+- A generic send failure, temporary bounce, full mailbox, or provider quota problem
+  is recorded for review. It does not establish that an address is fake.
+- Duplicate event deliveries are harmless. A delayed old event does not clear
+  an existing hard-bounce or complaint state.
+- Resend stores contact delivery status. The existing Upstash store retains
+  minimal event receipts for 90 days with message/contact identifiers and status,
+  without subjects, addresses, medical details, click URLs, or message bodies.
+- Available provider history was backfilled. Historical status timestamps are
+  the message creation time when an exact delivery-event time was unavailable.
+  Unknown older history stays unknown.
+
+Welcome delivery uses persistent receipts and a stable provider idempotency key.
+The original message is kept until accepted so retries use the same payload.
+Accepted receipts drop the message body. A 23-hour retry window begins at the
+first possible send, not at contact reservation. Expired workers cannot overwrite
+newer receipts. Older uncertain sends require a provider log check.
+
+## Review and activation
+
+Review `.tmp/email-review/preview/review.html` for recipients and all four prepared
+messages. Footer URLs in preview files are placeholders, not a live inbox test.
+The same drafts are visible in Resend. Templates are published internally only
+because Resend requires that for a disabled automation to reference them;
+publishing a reusable template does not send a message.
+
+Before sending to subscribers:
+
+1. Sean reviews the copy and recipient list. Do not send both the reconnect
+   update and the monthly note to overlapping recipients at the same time.
+   Start with the beta update, then wait at least a week before a separate note.
+2. Apply the generated private deployment settings, retaining the stable
+   unsubscribe key. Keep the sequence flag false.
+3. Verify the live preference route and direct webhook endpoint. Keep the webhook
+   enabled. Confirm the Hostinger reply inbox receives mail; the owner test checked
+   the Reply-To header, not an actual incoming reply.
+4. Website and owner-only native tests are complete. Review the revised branded
+   test rather than the earlier plain campaign tests. Do not activate a subscriber
+   send simply because a test passed.
+5. Approve an individual broadcast or sequence activation separately. Review
+   the actual recipient count immediately before sending. Do not auto-enroll
+   historical contacts just because they were imported.
+
+Operator actions, run with the existing environment loaded:
+
+```
+node --env-file=.env scripts/email-ops.mjs review
+node --env-file=.env scripts/email-ops.mjs status person@example.com invited
+```
+
+The tool has no send or enable command. Its review guard rejects email sends,
+broadcast scheduling, real enrollment events, and enabled sending automations.
+Daily inbox monitoring remains a separate choice, not an implied feature.
+
+## Claims and measurement
+
+| Wording                                             | Evidence owner                                                                                                                  |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Scan or look up supplements                         | App `lib/features/scanner/scanner_logic.dart` and scanner screens                                                               |
+| Review product information and interaction warnings | App `lib/services/stack/stack_interaction_checker.dart`                                                                         |
+| Coverage varies                                     | Pipeline `scripts/data/curated_interactions/curated_interactions_v1.json`; rules have specific ingredient and medication scopes |
+| Newsletter provides general information             | Website signup collects an email, not the subscriber's medication list                                                          |
+
+This is a source-code check, not a new clinical review or proof of the release
+installed on every beta device. Do not add product counts, brand integrations,
+real-user rankings, instant recall notifications, or personalized safety promises
+without current evidence for the exact wording.
+
+Measure useful replies, invitations accepted, confirmed first checks, recurring
+problems, bounces, and complaints. Email opens and clicks do not prove app use.
+Open and click tracking were off on the sending domain and remain off. Write
+plain sentences; no double hyphens, em dashes, invented urgency, or generic wellness copy.
+
+Validation: `pnpm test:email`, typecheck, lint, and production build. Mocked
+delivery tests and the no-email provider probe do not establish inbox placement.
+
+References:
+
+- [Automation conditions](https://resend.com/docs/dashboard/automations/condition)
+- [Automation unsubscribe behavior](https://resend.com/docs/dashboard/automations/send-email)
+- [Contact topics](https://resend.com/docs/dashboard/contacts/manage-topics)
+- [Individual API unsubscribe handling](https://resend.com/docs/dashboard/emails/add-unsubscribe-to-transactional-emails)
+- [Provider idempotency window](https://resend.com/changelog/idempotency-keys)

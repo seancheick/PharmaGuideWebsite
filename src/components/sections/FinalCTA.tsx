@@ -5,7 +5,6 @@ import { useState } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { joinBetaWaitlist } from "@/app/actions/subscribe";
 import { isValidEmail } from "@/lib/validation";
-import { SOURCE_LABEL_COUNT } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { track } from "@/lib/analytics";
 
@@ -36,17 +35,17 @@ const BETA_CAPABILITIES = [
   {
     num: "01",
     title: "Scan & search",
-    body: `Product catalog sourced from NIH's ${SOURCE_LABEL_COUNT} supplement labels, pre-loaded on your device. Sub-10ms lookup, even offline.`,
+    body: "Scan a barcode or search for a supplement. Check that the product and label match what you have.",
   },
   {
     num: "02",
     title: "Verdicts with reasoning",
-    body: "Every interaction includes the mechanism, evidence level, and recommendation — in plain English.",
+    body: "Review product information and interaction warnings. Available details depend on the product and the evidence behind the result.",
   },
   {
     num: "03",
     title: "Personal Fit",
-    body: "Adapts to your conditions, medications, and goals. Recomputed fresh, never cached, never sold.",
+    body: "Your profile and the details you enter help put results in context. Coverage varies, so bring questions to your pharmacist or clinician.",
   },
 ] as const;
 
@@ -55,6 +54,7 @@ export function FinalCTA() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -75,6 +75,7 @@ export function FinalCTA() {
       const result = await joinBetaWaitlist({ email, company });
       track("waitlist_submit", { ok: result.ok });
       if (result.ok) {
+        setSuccessMessage(result.message);
         setSubmitted(true);
       } else {
         setError(result.message);
@@ -148,14 +149,13 @@ export function FinalCTA() {
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              We&apos;re adding the first group by hand this month. You get early access and a
-              direct line to us — we get to find the edge cases before PharmaGuide opens to
-              everyone.
+              We&apos;re adding founding testers by hand. Join the list for an invitation when a
+              place is available. Your feedback will help us find what needs work.
             </m.p>
 
             <m.div variants={fadeUpItem} className="w-full max-w-lg">
               {submitted ? (
-                <SuccessState />
+                <SuccessState message={successMessage} />
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                   {/* Honeypot — off-screen, aria-hidden, not tabbable.
@@ -203,7 +203,7 @@ export function FinalCTA() {
                         : "hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow"
                     )}
                   >
-                    {submitting ? "Sending…" : "Get early access"}
+                    {submitting ? "Sending…" : "Join the beta list"}
                     {!submitting && <span aria-hidden="true">→</span>}
                   </button>
                   {error && (
@@ -275,7 +275,7 @@ export function FinalCTA() {
   );
 }
 
-function SuccessState() {
+function SuccessState({ message }: { message: string }) {
   return (
     <m.div
       initial={{ opacity: 0, y: 8 }}
@@ -302,11 +302,8 @@ function SuccessState() {
           />
         </svg>
       </span>
-      <p className="font-serif text-h3 italic text-ink">You&apos;re on the list.</p>
-      <p className="text-body-sm text-muted">
-        We sent a confirmation to your inbox. Your wave opens through 2026 — we&apos;ll write again
-        then.
-      </p>
+      <p className="font-serif text-h3 italic text-ink">Thanks for checking in.</p>
+      <p className="text-body-sm text-muted">{message}</p>
     </m.div>
   );
 }

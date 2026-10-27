@@ -10,6 +10,13 @@ import { site } from "./site";
  *   waitlist_cta        — which button sent them to the signup form?
  *                         `from` is the section the click came from.
  *   waitlist_submit     — did the signup go through? `ok` true/false.
+ *   brief_offer         — the Safety Brief offer. `action` is banner_shown
+ *                         (mobile invitation visible), shown (form visible),
+ *                         form_opened (mobile tap), dismissed (reader closed
+ *                         it; leaving the page is not a dismissal),
+ *                         already_subscribed (reader said so) or submit
+ *                         (server answered, with `ok`). `placement` names the
+ *                         surface.
  *
  * Events go to Microsoft Clarity (named events filter its session
  * recordings, so you can watch exactly the visits that reached story 2 or
@@ -74,7 +81,18 @@ type Events = {
   hero_story: { story: string };
   waitlist_cta: { from: string };
   waitlist_submit: { ok: boolean };
+  brief_offer: { action: BriefOfferAction; placement: BriefPlacement; ok?: boolean };
 };
+
+/** Where a Safety Brief request form lives. */
+export type BriefPlacement = "checklist" | "blog_dialog" | "blog_banner" | "blog_inline";
+type BriefOfferAction =
+  | "banner_shown"
+  | "shown"
+  | "form_opened"
+  | "dismissed"
+  | "already_subscribed"
+  | "submit";
 
 declare global {
   interface Window {

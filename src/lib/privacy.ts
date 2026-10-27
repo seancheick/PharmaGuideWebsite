@@ -106,6 +106,10 @@ On our servers (encrypted in transit and at rest): your email, account metadata,
       title: "Who we share with",
       body: `**Service providers:** the small number of vendors we use (email delivery, app hosting, error monitoring) only see what they need to do their job. Optional AI sharing is an exception to device-only storage: our hosting provider stores the encrypted snapshot, and the assistant provider you choose receives the selected text. The assistant handles and retains that text under its own policies. All vendors are bound by data-processing agreements aligned with GDPR / CCPA standards.
 
+**Optional beta poll:** if you confirm an answer, we store your latest general testing interest and its submission date with your Resend contact. Opening a poll link does not save an answer. The poll collects no personal medical details and does not change your subscriptions.
+
+**Optional unsubscribe feedback:** after opting out of an email list, you may choose a reason. If submitted, only the latest selected reason and list are stored with your contact in our email provider, Resend, to improve our emails. No free text or health information is collected in this form. Giving feedback does not change your subscriptions.
+
 **Legal requirements:** we will disclose information when legally required (court order, subpoena, lawful request from a regulator) and we will tell you about the request unless legally barred from doing so.
 
 **Business transfers:** if PharmaGuide is acquired or merges with another company, your data may transfer to the new entity. They are required to honor this policy or notify you of any changes.
@@ -126,7 +130,7 @@ On our servers (encrypted in transit and at rest): your email, account metadata,
 
 **Port** — receive your data in a portable JSON format you can take elsewhere.
 
-**Opt out of marketing** — unsubscribe from any email we send, instantly, no questions.
+**Opt out of marketing** — use the unsubscribe link in our marketing emails. A visible link asks you to confirm; your email app may also offer one-click unsubscribe. Contact info@pharmaguide.io if a link fails.
 
 **Opt out of analytics** — Settings → Privacy → Disable usage analytics.
 
@@ -136,7 +140,9 @@ If you're in California, the EU, the UK, or another jurisdiction with additional
       id: "third-parties",
       num: "7",
       title: "Third parties and tracking",
-      body: `**Sign-in on the website:** consent and connections pages use browser storage for your Supabase session and the PKCE sign-in verifier.
+      body: `**Email subscriptions:** Resend stores your email address, list membership, unsubscribe preference, general beta testing stage, and email delivery records. Our existing Upstash store keeps a keyed identifier and welcome-send status so a retry does not send another accepted welcome. Until a welcome is accepted, it also stores the original email message, including your address, so a retry sends the same message. The message is removed from that receipt once accepted; the identifier and status remain to prevent duplicate welcomes. Unresolved sends are reviewed before retrying after the provider's deduplication window. Minimal delivery-event records, containing message/contact identifiers, status and timestamp, are kept for 90 days. These tracking records do not contain email bodies, your medication list, or other health details. A newsletter subscription does not tell us which products you take.
+
+**Sign-in on the website:** consent and connections pages use browser storage for your Supabase session and the PKCE sign-in verifier.
 
 **Cookies on the website:** we use a minimal set of essential cookies (session, security). We use privacy-friendly analytics (Vercel Analytics, Microsoft Clarity for session replay). No cross-site advertising trackers. No Facebook pixel. No data brokers.
 

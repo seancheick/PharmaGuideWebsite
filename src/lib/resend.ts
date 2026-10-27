@@ -1,6 +1,7 @@
 import "server-only";
 import { Resend, type ErrorResponse, type GetContactResponseSuccess } from "resend";
 import { render } from "@react-email/render";
+import { after } from "next/server";
 import { env } from "./env";
 import { isValidEmail } from "./validation";
 import { log, hashPii } from "./logger";
@@ -382,12 +383,16 @@ export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
       newsletter && newsletterEnrolled
         ? unsubscribeUrl({ contactId: newsletter.id, list: "newsletter" })
         : undefined;
+    // Tracking sync is several more Resend round trips and never changes
+    // what the visitor sees, so it runs after the response is sent.
     if (betaEnrolled && contact) {
-      try {
-        await syncBetaContact(contact.id);
-      } catch {
-        log.error("email.beta_tracking_needs_review", { contact_id: contact.id });
-      }
+      after(async () => {
+        try {
+          await syncBetaContact(contact.id);
+        } catch {
+          log.error("email.beta_tracking_needs_review", { contact_id: contact.id });
+        }
+      });
     }
     const react = BriefDeliveryEmail({
       email,

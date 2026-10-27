@@ -70,9 +70,7 @@ export function BriefForm({ idPrefix, placement, onSuccess }: BriefFormProps) {
     return (
       <div className="rounded-2xl border border-accent/20 bg-white p-8 text-center" role="status">
         <p className="font-serif text-2xl italic text-ink">Check your inbox.</p>
-        <p className="mt-2 text-muted">
-          {submitted} Screenshot the eight-checks page before your next store run.
-        </p>
+        <p className="mt-2 text-muted">{submitted}</p>
       </div>
     );
   }

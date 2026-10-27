@@ -138,6 +138,7 @@ function loadFlow(options = {}) {
       },
     },
     "@upstash/redis": { Redis: FakeRedis },
+    "next/server": { after: (task) => void task() },
   };
   const env = {
     RESEND_API_KEY: "test-secret",

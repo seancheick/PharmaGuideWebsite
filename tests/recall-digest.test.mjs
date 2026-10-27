@@ -9,6 +9,7 @@ import {
   mdxText,
   mergeAnnouncement,
   mergeEnforcementEvent,
+  mergeHistories,
   parseAnnouncement,
   parseEnforcementCsv,
   renderDigest,
@@ -134,6 +135,20 @@ test("an Enforcement Report listing of an announced recall is 'previously announ
   const { mdx } = renderDigest({ history: h, window: WEEK, coverage: { complete: true, sources: [], gaps: [] }, generatedOn: RUN });
   assert.match(mdx, /Previously announced: FDA posted the company's notice on October 6, 2026/);
   assert.match(mdx, /not an expansion of that warning/);
+});
+
+test("a recall renders as a card: action first, packages in a table, empty categories scoped in one note", () => {
+  const h = emptyHistory();
+  const extra = "<p>Products subject to the recall include the SleepWell 60-count Bottle (Item #810208, UPC 868592000002) and the SleepWell Travel Pack (Item #810222, UPC 868592000040).</p>";
+  mergeAnnouncement(h, listingRow(), parseAnnouncement(page({ extra })), { runDate: RUN, matchReason: "t" });
+  const { mdx } = renderDigest({ history: h, window: WEEK, coverage: { complete: true, sources: [], gaps: [] }, generatedOn: RUN });
+  assert.match(mdx, /<RecallCard [^>]*action="Stop using the product and return it for a refund\."/);
+  assert.match(mdx, /\| SleepWell 60-count Bottle \| 810208 \| 868592000002 \|/);
+  assert.match(mdx, /\| SleepWell Travel Pack \| 810222 \| 868592000040 \|/);
+  assert.ok(mdx.indexOf("action=") < mdx.indexOf("Check your package"), "the action comes before the package details");
+  assert.match(mdx, /Lot 24A1, exp 03\/2027/, "a lot named only in the recalling sentence is never dropped");
+  assert.match(mdx, /\*\*Also checked:\*\* no updates to earlier supplement recalls; no supplement recalls newly listed in FDA's Enforcement Report for/);
+  assert.doesNotMatch(mdx, /No dietary-supplement recalls this week/);
 });
 
 test("classification later is 'classified', never an update or a new recall", () => {
@@ -300,6 +315,22 @@ test("a person's classification settles the week: not-supplement drops the recor
   const { mdx, quiet } = renderDigest({ history: yes, window: WEEK, coverage: c2, generatedOn: RUN });
   assert.equal(quiet, false);
   assert.match(mdx, /Berry Farm/);
+});
+
+test("merging main's history with the automation copy keeps people's classifications and newer collection", () => {
+  const main = history1();
+  main.classified = { 77001: { supplement: false, by: "sean", date: "2026-10-28", note: "jam" } };
+  const auto = structuredClone(history1());
+  auto.classified = { 77001: { supplement: true, by: "bot", date: "2026-10-20", note: "" }, 88002: { supplement: false, by: "sean", date: "2026-10-21", note: "" } };
+  auto.weeks["2026-10-25"] = { lastRun: "2026-10-29", events: ["x"] };
+  const k = Object.keys(auto.entries)[0];
+  auto.entries[k].events.push({ id: "later-event", kind: "updated", date: "2026-10-29", detectedAt: "2026-10-29" });
+  const merged = mergeHistories(main, auto);
+  assert.equal(merged.classified[77001].by, "sean", "the later human decision survives");
+  assert.ok(merged.classified[88002], "decisions only the other copy has are kept");
+  assert.equal(merged.weeks["2026-10-25"].lastRun, "2026-10-29");
+  assert.ok(merged.entries[k].events.some((e) => e.id === "later-event"), "newer events are kept");
+  assert.equal(merged.entries[k].events.length, new Set(merged.entries[k].events.map((e) => e.id)).size, "no duplicate events");
 });
 
 test("a full run: supplement announcement and enforcement row become one new card plus a 'previously announced' listing", async () => {

@@ -60,15 +60,16 @@ jobs:
       - name: Recall tests
         run: pnpm test:recalls
 
-      # The history branch holds every collection since main last merged a
-      # weekly PR, so it is the newest copy; the script merges into it.
-      - name: Restore collected history
+      # Start from main's history (people's --classify decisions arrive there
+      # through merged PRs) and merge the automation branch's copy (newer
+      # collection) into it, so neither overwrites the other.
+      - name: Fetch collected history
         run: |
           git config user.name "pharmaguide-recalls[bot]"
           git config user.email "recalls-bot@users.noreply.github.com"
           if git ls-remote --exit-code --heads origin "$HISTORY_BRANCH" >/dev/null; then
             git fetch origin "$HISTORY_BRANCH"
-            git show "origin/$HISTORY_BRANCH:content/recalls/history.json" > content/recalls/history.json
+            git show "origin/$HISTORY_BRANCH:content/recalls/history.json" > "$RUNNER_TEMP/automation-history.json"
           fi
 
       # Exit 3 = a source failed or a record may be a supplement and needs a
@@ -80,9 +81,9 @@ jobs:
         run: |
           set +e
           if [ "$MODE" = "weekly" ]; then
-            pnpm --silent recalls:digest | tee digest.log
+            pnpm --silent recalls:digest --merge-history "$RUNNER_TEMP/automation-history.json" | tee digest.log
           else
-            pnpm --silent recalls:digest --collect-only | tee digest.log
+            pnpm --silent recalls:digest --collect-only --merge-history "$RUNNER_TEMP/automation-history.json" | tee digest.log
           fi
           code=${PIPESTATUS[0]}
           echo "code=$code" >> "$GITHUB_OUTPUT"
@@ -109,6 +110,18 @@ jobs:
         run: |
           slug="${{ steps.run.outputs.slug }}"
           branch="recalls/$slug"
+
+          # A rerun must never overwrite review work: if anyone other than
+          # this bot has committed to the week's branch, leave it alone.
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then
+            git fetch origin "$branch"
+            others=$(git log "origin/main..origin/$branch" --format='%ae' | grep -v '^recalls-bot@users.noreply.github.com$' || true)
+            if [ -n "$others" ]; then
+              echo "::warning::$branch has review commits from someone else; not regenerating it. History was still saved to $HISTORY_BRANCH."
+              exit 0
+            fi
+          fi
+
           git checkout -B "$branch"
           git add content/recalls/history.json "content/blog/.drafts/$slug.mdx" "content/blog/.review/$slug.review.md"
           git commit -m "recalls: draft digest $slug" || true

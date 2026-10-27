@@ -6,3 +6,4 @@
  * Only figure components may be exported from the listed files.
  */
 export * from "./ShilajitFigures";
+export * from "./RecallFigures";

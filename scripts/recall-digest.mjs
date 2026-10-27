@@ -5,6 +5,7 @@
  *   pnpm recalls:digest                         # last complete Mon–Sun week
  *   pnpm recalls:digest --week-ending 2026-10-25
  *   pnpm recalls:digest --collect-only          # update history, no draft
+ *   pnpm recalls:digest --merge-history other.json  # merge another copy first
  *   pnpm recalls:digest --classify 99001=not-supplement:"elderberry jam" --by sean
  *                                               # record a person's decision on a
  *                                               # "possible supplement", then re-render
@@ -34,6 +35,7 @@ import {
   looksLikeEnforcementCsv,
   mergeAnnouncement,
   mergeEnforcementEvent,
+  mergeHistories,
   parseAnnouncement,
   parseEnforcementCsv,
   parseListing,
@@ -224,6 +226,7 @@ function parseArgs(argv) {
       args.classify.push({ id: m[1], supplement: m[2] === "supplement", note: m[3] || "" });
     }
     else if (argv[i] === "--by") args.by = argv[++i];
+    else if (argv[i] === "--merge-history") args.mergeHistory = argv[++i];
     else throw new Error(`unknown argument ${argv[i]}`);
   }
   return args;
@@ -241,7 +244,12 @@ async function main() {
     process.exit(2);
   }
   const historyPath = args.history ? path.resolve(args.history) : HISTORY;
-  const history = fs.existsSync(historyPath) ? JSON.parse(fs.readFileSync(historyPath, "utf8")) : emptyHistory();
+  let history = fs.existsSync(historyPath) ? JSON.parse(fs.readFileSync(historyPath, "utf8")) : emptyHistory();
+  // The scheduled run merges the automation branch's copy into main's, so
+  // collected data and people's classifications both survive.
+  if (args.mergeHistory && fs.existsSync(args.mergeHistory)) {
+    history = mergeHistories(history, JSON.parse(fs.readFileSync(args.mergeHistory, "utf8")));
+  }
   if (args.classify.length) {
     if (!args.by) { console.error("--classify needs --by <person> (recorded with the decision)"); process.exit(2); }
     history.classified ??= {};

@@ -56,11 +56,25 @@ an `enforcement_listed` or `classified` item as new.
 
 - **No word-count floor, no mandatory FAQ, no figures.** Frontmatter `format: "recall-digest"`
   exempts the post from the word floor. Length is whatever the week's notices need.
-- **One card per notice or Enforcement Report event, one row per product.** Brand, product, lots,
-  sizes, expiry and identifiers; the reason; the notice's instructions; announcement date; the
-  official link.
-- **Quote, don't paraphrase.** Scope, reasons and instructions are quoted from the notice. The
-  editor may trim a quote but never rewords it.
+- **One `<RecallCard>` per notice or Enforcement Report event** (`src/components/blog/figures/RecallFigures.tsx`,
+  written by the renderer). It answers, in order: do I have this product, does the recall cover my
+  package, what should I do. Product and scope first, then **What to do** (the notice's own
+  instruction, e.g. "Consumers should stop using X immediately" → "Stop using X immediately."), a
+  one-line reason, a package table (package, item number, UPC; or lots and codes for Enforcement
+  Report records), where it was sold, the notice's refund and contact lines, and the official link.
+  Each fact appears once. Cards carry Save image / Print / Copy link, and a saved card keeps the
+  product, scope, action, source, update date and page URL.
+- **Preserve exact details in structured fields; don't quote everything.** Product names, lots,
+  item numbers, UPCs, dates, exclusions ("not sold through GNC corporate stores") and the notice's
+  instructions are kept word for word. Surrounding explanation is short and plain. The full notice
+  text stays in the review sidecar, not the post. A lot or identifier is never dropped to shorten
+  a card.
+- **Empty categories collapse into one scoped note** ("Also checked: no updates to earlier
+  supplement recalls; no supplement recalls newly listed in FDA's Enforcement Report for October 21,
+  2026"), never a bare "No recalls this week" next to a recall.
+- **Product photos:** only the official photo from the FDA notice, never a generated lookalike.
+  (Not automated yet: add by hand when it helps identification.)
+- **Length follows the notices**: a one-recall week is a few hundred words.
 - **Never generalise to an ingredient.** "Ultimate Forza Male Supplement recalled", never
   "sildenafil supplements recalled" or "magnesium recalled".
 - **Coverage first.** A failed source makes coverage incomplete; the post says which source and

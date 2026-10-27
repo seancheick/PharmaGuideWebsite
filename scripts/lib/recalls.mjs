@@ -424,6 +424,48 @@ export function emptyHistory() {
   return { schema: 1, entries: {}, weeks: {} };
 }
 
+/**
+ * Combine two copies of the history without losing work from either.
+ * `base` is main's copy (where people's --classify decisions arrive through
+ * merged PRs); `other` is the automation branch's copy (newer collection).
+ * Entries and events are unioned (events by id); for an entry both have,
+ * fields come from whichever copy saw it later. Weeks keep the later run.
+ * Classifications are unioned, and on a conflict the later decision wins,
+ * with base winning a tie.
+ */
+const touched = (entry) =>
+  [entry.contentCurrentAsOf, ...(entry.events || []).map((e) => e.detectedAt || e.date)].filter(Boolean).sort().at(-1) || "";
+
+export function mergeHistories(base, other) {
+  const out = structuredClone(base);
+  out.entries ??= {};
+  out.weeks ??= {};
+  for (const [key, theirs] of Object.entries(other.entries || {})) {
+    const ours = out.entries[key];
+    if (!ours) {
+      out.entries[key] = structuredClone(theirs);
+      continue;
+    }
+    const newer = touched(theirs) > touched(ours) ? theirs : ours;
+    const events = new Map([...(ours.events || []), ...(theirs.events || [])].map((e) => [e.id, e]));
+    out.entries[key] = {
+      ...structuredClone(newer),
+      events: [...events.values()].sort((a, b) => String(a.date).localeCompare(String(b.date))),
+      ...(ours.related || theirs.related ? { related: [...new Set([...(ours.related || []), ...(theirs.related || [])])] } : {}),
+    };
+  }
+  for (const [week, theirs] of Object.entries(other.weeks || {})) {
+    const ours = out.weeks[week];
+    if (!ours || (theirs.lastRun || "") > (ours.lastRun || "")) out.weeks[week] = structuredClone(theirs);
+  }
+  for (const [id, theirs] of Object.entries(other.classified || {})) {
+    out.classified ??= {};
+    const ours = out.classified[id];
+    if (!ours || (theirs.date || "") > (ours.date || "")) out.classified[id] = structuredClone(theirs);
+  }
+  return out;
+}
+
 function addEvent(entry, event) {
   const id = sha([event.kind, event.date, event.hash ?? null, event.changes ?? null]);
   if (entry.events.some((e) => e.id === id)) return null;
@@ -687,7 +729,6 @@ export function mdxText(s) {
     .replace(/\}/g, "&#125;");
 }
 
-const quote = (s) => `“${mdxText(s)}”`;
 
 function weekLabel({ start, end }) {
   const [sy, sm, sd] = start.split("-").map(Number);
@@ -698,19 +739,6 @@ function weekLabel({ start, end }) {
   return `${mon(sm)} ${sd}, ${sy}–${mon(em)} ${ed}, ${ey}`;
 }
 
-function announcementTitle(entry) {
-  const product = entry.notice?.productDescriptions?.join("; ") || entry.productDescription;
-  const brand = entry.notice?.brands?.join(", ") || entry.brand;
-  const name = brand && !product.toLowerCase().includes(brand.toLowerCase()) ? `${brand} ${product}` : product || brand;
-  return `${mdxText(name)} (${mdxText(entry.company)})`;
-}
-
-function list(label, items, fallback) {
-  if (!items?.length) return fallback ? [`- **${label}:** ${fallback}`] : [];
-  if (items.length === 1) return [`- **${label}:** ${quote(items[0])}`];
-  return [`- **${label}:**`, ...items.map((s) => `  - ${quote(s)}`)];
-}
-
 function table(rows) {
   if (!rows?.length) return [];
   const width = Math.max(...rows.map((r) => r.length));
@@ -719,77 +747,138 @@ function table(rows) {
   return ["", `| ${pad(rows[0]).map(cell).join(" | ")} |`, `|${" --- |".repeat(width)}`, ...rows.slice(1).map((r) => `| ${pad(r).map(cell).join(" | ")} |`), ""];
 }
 
-function renderAnnouncementCard(entry, event, history) {
+// ─── Recall cards ───────────────────────────────────────────────────
+// Each recall renders as one <RecallCard> (src/components/blog/figures):
+// product, scope and the action first, then a package table and the
+// details, each fact once. Identifiers, lots, dates, exclusions and the
+// notice's instructions are kept word for word; the full notice text stays
+// in the review sidecar.
+
+/** A JSX string attribute: MDX keeps it literal; only `"` and newlines need care. */
+const attr = (s) => String(s ?? "").replace(/\s+/g, " ").replace(/"/g, "'").trim();
+const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+
+function productName(entry) {
+  const product = entry.notice?.productDescriptions?.join("; ") || entry.productDescription || "";
+  const brand = entry.notice?.brands?.join(", ") || entry.brand;
+  return brand && !product.toLowerCase().includes(brand.toLowerCase()) ? `${brand} ${product}`.trim() : product || brand;
+}
+
+/** "Consumers should stop using X immediately." → "Stop using X immediately." (the notice's own words) */
+function asAction(sentence) {
+  const s = sentence.replace(/^(?:consumers|customers|patients|people)(?:\s+who\s+[^,]+,)?\s+(?:should|are\s+(?:urged|advised|asked|encouraged)\s+to|must)\s+/i, "");
+  return s === sentence ? sentence : s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+const ACTION = /\b(stop (?:using|taking|consuming|eating)|do not (?:use|take|consume|eat)|discard|dispose|destroy|throw)\b/i;
+
+/** Packages named as "<name> (Item #123, UPC 456)" in the notice. */
+function packagesFrom(identifiers = []) {
+  const rows = [];
+  for (const sentence of identifiers) {
+    for (const m of sentence.matchAll(/([^(),;]*?)\s*\(\s*Item\s*#\s*([\w-]+)\s*,\s*UPC\s*([\d\s-]+?)\s*\)/gi)) {
+      const name = m[1].trim().replace(/^.*\b(?:include|includes|including|are|is)\s+/i, "").replace(/^(?:and\s+)?(?:the\s+)?/i, "").trim();
+      rows.push([name || "Package", m[2], m[3].replace(/\s+/g, "")]);
+    }
+  }
+  return rows;
+}
+
+function renderAnnouncementCard(entry, event, history, page) {
   const n = entry.notice;
-  const lines = [`### ${announcementTitle(entry)}`, ""];
+  const name = productName(entry);
+  const ids = n?.identifiers || [];
+  const instructions = n?.instructions || [];
+  const actionSentence = instructions.find((s) => ACTION.test(s));
+  const packages = packagesFrom(ids);
+  const allLots = ids.some((s) => /\ball lots\b/i.test(s));
+  const status = event.kind === "updated" ? "Recall updated" : "Recall";
+  const announced = `Announced ${formatLongDate(entry.companyAnnouncementDate || entry.fdaPublishDate || entry.listingDate)}`;
+
+  const lines = [
+    `<RecallCard id="${slugify(name)}" product="${attr(name)}" scope="${allLots ? "All lots" : packages.length ? "Only the packages listed" : ""}" company="${attr(entry.company)}" announced="${attr(announced)}" status="${status}" action="${attr(actionSentence ? asAction(actionSentence) : "Read the official notice for what to do.")}" reason="${attr(n?.reason || entry.reasonDescription || entry.reasonCategory)}" notice="${entry.url}" page="${attr(page)}">`,
+    "",
+  ];
+
   if (event.kind === "updated" && event.prior) {
     const prior = history.entries[event.prior];
-    lines.push(`This notice updates an earlier recall by the same company${prior ? ` ([earlier FDA-posted notice](${prior.url}), ${formatLongDate(prior.fdaPublishDate || prior.listingDate)})` : ""}.`, "");
+    lines.push(`This notice updates an earlier recall by the same company${prior ? ` ([earlier notice](${prior.url}), ${formatLongDate(prior.fdaPublishDate || prior.listingDate)})` : ""}.`, "");
   } else if (event.kind === "updated") {
-    lines.push(`FDA's posted notice changed on ${formatLongDate(event.date)}. What changed:`, "");
+    lines.push(`FDA's posted notice changed on ${formatLongDate(event.date)}:`, "");
     for (const c of event.changes || []) {
-      if (c.added?.length) lines.push(...c.added.map((x) => `- Added (${c.field}): ${quote(Array.isArray(x) ? x.join(" · ") : x)}`));
-      if (c.removed?.length) lines.push(...c.removed.map((x) => `- Removed (${c.field}): ${quote(Array.isArray(x) ? x.join(" · ") : x)}`));
-      if (c.field === "reason") lines.push(`- Reason changed to ${quote(c.after)}`);
+      if (c.added?.length) lines.push(...c.added.map((x) => `- Added: ${mdxText(Array.isArray(x) ? x.join(" · ") : x)}`));
+      if (c.removed?.length) lines.push(...c.removed.map((x) => `- Removed: ${mdxText(Array.isArray(x) ? x.join(" · ") : x)}`));
+      if (c.field === "reason") lines.push(`- Reason now: ${mdxText(c.after)}`);
     }
     lines.push("");
   }
-  lines.push(`- **Company:** ${mdxText(entry.company)}`);
-  lines.push(`- **Brand:** ${mdxText(n?.brands?.join(", ") || entry.brand || "not stated")}`);
-  lines.push(`- **Product:** ${mdxText(n?.productDescriptions?.join("; ") || entry.productDescription)}`);
-  lines.push(`- **Reason (FDA summary):** ${quote(n?.reason || entry.reasonDescription || entry.reasonCategory)}`);
-  if (n) {
-    lines.push(...list("Products, lots and identifiers in the notice", n.identifiers, "the notice gives no lot or size detail beyond the product name; read the official notice"));
-    lines.push(...list("Where it was sold", n.distribution));
-    lines.push(...list("What the notice tells consumers to do", n.instructions, "see the official notice"));
-  } else {
-    lines.push("- **Products, lots and instructions:** the announcement page could not be read on this run; see the official notice");
+
+  if (packages.length) {
+    lines.push("**Check your package**", "", ...table([["Package", "Item number", "UPC"], ...packages]).slice(1), "");
+    // Every other identifier sentence stays (lots, sizes, dates). The only one
+    // dropped is a "recalling all lots" sentence, whose scope the card's tag
+    // already shows; a recalling sentence that names lots is kept.
+    const sizes = ids.filter((s) => !/\(\s*Item\s*#/i.test(s) && !(/\brecalling\b/i.test(s) && /\ball lots\b/i.test(s)));
+    if (sizes.length) lines.push(sizes.map(mdxText).join(" "), "");
+  } else if (n?.tables?.length) {
+    lines.push("**Check your package**", "");
+    for (const t of n.tables) lines.push(...table(t).slice(1), "");
+  } else if (ids.length) {
+    lines.push("**Products and lots in the notice**", "", ...ids.map((s) => `- ${mdxText(s)}`), "");
+  } else if (!n) {
+    lines.push("The announcement page could not be read on this run; the official notice has the products and lots.", "");
   }
-  lines.push(`- **Announced:** company announcement ${formatLongDate(entry.companyAnnouncementDate)}; posted by FDA ${formatLongDate(entry.fdaPublishDate || entry.listingDate)}`);
+
+  if (n?.distribution?.length) lines.push(`**Where it was sold:** ${n.distribution.map(mdxText).join(" ")}`, "");
+  const more = instructions.filter((s) => s !== actionSentence);
+  if (more.length) lines.push("**Refunds, questions and health concerns (from the notice):**", "", ...more.map((s) => `- ${mdxText(s)}`), "");
   const enforcement = Object.values(history.entries).find((e) => e.source === SOURCES.enforcement.id && e.related.includes(entry.key));
-  if (enforcement) lines.push(`- **Enforcement Report:** first listed ${formatLongDate(enforcement.firstReportDate)} (FDA Event ID ${mdxText(enforcement.eventId)})`);
-  lines.push(`- **Official notice:** [${mdxText(entry.title || "FDA-posted company announcement")}](${entry.url})`);
-  for (const t of n?.tables || []) lines.push(...table(t));
-  lines.push("");
+  if (enforcement) lines.push(`Listed in FDA's Enforcement Report on ${formatLongDate(enforcement.firstReportDate)} (Event ID ${mdxText(enforcement.eventId)}).`, "");
+  lines.push("</RecallCard>", "");
   return lines;
 }
 
-function renderEnforcementCard(entry, event, history, weekCsvUrl) {
-  const lines = [`### ${mdxText(entry.firm)}: FDA Event ID ${mdxText(entry.eventId)}`, ""];
+function renderEnforcementCard(entry, event, history, weekCsvUrl, page) {
   const prior = event.priorAnnouncement ? history.entries[event.priorAnnouncement] : null;
+  const first = entry.products[0] || {};
+  const name = entry.products.length === 1 ? first.productDescription : `${entry.firm}: ${entry.products.length} products`;
+  const status =
+    event.kind === "enforcement_listed" ? (prior ? "Enforcement Report listing · previously announced" : "Enforcement Report listing")
+    : event.kind === "classified" ? `FDA classification · ${event.changes?.[0]?.after || "not stated"}`
+    : "Enforcement Report record updated";
+  const reportDate = event.kind === "enforcement_listed" ? event.date : entry.firstReportDate;
+  const action = prior
+    ? "Follow the instructions in the company's notice (linked below); check your lots against it."
+    : "Check your lots against the table. The Enforcement Report gives no consumer instructions; ask the seller or a pharmacist if you have this product.";
+
+  const lines = [
+    `<RecallCard id="${slugify(`${entry.firm}-${entry.eventId}`)}" product="${attr(name)}" company="${attr(entry.firm)}" announced="${attr(`Listed ${formatLongDate(reportDate)}`)}" status="${attr(status)}" action="${attr(action)}" reason="${attr(first.reason)}" notice="${prior ? prior.url : weekCsvUrl(reportDate)}" noticeLabel="${prior ? "Read the company's FDA-posted notice" : "FDA Enforcement Report (CSV)"}" page="${attr(page)}">`,
+    "",
+  ];
   if (event.kind === "enforcement_listed") {
     const later = entry.related.map((k) => history.entries[k]).filter((e) => e && e.key !== prior?.key);
     lines.push(prior
-      ? `Previously announced: FDA posted the company's notice on ${formatLongDate(prior.fdaPublishDate || prior.listingDate)} ([official notice](${prior.url})). Its listing in the Enforcement Report is not an expansion of that warning.`
+      ? `Previously announced: FDA posted the company's notice on ${formatLongDate(prior.fdaPublishDate || prior.listingDate)}. Its listing in the Enforcement Report is not an expansion of that warning.`
       : later.length
-        ? `No company announcement had been posted when FDA listed this recall. FDA posted the company's notice later, on ${formatLongDate(later[0].fdaPublishDate || later[0].listingDate)} ([official notice](${later[0].url})).`
-        : `FDA's recalls page has no company announcement for this recall, so the Enforcement Report is the public record. Not every recall gets a press release.`);
+        ? `No company announcement had been posted when FDA listed this recall; FDA posted the company's notice later, on ${formatLongDate(later[0].fdaPublishDate || later[0].listingDate)} ([official notice](${later[0].url})).`
+        : `FDA's recalls page has no company announcement for this recall, so the Enforcement Report is the public record.`, "");
   } else if (event.kind === "classified") {
     const c = event.changes[0];
-    lines.push(`FDA classified this recall as ${mdxText(c.after || "not stated")}${c.recallNumber ? ` (recall number ${mdxText(c.recallNumber)})` : ""}. Classification rates the health risk of a recall already under way; it does not add products.`);
+    lines.push(`FDA classified this recall as ${mdxText(c.after || "not stated")}${c.recallNumber ? ` (recall number ${mdxText(c.recallNumber)})` : ""}. Classification rates the health risk of a recall already under way; it does not add products.`, "");
   } else {
-    lines.push(`FDA changed this Enforcement Report record (${formatLongDate(event.date)}). What changed:`, "");
+    lines.push(`FDA changed this record on ${formatLongDate(event.date)}:`, "");
     for (const c of event.changes || []) {
       if (typeof c === "string") lines.push(`- ${mdxText(c)}`);
-      else lines.push(`- ${mdxText(c.field)}${c.recallNumber ? ` (${mdxText(c.recallNumber)})` : ""}: ${c.before ? `was ${quote(c.before)}, now ` : ""}${quote(c.after)}`);
+      else lines.push(`- ${mdxText(c.field)}: ${c.before ? `was ${mdxText(c.before)}, now ` : ""}${mdxText(c.after)}`);
     }
+    lines.push("");
   }
-  lines.push("", `- **Recalling firm:** ${mdxText(entry.firm)}${entry.location ? `, ${mdxText(entry.location)}` : ""}`);
-  lines.push(`- **Recall started:** ${formatLongDate(entry.initiationDate)}; ${mdxText(entry.voluntary || "voluntary/mandated not stated")}`);
-  if (entry.distribution) lines.push(`- **Distribution:** ${quote(entry.distribution)}`);
-  lines.push("");
-  for (const p of entry.products) {
-    lines.push(`- **Product:** ${quote(p.productDescription)}`);
-    lines.push(`  - **Lots / codes:** ${p.codeInfo ? quote(p.codeInfo) : "not stated"}`);
-    if (p.quantity) lines.push(`  - **Quantity:** ${quote(p.quantity)}`);
-    lines.push(`  - **Reason:** ${quote(p.reason)}`);
-    lines.push(`  - **Classification:** ${mdxText(p.classification || "not stated")}${p.recallNumber ? `; recall number ${mdxText(p.recallNumber)}` : ""}`);
-  }
-  lines.push("", `Source: [FDA Enforcement Report, week of ${formatLongDate(event.kind === "enforcement_listed" ? event.date : entry.firstReportDate)}](${weekCsvUrl(event.kind === "enforcement_listed" ? event.date : entry.firstReportDate)}) (CSV), searchable at [FDA Enforcement Reports](${SOURCES.enforcement.url}).`, "");
+  lines.push("**Check your product**", "", ...table([["Product", "Lots / codes", "Class"], ...entry.products.map((p) => [p.productDescription, p.codeInfo || "not stated", p.classification || "not yet classified"])]).slice(1), "");
+  if (entry.distribution) lines.push(`**Where it was sold:** ${mdxText(entry.distribution)}`, "");
+  lines.push(`Recall started ${formatLongDate(entry.initiationDate)} (${mdxText(entry.voluntary || "voluntary/mandated not stated")}); FDA Event ID ${mdxText(entry.eventId)}.`, "", "</RecallCard>", "");
   return lines;
 }
 
-/** Build the digest MDX and its review sidecar for one week. */
 export function renderDigest({ history, window, coverage, generatedOn, author = "sean-cheick-baradji" }) {
   const selection = selectWeek(history, window);
   const label = weekLabel(window);
@@ -813,8 +902,8 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
 
   const fm = [
     "---",
-    `title: "PharmaGuide Weekly: Supplement Recalls and Safety Updates, ${label}"`,
-    `seoTitle: "Supplement recalls, ${label}"`,
+    `title: "Supplement recalls: ${label}"`,
+    `seoTitle: "Supplement recalls, ${label} · PharmaGuide Weekly"`,
     `description: ${JSON.stringify(description)}`,
     `slug: "${slug}"`,
     `category: "safety-alerts"`,
@@ -830,13 +919,14 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
   ];
 
   const enforcementWeeks = wednesdaysIn(window);
-  const sourcesLine = `We checked FDA's [Recalls, Market Withdrawals & Safety Alerts](${SOURCES.listing.url}) list and the [FDA Enforcement Report](${SOURCES.enforcement.url}) for ${enforcementWeeks.map(formatLongDate).join(" and ") || "this week"}.`;
+  const reportDates = enforcementWeeks.map(formatLongDate).join(" and ");
+  const page = `pharmaguide.io/blog/${slug}`;
 
   const body = [
-    `${settled ? "Every dietary-supplement recall" : "The dietary-supplement recalls we could confirm that"} FDA posted between ${formatLongDate(window.start)} and ${formatLongDate(window.end)}, product by product. Each recall covers only the products, lots and sizes listed in its notice. It does not mean every product containing the same ingredient is affected.`,
+    `**PharmaGuide Weekly.** Dietary-supplement recalls FDA posted ${formatLongDate(window.start)} to ${formatLongDate(window.end)}. Each recall covers only the products and lots in its notice, not every product with the same ingredient.`,
     "",
     `<Callout tone="info">`,
-    `This roundup restates official FDA notices; it is not medical advice. If you have one of these products, check the lot and size against the notice and follow its instructions. A pharmacist or your clinician can help if you have taken it and have questions.`,
+    `This roundup restates official FDA notices; it is not medical advice. If you have one of these products, check it against the card and follow the notice's instructions. A pharmacist or your clinician can help if you have taken it and have questions.`,
     `</Callout>`,
     "",
   ];
@@ -844,71 +934,60 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
   if (!coverage.complete) {
     body.push(
       `<Callout tone="warn">`,
-      `**Coverage for this week is incomplete.** These sources could not be read after repeated attempts: ${coverage.gaps.map(mdxText).join("; ")}. This post lists what we could confirm. It is not a complete list, and an empty section below does not mean there were no recalls.`,
+      `**Coverage for this week is incomplete.** These sources could not be read after repeated attempts: ${coverage.gaps.map(mdxText).join("; ")}. This is not a complete list, and a missing recall here does not mean there wasn't one.`,
       `</Callout>`,
       ""
     );
   } else if (!settled) {
     body.push(
       `<Callout tone="warn">`,
-      `**${unresolved} FDA record${unresolved === 1 ? "" : "s"} from this week may involve a dietary supplement and ${unresolved === 1 ? "is" : "are"} still being checked.** Until ${unresolved === 1 ? "it is" : "they are"}, this is not a complete list, and an empty section below does not mean there were no recalls.`,
+      `**${unresolved} FDA record${unresolved === 1 ? "" : "s"} from this week may involve a dietary supplement and ${unresolved === 1 ? "is" : "are"} still being checked.** Until ${unresolved === 1 ? "it is" : "they are"}, this is not a complete list.`,
       `</Callout>`,
       ""
     );
   }
 
-  const section = (heading, intro, entries, render, emptyText) => {
-    body.push(`## ${heading}`, "", intro, "");
-    if (entries.length) for (const { entry, event } of entries) body.push(...render(entry, event));
-    else body.push(settled ? emptyText : `Nothing confirmed yet (see the note above).`, "");
-  };
+  const groups = [
+    ["New recalls", selection.newAnnouncements, (e, ev) => renderAnnouncementCard(e, ev, history, page)],
+    ["Updates to earlier recalls", selection.updates, (e, ev) => (e.source === SOURCES.enforcement.id ? renderEnforcementCard(e, ev, history, SOURCES.enforcement.weeklyCsv, page) : renderAnnouncementCard(e, ev, history, page))],
+    ["Newly listed in FDA's Enforcement Report", [...selection.enforcementListings, ...selection.classifications], (e, ev) => renderEnforcementCard(e, ev, history, SOURCES.enforcement.weeklyCsv, page)],
+  ];
 
   if (quiet) {
     body.push(
       `## Were there any supplement recalls this week?`,
       "",
-      `No. ${sourcesLine} Neither listed a new dietary-supplement recall, a supplement recall newly added to the Enforcement Report, or an update to an earlier supplement recall for ${label}.`,
+      `No. We checked FDA's [recalls page](${SOURCES.listing.url}) and the [Enforcement Report](${SOURCES.enforcement.url}) for ${reportDates || "this week"}: neither listed a new dietary-supplement recall, a supplement recall newly added to the Enforcement Report, or an update to an earlier one for ${label}.`,
       ""
     );
   } else {
-    section(
-      "New recall announcements this week",
-      `Company recall announcements that FDA posted on its [recalls page](${SOURCES.listing.url}) this week.`,
-      selection.newAnnouncements,
-      (e, ev) => renderAnnouncementCard(e, ev, history),
-      "None this week."
-    );
-    section(
-      "Updates to earlier recalls",
-      `Changes to recalls announced before this week: more lots or products, corrected details or new instructions, from the [FDA-posted notices](${SOURCES.listing.url}) and the [Enforcement Report](${SOURCES.enforcement.url}).`,
-      selection.updates,
-      (e, ev) => (e.source === SOURCES.enforcement.id ? renderEnforcementCard(e, ev, history, SOURCES.enforcement.weeklyCsv) : renderAnnouncementCard(e, ev, history)),
-      "None this week."
-    );
-    section(
-      "Newly listed in FDA's Enforcement Report",
-      `FDA's weekly [Enforcement Report](${SOURCES.enforcement.url}) lists recalls after FDA reviews them, often weeks after the company's announcement. A listing here is not a new warning or an expansion of an earlier one.`,
-      [...selection.enforcementListings, ...selection.classifications],
-      (e, ev) => renderEnforcementCard(e, ev, history, SOURCES.enforcement.weeklyCsv),
-      "No dietary-supplement recalls this week."
-    );
+    for (const [heading, entries, render] of groups) {
+      if (!entries.length) continue;
+      body.push(`## ${heading}`, "");
+      for (const { entry, event } of entries) body.push(...render(entry, event));
+    }
+    // Empty categories collapse into one note, scoped to exactly what was checked.
+    if (settled) {
+      const none = [
+        !selection.newAnnouncements.length && `no other supplement recall announcements on FDA's recalls page for ${label}`,
+        !selection.updates.length && "no updates to earlier supplement recalls",
+        !(selection.enforcementListings.length + selection.classifications.length) && `no supplement recalls newly listed in FDA's Enforcement Report for ${reportDates || "this week"}`,
+      ].filter(Boolean);
+      if (none.length) body.push(`**Also checked:** ${none.join("; ")}.`, "");
+    }
   }
 
   body.push(
-    `## How we put this roundup together`,
-    "",
-    `${sourcesLine} We include a recall when FDA files it under dietary supplements or the product description names a supplement. Product details, reasons and instructions are quoted from the notice. openFDA was used only to cross-check, as [its documentation](${SOURCES.openfda.url}) advises. If a source cannot be read, we say so above rather than report a quiet week.`,
-    "",
     `A recall is about specific products, not an ingredient. To see how PharmaGuide checks a product you already own, read [how it works](/how-it-works/) and [our methodology](/methodology/). More safety posts are on the [blog](/blog/).`,
     "",
     "<Sources>",
+    `- How we check: FDA's recalls page and every Enforcement Report in the week; a recall is included when FDA files it under dietary supplements or the product description names one. Identifiers, lots and instructions are taken from the notice. [openFDA](${SOURCES.openfda.url}) is used only to cross-check.`,
     `- [FDA: Recalls, Market Withdrawals & Safety Alerts](${SOURCES.listing.url})`,
     `- [FDA: Enforcement Reports](${SOURCES.enforcement.url})`,
     ...[...new Set(items.filter(({ entry }) => entry.url).map(({ entry }) => entry.url))].map((u) => {
       const e = items.find(({ entry }) => entry.url === u).entry;
       return `- [${mdxText(e.title || `${e.company}: FDA-posted company announcement`)}](${u})`;
     }),
-    `- [openFDA: food enforcement API](${SOURCES.openfda.url})`,
     "</Sources>",
     ""
   );

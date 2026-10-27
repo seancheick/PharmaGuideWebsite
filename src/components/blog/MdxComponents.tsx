@@ -91,6 +91,27 @@ export const mdxComponents: MDXComponents = {
   ),
   li: ({ children, ...props }) => <li {...props}>{children}</li>,
 
+  // ─── Tables ────────────────────────────────────────────────────────
+  // GFM tables scroll sideways inside their own box on narrow screens
+  // rather than widening the page.
+  table: ({ children, ...props }) => (
+    <div className="my-6 overflow-x-auto rounded-lg ring-1 ring-border">
+      <table className="w-full border-collapse text-left text-body-sm" {...props}>
+        {children}
+      </table>
+    </div>
+  ),
+  th: ({ children, ...props }) => (
+    <th className="border-b border-border bg-surface-subtle/60 px-3 py-2 font-mono text-nano font-medium uppercase text-subtle" {...props}>
+      {children}
+    </th>
+  ),
+  td: ({ children, ...props }) => (
+    <td className="border-b border-border px-3 py-2 align-top text-foreground/85 [tr:last-child>&]:border-b-0" {...props}>
+      {children}
+    </td>
+  ),
+
   // ─── Inline emphasis ───────────────────────────────────────────────
   strong: ({ children, ...props }) => (
     <strong className="font-medium text-ink" {...props}>

@@ -95,6 +95,24 @@ export interface BlogPost {
   /** A content/blog/.drafts/ post, rendered on preview deployments only. */
   isDraft?: boolean;
   evidenceLevel?: "Established" | "Moderate" | "Limited" | "Mixed" | "Conditional";
+  /** Set on weekly FDA recall roundups (format: recall-digest). They are
+   *  listed under Safety Alerts and kept out of the main feed. */
+  recall?: RecallSummary;
+}
+
+/** What a recall roundup's cover shows, read from the post itself. */
+export interface RecallSummary {
+  /** "Oct 19–25, 2026" */
+  week: string;
+  /** RecallCard entries in the post. */
+  count: number;
+  /** Some FDA records were still being classified when it was rendered. */
+  unsettled: boolean;
+}
+
+/** "1 recall listed" / "3 recalls listed so far". */
+export function recallCountLabel({ count, unsettled }: RecallSummary): string {
+  return `${count} recall${count === 1 ? "" : "s"} listed${unsettled ? " so far" : ""}`;
 }
 
 export function formatBlogDate(iso: string): string {
@@ -114,12 +132,12 @@ export function formatBlogDate(iso: string): string {
  */
 export type BlogCardPost = Pick<
   BlogPost,
-  "slug" | "title" | "description" | "category" | "date" | "readTime" | "image" | "authorId" | "tags"
+  "slug" | "title" | "description" | "category" | "date" | "readTime" | "image" | "authorId" | "tags" | "recall"
 >;
 
 export function toCardPost(post: BlogPost): BlogCardPost {
-  const { slug, title, description, category, date, readTime, image, authorId, tags } = post;
-  return { slug, title, description, category, date, readTime, image, authorId, tags };
+  const { slug, title, description, category, date, readTime, image, authorId, tags, recall } = post;
+  return { slug, title, description, category, date, readTime, image, authorId, tags, ...(recall ? { recall } : {}) };
 }
 
 /** The date a post was last substantively changed. */

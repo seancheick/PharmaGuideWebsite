@@ -22,6 +22,7 @@ const PALETTE = {
   hairline: "#E5E2DB",
   border: "#D1CDC4",
   accent: "#183B3F",
+  severity: "#AA4E26",
 } as const;
 
 const FONT_DIR = path.join(process.cwd(), "assets", "fonts");
@@ -46,6 +47,8 @@ export interface OgCard {
   accent?: string;
   /** Mono caps line bottom-left. */
   footnote?: string;
+  /** Large figure beside the headline, e.g. a recall roundup's count. */
+  stat?: { value: string; label: string };
 }
 
 /** Long article titles step down so they never exceed three lines. */
@@ -103,14 +106,15 @@ export function renderOgCard(card: OgCard): ImageResponse {
           </div>
         </div>
 
-        {/* Headline */}
+        {/* Headline (+ optional stat on the right) */}
+        <div style={{ display: "flex", alignItems: "center", flexGrow: 1, gap: 48 }}>
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             flexGrow: 1,
-            maxWidth: 1000,
+            maxWidth: card.stat ? 760 : 1000,
           }}
         >
           <div
@@ -142,6 +146,34 @@ export function renderOgCard(card: OgCard): ImageResponse {
               {card.accent}
             </div>
           ) : null}
+        </div>
+        {card.stat ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+              paddingLeft: 40,
+              borderLeft: `3px solid ${PALETTE.severity}`,
+            }}
+          >
+            <span style={{ fontSize: 168, lineHeight: 0.9, letterSpacing: "-0.05em", color: PALETTE.ink }}>
+              {card.stat.value}
+            </span>
+            <span
+              style={{
+                marginTop: 14,
+                fontFamily: "Geist Mono",
+                fontSize: 17,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: PALETTE.severity,
+              }}
+            >
+              {card.stat.label}
+            </span>
+          </div>
+        ) : null}
         </div>
 
         {/* Colophon */}

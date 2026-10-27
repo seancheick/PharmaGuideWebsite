@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { m } from "framer-motion";
 import { fadeUpContainer, fadeUpItem } from "@/lib/tokens";
+import Link from "next/link";
 import type { BlogCardPost, BlogCategory } from "@/lib/blog-types";
+import { recallCountLabel } from "@/lib/blog-types";
 import { PEOPLE, displayName } from "@/lib/people";
 import { BlogCard } from "./BlogCard";
 import { BlogFeaturedCard } from "./BlogFeaturedCard";
@@ -18,6 +20,9 @@ import { cn } from "@/lib/utils";
  * Layout flow:
  *   1. Search bar
  *   2. Category chips (left) + view toggle (right)
+ *   2b. Latest recall roundup link (All posts view only). Weekly recall
+ *      digests are listed under Safety Alerts and in search, never in the
+ *      unfiltered grid, so 52 roundups a year don't bury the articles.
  *   3. Featured Editor's Pick (only on page 1, no filters)
  *   4. "Latest" section header + post-count caption
  *   5. Posts (grid OR list — user-toggleable, persists in localStorage)
@@ -44,12 +49,14 @@ interface BlogHubClientProps {
   posts: BlogCardPost[];
   featured: BlogCardPost | undefined;
   categories: readonly BlogCategory[];
+  latestRecall?: BlogCardPost;
 }
 
 export function BlogHubClient({
   posts,
   featured,
   categories,
+  latestRecall,
 }: BlogHubClientProps) {
   const [activeCategory, setActiveCategory] = useState<string | "all">("all");
   const [query, setQuery] = useState("");
@@ -77,6 +84,7 @@ export function BlogHubClient({
     const q = query.trim().toLowerCase();
     return posts.filter((p) => {
       if (isUnfiltered && featured && p.slug === featured.slug) return false;
+      if (isUnfiltered && p.recall) return false;
       if (activeCategory !== "all" && p.category !== activeCategory)
         return false;
       if (q) {
@@ -164,6 +172,31 @@ export function BlogHubClient({
                 />
               ))}
             </div>
+
+            {latestRecall?.recall && isUnfiltered && (
+              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-border bg-surface/70 px-4 py-3 text-body-sm shadow-xs">
+                <span className="inline-flex items-center gap-2 font-mono text-nano uppercase tracking-[0.12em] text-severity-avoid">
+                  <span aria-hidden="true" className="block h-1.5 w-1.5 rounded-full bg-severity-avoid" />
+                  Latest recall roundup
+                </span>
+                <Link
+                  href={`/blog/${latestRecall.slug}`}
+                  className="font-medium text-ink underline decoration-border-strong underline-offset-[3px] transition-colors hover:text-accent hover:decoration-accent"
+                >
+                  {latestRecall.recall.week}
+                </Link>
+                <span className="font-mono text-nano uppercase tracking-[0.12em] text-subtle">
+                  {recallCountLabel(latestRecall.recall)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setActiveCategory(latestRecall.category)}
+                  className="ml-auto font-mono text-nano uppercase tracking-[0.12em] text-accent hover:text-ink"
+                >
+                  Safety Alerts →
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>

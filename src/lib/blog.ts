@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import readingTime from "reading-time";
-import type { BlogPost } from "./blog-types";
+import type { BlogPost, RecallSummary } from "./blog-types";
 import { findPerson, type PersonId } from "./people";
 
 /**
@@ -138,6 +138,7 @@ function readPosts(dir: string, isDraft: boolean): BlogPost[] {
       content,
       reviewRequired,
       evidenceLevel,
+      ...(data.format === "recall-digest" ? { recall: recallSummary(data.title as string, content) } : {}),
       ...(isDraft ? { isDraft } : {}),
     } satisfies BlogPost;
   });
@@ -146,6 +147,22 @@ function readPosts(dir: string, isDraft: boolean): BlogPost[] {
 }
 
 /** On previews a draft wins, so an update to a live post shows the new version. */
+// Reads what scripts/lib/recalls.mjs writes: the title "Supplement recalls:
+// <week>", one <RecallCard> per recall, and "still being checked" while
+// FDA records are unclassified.
+function recallSummary(title: string, content: string): RecallSummary {
+  return {
+    week: (title ?? "").replace(/^Supplement recalls:\s*/, ""),
+    count: (content.match(/<RecallCard\b/g) ?? []).length,
+    unsettled: /still being checked/.test(content),
+  };
+}
+
+/** The newest weekly recall roundup, linked from the blog hub. */
+export function getLatestRecallDigest(): BlogPost | undefined {
+  return getAllPosts().find((p) => p.recall);
+}
+
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return getDraftPosts().find((p) => p.slug === slug) ?? getAllPosts().find((p) => p.slug === slug);
 }
@@ -156,11 +173,13 @@ export function getPostsByCategory(categoryId: string): BlogPost[] {
 
 export function getFeaturedPost(): BlogPost | undefined {
   const posts = getAllPosts();
-  return posts.find((p) => p.featured) ?? posts[0];
+  // Weekly recall roundups never become the editor's pick by being newest.
+  return posts.find((p) => p.featured) ?? posts.find((p) => !p.recall);
 }
 
 export function getRelatedPosts(post: BlogPost, limit = 3): BlogPost[] {
-  const all = getAllPosts().filter((p) => p.slug !== post.slug);
+  // Recall roundups relate to each other, never under a regular article.
+  const all = getAllPosts().filter((p) => p.slug !== post.slug && (post.recall || !p.recall));
   const sameCategory = all.filter((p) => p.category === post.category);
   // Fall back to most recent posts when the category has no other entries
   const pool = sameCategory.length > 0 ? sameCategory : all;
@@ -173,6 +192,7 @@ export {
   formatBlogDate,
   getCategory,
   postModified,
+  recallCountLabel,
   toCardPost,
 } from "./blog-types";
 export type { BlogCardPost, BlogCategory, BlogPost } from "./blog-types";

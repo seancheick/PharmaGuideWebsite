@@ -34,7 +34,7 @@ export const revalidate = 432000; // 5 days, in seconds
 export const metadata = pageMetadata("home");
 
 export default function Home() {
-  const latest = getAllPosts().slice(0, 3).map(toCardPost);
+  const latest = getAllPosts().filter((p) => !p.recall).slice(0, 3).map(toCardPost);
 
   return (
     <>

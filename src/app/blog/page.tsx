@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { NewsletterCTA } from "@/components/faq/NewsletterCTA";
 import { BlogHubClient } from "@/components/blog/BlogHubClient";
 import { EditorialStandards } from "@/components/blog/EditorialStandards";
-import { CATEGORIES, getAllPosts, getFeaturedPost, toCardPost } from "@/lib/blog";
+import { CATEGORIES, getAllPosts, getFeaturedPost, getLatestRecallDigest, toCardPost } from "@/lib/blog";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { pageMetadata, pageSchema } from "@/lib/pages";
 import { absoluteUrl } from "@/lib/schema";
@@ -31,6 +31,7 @@ export const metadata = pageMetadata("blog");
 export default function BlogHubPage() {
   const posts = getAllPosts();
   const featured = getFeaturedPost();
+  const latestRecall = getLatestRecallDigest();
   const schema = pageSchema("blog", {
     extra: {
       mainEntity: {
@@ -100,6 +101,7 @@ export default function BlogHubPage() {
           posts={posts.map(toCardPost)}
           featured={featured && toCardPost(featured)}
           categories={CATEGORIES}
+          latestRecall={latestRecall && toCardPost(latestRecall)}
         />
 
         {/* Compact editorial-standards strip — replaces the heavy

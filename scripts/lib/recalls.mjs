@@ -911,7 +911,6 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
     `date: "${generatedOn}"`,
     `author: "${author}"`,
     "featured: false",
-    `image: "/images/moments/recall.jpg"`,
     `tags: ${JSON.stringify(["FDA recall", "dietary supplements", "weekly recall roundup", ...firms.slice(0, 6)])}`,
     "review_required: false",
     "---",

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { BlogCardPost, BlogCategory } from "@/lib/blog-types";
-import { getCategory } from "@/lib/blog-types";
+import { getCategory, recallCountLabel } from "@/lib/blog-types";
 import { cn } from "@/lib/utils";
 
 /**
@@ -15,6 +15,11 @@ import { cn } from "@/lib/utils";
  *      large category label as background type, faint capsule shapes,
  *      subtle grid lines. No two posts in the same category look
  *      identical because the seed (post.slug) shifts the geometry.
+ *
+ *   3. Recall roundup — weekly FDA recall digests get a series cover with
+ *      their week and recall count instead of a photo (product photos in
+ *      notices belong to the companies, and one jar can read as the whole
+ *      brand). Same design every week; the data makes each one distinct.
  *
  * The fallback ensures the blog hub never has empty card-tops, even
  * when content is mid-write. Posts without uploaded photos still look
@@ -42,6 +47,15 @@ export function BlogCardCover({
   forceFallback = false,
 }: BlogCardCoverProps) {
   const cat = getCategory(post.category);
+
+  if (post.recall && !post.image && !forceFallback) {
+    return (
+      // The container units in RecallCoverArt resolve against this box.
+      <div className={cn("relative h-full w-full overflow-hidden bg-accent", className)} style={{ containerType: "inline-size" }}>
+        <RecallCoverArt post={post} />
+      </div>
+    );
+  }
 
   if (post.image && !forceFallback) {
     return (
@@ -165,6 +179,58 @@ function FallbackArt({
         </span>
       </div>
     </>
+  );
+}
+
+// ─── Recall roundup cover ────────────────────────────────────────────
+// Sized in container units so the same composition holds from the list
+// thumbnail to the featured card. Decorative: the card repeats the title.
+function RecallCoverArt({ post }: { post: BlogCardPost }) {
+  const recall = post.recall!;
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 flex flex-col justify-between text-white"
+      style={{ padding: "6.5cqw 7cqw" }}
+    >
+      {/* Warm severity rule along the top edge */}
+      <span className="absolute inset-x-0 top-0 h-[3px] bg-severity-avoid" />
+      <div
+        className="pointer-events-none absolute -right-[18%] -top-[40%] h-[120%] w-[70%] rounded-pill bg-white/[0.07] blur-3xl"
+        style={{ transform: "rotate(-12deg)" }}
+      />
+
+      {/* Right-aligned: BlogCard's category badge owns the top-left corner */}
+      <div className="relative flex items-center justify-end font-mono uppercase" style={{ fontSize: "2.6cqw", letterSpacing: "0.16em" }}>
+        <span className="flex items-center gap-[1.6cqw] text-white/85">
+          <span className="block rounded-full bg-white/85" style={{ width: "1.6cqw", height: "1.6cqw" }} />
+          PharmaGuide Weekly
+        </span>
+      </div>
+
+      <div className="relative">
+        <p className="font-mono uppercase text-white/70" style={{ fontSize: "2.8cqw", letterSpacing: "0.14em" }}>
+          Supplement recalls
+        </p>
+        <p className="mt-[1cqw] font-serif italic leading-[1.02] text-white" style={{ fontSize: "8.4cqw", letterSpacing: "-0.02em" }}>
+          {recall.week}
+        </p>
+      </div>
+
+      <div className="relative flex items-end justify-between gap-[3cqw] border-t border-white/15" style={{ paddingTop: "2.6cqw" }}>
+        <span className="font-mono uppercase text-white/55" style={{ fontSize: "2.3cqw", letterSpacing: "0.12em" }}>
+          Exact lots · FDA notices
+        </span>
+        <span className="flex items-baseline gap-[1.4cqw] whitespace-nowrap">
+          <span className="font-medium leading-none tabular-nums" style={{ fontSize: "9cqw", letterSpacing: "-0.04em" }}>
+            {recall.count}
+          </span>
+          <span className="font-mono uppercase text-white/75" style={{ fontSize: "2.3cqw", letterSpacing: "0.12em" }}>
+            {recallCountLabel(recall).replace(/^\d+ /, "")}
+          </span>
+        </span>
+      </div>
+    </div>
   );
 }
 

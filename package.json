@@ -18,12 +18,13 @@
     "blog:feature": "node scripts/blog.mjs feature",
     "blog:validate": "node scripts/validate-blog.mjs",
     "blog:publish-check": "node scripts/validate-blog.mjs --publish-check",
-    "test:email": "node --test tests/resend-contract.test.cjs",
+    "test:email": "node --test tests/resend-contract.test.cjs tests/email-theme.test.cjs tests/email-poll.test.cjs",
     "test:ai-connector": "tsc -p tests/tsconfig.ai-connector.json && node --test tests/ai-connector.test.cjs",
     "test:ai-privacy": "node --test tests/analytics-privacy.test.cjs",
     "test:mcp-routing": "node --test tests/mcp-routing.test.cjs"
   },
   "dependencies": {
+    "@lucasmarkes/hairline": "0.5.1",
     "@microsoft/clarity": "^1.0.2",
     "@react-email/components": "^1.0.12",
     "@react-email/render": "^2.0.8",

@@ -206,7 +206,7 @@ export const PAGES: Record<PageKey, PageEntry> = {
     path: "/checklist",
     title: "Free Supplement Safety Brief",
     description:
-      "The Supplement Safety Intelligence Brief: 12 pharmacist-reviewed sections on labels, doses, hidden ingredients, and interactions. Free.",
+      "The Supplement Safety Intelligence Brief: 12 clinician-reviewed sections on labels, doses, hidden ingredients, and interactions. Free.",
     label: "Safety Brief",
     og: { eyebrow: "Free field guide", headline: "Know what you're", accent: "actually taking." },
     sitemap: { priority: 0.5, changeFrequency: "monthly" },

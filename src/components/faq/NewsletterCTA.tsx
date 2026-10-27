@@ -28,6 +28,7 @@ export function NewsletterCTA() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -45,6 +46,7 @@ export function NewsletterCTA() {
     try {
       const result = await subscribeToNewsletter({ email, company });
       if (result.ok) {
+        setSuccessMessage(result.message);
         setSubmitted(true);
       } else {
         setError(result.message);
@@ -57,10 +59,7 @@ export function NewsletterCTA() {
   };
 
   return (
-    <section
-      aria-labelledby="newsletter-heading"
-      className="relative section-y bg-background"
-    >
+    <section aria-labelledby="newsletter-heading" className="section-y relative bg-background">
       {/* Soft accent halo (matches FinalCTA pattern) */}
       <div
         aria-hidden="true"
@@ -74,8 +73,7 @@ export function NewsletterCTA() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[35%]"
         style={{
-          background:
-            "linear-gradient(180deg, transparent 0%, rgb(244 242 238 / 0.5) 100%)",
+          background: "linear-gradient(180deg, transparent 0%, rgb(244 242 238 / 0.5) 100%)",
         }}
       />
 
@@ -92,21 +90,20 @@ export function NewsletterCTA() {
             variants={fadeUpItem}
             className="text-balance text-display-lg leading-[1.06] text-ink"
           >
-            Stay in{" "}
-            <span className="font-serif italic">the loop.</span>
+            Stay in <span className="font-serif italic">the loop.</span>
           </m.h2>
 
           <m.p
             variants={fadeUpItem}
             className="max-w-prose text-body-lg leading-relaxed text-muted"
           >
-            Latest research, supplement recalls, interaction updates, and the
-            health industry&apos;s signal — distilled. One email, no noise.
+            A useful article, a short product update, and a question for you. General information,
+            about once a month.
           </m.p>
 
           <m.div variants={fadeUpItem} className="w-full max-w-lg">
             {submitted ? (
-              <SuccessState />
+              <SuccessState message={successMessage} />
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 {/* Honeypot — off-screen, aria-hidden, not tabbable. */}
@@ -147,7 +144,7 @@ export function NewsletterCTA() {
                     type="submit"
                     disabled={submitting}
                     className={cn(
-                      "inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent",
+                      "focus-visible:outline-offset-3 inline-flex items-center justify-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth focus-visible:outline-2 focus-visible:outline-accent",
                       submitting
                         ? "cursor-wait opacity-80"
                         : "hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow"
@@ -158,10 +155,7 @@ export function NewsletterCTA() {
                   </button>
                 </div>
                 {error && (
-                  <p
-                    role="alert"
-                    className="text-body-sm text-severity-avoid"
-                  >
+                  <p role="alert" className="text-body-sm text-severity-avoid">
                     {error}
                   </p>
                 )}
@@ -170,19 +164,20 @@ export function NewsletterCTA() {
 
             <p className="mt-4 text-body-sm text-muted">
               Roughly monthly
-              <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
+              <span aria-hidden="true" className="mx-2 text-border-strong">
+                ·
+              </span>
               No spam
-              <span aria-hidden="true" className="mx-2 text-border-strong">·</span>
+              <span aria-hidden="true" className="mx-2 text-border-strong">
+                ·
+              </span>
               Unsubscribe anytime
             </p>
           </m.div>
 
           {/* Tiny help line — replaces the standalone "Can't find
               your answer?" strip with an inline contact link */}
-          <m.p
-            variants={fadeUpItem}
-            className="text-body-sm text-muted"
-          >
+          <m.p variants={fadeUpItem} className="text-body-sm text-muted">
             Still have a specific question?{" "}
             <a
               href="mailto:info@pharmaguide.io"
@@ -197,7 +192,7 @@ export function NewsletterCTA() {
   );
 }
 
-function SuccessState() {
+function SuccessState({ message }: { message: string }) {
   return (
     <m.div
       initial={{ opacity: 0, y: 8 }}
@@ -224,10 +219,8 @@ function SuccessState() {
           />
         </svg>
       </span>
-      <p className="font-serif text-h3 italic text-ink">You&apos;re in.</p>
-      <p className="text-body-sm text-muted">
-        Watch your inbox — first dispatch arrives soon.
-      </p>
+      <p className="font-serif text-h3 italic text-ink">Thanks for checking in.</p>
+      <p className="text-body-sm text-muted">{message}</p>
     </m.div>
   );
 }

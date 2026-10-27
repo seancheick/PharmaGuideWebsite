@@ -63,7 +63,7 @@ const config = [
      * `no-require-imports` would otherwise fail CI on a file that is working
      * exactly as intended.
      */
-    files: ["tests/**/*.cjs"],
+    files: ["tests/**/*.cjs", "src/emails/email-layout.cjs", "src/lib/email-poll.cjs"],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
     },

@@ -8,6 +8,8 @@ import { Footer } from "@/components/layout/Footer";
 import { NewsletterCTA } from "@/components/faq/NewsletterCTA";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogShare } from "@/components/blog/BlogShare";
+import { BriefInline } from "@/components/brief/BriefInline";
+import { BriefOffer } from "@/components/brief/BriefOffer";
 import { mdxComponents } from "@/components/blog/MdxComponents";
 import { ClinicianBadge } from "@/components/shared/ClinicianBadge";
 import { JsonLd } from "@/components/shared/JsonLd";
@@ -263,7 +265,7 @@ export default async function BlogPostPage({
           className="relative pb-section-y"
         >
           <div className="container relative mx-auto">
-            <article className="mx-auto max-w-3xl">
+            <article id="post-body" className="mx-auto max-w-3xl">
               <MDXRemote
                 source={post.content}
                 components={mdxComponents}
@@ -274,6 +276,7 @@ export default async function BlogPostPage({
                 }}
               />
             </article>
+            <BriefInline />
           </div>
         </section>
 
@@ -320,6 +323,8 @@ export default async function BlogPostPage({
       </main>
       <Footer />
 
+      {/* Keyed by slug: a new post starts a fresh trigger. */}
+      <BriefOffer key={post.slug} articleId="post-body" />
       <JsonLd nodes={schema} />
     </>
   );

@@ -321,6 +321,12 @@
     color: rgb(var(--color-ink));
   }
 
+  /* The brief offer and the chat launcher share the bottom corner;
+     the launcher steps aside while the offer is up (BriefOffer.tsx). */
+  html[data-brief-offer] [data-chat-launcher] {
+    display: none;
+  }
+
   /* Focus ring — visible but elegant */
   :focus-visible {
     outline: 2px solid rgb(var(--color-accent));

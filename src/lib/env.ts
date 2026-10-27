@@ -43,11 +43,18 @@ function requiredInProduction(name: string): string | undefined {
 export const env = {
   // Resend — required everywhere
   RESEND_API_KEY: required("RESEND_API_KEY"),
+  EMAIL_UNSUBSCRIBE_SECRET: process.env.EMAIL_UNSUBSCRIBE_SECRET ?? "",
+  RESEND_WEBHOOK_SECRET: process.env.RESEND_WEBHOOK_SECRET ?? "",
+  RESEND_BETA_WAITING_SEGMENT_ID: process.env.RESEND_BETA_WAITING_SEGMENT_ID ?? "",
+  RESEND_BETA_TOPIC_ID: process.env.RESEND_BETA_TOPIC_ID ?? "",
+  RESEND_NEWSLETTER_TOPIC_ID: process.env.RESEND_NEWSLETTER_TOPIC_ID ?? "",
+  RESEND_WAITING_SEQUENCE_ENABLED: process.env.RESEND_WAITING_SEQUENCE_ENABLED === "true",
+  RESEND_WAITING_SEQUENCE_STARTED_AT: process.env.RESEND_WAITING_SEQUENCE_STARTED_AT ?? "",
   RESEND_AUDIENCE_BETA_ID: required("RESEND_AUDIENCE_BETA_ID"),
   RESEND_AUDIENCE_NEWSLETTER_ID: required("RESEND_AUDIENCE_NEWSLETTER_ID"),
 
   // Sender identity — falls back to a hardcoded domain match if unset
-  RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL ?? "PharmaGuide <hello@pharmaguide.io>",
+  RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL ?? "Sean at PharmaGuide <hello@pharmaguide.io>",
   RESEND_REPLY_TO_EMAIL: process.env.RESEND_REPLY_TO_EMAIL ?? "info@pharmaguide.io",
   // Inbox that receives Healthcare-Pros early-access inquiries from the
   // HIPAA page form. Lands as a structured email a human triages — no

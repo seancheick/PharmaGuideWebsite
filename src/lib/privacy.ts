@@ -106,6 +106,10 @@ On our servers (encrypted in transit and at rest): your email, account metadata,
 
 **Assistant connection infrastructure:** Supabase provides account sign-in, the synced supplement backup, connection records and encrypted snapshot storage. WorkOS manages assistant authorization; we send it your verified account ID and email, and it processes authorization and connection metadata. We do not send your supplement list, medications or snapshot text to WorkOS as part of this authorization flow. Vercel hosts the website and connection-management endpoints. See [Supabase’s data-processing terms](https://supabase.com/legal/customer-resources/data-processing-addendum) and [WorkOS’s data-processing terms](https://workos.com/legal/data-processing-addendum).
 
+**Optional beta poll:** if you confirm an answer, we store your latest general testing interest and its submission date with your Resend contact. Opening a poll link does not save an answer. The poll collects no personal medical details and does not change your subscriptions.
+
+**Optional unsubscribe feedback:** after opting out of an email list, you may choose a reason. If submitted, only the latest selected reason and list are stored with your contact in our email provider, Resend, to improve our emails. No free text or health information is collected in this form. Giving feedback does not change your subscriptions.
+
 **Legal requirements:** we will disclose information when legally required (court order, subpoena, lawful request from a regulator) and we will tell you about the request unless legally barred from doing so.
 
 **Business transfers:** if PharmaGuide is acquired or merges with another company, your data may transfer to the new entity. They are required to honor this policy or notify you of any changes.
@@ -126,7 +130,7 @@ On our servers (encrypted in transit and at rest): your email, account metadata,
 
 **Portability** — contact [privacy@pharmaguide.io](mailto:privacy@pharmaguide.io) to request a portable copy where applicable. A full self-service JSON export is not currently provided.
 
-**Opt out of marketing** — unsubscribe from any email we send, instantly, no questions.
+**Opt out of marketing** — use the unsubscribe link in our marketing emails. A visible link asks you to confirm; your email app may also offer one-click unsubscribe. Contact info@pharmaguide.io if a link fails.
 
 **Website analytics** — we honor your browser’s Do Not Track setting. Private connection pages exclude marketing analytics and session replay.
 
@@ -136,7 +140,9 @@ If you're in California, the EU, the UK, or another jurisdiction with additional
       id: "third-parties",
       num: "7",
       title: "Third parties and tracking",
-      body: `**Sign-in on the website:** consent and connections pages use browser storage for your Supabase session and the PKCE sign-in verifier. These private pages do not load our marketing analytics or session replay.
+      body: `**Email subscriptions:** Resend stores your email address, list membership, unsubscribe preference, general beta testing stage, and email delivery records. Our existing Upstash store keeps a keyed identifier and welcome-send status so a retry does not send another accepted welcome. Until a welcome is accepted, it also stores the original email message, including your address, so a retry sends the same message. The message is removed from that receipt once accepted; the identifier and status remain to prevent duplicate welcomes. Unresolved sends are reviewed before retrying after the provider's deduplication window. Minimal delivery-event records, containing message/contact identifiers, status and timestamp, are kept for 90 days. These tracking records do not contain email bodies, your medication list, or other health details. A newsletter subscription does not tell us which products you take.
+
+**Sign-in on the website:** consent and connections pages use browser storage for your Supabase session and the PKCE sign-in verifier. These private pages do not load our marketing analytics or session replay.
 
 **Cookies on the website:** we use a minimal set of essential cookies (session, security). We use privacy-friendly analytics (Vercel Analytics, Microsoft Clarity for session replay). No cross-site advertising trackers. No Facebook pixel. No data brokers.
 

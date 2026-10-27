@@ -405,7 +405,7 @@ test("brief delivery describes actual enrollment and honors an existing opt-out"
     assert.equal(result.ok, true);
     assert.match(result.message, /could not confirm your beta signup/);
     assert.match(setup.sends[0].payload.text, /couldn't confirm an active beta subscription/);
-    assert.doesNotMatch(setup.sends[0].payload.text, /You're also on the beta list/);
+    assert.doesNotMatch(setup.sends[0].payload.text, /on the beta list too/);
   }
 });
 
@@ -424,6 +424,9 @@ test("a brief request also joins the newsletter, with an unsubscribe link for ea
   assert.match(text, /monthly notes/);
   assert.match(text, /Unsubscribe from monthly notes/);
   assert.match(text, /Unsubscribe from beta invitations and updates/);
+  assert.match(text, /on the beta list too/);
+  assert.match(text, /Get your brief https:\/\/pharmaguide\.io\/supplement-safety-brief\.pdf/);
+  assert.match(setup.sends[0].payload.html ?? (await require("@react-email/render").render(setup.sends[0].payload.react)), /brief-cover-email\.jpg/);
   const header = setup.sends[0].payload.headers["List-Unsubscribe"];
   const token = new URL(header.slice(1, -1)).searchParams.get("token");
   assert.equal(setup.preferences.readEmailPreference(token).list, "newsletter");

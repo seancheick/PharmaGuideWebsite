@@ -122,7 +122,8 @@ automatic blog offer (`BriefOffer.tsx`). The automatic offer appears after 45
 visible seconds plus the article midpoint, at most once a session, quiet for 30
 days after a dismissal and for good after a confirmed request
 (`src/lib/brief-offer.ts`). The PDF is `public/supplement-safety-brief.pdf`;
-re-render `public/images/brief-cover.webp` from its page 1 whenever it changes.
+re-render `public/images/brief-cover.webp` (site) and `public/images/brief-cover-email.jpg`
+(email, 240px JPEG because some clients can't show WebP) from its page 1 whenever it changes.
 
 From: Sean at PharmaGuide, using the verified `hello@pharmaguide.io` address.
 Reply-to: `info@pharmaguide.io`. During active testing, check replies daily or

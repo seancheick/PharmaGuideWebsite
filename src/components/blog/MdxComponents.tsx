@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { MDXComponents } from "mdx/types";
 import { cn } from "@/lib/utils";
-import * as shilajitFigures from "./figures/ShilajitFigures";
+import * as figures from "./figures";
 
 /**
  * Custom MDX components for blog posts.
@@ -371,6 +371,7 @@ export const mdxComponents: MDXComponents = {
    */
   SvgStyle: ({ css }: { css: string }) => <style>{css}</style>,
 
-  // Post-specific teaching figures (HTML, so text reflows on phones).
-  ...shilajitFigures,
+  // Teaching figures, registered in ./figures/index.ts (HTML, so text
+  // reflows on phones). The validator reads the same registry.
+  ...figures,
 };

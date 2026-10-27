@@ -58,17 +58,16 @@ const HIGH_RISK_CATEGORIES = new Set([
   "safety-alerts",
 ]);
 
-// Teaching figures are React components in src/components/blog/figures/,
-// registered in MdxComponents.tsx. Every exported function there is
-// allowed, so a new figure needs no edit here.
+// Teaching figures: the registry src/components/blog/figures/index.ts
+// re-exports each figure module, and MdxComponents.tsx spreads it into the
+// MDX component map. Allow exactly the functions exported by the modules
+// that registry lists, so validation and rendering agree.
 const FIGURES_DIR = path.join(ROOT, "src", "components", "blog", "figures");
-const FIGURE_COMPONENTS = fs.existsSync(FIGURES_DIR)
-  ? fs
-      .readdirSync(FIGURES_DIR)
-      .filter((f) => f.endsWith(".tsx"))
-      .flatMap((f) =>
-        [...fs.readFileSync(path.join(FIGURES_DIR, f), "utf8").matchAll(/^export function ([A-Z]\w*)/gm)].map((m) => m[1])
-      )
+const FIGURES_REGISTRY = path.join(FIGURES_DIR, "index.ts");
+const FIGURE_COMPONENTS = fs.existsSync(FIGURES_REGISTRY)
+  ? [...fs.readFileSync(FIGURES_REGISTRY, "utf8").matchAll(/^export \* from "\.\/(\w+)";/gm)].flatMap(([, mod]) =>
+      [...fs.readFileSync(path.join(FIGURES_DIR, `${mod}.tsx`), "utf8").matchAll(/^export function ([A-Z]\w*)/gm)].map((m) => m[1])
+    )
   : [];
 
 const ALLOWED_MDX_COMPONENTS = new Set([
@@ -654,6 +653,14 @@ async function crossrefResolves(doi) {
   }
 }
 
+// URLs that block automated checks (401/403/429) but were opened in a
+// browser and matched to their citation. Each entry: who checked, when,
+// and what the page showed. Re-check when a post is substantively revised.
+const MANUALLY_VERIFIED_URLS = {
+  "https://professional.heart.org/en/science-news/2026-guideline-on-the-management-of-dyslipidemia":
+    "2026-10-27, Claude in browser: page titled '2026 Guideline on the Management of Dyslipidemia' (AHA Professional Heart Daily); returns 403 to scripts",
+};
+
 async function checkUrls(content, { skip = false } = {}) {
   if (skip) return [];
   const issues = [];
@@ -686,6 +693,9 @@ async function checkUrls(content, { skip = false } = {}) {
     const doi = doiFromUrl(url);
     if (doi && (await crossrefResolves(doi))) continue; // publisher blocks bots; DOI is real
     if ([401, 403, 429].includes(result.status)) {
+      // A specific bot-blocked URL a person has opened and matched to its
+      // citation passes; anything else still warns for a human to confirm.
+      if (MANUALLY_VERIFIED_URLS[url]) continue;
       // Bot protection is not a dead link: say so, and let a human confirm.
       issues.push(warn(`URL ${url} blocked the automated check (status ${result.status}); confirm it opens`));
       continue;

@@ -433,6 +433,26 @@
     }
   }
 
+  /* Figure "Print / PDF": FigureActions clones the figure into
+     #figure-print-root; print only that, without its controls. */
+  @media print {
+    html.print-figure body > *:not(#figure-print-root) {
+      display: none !important;
+    }
+    #figure-print-root [data-export-ignore] {
+      display: none !important;
+    }
+    #figure-print-root > * {
+      box-shadow: none;
+      break-inside: auto;
+    }
+  }
+  @media screen {
+    #figure-print-root {
+      display: none;
+    }
+  }
+
   /* Number tabular — for FitScore counters */
   .tnum {
     font-variant-numeric: tabular-nums;

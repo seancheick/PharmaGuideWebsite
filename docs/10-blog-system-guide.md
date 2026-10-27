@@ -30,8 +30,9 @@ git commit -m "feature: set <slug> as Editor's Pick"
 git push
 ```
 
-Vercel ISR rolls the change to production within the 5-day revalidation
-window. To make it live immediately, redeploy from the Vercel dashboard.
+Pushing to `main` starts a Vercel production deployment; the change is live
+once that deployment finishes (usually a few minutes). Open the live page to
+confirm. See [Production deploy](#production-deploy).
 
 ### Example session
 
@@ -90,7 +91,7 @@ mkdir -p "public/blog/your-post-slug"
 # 4. Reference images in the post:
 #    <PostImage src="/blog/your-post-slug/hero.jpg" alt="..." caption="..." />
 
-# 5. Push to main — Vercel ISR rolls it onto production
+# 5. Push to main — Vercel builds and deploys production
 git add content/blog/your-post-slug.mdx public/blog/your-post-slug/
 git commit -m "post: your-post-slug"
 git push
@@ -137,8 +138,8 @@ The skill runs an 8-phase pipeline:
 # Verify the post
 pnpm blog:validate <slug>
 
-# Visually inspect
-pnpm dev   # then open http://localhost:3000/blog/<slug>
+# Visually inspect (posts don't render under pnpm dev; see Testing locally)
+pnpm build && pnpm start   # then open http://localhost:3000/blog/<slug>
 
 # Before committing
 pnpm blog:publish-check <slug>
@@ -174,8 +175,8 @@ For end-to-end (blog + social in one session):
 - **Banned medical-advice phrases** — "you should take," "cures," "prevents disease," "the best supplement" etc. flagged
 - **Brand-recommendation guards** — "buy this brand," "our top pick," "we recommend" etc. flagged. Factual brand mentions are allowed (e.g., naming a recalled brand in a safety alert).
 - **Citation rule (risk-based)** — inline `<Source>` chips required for dosing / interactions / FDA / pregnancy / mechanism-driving-recommendation claims; background framing gets one `<Source>` line at the end of the section. Every citation uses `<Source>`, never a bold `**Source:**` line
-- **Image policy** — illustrations preferred over AI-generated photos; AI photos limited to editorial-mood imagery (no fake pills, doctors, bottles, labels, lab settings)
-- **Reviewer requirement** — posts with Risk Score 31–70 get `review_required: true` in frontmatter; `blog:publish-check` fails until a `reviewer:` field is set
+- **Image policy** — illustrations preferred over AI-generated photos; AI photos limited to editorial-mood imagery (no fake pills, doctors, bottles, labels, lab settings). Sole exception: a text-free, blank-label product prop as the base of a teaching figure, with all wording as live text and a visible "fictional" tag
+- **Reviewer requirement** — posts with Risk Score 31–70 get `review_required: true` in frontmatter; `blog:publish-check` fails until a `reviewer:` field is set. The field is a public claim (the page shows "Clinically reviewed" and emits `reviewedBy`), so set it only once the PharmD has signed off on the exact version being published, with `reviewed_at` taken from the review record
 
 ### Validator commands
 
@@ -186,7 +187,7 @@ For end-to-end (blog + social in one session):
 | `pnpm blog:publish-check <slug>` | Stricter ship gate (also fails on missing reviewer, high risk, URL warnings) | Before every commit that publishes |
 | `pnpm blog:feature <slug>` | Set the Editor's Pick (auto-unsets the previous) | When promoting a post |
 
-`blog:validate` runs **structural, clinical-governance, and URL checks** — frontmatter shape, component allowlist, image-file resolution, internal-link count, sources section, word-count floor, banned marketing/medical-advice/brand phrases, YMYL disclaimer presence, per-section citations for high-risk categories, fake-clinical-asset filename patterns, reviewer invariants, URL reachability, authoritative-domain hint for clinical citations, and PubMed citation identity: every PubMed/PMC link is fetched from NCBI and fails when its real title, first author (including an author named beside the link), year or journal does not match the post's label. Identity is not support: the drafter still reads each abstract for the numbers it attributes. A URL that carries a DOI is confirmed through Crossref when the publisher blocks bots; any other 401/403/429 is a warning to open the link by hand, not a dead link. A humanizer check warns on machine-sounding phrases ("it's important to note", "when it comes to", "deep dive"…). Run with Node 22 (`nvm use`); Next.js fails on Node 18. Readability warnings (long paragraphs, long sentences, academic connectives) print as warnings but don't fail the build.
+`blog:validate` runs **structural, clinical-governance, and URL checks** — frontmatter shape, component allowlist, image-file resolution, internal-link count, sources section, word-count floor, banned marketing/medical-advice/brand phrases, YMYL disclaimer presence, per-section citations for high-risk categories, fake-clinical-asset filename patterns, reviewer invariants, URL reachability, authoritative-domain hint for clinical citations, and PubMed citation identity: every PubMed/PMC link is fetched from NCBI and fails when its real title, first author (including an author named beside the link), year or journal does not match the post's label. Identity is not support: the drafter still reads each abstract for the numbers it attributes. A URL that carries a DOI is confirmed through Crossref when the publisher blocks bots; any other 401/403/429 is a warning to open the link by hand, not a dead link. Once a person has opened such a link and matched it to its citation, record it in `MANUALLY_VERIFIED_URLS` in `scripts/validate-blog.mjs` (who, when, what the page showed) instead of passing `--accept-warnings`, which silences every URL warning. A humanizer check warns on machine-sounding phrases ("it's important to note", "when it comes to", "deep dive"…). Run with Node 22 (`nvm use`); Next.js fails on Node 18. Readability warnings (long paragraphs, long sentences, academic connectives) print as warnings but don't fail the build.
 
 `blog:publish-check` adds: reviewer-field gating, Risk Score ≥ 71 hard fail, URL warnings as failures (unless `--accept-warnings`).
 
@@ -212,20 +213,30 @@ description: "…"
 slug: "…"
 category: "interactions-stacks"
 date: "2026-05-15"
-author: "Sean Cheick Baradji"
-# reviewer: "Laurie Pham, PharmD"  # add after PharmD sign-off — do NOT write reviewer: "" (empty looks intentional)
+author: "sean-cheick-baradji"       # PersonId from src/lib/people.ts
+# reviewer: "laurie-pham"          # PersonId; add only after PharmD sign-off on THIS version — never to clear the validator
+# reviewed_at: "2026-05-20"        # the actual sign-off date from the review record
 featured: false
 tags: ["…"]
 review_required: true              # set by skill when Risk Score 31–70
 risk_score: 45                     # computed Risk Score
-evidence_level: "Moderate"         # Strong | Moderate | Limited | Mixed
+evidence_level: "Moderate"         # whole-post rating: Strong | Moderate | Limited | Mixed
+                                   # (<EvidencePill> rates one claim; its own levels are listed below)
 ---
 ```
 
 ### Where the skill lives
 
+The canonical copy is version-controlled in this repo at `skills/pg-blog-mdx/`;
+edit it there and review changes like code. Install it once per machine with a
+symlink so the agent loads the repo copy:
+
+```bash
+ln -sfn "$PWD/skills/pg-blog-mdx" ~/.claude/skills/pg-blog-mdx
 ```
-~/.claude/skills/pg-blog-mdx/
+
+```
+skills/pg-blog-mdx/               (→ ~/.claude/skills/pg-blog-mdx)
   SKILL.md                          ← Main orchestrator
   references/
     voice-guide.md                  ← Voice + banned words/phrases
@@ -278,8 +289,8 @@ src/app/blog/
 src/app/llms.txt/route.ts           ← AI crawler index (auto-generated)
 ```
 
-The pipeline: write `.mdx` → push → Vercel ISR rebuilds page within 5 days
-(or trigger immediately via Vercel dashboard) → live.
+The pipeline: write `.mdx` → push to `main` → Vercel builds a new production
+deployment → live when it finishes → open the live page to check.
 
 ---
 
@@ -294,8 +305,9 @@ description: "1-2 sentence summary used in OG cards, search results, RSS feeds, 
 slug: "your-post-slug"               # optional — defaults to filename
 category: "health-education"          # one of the 5 categories below
 date: "2026-05-15"                    # ISO 8601, controls sort + display
-author: "Sean Cheick Baradji"
-reviewer: "Dr. Pham L., PharmD"       # optional but strongly recommended
+author: "sean-cheick-baradji"         # PersonId from src/lib/people.ts
+reviewer: "laurie-pham"               # PersonId; only after PharmD sign-off on this version
+reviewed_at: "2026-05-20"             # actual sign-off date; shown on the page
 featured: false                        # true = becomes Editor's Pick on hub
 image: "/blog/your-post-slug/hero.jpg" # optional but strongly recommended
 tags: ["statins", "CoQ10", "interaction"]  # 5-10 tags, helps search + AI crawl
@@ -471,7 +483,7 @@ The literature on CoQ10 reversing statin-associated muscle symptoms is mixed.
 
 ### `<Illustration>` — teaching figures
 
-The default image type for PharmaGuide. A figure is a **React component** in `src/components/blog/figures/<Topic>Figures.tsx`, registered in `MdxComponents.tsx`; `<Illustration>` supplies the caption. The validator allows every function exported from that folder.
+The default image type for PharmaGuide. A figure is a **React component** in `src/components/blog/figures/<Topic>Figures.tsx`, listed in the registry `src/components/blog/figures/index.ts` (`export * from "./<Topic>Figures";`); `<Illustration>` supplies the caption. `MdxComponents.tsx` and the validator both read that registry, so a figure is allowed exactly when it renders. Every figure gets **Save image** (PNG) and **Copy link** (`#figure-N`); pass `printable` to `Frame` to add **Print / PDF**.
 
 ```mdx
 <Illustration caption="Anatomy of a certificate of analysis, using a fictional report">
@@ -504,63 +516,59 @@ Reference implementation: `src/components/blog/figures/ShilajitFigures.tsx`. Rul
 
 ---
 
-## SEO + AI crawler authority — the big plan
+## Search and AI visibility — what we do and what we don't promise
 
-You said: *"super high SEO and AI crawler — be the main source of information,
-better than Harvard Medical."* Here's how the technical foundation supports that.
+The goal is to be the clearest, most accurate answer to a supplement question.
+Nothing below guarantees a ranking or a citation; it makes the page easy to
+trust, read and index. Google's own guidance: it has no preferred word count,
+E-E-A-T is not itself a specific ranking factor, changing dates to look fresh
+is discouraged, and no special file or schema is required for its AI features
+([helpful content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content),
+[AI features](https://developers.google.com/search/docs/appearance/ai-features)).
 
 ### What's already shipped
 
-- **JSON-LD on every post**: `BlogPosting`, `Article`, `Person` (author + reviewedBy),
-  `BreadcrumbList`, `Organization`. Search engines + AI crawlers parse these
-  for direct citations.
+- **JSON-LD on every post**: `BlogPosting`, `Person` (author, and `reviewedBy`
+  when a completed review exists), `BreadcrumbList`, `Organization`. It
+  describes the page accurately; it is not a ranking lever.
 - **Per-post metadata**: title, description, canonical URL, OG, Twitter card,
   publishedTime, modifiedTime, keywords (from tags), articleSection (category)
-- **Word count + read time**: surfaced in JSON-LD so crawlers can rank long-form
-  authoritatively
-- **Reviewed-by schema**: `reviewedBy` Person node with PharmD credentials —
-  Google's algorithm specifically boosts medically-reviewed content for YMYL
-  ("Your Money or Your Life") queries
 - **Blog hub schema**: `Blog` type with one `BlogPosting` node per post
 - **Sitemap auto-generated** from MDX files; one URL per post
-- **`/llms.txt`** at the root — emerging standard for AI crawlers (Perplexity,
-  ChatGPT, Claude, Google AI Overviews) to find authoritative content quickly.
-  Most sites don't have one yet → being early gives you a citation edge.
-- **External authority links throughout `/features`** — FDA, NIH ODS, DSLD,
-  PubMed, Cochrane, NCCIH, DailyMed. Search engines reward reciprocal authority.
+- **`/llms.txt`** at the root — an optional experiment for AI crawlers. Measure
+  whether it changes anything before investing more in it; no advantage is
+  established.
+- **Links to primary sources** — FDA, NIH ODS, DSLD, PubMed, Cochrane,
+  NCCIH, DailyMed — because readers can check them.
 
-### What you need to write to win
+### What to write
 
-**Length: 1,500–3,500 words per post.** Harvard Health averages ~1,200; thinly
-written ranks worse than long-and-substantial.
+**Depth follows the question.** Answer what the reader came for, completely;
+there is no target word count. Long posts need a short answer near the top
+and clear section headings so a reader can jump to what they need.
 
-**Citations: every claim links to a primary source.** PubMed, NIH, FDA preferred.
-Avoid linking to other blog summaries — link to the underlying study.
+**Citations: every clinical claim links to a primary source**, placed next to
+the claim it supports. PubMed, NIH, FDA preferred. Link the study, not a
+summary of it.
 
-**Author authority on every post.** Author byline + reviewer credentials baked
-into JSON-LD = Google's "E-E-A-T" (Experience, Expertise, Authoritativeness,
-Trustworthiness) signal. This is the #1 ranking factor for medical content.
+**Real expertise, shown accurately.** A named author, and a named clinical
+reviewer only when that reviewer actually approved this version. Trust comes
+from being right and transparent, not from the markup.
 
-**Topic clusters.** Internal linking from any post to:
-- The relevant `/features` pillar
-- `/methodology` (the proof page)
-- Other posts on related topics
+**Internal links that serve the reader's next question**: the relevant
+`/features` pillar, `/methodology`, and the posts that answer what a reader of
+this one asks next. Measure outcomes rather than assuming every link lifts
+every page.
 
-Goal: every supplement-or-medication question someone asks should have a
-PharmaGuide page somewhere in the top 3 search results.
+**Short answer at the top.** Helps skim readers, featured snippets and AI
+summaries extract a clean answer.
 
-**TL;DR or "short answer" at the top.** Helps:
-- AI summarizers (ChatGPT, Perplexity) extract a clean answer
-- Featured snippets (Google's "answer box")
-- Skim readers who decide to dig deeper
+**Tables, numbered lists, teaching figures with real HTML text** make content
+easy to read and to extract. Figures' text is HTML, so it is indexable and
+accessible.
 
-**Tables, numbered lists, structured data** make content extractable. AI
-crawlers prefer well-structured pages because they parse them more reliably.
-Compare a 3-column comparison table to a paragraph of prose — the table wins.
-
-**Update the `dateModified` field whenever you revise.** Google rewards
-freshness for medical content; a 2024 article with `dateModified: 2026` ranks
-better than a static 2024 article.
+**Update `updated_at` only for substantive changes**, and say what changed
+when it affects the reader's understanding. Don't touch dates to look fresh.
 
 ### Realistic timeline expectations
 
@@ -620,25 +628,34 @@ sticks across sessions.
 
 ## Testing locally
 
-```bash
-pnpm dev
-# → http://localhost:3000/blog
+Posts don't render under `pnpm dev`: `patches/next-mdx-remote.patch` creates
+the post element with React's production JSX runtime, which the dev server
+rejects ("Attempted to render … without development properties"). Use a
+production build:
 
-# Hot-reload picks up MDX file changes (sometimes needs a soft refresh)
+```bash
+pnpm build && pnpm start
+# → http://localhost:3000/blog/<slug>
 ```
 
-Edit a post, save, refresh the browser tab. Frontmatter changes (like
-`featured: true/false`) require a hard refresh in dev mode.
+Rebuild after each edit. Check teaching figures at ~800px and at 375px, and
+open a saved figure image (Save image) to confirm nothing is cut off.
 
 ## Production deploy
 
 Push to `main`:
-- Vercel auto-deploys
-- Static pages regenerate (route shows `(SSG)` in build output)
-- ISR refreshes within 5 days (configured via `revalidate = 432000` in
-  `src/app/blog/page.tsx` and `[slug]/page.tsx`)
+- Vercel builds a new production deployment from that commit; the post is
+  live when the deployment finishes. New or edited MDX reaches production
+  only through a deployment.
+- Blog pages are statically generated in that build (route shows `(SSG)`).
+  `revalidate = 432000` (5 days, in `src/app/blog/page.tsx` and
+  `[slug]/page.tsx`) is ISR: it can regenerate a page within an existing
+  deployment after the interval, on a later request. It does not pull new
+  commits from Git.
+- After the deployment, open the live post and check it.
 
-To force an immediate refresh of a published post: Vercel dashboard → project
+To ship a fix without a new commit: Vercel dashboard → project → Deployments
+→ Redeploy.
 → Deployments → Redeploy.
 
 ---
@@ -699,15 +716,9 @@ specific pillar sections that have multiple deep-dives.
 
 ### Why this matters
 
-**Topic-cluster SEO**: Google's "topic authority" signal rewards sites
-where the cluster anchor (the /features pillar) is reciprocally linked
-to multiple deep-dive supporting articles. Each new post in a cluster
-boosts the rank of every other piece in the cluster (and the pillar
-itself).
-
-**AI crawl**: Perplexity, ChatGPT, Claude, Google AI Overviews follow
-internal link graphs to build their citation paths. A pillar with 5+
-linked deep-dives is much more likely to be cited than one with 0.
+**Readers and discovery**: linking a pillar to its deep-dives, and back,
+helps a reader reach the next answer and helps crawlers find every page.
+Treat any ranking or citation effect as something to measure, not assume.
 
 **UX**: visitors who land on a /features pillar deep-dive want concrete
 reading. A "From the blog" link gives them the next click without

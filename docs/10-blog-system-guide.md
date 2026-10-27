@@ -177,7 +177,7 @@ For end-to-end (blog + social in one session):
 
 ### What the skills enforce (clinical governance)
 
-- **Review routing** — every post carries `review_required: true` (Laurie Pham, PharmD reviews all PharmaGuide content). Interactions, dosing, contraindications, pregnancy and children are listed for her as clinical conclusions; a claim that could change a health decision and can't be resolved stays out of the draft until it is. (This replaced a numeric Risk Score in October 2026, which let a well-evidenced serious interaction score "Low" and skip review.)
+- **Review routing** — every post carries `review_required: true` (Laurie Pham, PharmD reviews all PharmaGuide content). Recall digests are the exception: team-checked restatements of FDA notices, `review_required: false`, no reviewer, approved with `pnpm blog:approve <slug>`. Interactions, dosing, contraindications, pregnancy and children are listed for her as clinical conclusions; a claim that could change a health decision and can't be resolved stays out of the draft until it is. (This replaced a numeric Risk Score in October 2026, which let a well-evidenced serious interaction score "Low" and skip review.)
 - **Evidence vs severity vs review** — `<EvidencePill>` and `evidence_level` grade evidence only (Established · Moderate · Limited · Mixed · Conditional; the validator rejects anything else); interaction severity is said in words; review status lives in frontmatter
 - **YMYL disclaimer** — every post has `<Callout tone="info">` within first 300 words
 - **Banned marketing words** — AI-powered, revolutionary, synergy, seamless, etc. flagged

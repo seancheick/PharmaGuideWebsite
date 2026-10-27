@@ -150,9 +150,19 @@ export default async function BlogPostPage({
             role="note"
             className="fixed inset-x-0 bottom-0 z-50 border-t border-severity-caution/40 bg-[rgb(var(--color-severity-caution-bg))] px-4 py-3 text-center text-body-sm text-ink shadow-lg"
           >
-            <strong className="font-medium">Draft for clinical review, not published.</strong>{" "}
-            This page exists only on this preview link. After sign-off:{" "}
-            <code className="font-mono text-[0.9em]">pnpm blog:approve {post.slug} --reviewer laurie-pham --date &lt;date&gt;</code>
+            {post.reviewRequired === false ? (
+              <>
+                <strong className="font-medium">Draft, not published.</strong> This page exists only on this
+                preview link. After checking it against the FDA notices:{" "}
+                <code className="font-mono text-[0.9em]">pnpm blog:approve {post.slug}</code>
+              </>
+            ) : (
+              <>
+                <strong className="font-medium">Draft for clinical review, not published.</strong> This page
+                exists only on this preview link. After sign-off:{" "}
+                <code className="font-mono text-[0.9em]">pnpm blog:approve {post.slug} --reviewer laurie-pham --date &lt;date&gt;</code>
+              </>
+            )}
           </div>
         )}
         {/* ━━━━━━━━━━━━━━━━━━ HERO ━━━━━━━━━━━━━━━━━━ */}

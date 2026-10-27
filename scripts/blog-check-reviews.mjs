@@ -2,7 +2,9 @@
 /**
  * Review gate for the publication path: every post in content/blog/ (the
  * folder the site loads) must carry a completed clinical review record —
- * review_required: true, reviewer and reviewed_at. Offline and fast, so it
+ * review_required: true, reviewer and reviewed_at. Recall digests are the
+ * exception: team-checked restatements of FDA notices with review_required:
+ * false and no reviewer (Sean, 2026-10-27). Offline and fast, so it
  * can run in CI and before `next build`. Drafts in content/blog/.drafts/ are
  * not checked: the site doesn't load them.
  *
@@ -38,6 +40,12 @@ const pending = [];
 for (const file of fs.readdirSync(BLOG).filter((f) => f.endsWith(".mdx"))) {
   const raw = fs.readFileSync(path.join(BLOG, file), "utf8");
   const { data } = matter(raw);
+  if (data.format === "recall-digest") {
+    if (data.review_required !== false || data.reviewer || data.reviewed_at) {
+      problems.push(`${file}: recall digests need review_required: false and no reviewer/reviewed_at`);
+    }
+    continue;
+  }
   const missing = [
     data.review_required !== true && "review_required: true",
     !data.reviewer && "reviewer",

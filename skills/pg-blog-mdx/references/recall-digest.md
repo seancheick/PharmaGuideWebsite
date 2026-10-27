@@ -86,14 +86,16 @@ an `enforcement_listed` or `classified` item as new.
   classifies each one, recorded with who and when, then re-renders:
   `pnpm recalls:digest --week-ending <Sunday> --classify <Event ID or recall number>=not-supplement:"why" --by sean`
   (`=supplement` makes it a card).
-- Factual restatement of notices is the default. Any sentence that interprets risk needs PharmD
-  (Laurie Pham) sign-off; the draft sets `review_required: true` either way.
+- **Factual restatement only.** Recall digests are checked by our team against the FDA notices,
+  not clinically reviewed (Sean, 2026-10-27): the draft sets `review_required: false` and carries
+  no `reviewer`, so the page claims no clinical review. A sentence that interprets risk beyond
+  the notice doesn't belong in a digest; it goes in a regular, PharmD-reviewed post.
 
 ## Publishing (a human step)
 
 1. Check every card against its notice using the sidecar checklist; classify any unresolved records.
-2. After sign-off: `pnpm blog:approve <slug> --reviewer laurie-pham --date <sign-off date>`
-   (records the review, moves the draft live, runs publish-check, rolls back on failure).
+2. `pnpm blog:approve <slug>` (no reviewer or date: moves the draft live, runs publish-check,
+   rolls back on failure).
 3. Commit to the weekly PR branch and merge it. A merge to `main` deploys production.
 
 ## Schedule (`.github/workflows/recalls.yml`)

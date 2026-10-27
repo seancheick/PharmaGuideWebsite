@@ -228,7 +228,7 @@ Extract the candidate claims. For each, build the **claim record** in [claim-val
 
 ### Phase 5 — Review routing
 
-Every post gets `review_required: true`: Laurie Pham, PharmD reviews all PharmaGuide content. Clinical conclusions (efficacy, dosing, interactions, contraindications, pregnancy/breastfeeding, children, chronic disease) are listed in the sidecar for her review. A claim that could change a health decision and can't be resolved stays out of the draft (or its section is marked pending), with the exact claim and what would resolve it in the sidecar; everything else proceeds. Keep three labels separate: evidence confidence, interaction severity, review status (claim-validation-rules.md, "Review routing").
+Every post gets `review_required: true`: Laurie Pham, PharmD reviews all PharmaGuide content. The one exception is the recall digest, which only restates FDA notices and is team-checked (`review_required: false`, no reviewer; references/recall-digest.md). Clinical conclusions (efficacy, dosing, interactions, contraindications, pregnancy/breastfeeding, children, chronic disease) are listed in the sidecar for her review. A claim that could change a health decision and can't be resolved stays out of the draft (or its section is marked pending), with the exact claim and what would resolve it in the sidecar; everything else proceeds. Keep three labels separate: evidence confidence, interaction severity, review status (claim-validation-rules.md, "Review routing").
 
 ### Phase 6 — Outline
 

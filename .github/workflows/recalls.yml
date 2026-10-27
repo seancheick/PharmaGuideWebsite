@@ -4,7 +4,7 @@ name: Recall digest
 # previous Mon–Sun week's digest and open a draft PR for review.
 #
 # Nothing here touches main: a push to main deploys production, and a recall
-# post needs a person and Laurie's sign-off first. Collected history lives on
+# post needs a person to check it against the FDA notices first. Collected history lives on
 # automation/recall-history (always main + one data commit); the weekly PR
 # carries the draft, its review sidecar and the history up to that run.
 # Merging the PR is a human step. See skills/pg-blog-mdx/references/recall-digest.md.
@@ -131,14 +131,14 @@ jobs:
           validation=$([ "${{ steps.validate.outputs.code }}" = 0 ] && echo "passed" || echo "FAILED")
           title="Recall digest: $slug$([ "${{ steps.run.outputs.code }}" = 0 ] || echo ' (coverage incomplete)')"
           {
-            echo "Automated weekly draft. **Do not merge until a person has checked it against the FDA notices and Laurie has signed off.**"
+            echo "Automated weekly draft. **Do not merge until a person has checked it against the FDA notices.**"
             echo
             echo "- Coverage: $coverage"
             echo "- Validator: $validation"
             echo "- Draft: \`content/blog/.drafts/$slug.mdx\` (not loaded by the site until moved to \`content/blog/\`)"
             echo "- Review checklist: \`content/blog/.review/$slug.review.md\`"
             echo
-            echo "To publish: check each entry against its official notice and classify any unresolved records (review sidecar). After Laurie signs off, on this branch run \`pnpm blog:approve $slug --reviewer laurie-pham --date <sign-off date>\`, commit, mark the PR ready and merge."
+            echo "To publish: check each entry against its official notice and classify any unresolved records (review sidecar). Then, on this branch, run \`pnpm blog:approve $slug\`, commit, mark the PR ready and merge."
             echo
             echo '```'
             cat digest.log

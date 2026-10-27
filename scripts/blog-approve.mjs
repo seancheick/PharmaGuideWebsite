@@ -10,6 +10,9 @@
  * Only if that passes is the draft removed; otherwise everything is rolled
  * back and nothing is published. The date is required and never defaulted: it is the
  * day the reviewer signed off on this exact version, and the page shows it.
+ * Recall digests (format: recall-digest) are team-checked, not clinically
+ * reviewed: `pnpm blog:approve <slug>` with no reviewer or date publishes
+ * them unchanged after the same publish-check.
  * Nothing is committed or pushed; a push to main deploys production.
  */
 
@@ -28,9 +31,9 @@ const opt = (name) => {
 };
 const reviewer = opt("--reviewer");
 const date = opt("--date");
-
-if (!slug || !reviewer || !/^\d{4}-\d{2}-\d{2}$/.test(date ?? "")) {
-  console.error("Usage: pnpm blog:approve <slug> --reviewer <PersonId> --date <YYYY-MM-DD of the sign-off>");
+const usage = "Usage: pnpm blog:approve <slug> --reviewer <PersonId> --date <YYYY-MM-DD of the sign-off>\n       pnpm blog:approve <recall-digest slug>   (team-checked, no reviewer)";
+if (!slug) {
+  console.error(usage);
   process.exit(2);
 }
 
@@ -47,11 +50,18 @@ if (!m) {
   console.error("Draft has no YAML frontmatter.");
   process.exit(2);
 }
-const head = m[1]
-  .split("\n")
-  .filter((line) => !/^(reviewer|reviewed_at):/.test(line))
-  .concat([`reviewer: "${reviewer}"`, `reviewed_at: "${date}"`])
-  .join("\n");
+const recallDigest = /^format:\s*["']?recall-digest["']?\s*$/m.test(m[1]);
+if (recallDigest ? reviewer || date : !reviewer || !/^\d{4}-\d{2}-\d{2}$/.test(date ?? "")) {
+  console.error(recallDigest ? "Recall digests are team-checked: approve them without --reviewer or --date." : usage);
+  process.exit(2);
+}
+const head = recallDigest
+  ? m[1]
+  : m[1]
+      .split("\n")
+      .filter((line) => !/^(reviewer|reviewed_at):/.test(line))
+      .concat([`reviewer: "${reviewer}"`, `reviewed_at: "${date}"`])
+      .join("\n");
 const replacing = fs.existsSync(live);
 const previous = replacing ? fs.readFileSync(live, "utf8") : null;
 fs.writeFileSync(live, `---\n${head}\n---\n${src.slice(m[0].length)}`);
@@ -67,4 +77,4 @@ if (check.status !== 0) {
   process.exit(1);
 }
 fs.rmSync(draft);
-console.log(`\n${replacing ? "Replaced" : "Published to"} content/blog/${slug}.mdx (reviewer ${reviewer}, reviewed_at ${date}). Ready to commit; a push to main deploys production.`);
+console.log(`\n${replacing ? "Replaced" : "Published to"} content/blog/${slug}.mdx (${recallDigest ? "team-checked recall digest" : `reviewer ${reviewer}, reviewed_at ${date}`}). Ready to commit; a push to main deploys production.`);

@@ -132,6 +132,7 @@ Three labels stay separate everywhere — never merge them into one score or one
 | Content | Route |
 |---|---|
 | Every post | `review_required: true`. Laurie Pham, PharmD reviews all PharmaGuide content (Sean, 2026-10-11). |
+| Recall digest (`format: "recall-digest"`) | `review_required: false`, no reviewer: team-checked restatement of FDA notices (Sean, 2026-10-27). |
 | Clinical efficacy, dosing, interactions, contraindications, pregnancy/breastfeeding, children, chronic disease | Clinical review of those conclusions, on the exact version to be published |
 | General literacy and document interpretation (label reading, units, how a report works) | Same review; the claim records will be short |
 | A claim that could change a health decision and is **UNRESOLVED** | Draft everything else; leave that claim out or mark its section as pending; list the exact claim and what would resolve it in the sidecar. Don't publish until it's resolved. |

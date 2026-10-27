@@ -626,9 +626,17 @@ function checkReadability(content) {
 
 function checkReviewerInvariants(data) {
   const issues = [];
-  // Laurie Pham, PharmD reviews all PharmaGuide content (Sean, 2026-10-11),
-  // so every post carries the flag; reviewer + reviewed_at record the real
-  // sign-off on the published version.
+  // Recall digests only restate FDA notices and are checked by our team, not
+  // clinically reviewed (Sean, 2026-10-27): no reviewer, so the page claims
+  // no clinical review. Anything that interprets risk belongs in a regular post.
+  if (data.format === "recall-digest") {
+    if (data.reviewRequired !== false) issues.push(fail(`recall digests set review_required: false (team-checked against the FDA notices, no clinical review)`));
+    if (data.reviewer || data.reviewed_at || data.reviewedAt) issues.push(fail(`recall digests carry no reviewer or reviewed_at: the page would claim a clinical review`));
+    return issues;
+  }
+  // Laurie Pham, PharmD reviews all other PharmaGuide content (Sean,
+  // 2026-10-11), so every post carries the flag; reviewer + reviewed_at
+  // record the real sign-off on the published version.
   if (data.reviewRequired !== true) {
     issues.push(fail(`review_required: true is required on every post (all content is clinically reviewed)`));
   }

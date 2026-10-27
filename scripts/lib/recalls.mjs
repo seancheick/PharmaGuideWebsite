@@ -913,7 +913,7 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
     "featured: false",
     `image: "/images/moments/recall.jpg"`,
     `tags: ${JSON.stringify(["FDA recall", "dietary supplements", "weekly recall roundup", ...firms.slice(0, 6)])}`,
-    "review_required: true",
+    "review_required: false",
     "---",
     "",
   ];
@@ -1039,8 +1039,8 @@ function renderReview({ slug, label, coverage, selection, generatedOn, quiet }) 
     "- [ ] Every card checked against its official notice (above)",
     "- [ ] Coverage note matches the table above; never publish \"no recalls\" on incomplete coverage",
     "- [ ] Every record listed under Possible supplements / Only in openFDA is classified; re-render (`pnpm recalls:digest --week-ending <Sunday>`) once none are left, so the post can drop its \"still being checked\" note",
-    "- [ ] PharmD sign-off on this exact version (any sentence that interprets risk beyond quoting the notice especially)",
-    `- [ ] After sign-off: \`pnpm blog:approve ${slug} --reviewer laurie-pham --date <sign-off date>\` (moves the draft live, runs publish-check, rolls back on failure)`,
+    "- [ ] Nothing interprets risk beyond quoting the notice (that needs a regular, PharmD-reviewed post; digests are team-checked only)",
+    `- [ ] After checking: \`pnpm blog:approve ${slug}\` (moves the draft live, runs publish-check, rolls back on failure)`,
     ""
   );
   return lines.join("\n");

@@ -58,4 +58,4 @@ Factual check recorded 2026-10-27: the card (product, company, all lots, announc
 - [x] Coverage note matches the table above; never publish "no recalls" on incomplete coverage
 - [x] Every record listed under Possible supplements / Only in openFDA is classified; re-render (`pnpm recalls:digest --week-ending <Sunday>`) once none are left, so the post can drop its "still being checked" note
 - [x] Nothing interprets risk beyond quoting the notice (that needs a regular, PharmD-reviewed post; digests are team-checked only)
-- [ ] After checking: `pnpm blog:approve supplement-recalls-week-of-2026-10-19` (moves the draft live, runs publish-check, rolls back on failure)
+- [x] After checking: `pnpm blog:approve supplement-recalls-week-of-2026-10-19` (moves the draft live, runs publish-check, rolls back on failure)

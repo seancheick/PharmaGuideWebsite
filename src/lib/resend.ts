@@ -417,9 +417,9 @@ export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
       ok: true,
       message: betaEnrolled
         ? newsletterEnrolled
-          ? "Check your inbox. The brief is on its way, and you're on the newsletter and beta list."
-          : "Check your inbox. The brief is on its way."
-        : "Check your inbox for the brief. We could not confirm your beta signup. Contact info@pharmaguide.io to check your status or change your email preferences.",
+          ? "The brief is on its way, and you're on the newsletter and beta list."
+          : "The brief is on its way."
+        : "The brief is on its way. We could not confirm your beta signup. Contact info@pharmaguide.io to check your status or change your email preferences.",
     };
   } catch (err) {
     log.error("brief.failed", {

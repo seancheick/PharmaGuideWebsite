@@ -462,6 +462,23 @@ test("unsubscribe GET is read-only; one-click POST updates the signed list", asy
   assert.equal(setup.updates.length, 0);
 });
 
+test("one-click POST also accepts a multipart/form-data body (RFC 8058)", async () => {
+  const setup = loadFlow();
+  const url = setup.preferences.unsubscribeUrl({ contactId: "contact-id", list: "newsletter" });
+  const form = new FormData();
+  form.append("List-Unsubscribe", "One-Click");
+  const response = await setup.route.POST(new Request(url, { method: "POST", body: form }));
+  assert.equal(response.status, 200);
+  assert.equal(setup.topicUpdates[0].topics[0].subscription, "opt_out");
+
+  const withFile = new FormData();
+  withFile.append("List-Unsubscribe", new Blob(["One-Click"]), "x.txt");
+  const rejected = loadFlow();
+  const bad = await rejected.route.POST(new Request(url, { method: "POST", body: withFile }));
+  assert.equal(bad.status, 400);
+  assert.equal(rejected.topicUpdates.length, 0);
+});
+
 test("branded preference page is private, script-free and offers read-only keep", async () => {
   const setup = loadFlow();
   const url = setup.preferences.unsubscribeUrl({ contactId: "contact-id", list: "beta" });

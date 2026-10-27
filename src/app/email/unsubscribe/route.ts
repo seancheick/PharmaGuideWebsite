@@ -41,8 +41,20 @@ export async function POST(request: Request) {
   let fields: URLSearchParams;
   try {
     const body = await request.text();
-    if (body.length > 2048 || /%(?![0-9a-f]{2})/i.test(body)) return invalid();
-    fields = new URLSearchParams(body);
+    if (body.length > 2048) return invalid();
+    // RFC 8058 one-click may arrive as multipart/form-data or urlencoded.
+    const type = request.headers.get("content-type") ?? "";
+    if (/^multipart\/form-data/i.test(type)) {
+      const form = await new Response(body, { headers: { "content-type": type } }).formData();
+      fields = new URLSearchParams();
+      for (const [key, value] of form) {
+        if (typeof value !== "string") return invalid();
+        fields.append(key, value);
+      }
+    } else {
+      if (/%(?![0-9a-f]{2})/i.test(body)) return invalid();
+      fields = new URLSearchParams(body);
+    }
   } catch {
     return invalid();
   }

@@ -41,17 +41,6 @@ If the user is referring to the **old** WordPress system (`/Users/seancheick/Pha
 
 ---
 
-## Recall digest format
-
-`/pg-blog-mdx this week's FDA supplement recalls` skips the 9-phase pipeline below. Run
-`pnpm recalls:digest`, then review the draft in `content/blog/.drafts/` against its sidecar.
-No word-count floor (`format: "recall-digest"`), no mandatory FAQ or figures, one card per notice
-and one row per product, scope and instructions quoted from the notice, never generalised to an
-ingredient, and never "no recalls" when a source failed. Full rules, sources and classification:
-[recall-digest.md](references/recall-digest.md).
-
----
-
 ## Pipeline — 9 phases, risk-gate-first
 
 The risk gate runs **before drafting** — high-risk topics never produce a publishable MDX.

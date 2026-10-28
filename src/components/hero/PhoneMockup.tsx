@@ -6,11 +6,10 @@ import {
   m,
   useInView,
   useMotionValue,
-  useReducedMotion,
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { track } from "@/lib/analytics";
 import { transitions } from "@/lib/tokens";
 import { cn } from "@/lib/utils";
@@ -60,8 +59,24 @@ const TYPE_RHYTHM = [0, 24, -10, 38, 6, 58, -12, 18, 30, -6];
 const typeDelay = (i: number, ch: string) =>
   ch === " " ? 230 : 52 + TYPE_RHYTHM[i % TYPE_RHYTHM.length]!;
 
+// null until hydrated: the server cannot know the preference, and the first
+// client render must match its markup (framer's useReducedMotion reads it on
+// that render, which threw React #418 for reduced-motion visitors).
+const REDUCED = "(prefers-reduced-motion: reduce)";
+function useReducedMotionAfterHydration() {
+  return useSyncExternalStore<boolean | null>(
+    (onChange) => {
+      const mq = window.matchMedia(REDUCED);
+      mq.addEventListener("change", onChange);
+      return () => mq.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia(REDUCED).matches,
+    () => null
+  );
+}
+
 export function PhoneMockup() {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReducedMotionAfterHydration();
   const rootRef = useRef<HTMLDivElement>(null);
   const inView = useInView(rootRef, { amount: 0.2 });
 
@@ -86,7 +101,8 @@ export function PhoneMockup() {
   }, [inView]);
 
   useEffect(() => {
-    if (reducedMotion) return;
+    // Wait for the real preference so a reduced-motion visitor never starts the loop.
+    if (reducedMotion !== false) return;
 
     let cancelled = false;
     const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));

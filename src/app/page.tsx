@@ -47,7 +47,7 @@ export default function Home() {
         <div aria-hidden="true" className="fade-warm h-16 md:h-24" />
         <HowItWorks />
         {/* Warm fade into the darker surface-subtle ladder section */}
-        <div aria-hidden="true" className="fade-warm h-16 md:h-24" />
+        <div aria-hidden="true" className="fade-warm h-10 md:h-14" />
         <InteractionLadder />
         <BeyondInteractions />
         <RealLifeMoments />

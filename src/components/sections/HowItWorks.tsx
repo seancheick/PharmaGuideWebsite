@@ -61,7 +61,7 @@ export function HowItWorks() {
     <section
       id="how-it-works"
       aria-labelledby="how-heading"
-      className="section-y relative bg-surface-raised/50"
+      className="relative bg-surface-raised/50 pt-section-y pb-section-y-sm"
     >
       {/* Slight surface warmth + hairlines top/bottom: the section reads
           as its own zone, distinct from the warm cream above and the

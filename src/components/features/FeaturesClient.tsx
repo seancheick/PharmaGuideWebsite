@@ -153,8 +153,8 @@ export function FeaturesClient() {
               spelling that out here prevents the comparison in the user's
               head from going wrong by the time they reach Pillar 2. */}
           <m.aside
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 8 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={transitions.reveal}
             className="mx-auto mt-10 max-w-3xl rounded-2xl border border-border bg-surface-raised/50 p-6 text-center md:mt-12 md:p-7"
@@ -209,7 +209,9 @@ export function FeaturesClient() {
                   viewport={{ once: true, margin: "-10%" }}
                   className="flex flex-col gap-5"
                 >
-                  <m.div variants={fadeUpItem} className="flex items-baseline gap-3">
+                  {/* aria-hidden: the h2 below carries the module name for
+                      screen readers and agents that read headings. */}
+                  <m.div variants={fadeUpItem} aria-hidden="true" className="flex items-baseline gap-3">
                     <span className="font-mono text-[11px] font-medium uppercase tabular-nums tracking-[0.18em] text-accent">
                       {pillar.num}
                     </span>
@@ -223,6 +225,7 @@ export function FeaturesClient() {
                     variants={fadeUpItem}
                     className="text-balance text-display-md leading-[1.08] text-ink"
                   >
+                    <span className="sr-only">{pillar.eyebrow}: </span>
                     {pillar.titleLead}{" "}
                     <span className="font-serif italic text-accent">{pillar.titleEm}</span>
                   </m.h2>
@@ -514,8 +517,8 @@ export function FeaturesClient() {
       >
         <div className="container relative mx-auto">
           <m.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 12 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
             transition={transitions.reveal}
             className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center md:gap-6"

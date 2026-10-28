@@ -231,10 +231,6 @@ export function MethodologyClient() {
           </m.ul>
 
           <m.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={transitions.ambient}
             className="mx-auto mt-10 max-w-2xl text-balance text-center font-serif text-body italic leading-relaxed text-muted md:mt-14"
           >
             We do not access medical records, pharmacy systems, or any personal health data outside
@@ -318,8 +314,8 @@ export function MethodologyClient() {
 
           {/* Closing: the pipeline resolves to the Stack Health verdict */}
           <m.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 12 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={transitions.reveal}
             className="mx-auto mt-10 flex max-w-3xl flex-col items-center gap-4 text-center md:mt-12"
@@ -387,8 +383,8 @@ export function MethodologyClient() {
           </m.div>
 
           <m.article
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 16 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={transitions.reveal}
             className="mx-auto mt-12 max-w-3xl overflow-hidden rounded-2xl border border-border bg-surface shadow-sm md:mt-14"
@@ -890,10 +886,6 @@ export function MethodologyClient() {
           </m.div>
 
           <m.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={transitions.ambient}
             className="mx-auto mt-12 max-w-2xl text-balance text-center font-serif text-body-lg italic leading-relaxed text-ink md:mt-14"
           >
             Always consult a qualified healthcare provider before starting, stopping, or changing

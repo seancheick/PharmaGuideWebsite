@@ -1,7 +1,5 @@
 "use client";
 
-import { m } from "framer-motion";
-import { transitions } from "@/lib/tokens";
 
 /**
  * Infrastructure Strip — quiet divider between Hero and Problem.
@@ -22,11 +20,7 @@ export function InfrastructureStrip() {
       aria-label="Platform principles"
       className="relative border-y border-border/60 bg-surface-subtle/30"
     >
-      <m.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-15%" }}
-        transition={transitions.reveal}
+      <div
         className="container mx-auto py-6 sm:py-7"
       >
         <p className="flex flex-col items-center gap-2 text-center font-mono text-eyebrow font-medium uppercase tracking-[var(--ls-eyebrow)] text-muted sm:flex-row sm:justify-center sm:gap-0">
@@ -40,7 +34,7 @@ export function InfrastructureStrip() {
           </span>
           <span>Your health profile is stored on your device</span>
         </p>
-      </m.div>
+      </div>
     </section>
   );
 }

@@ -638,8 +638,8 @@ export function PressClient() {
       >
         <div className="container relative mx-auto">
           <m.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 12 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
             transition={transitions.reveal}
             className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center md:gap-6"
@@ -683,8 +683,8 @@ function BoilerplateBlock({
 }) {
   return (
     <m.div
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ y: 12 }}
+      whileInView={{ y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
       transition={{ duration: 0.5, ease: [0.32, 0.72, 0, 1] }}
       className="rounded-2xl border border-border bg-surface p-7 shadow-sm md:p-8"

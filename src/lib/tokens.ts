@@ -91,10 +91,11 @@ export const fadeUpContainer = {
   },
 } as const;
 
+// No opacity fade: text must be visible before it scrolls into view, or
+// agents and screenshot crawlers that don't scroll see a blank page.
 export const fadeUpItem = {
-  hidden: { opacity: 0, y: 12 },
+  hidden: { y: 12 },
   visible: {
-    opacity: 1,
     y: 0,
     transition: transitions.reveal,
   },

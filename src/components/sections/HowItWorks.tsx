@@ -149,8 +149,8 @@ export function HowItWorks() {
             block stays a quiet trust signal visually; the hover state
             cues that there's more depth one click away.              */}
         <m.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 10 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ ...transitions.reveal, delay: 0.2 }}
           className="mx-auto mt-14 max-w-3xl border-t border-border/70 pt-7 md:mt-16"
@@ -363,8 +363,8 @@ function YourFitVisual() {
   // for the card to scroll into view.
   const show = reducedMotion || inView;
   const reveal = (delay: number) => ({
-    initial: reducedMotion ? false : { opacity: 0, y: 4 },
-    animate: show ? { opacity: 1, y: 0 } : {},
+    initial: reducedMotion ? false : { y: 4 },
+    animate: show ? { y: 0 } : {},
     transition: { duration: 0.45, delay, ease: ease.emphasized },
   });
 

@@ -185,8 +185,8 @@ export function Problem() {
             kept sans (not italic) so we don't stack three italic moments
             in one section. */}
         <m.figure
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 16 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true, margin: "-12%" }}
           transition={transitions.reveal}
           className="mx-auto mt-20 flex max-w-[560px] flex-col items-center gap-3 text-center md:mt-24"
@@ -260,8 +260,8 @@ export function Problem() {
             Margin tightened from mt-24/28 → mt-16/20 so the thesis reads as
             the natural conclusion of the stat block, not a separate beat.  */}
         <m.p
-          initial={{ opacity: 0, y: 12, scale: 0.985 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          initial={{ y: 12, scale: 0.985 }}
+          whileInView={{ y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-20%" }}
           transition={transitions.reveal}
           className="mx-auto mt-16 max-w-2xl text-balance text-center font-serif text-display-sm italic leading-[1.12] text-ink md:mt-20 md:max-w-4xl"

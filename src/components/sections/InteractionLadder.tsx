@@ -274,8 +274,8 @@ export function InteractionLadder() {
 
         {/* Connected tier ladder + detail panel */}
         <m.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 20 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={transitions.reveal}
           className="mx-auto mt-16 max-w-6xl overflow-hidden rounded-2xl border border-border bg-surface shadow-sm md:mt-20"
@@ -448,10 +448,6 @@ export function InteractionLadder() {
 
         {/* Honesty note — quiet editorial caption */}
         <m.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={transitions.ambient}
           className="mt-8 text-center font-serif text-body italic text-muted"
         >
           When evidence is incomplete, we say so directly.

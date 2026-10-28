@@ -1,7 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FeaturesClient } from "@/components/features/FeaturesClient";
-import { PILLARS } from "@/lib/features";
+import { PILLARS, CLINICIAN_REPORT } from "@/lib/features";
 import { site } from "@/lib/site";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { PAGES, pageMetadata, pageSchema } from "@/lib/pages";
@@ -37,7 +37,12 @@ export default function FeaturesPage() {
       operatingSystem: "iOS, Android",
       description: PAGES.features.description,
       url: absoluteUrl("/features"),
-      featureList: PILLARS.map((p) => `${p.titleLead} ${p.titleEm}`),
+      // Plain capability names + the overview line each card shows, so an
+      // agent reading the schema gets features, not taglines.
+      featureList: [
+        ...PILLARS.map((p) => `${p.eyebrow}: ${p.overview}`),
+        `Clinician report: ${CLINICIAN_REPORT.title}`,
+      ],
       offers: {
         "@type": "Offer",
         price: "0",
@@ -57,8 +62,8 @@ export default function FeaturesPage() {
         item: {
           "@type": "Thing",
           "@id": `${absoluteUrl("/features")}#${p.id}`,
-          name: `${p.titleLead} ${p.titleEm}`,
-          description: p.intro,
+          name: p.eyebrow,
+          description: p.intro.replaceAll("**", ""),
         },
       })),
     },

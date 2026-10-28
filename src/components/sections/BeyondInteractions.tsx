@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { m } from "framer-motion";
-import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
+import { fadeUpContainer, fadeUpItem } from "@/lib/tokens";
 
 /**
  * Beyond Interactions — homepage broadening section.
@@ -157,10 +157,6 @@ export function BeyondInteractions() {
             paths for two different appetites: skim deep-dives vs.
             read evidence-graded guides. */}
         <m.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={transitions.ambient}
           className="mt-12 flex flex-col items-center gap-4 md:mt-14 md:flex-row md:justify-center md:gap-6"
         >
           {/* Primary CTA pill — same teal-on-white treatment as the

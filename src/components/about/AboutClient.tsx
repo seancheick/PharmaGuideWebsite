@@ -285,10 +285,6 @@ export function AboutClient() {
           </m.ul>
 
           <m.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={transitions.ambient}
             className="mx-auto mt-10 flex items-center justify-center gap-3 md:mt-12"
           >
             <Image
@@ -305,10 +301,6 @@ export function AboutClient() {
           </m.div>
 
           <m.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={transitions.ambient}
             className="mx-auto mt-14 flex max-w-3xl flex-col items-center gap-6 text-center md:mt-16"
           >
             <p className="text-balance font-serif text-h2 italic leading-snug text-ink">
@@ -429,10 +421,6 @@ export function AboutClient() {
               doing the math would notice; we name the difference
               explicitly so the page reads as honest, not loose. */}
           <m.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={transitions.ambient}
             className="mx-auto mt-8 max-w-2xl text-balance text-center text-body-sm leading-relaxed text-subtle md:mt-10"
           >
             The 23,000 figure is supplement-specific. Separately, the homepage cites 4,100+ daily ER
@@ -562,10 +550,6 @@ export function AboutClient() {
           </m.div>
 
           <m.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={transitions.ambient}
             className="mx-auto mt-12 max-w-2xl text-balance text-center font-serif text-body-lg italic leading-relaxed text-ink md:mt-14"
           >
             We&apos;re building FDA recall alerts to help with this gap. They are not available in the current beta.
@@ -734,10 +718,6 @@ export function AboutClient() {
           </m.ul>
 
           <m.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={transitions.ambient}
             className="mx-auto mt-10 max-w-2xl text-balance text-center font-serif text-body-lg italic leading-relaxed text-ink md:mt-14"
           >
             Boston · Cambridge medical ecosystem.
@@ -749,8 +729,8 @@ export function AboutClient() {
       <section aria-label="Join us" className="section-y-sm relative">
         <div className="container relative mx-auto">
           <m.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 12 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: "-15%" }}
             transition={transitions.reveal}
             className="mx-auto flex max-w-3xl flex-col items-center gap-5 text-center md:gap-7"

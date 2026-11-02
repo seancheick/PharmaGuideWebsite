@@ -1,7 +1,8 @@
 name: Recall digest
 
-# Collect FDA dietary-supplement recalls every day; every Monday, render the
-# previous Mon–Sun week's digest and open a draft PR for review.
+# Collect FDA dietary-supplement recalls every day. The first run after a
+# Mon–Sun week ends also renders its digest and opens a draft PR for review.
+# GitHub can delay or drop scheduled runs, so a later day picks up a missed one.
 #
 # Nothing here touches main: a push to main deploys production, and a recall
 # post needs a person to check it against the FDA notices first. Collected history lives on
@@ -11,8 +12,8 @@ name: Recall digest
 
 on:
   schedule:
-    - cron: "0 14 * * *" # daily ~10:00 ET: collect only
-    - cron: "0 15 * * 1" # Monday ~11:00 ET: collect, render last week, open draft PR
+    # Off the hour: GitHub's scheduled runs are most delayed at the top of it.
+    - cron: "17 14 * * *" # daily
   workflow_dispatch:
     inputs:
       mode:
@@ -37,7 +38,6 @@ jobs:
     timeout-minutes: 20
     env:
       HISTORY_BRANCH: automation/recall-history
-      MODE: ${{ github.event.schedule == '0 15 * * 1' && 'weekly' || inputs.mode || 'collect' }}
       OPENFDA_API_KEY: ${{ secrets.OPENFDA_API_KEY }}
       GH_TOKEN: ${{ github.token }}
 
@@ -59,6 +59,23 @@ jobs:
 
       - name: Recall tests
         run: pnpm test:recalls
+
+      # A hand-started run does what it was asked. A scheduled run renders the
+      # last finished week unless that week's branch or post already exists.
+      - name: Choose mode
+        env:
+          REQUESTED_MODE: ${{ inputs.mode }}
+        run: |
+          slug=$(node scripts/recall-digest.mjs --print-slug)
+          if [ -n "$REQUESTED_MODE" ]; then
+            mode="$REQUESTED_MODE"
+          elif git ls-remote --exit-code --heads origin "recalls/$slug" >/dev/null || [ -e "content/blog/$slug.mdx" ]; then
+            mode=collect
+          else
+            mode=weekly
+          fi
+          echo "MODE=$mode" >> "$GITHUB_ENV"
+          echo "$slug: $mode"
 
       # Start from main's history (people's --classify decisions arrive there
       # through merged PRs) and merge the automation branch's copy (newer

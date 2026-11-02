@@ -104,14 +104,16 @@ Collect daily, publish weekly:
 
 - **Daily** `pnpm recalls:digest --collect-only` (e.g. 10:00 ET). Daily runs date notice changes
   close to when FDA made them; announcement pages are re-read for 90 days after posting.
-- **Weekly** on Monday, after the last daily run, render the previous week's draft and open a PR
-  for review. Enforcement Reports post on Wednesdays, so a Monday run has the whole week.
+- **Weekly** on the first daily run after a Monday–Sunday week ends, render that week's draft and
+  open a PR for review. Enforcement Reports post on Wednesdays, so that run has the whole week. If
+  GitHub delays or drops a scheduled run, a later day catches up; expect runs hours after the
+  scheduled time.
 - The runner needs network access to fda.gov, accessdata.fda.gov and api.fda.gov, write access
   to commit `content/recalls/history.json` on a branch (never `main`), an optional
   `OPENFDA_API_KEY`, and an alert when the script exits 3 (incomplete coverage) or 1 (crash).
   Built as a GitHub Actions workflow: daily collection force-pushes the history to
-  `automation/recall-history` (main + one data commit; Vercel skips this branch); Monday renders
-  the previous week, validates it and opens a **draft PR** from `recalls/<slug>`. Nothing
+  `automation/recall-history` (main + one data commit; Vercel skips this branch); the first run
+  after the week ends renders it, validates it and opens a **draft PR** from `recalls/<slug>`. Nothing
   auto-merges. If the repo setting "Allow GitHub Actions to create and approve pull requests" is
   off, the run opens an issue with a one-click link to create the PR instead. PRs opened by the
   workflow's token don't trigger CI, so the run puts the recall tests and validator results in

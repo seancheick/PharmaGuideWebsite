@@ -61,7 +61,9 @@ jobs:
         run: pnpm test:recalls
 
       # A hand-started run does what it was asked. A scheduled run renders the
-      # last finished week unless that week's branch or post already exists.
+      # last finished week until it has a post, PR or issue, open or closed, so
+      # a run that died after pushing its branch still gets a review item. A
+      # rejected draft stays rejected, and reruns keep reviewers' commits.
       - name: Choose mode
         env:
           REQUESTED_MODE: ${{ inputs.mode }}
@@ -69,7 +71,9 @@ jobs:
           slug=$(node scripts/recall-digest.mjs --print-slug)
           if [ -n "$REQUESTED_MODE" ]; then
             mode="$REQUESTED_MODE"
-          elif git ls-remote --exit-code --heads origin "recalls/$slug" >/dev/null || [ -e "content/blog/$slug.mdx" ]; then
+          elif [ -e "content/blog/$slug.mdx" ] ||
+            [ -n "$(gh pr list --head "recalls/$slug" --state all --json number -q '.[].number')" ] ||
+            [ -n "$(gh issue list --state all --search "\"Recall digest: $slug\" in:title" --json number -q '.[].number')" ]; then
             mode=collect
           else
             mode=weekly

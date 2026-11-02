@@ -102,6 +102,8 @@ export interface BlogPost {
 
 /** What a recall roundup's cover shows, read from the post itself. */
 export interface RecallSummary {
+  /** "Supplement recalls" or "Medication recalls" */
+  subject: string;
   /** "Oct 19–25, 2026" */
   week: string;
   /** RecallCard entries in the post. */

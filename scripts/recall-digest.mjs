@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
- * Weekly dietary-supplement recall digest.
+ * Weekly recall digests: dietary supplements (default) and medications.
  *
  *   pnpm recalls:digest                         # last complete Mon–Sun week
+ *   pnpm recalls:digest --kind medication       # the same, for medications
  *   pnpm recalls:digest --week-ending 2026-10-25
  *   pnpm recalls:digest --collect-only          # update history, no draft
  *   pnpm recalls:digest --print-slug            # print the week's slug and stop
@@ -12,7 +13,7 @@
  *                                               # "possible supplement", then re-render
  *
  * Reads FDA's recalls listing and announcement pages plus the weekly
- * Enforcement Report CSVs, merges them into content/recalls/history.json,
+ * Enforcement Report CSVs, merges them into the kind's file in content/recalls/,
  * and writes a draft to content/blog/.drafts/<slug>.mdx with a review
  * sidecar in content/blog/.review/. Drafts under .drafts/ are not loaded by
  * the site; publishing is a human step (see the sidecar checklist).
@@ -29,12 +30,15 @@ import {
   SOURCES,
   addDays,
   defaultWeekEnding,
+  KINDS,
   digestSlug,
   emptyHistory,
   fetchWithRetry,
   inWindow,
   isoDate,
   looksLikeEnforcementCsv,
+  medicationEnforcementMatch,
+  medicationListingMatch,
   mergeAnnouncement,
   mergeEnforcementEvent,
   mergeHistories,
@@ -43,7 +47,10 @@ import {
   parseListing,
   parseUpdatedReportDates,
   possibleSupplement,
+  relatedMedicationRecall,
   renderDigest,
+  renderMedicationDigest,
+  sameDrug,
   selectWeek,
   summarizeCoverage,
   supplementEnforcementMatch,
@@ -53,7 +60,7 @@ import {
 } from "./lib/recalls.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const HISTORY = path.join(ROOT, "content", "recalls", "history.json");
+const HISTORIES = path.join(ROOT, "content", "recalls");
 const DRAFTS = path.join(ROOT, "content", "blog", ".drafts");
 const REVIEWS = path.join(ROOT, "content", "blog", ".review");
 
@@ -79,21 +86,25 @@ async function pool(items, size, fn) {
  * Collect every source for `window` and merge into `history` (mutated).
  * `fetchOpts` is passed to fetchWithRetry, so tests can inject fetch.
  */
-export async function collect({ history, window, today, fetchOpts = {}, openFdaKey = process.env.OPENFDA_API_KEY }) {
+export async function collect({ history, window, today, fetchOpts = {}, openFdaKey = process.env.OPENFDA_API_KEY, kind = "supplement" }) {
   const sources = [];
   const runDate = today;
+  const medication = kind === "medication";
+  const linking = medication ? { related: relatedMedicationRecall, sameProduct: sameDrug } : {};
 
   // 1. Recalls listing (required).
   const listingRes = await fetchWithRetry(SOURCES.listing.data, {
     ...fetchOpts,
     accept: (t) => { try { return Array.isArray(JSON.parse(t)); } catch { return false; } },
   });
-  let supplementRows = [];
+  let matchedRows = [];
+  let supplementNotices = [];
   if (listingRes.ok) {
     const rows = parseListing(listingRes.text);
-    supplementRows = rows.map((r) => ({ row: r, matchReason: supplementListingMatch(r) })).filter((x) => x.matchReason);
+    matchedRows = rows.map((r) => ({ row: r, matchReason: (medication ? medicationListingMatch : supplementListingMatch)(r) })).filter((x) => x.matchReason);
+    if (medication) supplementNotices = rows.filter(supplementListingMatch).map((r) => ({ ...r, listingDate: r.date }));
     const newest = rows.map((r) => r.date).filter(Boolean).sort().pop();
-    sources.push({ id: SOURCES.listing.id, label: SOURCES.listing.label, required: true, status: "ok", attempts: listingRes.attempts, records: rows.length, supplementRecords: supplementRows.length, detail: `newest posting ${newest}` });
+    sources.push({ id: SOURCES.listing.id, label: SOURCES.listing.label, required: true, status: "ok", attempts: listingRes.attempts, records: rows.length, matchedRecords: matchedRows.length, detail: `newest posting ${newest}` });
     if (newest && newest < window.end) {
       // The listing has nothing after mid-week: possible, but worth a human look.
       sources[sources.length - 1].detail += `; nothing posted after ${newest}`;
@@ -104,7 +115,7 @@ export async function collect({ history, window, today, fetchOpts = {}, openFdaK
 
   // 1b. Announcement pages: this week's (required) and recent ones (refresh).
   const refreshFrom = addDays(window.start, -REFRESH_DAYS);
-  const wanted = supplementRows.filter(({ row }) => row.date && row.date >= refreshFrom && row.date <= today);
+  const wanted = matchedRows.filter(({ row }) => row.date && row.date >= refreshFrom && row.date <= today);
   const pages = await pool(wanted, 4, async ({ row, matchReason }) => {
     // Company announcements and FDA's own alerts share the page summary block.
     const res = await fetchWithRetry(row.url, { ...fetchOpts, accept: (t) => /Company Announcement|FDA Publish Date/i.test(t) });
@@ -119,15 +130,15 @@ export async function collect({ history, window, today, fetchOpts = {}, openFdaK
     status: pageFailures.length ? "failed" : "ok",
     attempts: Math.max(0, ...pages.map((p) => p.res.attempts || 0)),
     records: pages.length,
-    supplementRecords: pages.length - pageFailures.length,
+    matchedRecords: pages.length - pageFailures.length,
     detail: `pages posted since ${refreshFrom}`,
     error: pageFailures.length ? `${pageFailures.length} page(s) unreadable${weekFailures.length ? `, ${weekFailures.length} from this week` : ""}: ${pageFailures.map((p) => p.row.url).join(", ")}` : undefined,
   });
 
   // Merge oldest first so an expansion notice finds the notice it expands.
   const details = new Map(pages.filter((p) => p.res.ok).map((p) => [p.row.path, parseAnnouncement(p.res.text)]));
-  for (const { row, matchReason } of [...supplementRows].sort((a, b) => (a.row.date || "").localeCompare(b.row.date || ""))) {
-    mergeAnnouncement(history, row, details.get(row.path) || null, { runDate, matchReason });
+  for (const { row, matchReason } of [...matchedRows].sort((a, b) => (a.row.date || "").localeCompare(b.row.date || ""))) {
+    mergeAnnouncement(history, row, details.get(row.path) || null, { runDate, matchReason, ...linking });
   }
   const supplementAnnouncements = Object.values(history.entries).filter((e) => e.source === SOURCES.listing.id);
 
@@ -157,7 +168,7 @@ export async function collect({ history, window, today, fetchOpts = {}, openFdaK
     const res = await fetchWithRetry(SOURCES.enforcement.weeklyCsv(date), { ...fetchOpts, encoding: "windows-1252", accept: looksLikeEnforcementCsv });
     return { date, why, res };
   });
-  const supplementRecords = [];
+  const matchedRecords = [];
   const possible = [];
   for (const { date, why, res } of reports) {
     const required = why !== "first-run backfill";
@@ -170,28 +181,34 @@ export async function collect({ history, window, today, fetchOpts = {}, openFdaK
     // overrides the heuristics in both directions.
     const decided = (r) => history.classified?.[r.eventId];
     const reasonFor = (r) => {
+      if (medication) return medicationEnforcementMatch(r, supplementNotices);
       const d = decided(r);
       if (d) return d.supplement ? `classified as a dietary supplement by ${d.by} on ${d.date}` : null;
       return supplementEnforcementMatch(r, supplementAnnouncements);
     };
     const matched = rows.map((r) => ({ r, matchReason: reasonFor(r) })).filter((x) => x.matchReason);
-    supplementRecords.push(...matched.map((m) => ({ ...m, date })));
-    if (inWindow(date, window)) possible.push(...rows.filter((r) => !decided(r) && !supplementEnforcementMatch(r, supplementAnnouncements) && possibleSupplement(r)));
-    sources.push({ id: `${SOURCES.enforcement.id}:${date}`, label: `${SOURCES.enforcement.label}, ${date}`, required, status: "ok", attempts: res.attempts, records: rows.length, supplementRecords: matched.length, detail: why });
+    matchedRecords.push(...matched.map((m) => ({ ...m, date })));
+    if (!medication && inWindow(date, window)) possible.push(...rows.filter((r) => !decided(r) && !supplementEnforcementMatch(r, supplementAnnouncements) && possibleSupplement(r)));
+    sources.push({ id: `${SOURCES.enforcement.id}:${date}`, label: `${SOURCES.enforcement.label}, ${date}`, required, status: "ok", attempts: res.attempts, records: rows.length, matchedRecords: matched.length, detail: why });
   }
   const byEvent = new Map();
-  for (const m of supplementRecords.sort((a, b) => a.date.localeCompare(b.date))) {
+  for (const m of matchedRecords.sort((a, b) => a.date.localeCompare(b.date))) {
     if (!byEvent.has(m.date + m.r.eventId)) byEvent.set(m.date + m.r.eventId, []);
     byEvent.get(m.date + m.r.eventId).push(m);
   }
   for (const group of byEvent.values()) {
-    mergeEnforcementEvent(history, group.map((g) => g.r), { runDate, matchReason: group[0].matchReason });
+    mergeEnforcementEvent(history, group.map((g) => g.r), { runDate, matchReason: group[0].matchReason, ...linking });
   }
 
-  // 3. openFDA cross-check (optional; never a source of entries).
   const coverage = summarizeCoverage(sources);
   coverage.possibleSupplements = possible;
   coverage.openFdaOnly = [];
+  if (medication) {
+    coverage.classified = true;
+    return coverage;
+  }
+
+  // 3. openFDA cross-check (optional; never a source of entries).
   const q = `report_date:[${window.start.replaceAll("-", "")}+TO+${window.end.replaceAll("-", "")}]+AND+product_description:"supplement"`;
   const ofRes = await fetchWithRetry(`https://api.fda.gov/food/enforcement.json?search=${q}&limit=1000${openFdaKey ? `&api_key=${openFdaKey}` : ""}`, {
     ...fetchOpts,
@@ -200,7 +217,7 @@ export async function collect({ history, window, today, fetchOpts = {}, openFdaK
   });
   if (ofRes.ok) {
     const results = JSON.parse(ofRes.text).results || [];
-    const ours = new Set(supplementRecords.filter((m) => inWindow(m.r.reportDate, window)).map((m) => m.r.recallNumber).filter(Boolean));
+    const ours = new Set(matchedRecords.filter((m) => inWindow(m.r.reportDate, window)).map((m) => m.r.recallNumber).filter(Boolean));
     const theirs = new Set(results.map((r) => r.recall_number));
     const onlyOpen = [...theirs].filter((n) => !ours.has(n));
     const onlyOurs = [...ours].filter((n) => !theirs.has(n));
@@ -216,9 +233,13 @@ export async function collect({ history, window, today, fetchOpts = {}, openFdaK
 }
 
 function parseArgs(argv) {
-  const args = { collectOnly: false, classify: [] };
+  const args = { collectOnly: false, classify: [], kind: "supplement" };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--week-ending") args.weekEnding = argv[++i];
+    else if (argv[i] === "--kind") {
+      args.kind = argv[++i];
+      if (!KINDS[args.kind]) throw new Error(`--kind takes ${Object.keys(KINDS).join(" or ")}`);
+    }
     else if (argv[i] === "--collect-only") args.collectOnly = true;
     else if (argv[i] === "--print-slug") args.printSlug = true;
     else if (argv[i] === "--history") args.history = argv[++i];
@@ -247,10 +268,10 @@ async function main() {
     process.exit(2);
   }
   if (args.printSlug) {
-    console.log(digestSlug(window));
+    console.log(digestSlug(window, args.kind));
     process.exit(0);
   }
-  const historyPath = args.history ? path.resolve(args.history) : HISTORY;
+  const historyPath = args.history ? path.resolve(args.history) : path.join(HISTORIES, KINDS[args.kind].history);
   let history = fs.existsSync(historyPath) ? JSON.parse(fs.readFileSync(historyPath, "utf8")) : emptyHistory();
   // The scheduled run merges the automation branch's copy into main's, so
   // collected data and people's classifications both survive.
@@ -258,12 +279,13 @@ async function main() {
     history = mergeHistories(history, JSON.parse(fs.readFileSync(args.mergeHistory, "utf8")));
   }
   if (args.classify.length) {
+    if (args.kind !== "supplement") { console.error("--classify is for the supplement digest"); process.exit(2); }
     if (!args.by) { console.error("--classify needs --by <person> (recorded with the decision)"); process.exit(2); }
     history.classified ??= {};
     for (const c of args.classify) history.classified[c.id] = { supplement: c.supplement, by: args.by, date: today, note: c.note };
   }
 
-  const coverage = await collect({ history, window, today });
+  const coverage = await collect({ history, window, today, kind: args.kind });
   const selection = selectWeek(history, window);
   const counts = Object.fromEntries(Object.entries(selection).map(([k, v]) => [k, v.length]));
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
@@ -280,13 +302,14 @@ async function main() {
   fs.writeFileSync(historyPath, JSON.stringify(history, null, 2) + "\n");
 
   console.log(`Week ${window.start} → ${window.end}: coverage ${coverage.complete ? "complete" : "INCOMPLETE"}`);
-  for (const s of coverage.sources) console.log(`  ${s.status === "ok" ? "✓" : s.required ? "✕" : "·"} ${s.label}${s.records !== undefined ? `: ${s.records} records, ${s.supplementRecords} supplement` : ""}${s.error ? ` — ${s.error}` : ""}`);
+  for (const s of coverage.sources) console.log(`  ${s.status === "ok" ? "✓" : s.required ? "✕" : "·"} ${s.label}${s.records !== undefined ? `: ${s.records} records, ${s.matchedRecords} ${KINDS[args.kind].noun}` : ""}${s.error ? ` — ${s.error}` : ""}`);
   if (!coverage.classified) console.log(`  ${coverage.possibleSupplements.length + coverage.openFdaOnly.length} record(s) need classifying before the week can be called complete`);
   console.log(`  new ${counts.newAnnouncements}, updates ${counts.updates}, enforcement listings ${counts.enforcementListings}, classifications ${counts.classifications}`);
   console.log(`History: ${path.relative(ROOT, historyPath)}`);
 
   if (!args.collectOnly) {
-    const { slug, mdx, review } = renderDigest({ history, window, coverage, generatedOn: today });
+    const render = args.kind === "medication" ? renderMedicationDigest : renderDigest;
+    const { slug, mdx, review } = render({ history, window, coverage, generatedOn: today });
     fs.mkdirSync(DRAFTS, { recursive: true });
     fs.mkdirSync(REVIEWS, { recursive: true });
     fs.writeFileSync(path.join(DRAFTS, `${slug}.mdx`), mdx);

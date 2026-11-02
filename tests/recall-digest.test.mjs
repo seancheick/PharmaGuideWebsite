@@ -1,4 +1,4 @@
-// Weekly supplement-recall digest: dedupe, new-vs-update classification and
+// Weekly recall digests: dedupe, new-vs-update classification and
 // the failed-source path. Run: pnpm test:recalls
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -12,7 +12,11 @@ import {
   mergeHistories,
   parseAnnouncement,
   parseEnforcementCsv,
+  medicationEnforcementMatch,
+  medicationListingMatch,
+  relatedMedicationRecall,
   renderDigest,
+  renderMedicationDigest,
   selectWeek,
   supplementEnforcementMatch,
   weekWindow,
@@ -362,4 +366,115 @@ test("a full run: supplement announcement and enforcement row become one new car
   // Running again adds nothing.
   await collect({ history: h, window: WEEK, today: RUN, fetchOpts: fetchOpts(impl), openFdaKey: "" });
   assert.equal(Object.values(selectWeek(h, WEEK)).flat().length, 2);
+});
+
+// ─── Medication digest ──────────────────────────────────────────────
+
+const parRow = (over = {}) => listingRow({
+  path: "/safety/recalls-market-withdrawals-safety-alerts/par-recalls-brevital",
+  url: "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-recalls-brevital",
+  date: "2026-10-09",
+  brand: "Par Pharmaceutical",
+  company: "Par Health",
+  productDescription: "Brevital Sodium 500 mg/vial for Injection",
+  reasonDescription: "Presence of particulate matter",
+  regulatedProducts: "Drugs",
+  terms: "Drugs",
+  ...over,
+});
+const drugRows = (o = {}) => parseEnforcementCsv(csv(csvRow({ type: "Drugs", firm: "Par Health USA, LLC", event: "100072", recall: "D-1", cls: "Class II", desc: "Argatroban Injection, USP, 250 mg/2.5mL, Rx only", ...o })));
+
+test("the medication post takes human drug records, never supplements, food or veterinary products", () => {
+  assert.ok(medicationListingMatch(parRow()));
+  assert.equal(medicationListingMatch(parRow({ regulatedProducts: "Dietary Supplements, Drugs" })), null);
+  assert.equal(medicationListingMatch(parRow({ regulatedProducts: "Food & Beverages" })), null);
+  assert.equal(medicationListingMatch(parRow({ productDescription: "Compounded veterinary medications" })), null);
+  assert.equal(medicationListingMatch(parRow({ company: "American Regent, Inc. Animal Health" })), null);
+  const [drug] = drugRows();
+  assert.ok(medicationEnforcementMatch(drug));
+  assert.equal(medicationEnforcementMatch({ ...drug, productType: "Food" }), null);
+  assert.equal(medicationEnforcementMatch({ ...drug, productDescription: "Rapture Pre Workout Dietary Supplement" }), null);
+  const supplementNotice = { company: "Par Health", listingDate: "2026-10-01", brand: "Argatroban", productDescription: "x" };
+  assert.equal(medicationEnforcementMatch(drug, [supplementNotice]), null);
+});
+
+test("a medication record links to a notice only for the same drug, close in time", () => {
+  const firmOnly = { company: "Par Health", listingDate: "2026-10-09", productDescription: "Brevital Sodium 500 mg/vial for Injection" };
+  const sameDrugNotice = { ...firmOnly, productDescription: "Argatroban Injection 250 mg/2.5 mL" };
+  const [row] = drugRows();
+  const entry = { firm: row.firm, initiationDate: "2026-10-01", products: [{ productDescription: row.productDescription }] };
+  assert.equal(relatedMedicationRecall(firmOnly, entry), false);
+  assert.equal(relatedMedicationRecall(sameDrugNotice, entry), true);
+  assert.equal(relatedMedicationRecall({ ...sameDrugNotice, listingDate: "2026-01-01" }, entry), false);
+});
+
+test("an unrelated notice from the same firm is not called 'previously announced'", () => {
+  const h = emptyHistory();
+  mergeAnnouncement(h, parRow(), null, { runDate: RUN, matchReason: "x", related: relatedMedicationRecall });
+  mergeEnforcementEvent(h, drugRows({ report: "10/21/2026" }), { runDate: RUN, matchReason: "x", related: relatedMedicationRecall });
+  const { mdx } = renderMedicationDigest({ history: h, window: WEEK, coverage: { complete: true, sources: [], gaps: [] }, generatedOn: RUN });
+  assert.match(mdx, /product="Argatroban/);
+  assert.ok(!/previously announced/i.test(mdx));
+  assert.match(mdx, /We found no FDA-posted company notice matching this recall/);
+  assert.ok(!mdx.includes("par-recalls-brevital"));
+});
+
+test("medication cards carry FDA's guidance by class, and class III stays listed with its lots", () => {
+  const h = emptyHistory();
+  const add = (o) => mergeEnforcementEvent(h, drugRows({ report: "10/21/2026", ...o }), { runDate: RUN, matchReason: "x", related: relatedMedicationRecall });
+  add({ event: "1", cls: "Class I", desc: "Argatroban Injection, 2.5 mL vial, Rx only" });
+  add({ event: "2", cls: "Class II", desc: "Levoxyl (levothyroxine) tablets, 175 mcg, Rx only", firm: "Pfizer" });
+  add({ event: "3", cls: "Class III", desc: "Tretinoin Cream 0.05%, 45g tube, Rx only", firm: "Sun Pharma", code: "Lot Z9" });
+  add({ event: "4", cls: "Class II", desc: "Tris/Tromethamine, USP, GMP, API Grade", firm: "BioSpectra" });
+  const { mdx, slug } = renderMedicationDigest({ history: h, window: WEEK, coverage: { complete: true, sources: [], gaps: [] }, generatedOn: RUN });
+  assert.equal(slug, "medication-recalls-week-of-2026-10-19");
+  assert.equal(digestSlug(WEEK, "medication"), slug);
+  assert.match(mdx, /title: "Medication recalls: Oct 19–25, 2026"/);
+  assert.match(mdx, /review_required: false/);
+  assert.equal((mdx.match(/<RecallCard\b/g) || []).length, 2);
+  assert.match(mdx, /For class I recalls, FDA recommends following the recalling company's instructions/);
+  assert.match(mdx, /consumers can generally continue taking the medicine unless the recalling company provides other instructions/);
+  assert.ok(mdx.indexOf("Levoxyl") < mdx.indexOf('product="Argatroban'), "tablets come before injections");
+  const table = mdx.slice(mdx.indexOf("## Lower-risk recalls"));
+  assert.match(table, /Tretinoin Cream/);
+  assert.match(table, /Lot Z9/);
+  assert.match(table, /API Grade/);
+  assert.ok(!mdx.includes("dietary-supplement"));
+});
+
+test("a failed source means the medication post never says 'no recalls'", () => {
+  const coverage = { complete: false, sources: [], gaps: ["FDA Enforcement Report: HTTP 500"] };
+  const { mdx, quiet } = renderMedicationDigest({ history: emptyHistory(), window: WEEK, coverage, generatedOn: RUN });
+  assert.equal(quiet, false);
+  assert.match(mdx, /Coverage for this week is incomplete/);
+  assert.ok(!/Were there any medication recalls/.test(mdx));
+});
+
+test("a full medication run: drug rows become cards, supplement rows and notices stay out", async () => {
+  const listing = JSON.stringify([
+    { path: "/safety/recalls-market-withdrawals-safety-alerts/par-argatroban", field_change_date_2: "10/21/2026", field_brand_name: "Par", field_product_description: "Argatroban Injection", field_recall_reason_description: "Particulate matter", field_recall_reason: "x", field_company_name: "Par Health USA, LLC", field_regulated_product_field: "Drugs", "all-terms-rewrite": "Drugs" },
+    JSON.parse(LISTING)[0],
+  ]);
+  const report = csv(
+    csvRow({ type: "Drugs", firm: "Par Health USA, LLC", event: "7", recall: "D-1", cls: "Class I", report: "10/21/2026", desc: "Argatroban Injection, USP, Rx only" }),
+    csvRow({ type: "Drugs", firm: "Other Labs", event: "8", recall: "D-2", cls: "Class II", report: "10/21/2026", desc: "Rapture Dietary Supplement capsules" }),
+    csvRow({ type: "Food", firm: "Grocer", event: "9", recall: "F-1", cls: "Class II", report: "10/21/2026", desc: "Blueberries" })
+  );
+  const { impl } = fakeFetch([
+    ["recalls-market-withdrawals.json", () => ({ body: listing })],
+    ["par-argatroban", () => ({ body: page({ title: "Par Recalls Argatroban" }).replaceAll("Acme Nutrition, LLC", "Par Health USA, LLC") })],
+    ["acme-recalls-sleepwell", () => { throw new Error("a supplement page must not be fetched"); }],
+    ["getWeeklyExportCSVResult", () => ({ body: report })],
+    ["accessdata.fda.gov/scripts/ires/index.cfm", () => ({ body: UPDATED })],
+  ]);
+  const h = history1();
+  const coverage = await collect({ history: h, window: WEEK, today: RUN, fetchOpts: fetchOpts(impl), kind: "medication" });
+  assert.equal(coverage.complete, true);
+  assert.equal(coverage.classified, true);
+  const keys = Object.keys(h.entries);
+  assert.ok(keys.includes("fda-enforcement:7"));
+  assert.ok(!keys.includes("fda-enforcement:8"));
+  assert.ok(!keys.includes("fda-enforcement:9"));
+  assert.ok(!keys.some((k) => k.includes("sleepwell")));
+  assert.deepEqual(h.entries["fda-enforcement:7"].related, [keys.find((k) => k.includes("par-argatroban"))]);
 });

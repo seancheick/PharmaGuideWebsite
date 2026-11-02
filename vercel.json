@@ -2,7 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "git": {
     "deploymentEnabled": {
-      "automation/recall-history": false
+      "automation/recall-history": false,
+      "automation/medication-recall-history": false
     }
   }
 }

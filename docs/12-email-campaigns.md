@@ -115,8 +115,10 @@ of the email text here.
 
 Brief requests join the newsletter and beta lists (the form says so, and an
 earlier opt-out from either list is kept). The brief email is the only message
-sent; it carries an unsubscribe link for each list, and the inbox one-click
-unsubscribe stops the monthly notes. Requests come from one form, `src/components/brief/BriefForm.tsx`, on three
+sent at that moment; it carries an unsubscribe link for each list, and the inbox
+one-click unsubscribe stops the monthly notes. If that new joiner later uses the
+beta or newsletter form, they get that list's welcome once instead of only an
+"already on the list" screen. Requests come from one form, `src/components/brief/BriefForm.tsx`, on three
 surfaces: `/checklist`, the end of every blog post (always shown), and the
 automatic blog offer (`BriefOffer.tsx`). The automatic offer appears after 45
 visible seconds plus the article midpoint, at most once a session, quiet for 30

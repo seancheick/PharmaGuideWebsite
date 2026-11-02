@@ -362,7 +362,17 @@ export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
     // contact add failed: they asked for the PDF.
     const join = async (list: SubscribeList) => {
       try {
-        return await addContact(email, listToAudience[list]);
+        // The brief is the only email now. Holding the welcome means a later
+        // signup through that list's form still gets its confirmation once.
+        return await addContact(email, listToAudience[list], undefined, () =>
+          reserveWelcome(welcomeKey(email, list)).catch((err) => {
+            log.error("brief.welcome_reservation_failed", {
+              list,
+              email_hash: hashPii(email),
+              error: err instanceof Error ? err.message : String(err),
+            });
+          })
+        );
       } catch (err) {
         log.error("brief.contact_failed", {
           list,

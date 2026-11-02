@@ -443,6 +443,38 @@ test("a brief request keeps an earlier newsletter opt-out", async () => {
   assert.doesNotMatch(setup.sends[0].payload.text, /You're also subscribed to the monthly notes/);
 });
 
+test("a brief joiner gets one welcome when they later use a signup form", async () => {
+  const setup = loadFlow({ missingSegment: true });
+  await setup.flow.sendSafetyBrief("test@example.com");
+  assert.equal(setup.sends.length, 1);
+  assert.match(setup.sends[0].payload.subject, /Safety Brief/);
+
+  const first = await setup.flow.subscribe({ email: "test@example.com", list: "beta" });
+  assert.match(first.message, /Check your inbox/);
+  assert.equal(setup.sends.length, 2);
+  assert.equal(setup.sends[1].payload.subject, "You're on the PharmaGuide beta list");
+
+  const second = await setup.flow.subscribe({ email: "test@example.com", list: "beta" });
+  assert.match(second.message, /Check your inbox/);
+  assert.equal(setup.sends.length, 2);
+});
+
+test("a brief request by someone already on the list does not unlock a welcome", async () => {
+  const setup = loadFlow({ contact: { ...subscribed } });
+  await setup.flow.sendSafetyBrief("test@example.com");
+  const result = await setup.flow.subscribe({ email: "test@example.com", list: "beta" });
+  assert.match(result.message, /already on the list/);
+  assert.equal(setup.sends.length, 1);
+});
+
+test("a welcome storage failure does not cost a brief joiner their list place", async () => {
+  const setup = loadFlow({ missingSegment: true, storageFailure: true });
+  const result = await setup.flow.sendSafetyBrief("test@example.com");
+  assert.equal(result.ok, true);
+  assert.match(result.message, /newsletter and beta list/);
+  assert.match(setup.sends[0].payload.text, /on the beta list too/);
+});
+
 test("a requested brief can be resent and send errors are reported", async () => {
   const setup = loadFlow({ send: failure });
   assert.equal((await setup.flow.sendSafetyBrief("test@example.com")).ok, false);

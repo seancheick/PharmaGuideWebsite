@@ -134,19 +134,23 @@ jobs:
 
           # A rerun must never overwrite review work: if anyone other than
           # this bot has committed to the week's branch, leave it alone.
+          others=""
           if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then
             git fetch origin "$branch"
             others=$(git log "origin/main..origin/$branch" --format='%ae' | grep -v '^recalls-bot@users.noreply.github.com$' || true)
-            if [ -n "$others" ]; then
-              echo "::warning::$branch has review commits from someone else; not regenerating it. History was still saved to $HISTORY_BRANCH."
-              exit 0
-            fi
           fi
 
-          git checkout -B "$branch"
-          git add content/recalls/history.json "content/blog/.drafts/$slug.mdx" "content/blog/.review/$slug.review.md"
-          git commit -m "recalls: draft digest $slug" || true
-          git push --force origin "HEAD:refs/heads/$branch"
+          if [ -n "$others" ]; then
+            echo "::warning::$branch has review commits from someone else; not regenerating it. History was still saved to $HISTORY_BRANCH."
+            # A scheduled run only renders a week with no PR or issue, so it
+            # still opens one for the reviewed branch.
+            [ "$GITHUB_EVENT_NAME" = "schedule" ] || exit 0
+          else
+            git checkout -B "$branch"
+            git add content/recalls/history.json "content/blog/.drafts/$slug.mdx" "content/blog/.review/$slug.review.md"
+            git commit -m "recalls: draft digest $slug" || true
+            git push --force origin "HEAD:refs/heads/$branch"
+          fi
 
           coverage=$([ "${{ steps.run.outputs.code }}" = 0 ] && echo "complete" || echo "INCOMPLETE — a source failed or records need classifying; see the log and the review sidecar")
           validation=$([ "${{ steps.validate.outputs.code }}" = 0 ] && echo "passed" || echo "FAILED")

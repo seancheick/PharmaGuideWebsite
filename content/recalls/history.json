@@ -2436,6 +2436,121 @@
           "priorAnnouncement": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-x10-natural-enhancement-supplement-due-undeclared"
         }
       ]
+    },
+    "fda-enforcement:98583": {
+      "key": "fda-enforcement:98583",
+      "source": "fda_enforcement_report",
+      "eventId": "98583",
+      "firm": "PRIMAL SUPPLEMENTS GROUP LLC",
+      "location": "Albuquerque, NM, United States",
+      "voluntary": "Voluntary: Firm initiated",
+      "distribution": "Product was sold on the website primalherbs.com",
+      "initiationDate": "2026-02-27",
+      "firstReportDate": "2026-10-28",
+      "matchReason": "product description names a supplement",
+      "products": [
+        {
+          "recallNumber": "H-0172-2027",
+          "productDescription": "PRIMAL HERBS, VOLUME, HERBAL SUPPLEMENT, Net Wt. 8.5 oz, 30 servings",
+          "codeInfo": "All orders placed between July 2, 2025, and September 19, 2025, on the website: primalherbs.com",
+          "quantity": "Unknown",
+          "reason": "FDA laboratory analysis confirmed that Primal Herbs Volume contains sildenafil not listed on the product label.",
+          "classification": "Class I",
+          "classificationDate": "2026-10-21",
+          "status": "Ongoing",
+          "reportDate": "2026-10-28",
+          "lastModifiedDate": null
+        }
+      ],
+      "firstSeen": "2026-11-02",
+      "related": [
+        "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/primal-herbs-issues-voluntary-nationwide-recall-primal-herbs-volume-due-undeclared-sildenafil"
+      ],
+      "events": [
+        {
+          "id": "076db7b65e94e79c",
+          "kind": "enforcement_listed",
+          "date": "2026-10-28",
+          "detectedAt": "2026-11-02",
+          "priorAnnouncement": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/primal-herbs-issues-voluntary-nationwide-recall-primal-herbs-volume-due-undeclared-sildenafil"
+        }
+      ]
+    },
+    "fda-enforcement:100068": {
+      "key": "fda-enforcement:100068",
+      "source": "fda_enforcement_report",
+      "eventId": "100068",
+      "firm": "Pacific Health Sciences Llc",
+      "location": "Oxnard, CA, United States",
+      "voluntary": "Voluntary: Firm initiated",
+      "distribution": "Product was manufactured for a single customer located in Florida. Product was made available through Amazon and through the customers website.",
+      "initiationDate": "2026-10-06",
+      "firstReportDate": "2026-10-28",
+      "matchReason": "product description names a supplement",
+      "products": [
+        {
+          "recallNumber": "H-0168-2027",
+          "productDescription": "Babies' Magic Tea; Baby Sleep Gripe Water; Dietary Supplement; Net Wt. 4 OZ; Age 2eeks+ \"No Alcohol, Dairy, Wheat, Soy And Animal Testing\" UPC: 850302008183",
+          "codeInfo": "Lot: 25122bw Expiration date: 12/2028",
+          "quantity": "953 units",
+          "reason": "Adulterated (elevated levels of alcohol) infant dietary supplement",
+          "classification": "Class II",
+          "classificationDate": "2026-10-21",
+          "status": "Ongoing",
+          "reportDate": "2026-10-28",
+          "lastModifiedDate": null
+        }
+      ],
+      "firstSeen": "2026-11-02",
+      "related": [
+        "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/pacific-health-sciences-voluntarily-recalls-one-lot-babies-magic-tea-brand-baby-sleep-gripe-water"
+      ],
+      "events": [
+        {
+          "id": "076db7b65e94e79c",
+          "kind": "enforcement_listed",
+          "date": "2026-10-28",
+          "detectedAt": "2026-11-02",
+          "priorAnnouncement": "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/pacific-health-sciences-voluntarily-recalls-one-lot-babies-magic-tea-brand-baby-sleep-gripe-water"
+        }
+      ]
+    },
+    "fda-enforcement:99942": {
+      "key": "fda-enforcement:99942",
+      "source": "fda_enforcement_report",
+      "eventId": "99942",
+      "firm": "EVEXIAS HEALTH SOLUTION",
+      "location": "Southlake, TX, United States",
+      "voluntary": "Voluntary: Firm initiated",
+      "distribution": "FL, NM, PA, NY, TN, SD, ND, KY, WA",
+      "initiationDate": "2026-09-24",
+      "firstReportDate": "2026-10-28",
+      "matchReason": "product description names a supplement",
+      "products": [
+        {
+          "recallNumber": "H-0170-2027",
+          "productDescription": "Evexias Health Solutions Amino Ultra, 90-capsules, dietary supplement in white plastic bottles with blue/green/white labeling",
+          "codeInfo": "\" Lot Number: 594886001 MFG 1125, printed on side label. \" Affected units only: Bottles with 496 inkjet-printed on the bottom",
+          "quantity": "30 bottles",
+          "reason": "The product is mislabeled and fails to declare fish oil.",
+          "classification": "Class II",
+          "classificationDate": "2026-10-21",
+          "status": "Ongoing",
+          "reportDate": "2026-10-28",
+          "lastModifiedDate": null
+        }
+      ],
+      "firstSeen": "2026-11-02",
+      "related": [],
+      "events": [
+        {
+          "id": "076db7b65e94e79c",
+          "kind": "enforcement_listed",
+          "date": "2026-10-28",
+          "detectedAt": "2026-11-02",
+          "priorAnnouncement": null
+        }
+      ]
     }
   },
   "weeks": {
@@ -2444,7 +2559,7 @@
         "start": "2026-10-19",
         "end": "2026-10-25"
       },
-      "lastRun": "2026-10-27",
+      "lastRun": "2026-11-01",
       "coverageComplete": true,
       "gaps": [],
       "counts": {
@@ -2456,6 +2571,27 @@
       "quietWeek": false,
       "events": [
         "fda-announcement:/safety/recalls-market-withdrawals-safety-alerts/tonight-we-ride-llc-issues-voluntary-recall-ultimate-forza-male-supplement-due-presence-undeclared#52631035b7f227b2"
+      ]
+    },
+    "2026-11-01": {
+      "window": {
+        "start": "2026-10-26",
+        "end": "2026-11-01"
+      },
+      "lastRun": "2026-11-02",
+      "coverageComplete": true,
+      "gaps": [],
+      "counts": {
+        "newAnnouncements": 0,
+        "updates": 0,
+        "enforcementListings": 3,
+        "classifications": 0
+      },
+      "quietWeek": false,
+      "events": [
+        "fda-enforcement:100068#076db7b65e94e79c",
+        "fda-enforcement:98583#076db7b65e94e79c",
+        "fda-enforcement:99942#076db7b65e94e79c"
       ]
     }
   }

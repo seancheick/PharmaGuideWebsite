@@ -113,8 +113,9 @@ Collect daily, publish weekly:
   `OPENFDA_API_KEY`, and an alert when the script exits 3 (incomplete coverage) or 1 (crash).
   Built as a GitHub Actions workflow: daily collection force-pushes the history to
   `automation/recall-history` (main + one data commit; Vercel skips this branch); the first run
-  after the week ends renders it, validates it and opens a **draft PR** from `recalls/<slug>`. Nothing
-  auto-merges. If the repo setting "Allow GitHub Actions to create and approve pull requests" is
+  after the week ends renders it, validates it and opens a PR from `recalls/<slug>`. When coverage is
+  complete and the checks pass, the run also does `pnpm blog:approve`, so **merging the PR publishes
+  the post**. Otherwise it stays a **draft PR**. Nothing auto-merges. If the repo setting "Allow GitHub Actions to create and approve pull requests" is
   off, the run opens an issue with a one-click link to create the PR instead. PRs opened by the
   workflow's token don't trigger CI, so the run puts the recall tests and validator results in
   the PR body. Run it by hand from the Actions tab (`collect` or `weekly`).

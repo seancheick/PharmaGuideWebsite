@@ -683,6 +683,14 @@ const MANUALLY_VERIFIED_URLS = {
     "2026-10-27, Claude in browser: page titled '2026 Guideline on the Management of Dyslipidemia' (AHA Professional Heart Daily); returns 403 to scripts",
 };
 
+// FDA's recall index pages, linked from every recall digest, return 404 to
+// GitHub's runners but open normally elsewhere (checked 2026-11-02). Only the
+// runner skips them; a real 404 still fails anywhere else.
+const FDA_INDEXES_MISREPORTED_TO_RUNNERS = new Set([
+  "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+  "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/enforcement-reports",
+]);
+
 // Numbers a person found in a study's FULL TEXT when the abstract (all the
 // citation-support check reads) doesn't state them. Each entry: the exact
 // passage, where it is, who checked and when. The check still warns on any
@@ -725,6 +733,7 @@ async function checkUrls(content, { skip = false } = {}) {
 
   for (const { url, result } of results) {
     if (result.ok) continue;
+    if (process.env.GITHUB_ACTIONS && result.status === 404 && FDA_INDEXES_MISREPORTED_TO_RUNNERS.has(url)) continue;
     const doi = doiFromUrl(url);
     if (doi && (await crossrefResolves(doi))) continue; // publisher blocks bots; DOI is real
     if ([401, 403, 429].includes(result.status)) {

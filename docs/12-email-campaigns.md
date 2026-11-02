@@ -108,6 +108,11 @@ that folder or copy subscriber details into a public review or analytics event.
 | Feedback request               | Sean, through Hostinger      | About a week after confirmed access |
 | Monthly newsletter             | Resend Broadcast draft       | Sean reviews and chooses to send    |
 
+CI fails if `/email/unsubscribe`, `/email/beta-interest` or `/api/email-events` is
+missing from the build. To check a live site, run
+`node scripts/verify-email-routes.mjs https://pharmaguide.io`; it uses GET only
+and cannot send email or change preferences.
+
 The exact immediate copy lives in `src/emails/`. The exact later copy lives in
 `scripts/lib/email-campaigns.mjs`; the operator tool renders it for Resend and
 the private review page. Edit those sources rather than keeping a second copy

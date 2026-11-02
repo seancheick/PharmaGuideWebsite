@@ -25,7 +25,7 @@ export const PRIVACY_DOC: LegalDocument = {
   titleEm: "By design.",
   subhead:
     "Your health details stay on your device unless you choose to share them. This page explains account backups, optional AI-assistant sharing, and your controls.",
-  lastUpdated: "2026-10-23",
+  lastUpdated: "2026-10-26",
   summary: {
     title: "The short version",
     points: [

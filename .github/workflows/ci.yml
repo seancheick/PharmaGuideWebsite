@@ -84,3 +84,5 @@ jobs:
           # feature disabled — which is exactly the state we want CI to prove
           # is buildable. Adding fake values here would instead assert that a
           # misconfigured deploy looks healthy.
+      - name: Email routes included in deployment
+        run: node scripts/verify-email-routes.mjs --build

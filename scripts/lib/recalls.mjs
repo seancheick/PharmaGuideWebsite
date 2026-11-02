@@ -100,6 +100,10 @@ export function weekWindow(weekEnding) {
 }
 
 /** The most recent Sunday strictly before `today`: the last complete week. */
+export function digestSlug(window) {
+  return `supplement-recalls-week-of-${window.start}`;
+}
+
 export function defaultWeekEnding(today) {
   const day = new Date(`${today}T00:00:00Z`).getUTCDay();
   return addDays(today, -(day === 0 ? 7 : day));
@@ -884,7 +888,7 @@ function renderEnforcementCard(entry, event, history, weekCsvUrl, page) {
 export function renderDigest({ history, window, coverage, generatedOn, author = "sean-cheick-baradji" }) {
   const selection = selectWeek(history, window);
   const label = weekLabel(window);
-  const slug = `supplement-recalls-week-of-${window.start}`;
+  const slug = digestSlug(window);
   const items = [...selection.newAnnouncements, ...selection.updates, ...selection.enforcementListings, ...selection.classifications];
   const firms = [...new Set(items.map(({ entry }) => entry.company || entry.firm))];
   const products = countProducts(selection);

@@ -5,6 +5,7 @@
  *   pnpm recalls:digest                         # last complete Mon–Sun week
  *   pnpm recalls:digest --week-ending 2026-10-25
  *   pnpm recalls:digest --collect-only          # update history, no draft
+ *   pnpm recalls:digest --print-slug            # print the week's slug and stop
  *   pnpm recalls:digest --merge-history other.json  # merge another copy first
  *   pnpm recalls:digest --classify 99001=not-supplement:"elderberry jam" --by sean
  *                                               # record a person's decision on a
@@ -28,6 +29,7 @@ import {
   SOURCES,
   addDays,
   defaultWeekEnding,
+  digestSlug,
   emptyHistory,
   fetchWithRetry,
   inWindow,
@@ -218,6 +220,7 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--week-ending") args.weekEnding = argv[++i];
     else if (argv[i] === "--collect-only") args.collectOnly = true;
+    else if (argv[i] === "--print-slug") args.printSlug = true;
     else if (argv[i] === "--history") args.history = argv[++i];
     else if (argv[i] === "--classify") {
       // --classify <Event ID or recall number>=supplement|not-supplement[:note]
@@ -242,6 +245,10 @@ async function main() {
   if (window.end >= today) {
     console.error(`week ending ${weekEnding} is not over yet (today ${today}); pick an earlier Sunday`);
     process.exit(2);
+  }
+  if (args.printSlug) {
+    console.log(digestSlug(window));
+    process.exit(0);
   }
   const historyPath = args.history ? path.resolve(args.history) : HISTORY;
   let history = fs.existsSync(historyPath) ? JSON.parse(fs.readFileSync(historyPath, "utf8")) : emptyHistory();

@@ -17,6 +17,7 @@ import {
   supplementEnforcementMatch,
   weekWindow,
   defaultWeekEnding,
+  digestSlug,
 } from "../scripts/lib/recalls.mjs";
 import { collect } from "../scripts/recall-digest.mjs";
 
@@ -203,6 +204,7 @@ test("quoted FDA text cannot become JSX or markdown", () => {
 test("the default week is the last complete Monday–Sunday", () => {
   assert.equal(defaultWeekEnding("2026-10-27"), "2026-10-25");
   assert.equal(defaultWeekEnding("2026-10-25"), "2026-10-18");
+  assert.equal(digestSlug(weekWindow("2026-11-01")), "supplement-recalls-week-of-2026-10-26");
 });
 
 // ─── Failed source ──────────────────────────────────────────────────

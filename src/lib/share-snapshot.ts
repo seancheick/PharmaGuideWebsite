@@ -28,7 +28,7 @@
 import { createHash } from "node:crypto";
 import { QUALITY_TIER_IDS, type QualityTierId } from "./quality-score";
 
-export const SHARE_INDEX_SCHEMA_VERSION = 2;
+export const SHARE_INDEX_SCHEMA_VERSION = 3;
 export const SHARE_INDEX_SHARD_PREFIX_LENGTH = 2;
 
 /** Map a product id to the immutable release shard published by the pipeline. */
@@ -79,7 +79,12 @@ export const MAX_HIGHLIGHTS = 3;
 export const SHARE_CONFIDENCE_VALUES = ["Limited"] as const;
 export type ShareConfidence = (typeof SHARE_CONFIDENCE_VALUES)[number];
 
-export const CATALOG_DISPOSITIONS = ["scored", "not_scored", "blocked"] as const;
+export const CATALOG_DISPOSITIONS = [
+  "scored",
+  "not_scored",
+  "blocked",
+  "assessment_incomplete",
+] as const;
 export type CatalogDisposition = (typeof CATALOG_DISPOSITIONS)[number];
 
 export type ShareRequest = {
@@ -99,6 +104,12 @@ export function shareDispositionCopy(disposition: CatalogDisposition): {
         body: "PharmaGuide found a product-level safety issue and does not publish a quality score for this product. Open it in PharmaGuide for the full details.",
         description:
           "PharmaGuide blocked this product from quality scoring because of a catalog-level safety issue.",
+      };
+    case "assessment_incomplete":
+      return {
+        title: "Rating not available",
+        body: "PharmaGuide’s assessment of this product is not yet complete. Open it in PharmaGuide for the available details.",
+        description: "PharmaGuide’s assessment of this product is not yet complete.",
       };
     case "not_scored":
       return {
@@ -122,7 +133,7 @@ export type ShareSnapshot = {
   brandName: string | null;
   catalogDisposition: CatalogDisposition;
   /**
-   * 0–100, or null when the product is blocked or not scored.
+   * 0–100, or null when the product is blocked, not scored or assessment-incomplete.
    *
    * Score and tier travel together: both present, or both absent. A tier
    * without a number is a verdict with nothing behind it, and a number
@@ -219,7 +230,8 @@ export function resolveShareSnapshotFromIndex(
   }
   const index = rawIndex as Record<string, unknown>;
   if (
-    index.schemaVersion !== SHARE_INDEX_SCHEMA_VERSION ||
+    // Keep immutable v2 release links readable alongside current v3 shards.
+    (index.schemaVersion !== 2 && index.schemaVersion !== SHARE_INDEX_SCHEMA_VERSION) ||
     index.shardPrefixLength !== SHARE_INDEX_SHARD_PREFIX_LENGTH ||
     index.catalogVersion !== request.catalogVersion
   ) {

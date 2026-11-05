@@ -1,14 +1,16 @@
 name: Recall digest
 
-# Collect FDA dietary-supplement recalls every day. The first run after a
-# Mon–Sun week ends also renders its digest and opens a PR. If coverage is
-# complete and the checks pass, merging that PR publishes the post.
+# Collect FDA dietary-supplement and medication recalls every day, each as its
+# own job with its own history and post. The first run after a Mon–Sun week ends
+# also renders each digest and opens a PR. If coverage is complete and the checks
+# pass, merging that PR publishes the post.
 # GitHub can delay or drop scheduled runs, so a later day picks up a missed one.
 #
 # Nothing here touches main: a push to main deploys production, and a recall
 # post needs a person to check it against the FDA notices first. Collected history lives on
-# automation/recall-history (always main + one data commit); the weekly PR
-# carries the draft, its review sidecar and the history up to that run.
+# automation/recall-history and automation/medication-recall-history (always
+# main + one data commit); the weekly PR carries the draft, its review sidecar
+# and that kind's history up to that run.
 # Merging the PR is a human step. See skills/pg-blog-mdx/references/recall-digest.md.
 
 on:
@@ -22,8 +24,13 @@ on:
         type: choice
         options: [collect, weekly]
         default: collect
+      kind:
+        description: "which digest to run"
+        type: choice
+        options: [both, supplement, medication]
+        default: both
 
-# Daily and weekly runs both write the history branch; never interleave them.
+# Daily and weekly runs both write the history branches; never interleave them.
 concurrency:
   group: recall-digest
   cancel-in-progress: false
@@ -37,8 +44,15 @@ jobs:
   recalls:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # One kind failing must not cancel or block the other.
+    strategy:
+      fail-fast: false
+      matrix:
+        kind: ${{ (inputs.kind == 'supplement' || inputs.kind == 'medication') && fromJSON(format('["{0}"]', inputs.kind)) || fromJSON('["supplement","medication"]') }}
     env:
-      HISTORY_BRANCH: automation/recall-history
+      KIND: ${{ matrix.kind }}
+      HISTORY_BRANCH: ${{ matrix.kind == 'medication' && 'automation/medication-recall-history' || 'automation/recall-history' }}
+      HISTORY_FILE: ${{ matrix.kind == 'medication' && 'content/recalls/medication-history.json' || 'content/recalls/history.json' }}
       OPENFDA_API_KEY: ${{ secrets.OPENFDA_API_KEY }}
       GH_TOKEN: ${{ github.token }}
 
@@ -69,7 +83,7 @@ jobs:
         env:
           REQUESTED_MODE: ${{ inputs.mode }}
         run: |
-          slug=$(node scripts/recall-digest.mjs --print-slug)
+          slug=$(node scripts/recall-digest.mjs --kind "$KIND" --print-slug)
           if [ -n "$REQUESTED_MODE" ]; then
             mode="$REQUESTED_MODE"
           elif [ -e "content/blog/$slug.mdx" ] ||
@@ -91,7 +105,7 @@ jobs:
           git config user.email "recalls-bot@users.noreply.github.com"
           if git ls-remote --exit-code --heads origin "$HISTORY_BRANCH" >/dev/null; then
             git fetch origin "$HISTORY_BRANCH"
-            git show "origin/$HISTORY_BRANCH:content/recalls/history.json" > "$RUNNER_TEMP/automation-history.json"
+            git show "origin/$HISTORY_BRANCH:$HISTORY_FILE" > "$RUNNER_TEMP/automation-history.json" || rm -f "$RUNNER_TEMP/automation-history.json"
           fi
 
       # Exit 3 = a source failed or a record may be a supplement and needs a
@@ -103,9 +117,9 @@ jobs:
         run: |
           set +e
           if [ "$MODE" = "weekly" ]; then
-            pnpm --silent recalls:digest --merge-history "$RUNNER_TEMP/automation-history.json" | tee digest.log
+            pnpm --silent recalls:digest --kind "$KIND" --merge-history "$RUNNER_TEMP/automation-history.json" | tee digest.log
           else
-            pnpm --silent recalls:digest --collect-only --merge-history "$RUNNER_TEMP/automation-history.json" | tee digest.log
+            pnpm --silent recalls:digest --kind "$KIND" --collect-only --merge-history "$RUNNER_TEMP/automation-history.json" | tee digest.log
           fi
           code=${PIPESTATUS[0]}
           echo "code=$code" >> "$GITHUB_OUTPUT"
@@ -115,8 +129,8 @@ jobs:
 
       - name: Save history branch
         run: |
-          git add content/recalls/history.json
-          git commit -m "recalls: collected history $(date -u +%F)" || true
+          git add "$HISTORY_FILE"
+          git commit -m "recalls: collected $KIND history $(date -u +%F)" || true
           git push --force origin "HEAD:refs/heads/$HISTORY_BRANCH"
 
       - name: Validate draft
@@ -158,7 +172,7 @@ jobs:
             [ "$GITHUB_EVENT_NAME" = "schedule" ] || exit 0
           else
             git checkout -B "$branch"
-            git add -A content/recalls/history.json content/blog
+            git add -A "$HISTORY_FILE" content/blog
             git commit -m "recalls: draft digest $slug" || true
             git push --force origin "HEAD:refs/heads/$branch"
           fi

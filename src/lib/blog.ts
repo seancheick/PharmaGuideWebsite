@@ -147,20 +147,22 @@ function readPosts(dir: string, isDraft: boolean): BlogPost[] {
 }
 
 /** On previews a draft wins, so an update to a live post shows the new version. */
-// Reads what scripts/lib/recalls.mjs writes: the title "Supplement recalls:
+// Reads what scripts/lib/recalls.mjs writes: the title "<Subject> recalls:
 // <week>", one <RecallCard> per recall, and "still being checked" while
 // FDA records are unclassified.
 function recallSummary(title: string, content: string): RecallSummary {
+  const [subject = "", week = ""] = (title ?? "").split(/:\s*(.*)/s);
   return {
-    week: (title ?? "").replace(/^Supplement recalls:\s*/, ""),
+    subject,
+    week,
     count: (content.match(/<RecallCard\b/g) ?? []).length,
     unsettled: /still being checked/.test(content),
   };
 }
 
-/** The newest weekly recall roundup, linked from the blog hub. */
+/** The newest weekly supplement recall roundup, linked from the blog hub. */
 export function getLatestRecallDigest(): BlogPost | undefined {
-  return getAllPosts().find((p) => p.recall);
+  return getAllPosts().find((p) => p.recall?.subject === "Supplement recalls");
 }
 
 export function getPostBySlug(slug: string): BlogPost | undefined {

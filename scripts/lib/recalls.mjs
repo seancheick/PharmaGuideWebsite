@@ -1,7 +1,7 @@
 /**
- * Weekly supplement-recall digest: parsing, filtering, history merge and
- * MDX rendering. Pure functions plus one fetch helper; the CLI that wires
- * them to the network is scripts/recall-digest.mjs.
+ * Weekly recall digests (supplements, medications): parsing, filtering, history
+ * merge and MDX rendering. Pure functions plus one fetch helper; the CLI that
+ * wires them to the network is scripts/recall-digest.mjs.
  *
  * Sources, in order of authority:
  *   1. FDA "Recalls, Market Withdrawals & Safety Alerts" (company
@@ -55,6 +55,13 @@ export const SOURCES = {
   },
 };
 
+// Each kind is its own weekly post with its own history file, so a medication
+// record can never change a supplement post or link to its notices.
+export const KINDS = {
+  supplement: { slug: "supplement-recalls", history: "history.json", noun: "supplement" },
+  medication: { slug: "medication-recalls", history: "medication-history.json", noun: "medication" },
+};
+
 // ─── Dates (all ISO YYYY-MM-DD, UTC arithmetic) ─────────────────────
 
 const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
@@ -100,8 +107,8 @@ export function weekWindow(weekEnding) {
 }
 
 /** The most recent Sunday strictly before `today`: the last complete week. */
-export function digestSlug(window) {
-  return `supplement-recalls-week-of-${window.start}`;
+export function digestSlug(window, kind = "supplement") {
+  return `${KINDS[kind].slug}-week-of-${window.start}`;
 }
 
 export function defaultWeekEnding(today) {
@@ -240,6 +247,16 @@ export function supplementListingMatch(row) {
   if (/\b(dietary|nutritional) supplements?\b/i.test(row.terms)) return "FDA topic tag: dietary/nutritional supplement";
   if (/\bdietary supplements?\b/i.test(row.productDescription)) return "product description says dietary supplement";
   return null;
+}
+
+const VETERINARY = /\b(veterinary|animal health|for (?:use in )?animals?)\b/i;
+
+/** Why a listing row counts as a human medication, or null if it doesn't. */
+export function medicationListingMatch(row) {
+  if (!/\bdrugs\b/i.test(row.regulatedProducts)) return null;
+  if (supplementListingMatch(row)) return null;
+  if (VETERINARY.test(`${row.company} ${row.brand} ${row.productDescription}`)) return null;
+  return "FDA product type: Drugs";
 }
 
 // ─── Source 1b: announcement page ───────────────────────────────────
@@ -409,6 +426,36 @@ export function supplementEnforcementMatch(row, announcements = []) {
   return hit ? `matches the dietary-supplement announcement ${hit.url}` : null;
 }
 
+/** Drug records, except those the supplement digest already claims. */
+export function medicationEnforcementMatch(row, supplementAnnouncements = []) {
+  if (row.productType !== "Drugs") return null;
+  return supplementEnforcementMatch(row, supplementAnnouncements) ? null : "FDA product type: Drugs";
+}
+
+// Words every drug label shares. Salts are here too: "sodium" alone would tie
+// Brevital Sodium to a saline-based product from the same firm.
+const DRUG_FORM_WORDS = new Set(["injection", "injectable", "infusion", "intravenous", "sodium", "chloride", "hydrochloride", "tablet", "tablets", "capsule", "capsules", "solution", "suspension", "oral", "vial", "vials", "single", "dose", "multi", "multidose", "bottle", "bottles", "container", "cream", "ointment", "topical", "sterile", "compounded", "extended", "release", "delayed", "drops", "count", "with", "from", "only", "brand", "product", "products", "drug", "drugs", "medication", "medications", "units"]);
+const drugWords = (s) => new Set(String(s ?? "").toLowerCase().match(/[a-z]{4,}/g)?.filter((w) => !DRUG_FORM_WORDS.has(w)) || []);
+
+export function sameDrug(a, b) {
+  const x = drugWords(a);
+  return [...drugWords(b)].some((w) => x.has(w));
+}
+
+const MEDICATION_NOTICE_DAYS = 120;
+
+/**
+ * A firm match is not enough for medications: one manufacturer can have several
+ * unrelated recalls in a month. The drug must match and the dates must be close.
+ */
+export function relatedMedicationRecall(announcement, enforcement) {
+  if (!sameFirm(announcement.company, enforcement.firm)) return false;
+  const a = announcement.fdaPublishDate || announcement.listingDate;
+  const b = enforcement.initiationDate || enforcement.firstReportDate;
+  if (!a || !b || Math.abs(new Date(a) - new Date(b)) > MEDICATION_NOTICE_DAYS * 864e5) return false;
+  return (enforcement.products || []).some((p) => sameDrug(announcement.productDescription, p.productDescription));
+}
+
 /**
  * Human-food records that read like a supplement but don't say so. Never
  * published automatically; listed in the review sidecar for a person to decide.
@@ -512,7 +559,7 @@ function diffList(before = [], after = []) {
  * Merge one supplement listing row (and its announcement page, when fetched)
  * into history. Returns the events added.
  */
-export function mergeAnnouncement(history, row, detail, { runDate, matchReason }) {
+export function mergeAnnouncement(history, row, detail, { runDate, matchReason, related = relatedRecall, sameProduct = () => true }) {
   const key = `fda-announcement:${row.path}`;
   const added = [];
   let entry = history.entries[key];
@@ -545,11 +592,11 @@ export function mergeAnnouncement(history, row, detail, { runDate, matchReason }
       events: [],
     };
     for (const e of Object.values(history.entries)) {
-      if (e.source === SOURCES.enforcement.id && relatedRecall(entry, e) && !e.related.includes(key)) e.related.push(key);
+      if (e.source === SOURCES.enforcement.id && related(entry, e) && !e.related.includes(key)) e.related.push(key);
     }
     const describesExpansion = EXPANSION.test(`${detail?.title || ""} ${(detail?.paragraphs || []).slice(0, 2).join(" ")}`);
     const prior = describesExpansion
-      ? Object.values(history.entries).find((e) => e.key !== key && e.source === SOURCES.listing.id && sameFirm(e.company, entry.company) && (e.fdaPublishDate || e.listingDate) < announced)
+      ? Object.values(history.entries).find((e) => e.key !== key && e.source === SOURCES.listing.id && sameFirm(e.company, entry.company) && sameProduct(e.productDescription, entry.productDescription) && (e.fdaPublishDate || e.listingDate) < announced)
       : null;
     if (prior) {
       entry.related.push(prior.key);
@@ -618,7 +665,7 @@ function productRecord(r) {
  * Merge the supplement rows of one Enforcement Report event (one Event ID)
  * into history. Returns the events added.
  */
-export function mergeEnforcementEvent(history, rows, { runDate, matchReason }) {
+export function mergeEnforcementEvent(history, rows, { runDate, matchReason, related = relatedRecall }) {
   const first = rows[0];
   const key = `fda-enforcement:${first.eventId}`;
   const reportDate = rows.map((r) => r.reportDate).filter(Boolean).sort()[0];
@@ -642,7 +689,7 @@ export function mergeEnforcementEvent(history, rows, { runDate, matchReason }) {
       related: [],
       events: [],
     };
-    const announcements = Object.values(history.entries).filter((e) => e.source === SOURCES.listing.id && relatedRecall(e, entry));
+    const announcements = Object.values(history.entries).filter((e) => e.source === SOURCES.listing.id && related(e, entry));
     entry.related.push(...announcements.map((e) => e.key));
     const prior = announcements.filter((e) => (e.fdaPublishDate || e.listingDate) <= reportDate).sort((a, b) => (a.fdaPublishDate || a.listingDate).localeCompare(b.fdaPublishDate || b.listingDate))[0];
     const priorAnnounced = prior ? prior.key : null;
@@ -844,7 +891,17 @@ function renderAnnouncementCard(entry, event, history, page) {
   return lines;
 }
 
-function renderEnforcementCard(entry, event, history, weekCsvUrl, page) {
+// FDA's guidance to patients, restated: fda.gov/drugs/drug-recalls/understanding-drug-recalls-what-know-and-what-do
+export const FDA_DRUG_RECALL_GUIDE = "https://www.fda.gov/drugs/drug-recalls/understanding-drug-recalls-what-know-and-what-do";
+
+function medicationAction(entry) {
+  const classes = entry.products.map((p) => p.classification);
+  if (classes.includes("Class I")) return "Check your lot against the table. For class I recalls, FDA recommends following the recalling company's instructions. The Enforcement Report gives none, so contact your doctor or pharmacist if you have this lot.";
+  if (classes.every((c) => c === "Class II" || c === "Class III")) return "Check your lot against the table. FDA says consumers can generally continue taking the medicine unless the recalling company provides other instructions. Ask your doctor or pharmacist if you have questions.";
+  return "Check your lot against the table. FDA has not rated this recall yet and the Enforcement Report gives no patient instructions. Ask your doctor or pharmacist if you have this lot.";
+}
+
+function renderEnforcementCard(entry, event, history, weekCsvUrl, page, medication = false) {
   const prior = event.priorAnnouncement ? history.entries[event.priorAnnouncement] : null;
   const first = entry.products[0] || {};
   const name = entry.products.length === 1 ? first.productDescription : `${entry.firm}: ${entry.products.length} products`;
@@ -855,7 +912,9 @@ function renderEnforcementCard(entry, event, history, weekCsvUrl, page) {
   const reportDate = event.kind === "enforcement_listed" ? event.date : entry.firstReportDate;
   const action = prior
     ? "Follow the instructions in the company's notice (linked below); check your lots against it."
-    : "Check your lots against the table. The Enforcement Report gives no consumer instructions; ask the seller or a pharmacist if you have this product.";
+    : medication
+      ? medicationAction(entry)
+      : "Check your lots against the table. The Enforcement Report gives no consumer instructions; ask the seller or a pharmacist if you have this product.";
 
   const lines = [
     `<RecallCard id="${slugify(`${entry.firm}-${entry.eventId}`)}" product="${attr(name)}" company="${attr(entry.firm)}" announced="${attr(`Listed ${formatLongDate(reportDate)}`)}" status="${attr(status)}" action="${attr(action)}" reason="${attr(first.reason)}" notice="${prior ? prior.url : weekCsvUrl(reportDate)}" noticeLabel="${prior ? "Read the company's FDA-posted notice" : "FDA Enforcement Report (CSV)"}" page="${attr(page)}">`,
@@ -867,7 +926,9 @@ function renderEnforcementCard(entry, event, history, weekCsvUrl, page) {
       ? `Previously announced: FDA posted the company's notice on ${formatLongDate(prior.fdaPublishDate || prior.listingDate)}. Its listing in the Enforcement Report is not an expansion of that warning.`
       : later.length
         ? `No company announcement had been posted when FDA listed this recall; FDA posted the company's notice later, on ${formatLongDate(later[0].fdaPublishDate || later[0].listingDate)} ([official notice](${later[0].url})).`
-        : `FDA's recalls page has no company announcement for this recall, so the Enforcement Report is the public record.`, "");
+        : medication
+          ? `We found no FDA-posted company notice matching this recall, so the Enforcement Report is the record we cite.`
+          : `FDA's recalls page has no company announcement for this recall, so the Enforcement Report is the public record.`, "");
   } else if (event.kind === "classified") {
     const c = event.changes[0];
     lines.push(`FDA classified this recall as ${mdxText(c.after || "not stated")}${c.recallNumber ? ` (recall number ${mdxText(c.recallNumber)})` : ""}. Classification rates the health risk of a recall already under way; it does not add products.`, "");
@@ -883,6 +944,34 @@ function renderEnforcementCard(entry, event, history, weekCsvUrl, page) {
   if (entry.distribution) lines.push(`**Where it was sold:** ${mdxText(entry.distribution)}`, "");
   lines.push(`Recall started ${formatLongDate(entry.initiationDate)} (${mdxText(entry.voluntary || "voluntary/mandated not stated")}); FDA Event ID ${mdxText(entry.eventId)}.`, "", "</RecallCard>", "");
   return lines;
+}
+
+function digestFrontmatter({ subject, label, description, slug, generatedOn, author, topicTag, firms }) {
+  return [
+    "---",
+    `title: "${subject}: ${label}"`,
+    `seoTitle: "${subject}, ${label} · PharmaGuide Weekly"`,
+    `description: ${JSON.stringify(description)}`,
+    `slug: "${slug}"`,
+    `category: "safety-alerts"`,
+    `format: "recall-digest"`,
+    `date: "${generatedOn}"`,
+    `author: "${author}"`,
+    "featured: false",
+    `tags: ${JSON.stringify(["FDA recall", topicTag, "weekly recall roundup", ...firms.slice(0, 6)])}`,
+    "review_required: false",
+    "---",
+    "",
+  ];
+}
+
+function incompleteCallout(coverage) {
+  return [
+    `<Callout tone="warn">`,
+    `**Coverage for this week is incomplete.** These sources could not be read after repeated attempts: ${coverage.gaps.map(mdxText).join("; ")}. This is not a complete list, and a missing recall here does not mean there wasn't one.`,
+    `</Callout>`,
+    "",
+  ];
 }
 
 export function renderDigest({ history, window, coverage, generatedOn, author = "sean-cheick-baradji" }) {
@@ -906,22 +995,7 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
       ? `FDA posted no new dietary-supplement recall notices, Enforcement Report listings or updates for ${label} in the sources we check.`
       : `FDA dietary-supplement recall notices for ${label}: ${products} product listing${products === 1 ? "" : "s"} from ${firms.length} compan${firms.length === 1 ? "y" : "ies"}, with exact lots and the official notice for each.`;
 
-  const fm = [
-    "---",
-    `title: "Supplement recalls: ${label}"`,
-    `seoTitle: "Supplement recalls, ${label} · PharmaGuide Weekly"`,
-    `description: ${JSON.stringify(description)}`,
-    `slug: "${slug}"`,
-    `category: "safety-alerts"`,
-    `format: "recall-digest"`,
-    `date: "${generatedOn}"`,
-    `author: "${author}"`,
-    "featured: false",
-    `tags: ${JSON.stringify(["FDA recall", "dietary supplements", "weekly recall roundup", ...firms.slice(0, 6)])}`,
-    "review_required: false",
-    "---",
-    "",
-  ];
+  const fm = digestFrontmatter({ subject: "Supplement recalls", label, description, slug, generatedOn, author, topicTag: "dietary supplements", firms });
 
   const enforcementWeeks = wednesdaysIn(window);
   const reportDates = enforcementWeeks.map(formatLongDate).join(" and ");
@@ -937,12 +1011,7 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
   ];
 
   if (!coverage.complete) {
-    body.push(
-      `<Callout tone="warn">`,
-      `**Coverage for this week is incomplete.** These sources could not be read after repeated attempts: ${coverage.gaps.map(mdxText).join("; ")}. This is not a complete list, and a missing recall here does not mean there wasn't one.`,
-      `</Callout>`,
-      ""
-    );
+    body.push(...incompleteCallout(coverage));
   } else if (!settled) {
     body.push(
       `<Callout tone="warn">`,
@@ -1001,9 +1070,107 @@ export function renderDigest({ history, window, coverage, generatedOn, author = 
   return { slug, mdx: [...fm, ...body].join("\n"), review, selection, quiet };
 }
 
+// ─── Medication digest ──────────────────────────────────────────────
+// About nine FDA drug recall events a week (Sept–Oct 2026), so the post sorts
+// instead of filtering: a heuristic that hides a recall is a false reassurance,
+// one that misplaces it is only a wrong heading. FDA says using a class III drug
+// is not likely to cause health consequences, so those and bulk ingredients stay
+// listed with their lots, in one table instead of a card each.
+
+const BULK_INGREDIENT = /\b(API Grade|active pharmaceutical ingredient)\b/i;
+const INJECTABLE = /\b(inject\w*|infusion|intravenous|vials?|syringes?|irrigation|cardioplegi\w*)\b/i;
+const CLASS_ORDER = ["Class I", "Not Yet Classified", "Class II", "Class III"];
+
+const isMinorRecord = (entry) => entry.source === SOURCES.enforcement.id && entry.products.length > 0 && entry.products.every((p) => p.classification === "Class III" || BULK_INGREDIENT.test(p.productDescription));
+const isInjectable = (entry) => entry.products.some((p) => INJECTABLE.test(p.productDescription));
+const classRank = (entry) => Math.min(...entry.products.map((p) => { const i = CLASS_ORDER.indexOf(p.classification); return i < 0 ? 1 : i; }));
+const bySeverity = (a, b) => classRank(a.entry) - classRank(b.entry);
+
+export function renderMedicationDigest({ history, window, coverage, generatedOn, author = "sean-cheick-baradji" }) {
+  const selection = selectWeek(history, window);
+  const label = weekLabel(window);
+  const slug = digestSlug(window, "medication");
+  const page = `pharmaguide.io/blog/${slug}`;
+  const all = [...selection.newAnnouncements, ...selection.updates, ...selection.enforcementListings, ...selection.classifications];
+  const minor = [...new Map(all.filter(({ entry }) => isMinorRecord(entry)).map(({ entry }) => [entry.key, entry])).values()];
+  const major = (list) => list.filter(({ entry }) => !isMinorRecord(entry));
+  const listed = major([...selection.enforcementListings, ...selection.classifications]).sort(bySeverity);
+  const firms = [...new Set(all.map(({ entry }) => entry.company || entry.firm))];
+  const quiet = coverage.complete && all.length === 0;
+  const count = new Set(all.map(({ entry }) => entry.key)).size;
+
+  const description = !coverage.complete
+    ? `FDA medication recall notices for ${label}. Coverage for this week is incomplete; see the note in the post.`
+    : quiet
+      ? `FDA posted no new medication recall notices, Enforcement Report listings or updates for ${label} in the sources we check.`
+      : `FDA medication recall notices for ${label}: ${count} recall${count === 1 ? "" : "s"} from ${firms.length} compan${firms.length === 1 ? "y" : "ies"}, with exact lots and the official record for each.`;
+
+  const fm = digestFrontmatter({ subject: "Medication recalls", label, description, slug, generatedOn, author, topicTag: "medications", firms });
+  const reportDates = wednesdaysIn(window).map(formatLongDate).join(" and ");
+  const body = [
+    `**PharmaGuide Weekly.** Medication recalls FDA posted ${formatLongDate(window.start)} to ${formatLongDate(window.end)}. Each recall covers only the products and lots in its record, not every product with the same active ingredient.`,
+    "",
+    `<Callout tone="info">`,
+    `**Check your lot first, and talk to your doctor or pharmacist before changing how you take a medicine.** [FDA's guidance](${FDA_DRUG_RECALL_GUIDE}): for class I recalls, the most serious, follow the recalling company's instructions. For class II and III, consumers can generally continue taking the medicine unless the recalling company provides other instructions, and in some instances stopping may be more harmful than continuing. This roundup restates official FDA records; it is not medical advice.`,
+    `</Callout>`,
+    "",
+  ];
+  if (!coverage.complete) body.push(...incompleteCallout(coverage));
+
+  const enforcementCard = ({ entry, event }) => renderEnforcementCard(entry, event, history, SOURCES.enforcement.weeklyCsv, page, true);
+  const enforcementIntro = `From [FDA's Enforcement Report](${SOURCES.enforcement.url}) for ${reportDates || "this week"}, most serious first.`;
+  const groups = [
+    ["New recalls", `Company notices on [FDA's recalls page](${SOURCES.listing.url}).`, selection.newAnnouncements, ({ entry, event }) => renderAnnouncementCard(entry, event, history, page)],
+    ["Updates to earlier recalls", `Changes in [FDA's recall records](${SOURCES.listing.url}).`, major(selection.updates), (item) => (item.entry.source === SOURCES.enforcement.id ? enforcementCard(item) : renderAnnouncementCard(item.entry, item.event, history, page))],
+    ["Tablets, capsules, creams and drops: newly listed by FDA", enforcementIntro, listed.filter(({ entry }) => !isInjectable(entry)), enforcementCard],
+    ["Injections and IV products: newly listed by FDA", enforcementIntro, listed.filter(({ entry }) => isInjectable(entry)), enforcementCard],
+  ];
+  if (quiet) {
+    body.push(
+      `## Were there any medication recalls this week?`,
+      "",
+      `No. We checked FDA's [recalls page](${SOURCES.listing.url}) and the [Enforcement Report](${SOURCES.enforcement.url}) for ${reportDates || "this week"}: neither listed a new medication recall or an update to an earlier one for ${label}.`,
+      ""
+    );
+  }
+  for (const [heading, intro, entries, render] of groups) {
+    if (!entries.length) continue;
+    body.push(`## ${heading}`, "", intro, "");
+    for (const item of entries) body.push(...render(item));
+  }
+  if (minor.length) {
+    body.push(
+      `## Lower-risk recalls and bulk ingredients`,
+      "",
+      `[FDA says](${FDA_DRUG_RECALL_GUIDE}) using a class III drug is not likely to cause health consequences. Bulk ingredients are listed here because they are not finished medicines.`,
+      ...table([["Product", "Lots / codes", "Class", "Company"], ...minor.flatMap((e) => e.products.map((p) => [p.productDescription, p.codeInfo || "not stated", p.classification || "not yet classified", e.firm]))]),
+      ""
+    );
+  }
+  body.push(
+    `A recall is about specific lots, not a whole medicine. To see how PharmaGuide checks a supplement against the medications you take, read [how it works](/how-it-works/). More safety posts are on the [blog](/blog/).`,
+    "",
+    "<Sources>",
+    `- How we check: FDA's recalls page and every Enforcement Report in the week; a recall is included when FDA files it under drugs. Veterinary products are left out, and supplements have their own weekly post. A notice FDA files under another category appears here once the Enforcement Report lists it.`,
+    `- [FDA: Understanding Drug Recalls: What to Know and What to Do](${FDA_DRUG_RECALL_GUIDE})`,
+    `- [FDA: Recalls, Market Withdrawals & Safety Alerts](${SOURCES.listing.url})`,
+    `- [FDA: Enforcement Reports](${SOURCES.enforcement.url})`,
+    ...[...new Set(all.filter(({ entry }) => entry.url).map(({ entry }) => entry.url))].map((u) => {
+      const e = all.find(({ entry }) => entry.url === u).entry;
+      return `- [${mdxText(e.title || `${e.company}: FDA-posted company announcement`)}](${u})`;
+    }),
+    "</Sources>",
+    ""
+  );
+
+  const review = renderReview({ slug, label, window, coverage, selection, history, generatedOn, quiet, kind: "medication" });
+  return { slug, mdx: [...fm, ...body].join("\n"), review, selection, quiet };
+}
+
 const unresolvedCount = (coverage) => (coverage.possibleSupplements?.length || 0) + (coverage.openFdaOnly?.length || 0);
 
-function renderReview({ slug, label, coverage, selection, generatedOn, quiet }) {
+function renderReview({ slug, label, coverage, selection, generatedOn, quiet, kind = "supplement" }) {
+  const noun = KINDS[kind].noun;
   const lines = [
     `# Review: ${slug}`,
     "",
@@ -1011,9 +1178,9 @@ function renderReview({ slug, label, coverage, selection, generatedOn, quiet }) 
     "",
     `## Source collection: ${coverage.complete ? "complete" : "INCOMPLETE"}${quiet ? " (quiet week)" : ""}${unresolvedCount(coverage) ? ` — ${unresolvedCount(coverage)} record(s) need classifying before the week is complete` : ""}`,
     "",
-    "| Source | Required | Status | Attempts | Records | Supplement records | Detail |",
+    `| Source | Required | Status | Attempts | Records | ${noun[0].toUpperCase()}${noun.slice(1)} records | Detail |`,
     "| --- | --- | --- | --- | --- | --- | --- |",
-    ...coverage.sources.map((s) => `| ${s.label} | ${s.required ? "yes" : "no"} | ${s.status}${s.error ? ` (${s.error})` : ""} | ${s.attempts ?? ""} | ${s.records ?? ""} | ${s.supplementRecords ?? ""} | ${s.detail ?? ""} |`),
+    ...coverage.sources.map((s) => `| ${s.label} | ${s.required ? "yes" : "no"} | ${s.status}${s.error ? ` (${s.error})` : ""} | ${s.attempts ?? ""} | ${s.records ?? ""} | ${s.matchedRecords ?? ""} | ${s.detail ?? ""} |`),
     "",
     "Records are what the collector read or refreshed, not this week's recall count. Source collection is not factual verification: that is recorded in the checklist below.",
     "",
@@ -1045,7 +1212,7 @@ function renderReview({ slug, label, coverage, selection, generatedOn, quiet }) 
     "",
     "- [ ] Every card checked against its official notice (above)",
     "- [ ] Coverage note matches the table above; never publish \"no recalls\" on incomplete coverage",
-    "- [ ] Every record listed under Possible supplements / Only in openFDA is classified; re-render (`pnpm recalls:digest --week-ending <Sunday>`) once none are left, so the post can drop its \"still being checked\" note",
+    ...(kind === "supplement" ? ["- [ ] Every record listed under Possible supplements / Only in openFDA is classified; re-render (`pnpm recalls:digest --week-ending <Sunday>`) once none are left, so the post can drop its \"still being checked\" note"] : []),
     "- [ ] Nothing interprets risk beyond quoting the notice (that needs a regular, PharmD-reviewed post; digests are team-checked only)",
     `- [ ] After checking: \`pnpm blog:approve ${slug}\` (moves the draft live, runs publish-check, rolls back on failure)`,
     ""

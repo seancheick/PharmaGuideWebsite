@@ -210,7 +210,7 @@ function RecallCoverArt({ post }: { post: BlogCardPost }) {
 
       <div className="relative">
         <p className="font-mono uppercase text-white/70" style={{ fontSize: "2.8cqw", letterSpacing: "0.14em" }}>
-          Supplement recalls
+          {recall.subject}
         </p>
         <p className="mt-[1cqw] font-serif italic leading-[1.02] text-white" style={{ fontSize: "8.4cqw", letterSpacing: "-0.02em" }}>
           {recall.week}

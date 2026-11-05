@@ -5,6 +5,10 @@ listing every U.S. dietary-supplement recall FDA posted that week, product by pr
 
 Trigger: `/pg-blog-mdx this week's FDA supplement recalls` (or any weekly-recall request).
 
+A second weekly post, "Medication recalls", runs through the same pipeline with `--kind medication`.
+See [Medication digest](#medication-digest). Everything below applies to both unless that section
+says otherwise. Food is never in scope.
+
 ## Run it
 
 ```bash
@@ -91,6 +95,35 @@ an `enforcement_listed` or `classified` item as new.
   no `reviewer`, so the page claims no clinical review. A sentence that interprets risk beyond
   the notice doesn't belong in a digest; it goes in a regular, PharmD-reviewed post.
 
+## Medication digest
+
+```bash
+pnpm recalls:digest --kind medication
+```
+
+Writes `medication-recalls-week-of-<monday>` and keeps its own history in
+`content/recalls/medication-history.json`, so a medication record can't change a supplement post.
+
+- **Volume:** about 9 FDA drug recall events a week, range 4 to 14, about 38% injectable (nine
+  reports, Sept 2 to Oct 28, 2026).
+- **In scope:** FDA files it under Drugs. Veterinary products, supplements and anything the
+  supplement digest claims stay out. FDA sometimes files a drug notice under another category on its
+  recalls page (American Regent's epinephrine, Sept 2026, under Food & Beverages); it appears once
+  the Enforcement Report lists it.
+- **Sorted, not filtered.** Tablets, capsules, creams and drops come first, then injections and IV
+  products, most serious class first. The headings come from a word match, so a wrong match only
+  misplaces a card. A filter could hide a recall.
+- **Class III and bulk ingredients** stay in one table with their lots and no card. FDA says using a
+  class III drug is not likely to cause health consequences.
+- **Patient guidance is FDA's, not ours.** The callout and each card's action restate
+  [FDA's guidance](https://www.fda.gov/drugs/drug-recalls/understanding-drug-recalls-what-know-and-what-do)
+  by class. Never tell a reader to stop or keep taking a medicine beyond that wording or the
+  company's notice.
+- **Linking a record to a notice** needs the same firm, the same drug and dates within 120 days. A
+  firm match alone would link unrelated recalls, because one manufacturer can have several a month.
+- **Not used here:** the openFDA cross-check and `--classify`, which exist for supplement
+  look-alikes. Every drug record is already filed under Drugs.
+
 ## Publishing (a human step)
 
 1. Check every card against its notice using the sidecar checklist; classify any unresolved records.
@@ -102,6 +135,7 @@ an `enforcement_listed` or `classified` item as new.
 
 Collect daily, publish weekly:
 
+- Each kind runs as its own job with its own branches, so one failing doesn't block the other.
 - **Daily** `pnpm recalls:digest --collect-only` (e.g. 10:00 ET). Daily runs date notice changes
   close to when FDA made them; announcement pages are re-read for 90 days after posting.
 - **Weekly** on the first daily run after a Monday–Sunday week ends, render that week's draft and
@@ -112,10 +146,11 @@ Collect daily, publish weekly:
   to commit `content/recalls/history.json` on a branch (never `main`), an optional
   `OPENFDA_API_KEY`, and an alert when the script exits 3 (incomplete coverage) or 1 (crash).
   Built as a GitHub Actions workflow: daily collection force-pushes the history to
-  `automation/recall-history` (main + one data commit; Vercel skips this branch); the first run
+  `automation/recall-history` or `automation/medication-recall-history` (main + one data commit;
+  Vercel skips these branches); the first run
   after the week ends renders it, validates it and opens a PR from `recalls/<slug>`. When coverage is
   complete and the checks pass, the run also does `pnpm blog:approve`, so **merging the PR publishes
   the post**. Otherwise it stays a **draft PR**. Nothing auto-merges. If the repo setting "Allow GitHub Actions to create and approve pull requests" is
   off, the run opens an issue with a one-click link to create the PR instead. PRs opened by the
   workflow's token don't trigger CI, so the run puts the recall tests and validator results in
-  the PR body. Run it by hand from the Actions tab (`collect` or `weekly`).
+  the PR body. Run it by hand from the Actions tab (`collect` or `weekly`; `both`, `supplement` or `medication`).

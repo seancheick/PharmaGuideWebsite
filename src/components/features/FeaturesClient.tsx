@@ -199,7 +199,7 @@ export function FeaturesClient() {
             )}
             <div className="container relative mx-auto">
               <div
-                className={`mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2 md:gap-14 lg:gap-20 ${reverse ? "md:[&>*:first-child]:order-2" : ""}`}
+                className={`mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 [&>*]:min-w-0 md:grid-cols-2 md:gap-14 lg:gap-20 ${reverse ? "md:[&>*:first-child]:order-2" : ""}`}
               >
                 {/* COPY column */}
                 <m.div

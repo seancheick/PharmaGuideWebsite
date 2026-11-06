@@ -1,6 +1,9 @@
 "use client";
 
 import { m } from "framer-motion";
+import { StackIntelligencePanel } from "./StackIntelligencePanel";
+import { AnimatedNutrientMeter, DepletionTrend } from "./FeatureMotionDetails";
+import { NUTRIENT_METERS } from "./nutrient-demo";
 import type { IllustrationKey } from "@/lib/features";
 
 /**
@@ -43,7 +46,7 @@ function DepletionIllustration() {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-15%" }}
-      className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-surface-subtle p-5 sm:p-7"
+      className="relative aspect-[4/3] min-h-[390px] w-full overflow-hidden rounded-2xl border border-border bg-surface-subtle p-5 [contain:inline-size] sm:min-h-[420px] sm:p-7"
     >
       {/* Soft accent halo behind the panel */}
       <div
@@ -109,6 +112,7 @@ function DepletionIllustration() {
               </span>
             </div>
           ))}
+          <DepletionTrend />
         </m.div>
 
         {/* Footer hint */}
@@ -128,94 +132,7 @@ function DepletionIllustration() {
 // One edge animates a pulse to suggest "live cross-checking."
 
 function StackIllustration() {
-  return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-surface-subtle p-3">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-2 rounded-[2rem] bg-accent/[0.04] blur-2xl"
-      />
-      <svg
-        viewBox="0 0 320 240"
-        className="relative h-full w-full"
-        aria-hidden="true"
-      >
-        {/* Edges — dashed accent */}
-        <g stroke="currentColor" strokeDasharray="3 4" strokeLinecap="round" className="text-accent" fill="none" opacity="0.5">
-          <path d="M60,60 Q160,30 260,60" strokeWidth="1.2">
-            <animate attributeName="stroke-dashoffset" from="0" to="-100" dur="18s" repeatCount="indefinite" />
-          </path>
-          <path d="M60,60 Q120,150 160,200" strokeWidth="1.2">
-            <animate attributeName="stroke-dashoffset" from="0" to="-100" dur="18s" repeatCount="indefinite" />
-          </path>
-          <path d="M260,60 Q200,150 160,200" strokeWidth="1.2">
-            <animate attributeName="stroke-dashoffset" from="0" to="-100" dur="18s" repeatCount="indefinite" />
-          </path>
-          <path d="M60,60 Q200,90 260,60" strokeWidth="1" opacity="0.7" />
-          <path d="M30,180 Q120,150 60,60" strokeWidth="1" opacity="0.7" />
-        </g>
-        {/* Warn edge with pulse */}
-        <path
-          d="M260,60 Q200,150 160,200"
-          fill="none"
-          className="text-severity-caution"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          opacity="0.85"
-        />
-        <circle r="3.5" className="text-severity-caution" fill="currentColor">
-          <animateMotion dur="3.4s" repeatCount="indefinite" path="M260,60 Q200,150 160,200" />
-          <animate attributeName="opacity" values="0;1;1;0" dur="3.4s" repeatCount="indefinite" />
-        </circle>
-
-        {/* Nodes */}
-        {[
-          { cx: 60, cy: 60, label: "Magnesium", glyph: "Mg" },
-          { cx: 260, cy: 60, label: "Calcium", glyph: "Ca" },
-          { cx: 160, cy: 200, label: "Levothyroxine", glyph: "Rx" },
-          { cx: 30, cy: 180, label: "Vitamin D", glyph: "D" },
-          { cx: 290, cy: 180, label: "Iron", glyph: "Fe" },
-        ].map((n) => (
-          <g key={n.label}>
-            <circle
-              cx={n.cx}
-              cy={n.cy}
-              r="22"
-              fill="rgb(var(--color-surface))"
-              className="text-border-strong"
-              stroke="currentColor"
-              strokeWidth="1.2"
-            />
-            <text
-              x={n.cx}
-              y={n.cy + 4}
-              fontFamily="var(--font-serif)"
-              fontStyle="italic"
-              fontSize="13"
-              textAnchor="middle"
-              className="text-ink"
-              fill="currentColor"
-            >
-              {n.glyph}
-            </text>
-            <text
-              x={n.cx}
-              y={n.cy + 40}
-              fontFamily="var(--font-mono)"
-              fontSize="9"
-              letterSpacing="0.1em"
-              textAnchor="middle"
-              className="text-muted"
-              fill="currentColor"
-              style={{ textTransform: "uppercase" }}
-            >
-              {n.label}
-            </text>
-          </g>
-        ))}
-      </svg>
-    </div>
-  );
+  return <StackIntelligencePanel />;
 }
 
 // ─── 3. Ingredient Transparency — label parse panel ──────────────────
@@ -358,14 +275,8 @@ function FitIllustration() {
 // ─── 5. Nutrient Accumulation — UL meter panel ───────────────────────
 
 function AccumulationIllustration() {
-  const meters = [
-    { name: "Vitamin D", val: 6000, ul: 4000, unit: "IU", over: true },
-    { name: "Zinc", val: 70, ul: 40, unit: "mg", over: true },
-    { name: "Vitamin C", val: 800, ul: 2000, unit: "mg", over: false },
-    { name: "Magnesium", val: 350, ul: 350, unit: "mg", over: false },
-  ];
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-surface-subtle p-5 sm:p-6">
+    <div className="relative aspect-[4/3] min-h-[340px] w-full overflow-hidden rounded-2xl border border-border bg-surface-subtle p-5 [contain:inline-size] sm:p-6">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -inset-2 rounded-[2rem] bg-accent/[0.04] blur-2xl"
@@ -380,35 +291,9 @@ function AccumulationIllustration() {
           </p>
         </div>
         <ul className="flex flex-1 flex-col justify-around gap-3">
-          {meters.map((meter) => {
-            const pct = Math.min(150, (meter.val / meter.ul) * 100);
-            const tone = meter.over ? "bg-severity-avoid" : "bg-severity-safe";
-            const txt = meter.over ? "text-severity-avoid" : "text-severity-safe";
-            return (
-              <li key={meter.name} className="flex flex-col gap-1.5">
-                <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-serif text-[13px] italic text-ink">
-                    {meter.name}
-                  </span>
-                  <span className={`font-mono text-[11px] tabular-nums ${txt}`}>
-                    {meter.val}
-                    <span className="text-subtle"> / {meter.ul} {meter.unit}</span>
-                  </span>
-                </div>
-                <div className="relative h-[5px] overflow-hidden rounded-full bg-border">
-                  <div
-                    className={`h-full ${tone}`}
-                    style={{ width: `${Math.min(100, pct)}%` }}
-                  />
-                  {/* UL marker */}
-                  <span
-                    aria-hidden="true"
-                    className="absolute right-0 top-0 h-full w-px bg-foreground/30"
-                  />
-                </div>
-              </li>
-            );
-          })}
+          {NUTRIENT_METERS.map((meter, index) => (
+            <AnimatedNutrientMeter key={meter.name} meter={meter} index={index} />
+          ))}
         </ul>
       </div>
     </div>

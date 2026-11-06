@@ -1,0 +1,173 @@
+.trend {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 90px;
+  padding: 9px 2px 0;
+}
+.trendHeading {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: rgb(var(--color-subtle));
+  font:
+    8px var(--font-mono),
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+.trendGraph {
+  display: block;
+  width: 100%;
+  height: clamp(62px, 8vw, 105px);
+  overflow: visible;
+  margin-top: 8px;
+}
+.trendGuides {
+  fill: none;
+  stroke: rgb(var(--color-foreground) / 0.09);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+  vector-effect: non-scaling-stroke;
+}
+.trendTrace {
+  fill: none;
+  stroke: #9aa38c;
+  stroke-width: 1;
+  opacity: 0.15;
+  vector-effect: non-scaling-stroke;
+}
+.trendLine {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: drawTrend 3.1s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  animation-play-state: paused;
+}
+.trendStart {
+  fill: #6b8873;
+}
+.trendEnd {
+  fill: #a18d54;
+  stroke: rgb(var(--color-surface-subtle));
+  stroke-width: 2;
+  opacity: 0;
+  animation: revealEnd 0.6s ease 2.6s forwards;
+  animation-play-state: paused;
+}
+.trend[data-running="true"] .trendLine,
+.trend[data-running="true"] .trendEnd {
+  animation-play-state: running;
+}
+.trendCaption {
+  margin-top: 4px;
+  color: rgb(var(--color-subtle));
+  font-size: 9px;
+  line-height: 1.5;
+}
+.trend[data-reduced="true"] .trendLine {
+  animation: none;
+  stroke-dashoffset: 0;
+}
+.trend[data-reduced="true"] .trendEnd {
+  animation: none;
+  opacity: 1;
+}
+
+.meter {
+  padding: 5px 0;
+}
+.meterHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.meterName {
+  font:
+    italic 14px var(--font-serif),
+    Georgia,
+    serif;
+  color: rgb(var(--color-ink));
+}
+.meterValue {
+  font:
+    11px var(--font-mono),
+    monospace;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: color 0.24s ease;
+}
+.valueSeparator,
+.meterUnit {
+  color: rgb(var(--color-subtle));
+}
+.meterTrack {
+  position: relative;
+  height: 6px;
+  margin-top: 18px;
+  border-radius: 8px;
+  background: rgb(var(--color-foreground) / 0.08);
+}
+.meterFill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  border-radius: inherit;
+  transition: background-color 0.24s ease;
+}
+.excessBand {
+  position: absolute;
+  left: 50%;
+  right: 0;
+  top: -4px;
+  bottom: -4px;
+  border-radius: 4px;
+  background: rgb(var(--color-severity-avoid) / 0.05);
+  pointer-events: none;
+}
+.limitMarker {
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  bottom: -4px;
+  width: 1px;
+}
+.limitMarker > span {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 2px);
+  transform: translateX(-50%);
+  font:
+    7px var(--font-mono),
+    monospace;
+  letter-spacing: 0.08em;
+}
+
+@keyframes drawTrend {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes revealEnd {
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .meterValue,
+  .meterFill {
+    transition: none;
+  }
+  .trendLine {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .trendEnd {
+    animation: none;
+    opacity: 1;
+  }
+}

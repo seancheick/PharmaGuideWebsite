@@ -4,6 +4,7 @@ import { m } from "framer-motion";
 import { StackIntelligencePanel } from "./StackIntelligencePanel";
 import { AnimatedNutrientMeter, DepletionTrend } from "./FeatureMotionDetails";
 import { NUTRIENT_METERS } from "./nutrient-demo";
+import { TransparencyIllustration, FitIllustration, RecallsIllustration } from "./RemainingIllustrations";
 import type { IllustrationKey } from "@/lib/features";
 
 /**
@@ -137,140 +138,6 @@ function StackIllustration() {
 
 // ─── 3. Ingredient Transparency — label parse panel ──────────────────
 
-function TransparencyIllustration() {
-  return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-surface-subtle p-5 sm:p-6">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-2 rounded-[2rem] bg-accent/[0.04] blur-2xl"
-      />
-      <div className="relative flex h-full flex-col gap-3">
-        <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-subtle">
-          Supplement facts · parsed
-        </p>
-
-        {/* Active ingredients */}
-        <div className="rounded-xl border border-border bg-surface p-4 shadow-xs">
-          <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.16em] text-severity-safe">
-            Active
-          </p>
-          <ul className="mt-2 space-y-1.5 text-[13px]">
-            <li className="flex items-baseline justify-between gap-3 text-ink">
-              <span className="font-serif italic">Magnesium glycinate</span>
-              <span className="font-mono text-[11px] text-muted">200 mg</span>
-            </li>
-            <li className="flex items-baseline justify-between gap-3 text-ink">
-              <span className="font-serif italic">L-theanine</span>
-              <span className="font-mono text-[11px] text-muted">100 mg</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* Proprietary blend — read as disclosed; member amounts stay unknown */}
-        <div className="rounded-xl border border-severity-caution/30 bg-severity-caution/[0.06] p-4">
-          <div className="flex items-center justify-between">
-            <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.16em] text-severity-caution">
-              Proprietary blend · as disclosed
-            </p>
-            <span className="font-mono text-[9.5px] uppercase tracking-[0.12em] text-severity-caution">
-              850 mg
-            </span>
-          </div>
-          <ul className="mt-2 space-y-1 text-[12.5px] text-foreground/80">
-            <li className="flex items-baseline justify-between">
-              <span>Ashwagandha root</span>
-              <span className="font-mono text-[10.5px] text-subtle">not disclosed</span>
-            </li>
-            <li className="flex items-baseline justify-between">
-              <span>Rhodiola</span>
-              <span className="font-mono text-[10.5px] text-subtle">not disclosed</span>
-            </li>
-            <li className="flex items-baseline justify-between">
-              <span>Holy basil</span>
-              <span className="font-mono text-[10.5px] text-subtle">not disclosed</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* Inactive */}
-        <div className="rounded-xl border border-border bg-surface p-3">
-          <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.16em] text-subtle">
-            Inactive
-          </p>
-          <p className="mt-1 text-[12px] text-muted">
-            Magnesium stearate · vegetable cellulose · titanium dioxide
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── 4. Personal Fit — profile-gated card ────────────────────────────
-
-function FitIllustration() {
-  return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-surface-subtle p-5 sm:p-6">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-2 rounded-[2rem] bg-accent/[0.04] blur-2xl"
-      />
-      <div className="relative flex h-full flex-col gap-3.5">
-        <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-subtle">
-          Your profile
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          {["Pregnant · 22w", "Hypertension", "SSRI", "Goal · sleep"].map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center gap-1.5 rounded-pill border border-accent/30 bg-accent/[0.06] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-accent-strong"
-            >
-              <span aria-hidden="true" className="block h-1 w-1 rounded-full bg-accent" />
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        <p className="mt-2 font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-subtle">
-          Adapted recommendations
-        </p>
-        <ul className="flex flex-col gap-2">
-          {[
-            { t: "Magnesium glycinate · evening", v: "Good fit", tone: "safe" as const },
-            { t: "St. John's Wort", v: "Contraindicated · SSRI", tone: "avoid" as const },
-            { t: "Vitamin A over 10,000 IU", v: "Contraindicated · pregnancy", tone: "avoid" as const },
-            { t: "Iron + multi", v: "Caution · timing", tone: "caution" as const },
-          ].map((row) => {
-            const dot =
-              row.tone === "safe"
-                ? "bg-severity-safe"
-                : row.tone === "avoid"
-                  ? "bg-severity-avoid"
-                  : "bg-severity-caution";
-            const txt =
-              row.tone === "safe"
-                ? "text-severity-safe"
-                : row.tone === "avoid"
-                  ? "text-severity-avoid"
-                  : "text-severity-caution";
-            return (
-              <li
-                key={row.t}
-                className="flex items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3 py-2.5 shadow-xs"
-              >
-                <span className="font-serif text-[13px] italic text-ink">{row.t}</span>
-                <span className={`inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] ${txt}`}>
-                  <span aria-hidden="true" className={`block h-1.5 w-1.5 rounded-full ${dot}`} />
-                  {row.v}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </div>
-  );
-}
 
 // ─── 5. Nutrient Accumulation — UL meter panel ───────────────────────
 
@@ -302,64 +169,6 @@ function AccumulationIllustration() {
 
 // ─── 6. Recall & Safety — alert card stack ───────────────────────────
 
-function RecallsIllustration() {
-  return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-surface-subtle p-5 sm:p-6">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-2 rounded-[2rem] bg-accent/[0.04] blur-2xl"
-      />
-      <div className="relative flex h-full flex-col gap-3">
-        <p className="font-mono text-[10.5px] font-medium uppercase tracking-[0.18em] text-subtle">
-          Active alerts · your stack
-        </p>
-
-        <div className="rounded-xl border border-severity-contraindicated/35 bg-severity-contraindicated/[0.06] p-4">
-          <div className="flex items-start gap-2.5">
-            <span aria-hidden="true" className="mt-1 block h-1.5 w-1.5 shrink-0 rounded-full bg-severity-contraindicated" />
-            <div className="min-w-0 flex-1">
-              <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] text-severity-contraindicated">
-                FDA recall · class I
-              </p>
-              <p className="mt-1 font-serif text-[14px] italic leading-tight text-ink">
-                NaturalBoost Energy — undeclared sildenafil
-              </p>
-              <p className="mt-1 text-[11.5px] text-muted">
-                In your stack · scanned March 12 · all lots
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-severity-contraindicated/35 bg-severity-contraindicated/[0.06] p-4">
-          <div className="flex items-start gap-2.5">
-            <span aria-hidden="true" className="mt-1 block h-1.5 w-1.5 shrink-0 rounded-full bg-severity-contraindicated" />
-            <div className="min-w-0 flex-1">
-              <p className="font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] text-severity-contraindicated">
-                Banned ingredient · blocked
-              </p>
-              <p className="mt-1 font-serif text-[14px] italic leading-tight text-ink">
-                Kratom leaf — not lawful as a supplement
-              </p>
-              <p className="mt-1 text-[11.5px] text-muted">
-                No score shown · reason and FDA source listed
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-auto flex items-center justify-between border-t border-border pt-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
-            Last checked
-          </span>
-          <span className="font-mono text-[10.5px] tabular-nums text-foreground/80">
-            8 minutes ago
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ─── Dispatcher ──────────────────────────────────────────────────────
 

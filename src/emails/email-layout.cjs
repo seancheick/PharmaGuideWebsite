@@ -27,6 +27,8 @@ function EmailLayout({
   unsubscribeUrl,
   unsubscribeLabel,
   preferenceLinks = [],
+  footerPreferenceContent,
+  signatureLine,
   children,
 }) {
   return createElement(
@@ -64,7 +66,15 @@ function EmailLayout({
             { style: { paddingLeft: "12px", verticalAlign: "middle" } },
             createElement(
               Text,
-              { style: { margin: 0, fontSize: "24px", fontWeight: 600, letterSpacing: "-0.3px", color: "#183B3F" } },
+              {
+                style: {
+                  margin: 0,
+                  fontSize: "24px",
+                  fontWeight: 600,
+                  letterSpacing: "-0.3px",
+                  color: "#183B3F",
+                },
+              },
               "PharmaGuide"
             )
           )
@@ -82,6 +92,7 @@ function EmailLayout({
           heading
         ),
         children,
+        signatureLine ? createElement(Text, { style: paragraphStyle }, signatureLine) : null,
         createElement(
           Text,
           { style: paragraphStyle },
@@ -101,18 +112,23 @@ function EmailLayout({
           unsubscribeUrl
             ? createElement(
                 Link,
-                { href: unsubscribeUrl, style: { color: "#183B3F" } },
+                { href: unsubscribeUrl, style: { color: "#183B3F", textDecoration: "underline" } },
                 unsubscribeLabel
               )
-            : "For questions about email preferences, contact info@pharmaguide.io.",
+            : footerPreferenceContent ? null : "For questions about email preferences, contact info@pharmaguide.io.",
           ...preferenceLinks.map(({ href, label }) =>
             createElement(
               "span",
               { key: href },
               createElement("br"),
-              createElement(Link, { href, style: { color: "#183B3F" } }, label)
+              createElement(Link, { href, style: { color: "#183B3F", textDecoration: "underline" } }, label)
             )
-          )
+          ),
+          footerPreferenceContent
+            ? createElement("span", null,
+                unsubscribeUrl || preferenceLinks.length ? createElement("br") : null,
+                footerPreferenceContent)
+            : null
         ),
         createElement(
           Text,

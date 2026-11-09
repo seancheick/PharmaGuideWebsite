@@ -7,6 +7,8 @@ export interface EmailLayoutProps {
   unsubscribeUrl?: string;
   unsubscribeLabel: string;
   preferenceLinks?: readonly { href: string; label: string }[];
+  footerPreferenceContent?: ReactNode;
+  signatureLine?: string;
   children?: ReactNode;
 }
 

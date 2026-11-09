@@ -124,3 +124,8 @@ test("outreach offers a website visit without requiring another expression of in
   assert.match(personal, /including clinicians/);
   assert.doesNotMatch(personal, /first of its kind|clinically validated|free forever|[—–]/i);
 });
+
+test('combined website welcome keeps monthly unsubscribe in the shared footer',async()=>{
+ const html=await render(React.createElement(loadTemplate('BetaWelcomeEmail.tsx').BetaWelcomeEmail,{email:'test@example.com',unsubscribeUrl:'https://pharmaguide.io/email/unsubscribe?token=beta-test',newsletterEnrolled:true,newsletterUnsubscribeUrl:'https://pharmaguide.io/email/unsubscribe?token=monthly-test'}));
+ assert.ok(html.indexOf('token=monthly-test')>html.indexOf('Founder, PharmaGuide'));
+});

@@ -149,3 +149,26 @@ test('linked HIPAA statement uses consumer scope and actual controls without cer
   assert.match(policy,/\/privacy/);
   assert.match(policy,/on behalf of a healthcare organization/);
 });
+
+test('beta signup form discloses invitations and monthly notes before joining', () => {
+  const source = fs.readFileSync('src/components/sections/FinalCTA.tsx', 'utf8');
+  const form = source.slice(source.indexOf('<form '), source.indexOf('</form>'));
+  assert.match(form, /By joining, you&apos;ll receive beta invitations and monthly notes\. Unsubscribe anytime\./);
+  assert.match(form, /href="\/privacy"/);
+  assert.match(form, /aria-describedby="cta-subscription-disclosure"/);
+  assert.match(form, /id="cta-subscription-disclosure"/);
+});
+
+test('email privacy describes delivery, open and link tracking without treating opens as reads', () => {
+  const context = { exports: {} };
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/lib/privacy.ts', 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS },
+  }).outputText, context);
+  const section = context.exports.PRIVACY_DOC.sections.find((section) => section.id === 'third-parties').body;
+  assert.match(section, /Resend.*delivery records/s);
+  assert.match(section, /open and link-click tracking/);
+  assert.match(section, /tracking pixel/);
+  assert.match(section, /redirect/);
+  assert.match(section, /estimates.*not proof.*read/s);
+  assert.match(section, /unsubscribe/);
+});

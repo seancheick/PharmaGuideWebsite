@@ -1,5 +1,9 @@
 # PharmaGuide email system
 
+> Sean clarified that **existing and new beta signups include monthly notes**. Reconcile eligible existing contacts into the Monthly notes segment, preserve prior opt-outs, and send no new welcome or enrollment events. Future monthly content stays draft until approved.
+
+> **November 5, 2026 review setup:** Revised copy is in [the current review](16-email-research-and-revised-copy.md). Nine v2 Resend templates are being prepared as drafts; the waiting automation is disabled. The website hosted-template connection is implemented behind `RESEND_HOSTED_TEMPLATES_ENABLED=false` and is deployed but remains off. Audience housekeeping reuses three groups: Beta signups, Monthly notes, Current campaign; pg_beta_status owns waiting stage. Historical enabled-state notes below are not the current account state. Do not use legacy draft-refresh commands to restore the old poll-led copy. Dashboard edits to v2 templates are authoritative after setup; reconcile changes rather than uploading over them.
+
 ## Day 14 interest poll
 
 Day 14 alone offers six general testing topics: interactions, the whole stack,
@@ -328,7 +332,7 @@ without current evidence for the exact wording.
 
 Measure useful replies, invitations accepted, confirmed first checks, recurring
 problems, bounces, and complaints. Email opens and clicks do not prove app use.
-Open and click tracking were off on the sending domain and remain off. Write
+Sean approved open and click tracking on November 5; both are now enabled on pharmaguide.io. Write
 plain sentences; no double hyphens, em dashes, invented urgency, or generic wellness copy.
 
 Validation: `pnpm test:email`, typecheck, lint, and production build. Mocked

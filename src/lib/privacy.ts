@@ -25,7 +25,7 @@ export const PRIVACY_DOC: LegalDocument = {
   titleEm: "By design.",
   subhead:
     "Your health details stay on your device unless you choose to share them. This page explains account backups, optional AI-assistant sharing, and your controls.",
-  lastUpdated: "2026-10-26",
+  lastUpdated: "2026-11-05",
   summary: {
     title: "The short version",
     points: [
@@ -78,7 +78,7 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
       title: "How we use information",
       body: `**To run the service:** authenticate your account, deliver app updates, fix bugs, prevent abuse.
 
-**To communicate with you:** send the welcome email when you join, send beta-wave invites when your wave opens, respond to support requests, and (if you opted in) the monthly newsletter.
+**To communicate with you:** send the welcome email when you join, send beta invitations and monthly notes when you join the beta list, respond to support requests, and send the monthly newsletter if you subscribe to it. You can unsubscribe from marketing emails anytime.
 
 **To improve the product:** anonymized, aggregated usage patterns (e.g. "X% of users scanned a barcode this week") help us prioritize what to build next. We do not link these aggregates back to individual users.
 
@@ -140,7 +140,7 @@ If you're in California, the EU, the UK, or another jurisdiction with additional
       id: "third-parties",
       num: "7",
       title: "Third parties and tracking",
-      body: `**Email subscriptions:** Resend stores your email address, list membership, unsubscribe preference, general beta testing stage, and email delivery records. Our existing Upstash store keeps a keyed identifier and welcome-send status so a retry does not send another accepted welcome. Until a welcome is accepted, it also stores the original email message, including your address, so a retry sends the same message. The message is removed from that receipt once accepted; the identifier and status remain to prevent duplicate welcomes. Unresolved sends are reviewed before retrying after the provider's deduplication window. Minimal delivery-event records, containing message/contact identifiers, status and timestamp, are kept for 90 days. These tracking records do not contain email bodies, your medication list, or other health details. A newsletter subscription does not tell us which products you take.
+      body: `**Email subscriptions:** Resend stores your email address, list membership, unsubscribe preference, general beta testing stage, and email delivery records. We use Resend for email delivery and enable open and link-click tracking to understand how our emails perform. Open tracking uses a tracking pixel; tracked links redirect through Resend before taking you to the destination. Recorded opens are estimates, not proof that you read an email: email privacy features and automated activity can affect these signals. You can unsubscribe using the link in our marketing emails. Our existing Upstash store keeps a keyed identifier and welcome-send status so a retry does not send another accepted welcome. Until a welcome is accepted, it also stores the original email message, including your address, so a retry sends the same message. The message is removed from that receipt once accepted; the identifier and status remain to prevent duplicate welcomes. Unresolved sends are reviewed before retrying after the provider's deduplication window. Minimal delivery-event records, containing message/contact identifiers, status and timestamp, are kept for 90 days. These minimal delivery-event records do not contain email bodies, your medication list, or other health details. A newsletter subscription does not tell us which products you take.
 
 **Sign-in on the website:** consent and connections pages use browser storage for your Supabase session and the PKCE sign-in verifier. These private pages do not load our marketing analytics or session replay.
 

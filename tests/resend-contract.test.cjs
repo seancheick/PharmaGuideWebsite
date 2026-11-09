@@ -11,6 +11,7 @@ function loadFlow(options = {}) {
   const updates = [];
   const topicUpdates = [];
   const removedSegments = [];
+  const addedSegments = [];
   const events = [];
   const creates = [];
   const segmentIds = new Set(
@@ -20,7 +21,7 @@ function loadFlow(options = {}) {
     "beta-topic": options.betaOptOut ? "opt_out" : "opt_in",
     "newsletter-topic": options.newsletterOptOut ? "opt_out" : "opt_in",
   };
-  let contact = options.contact;
+  let contact = options.contact ? structuredClone(options.contact) : undefined;
   let nextSend = options.send;
   let now = Date.now();
   const receiptStore = new Map();
@@ -62,14 +63,30 @@ function loadFlow(options = {}) {
     error: { name: "not_found", statusCode: 404, message: "Not found" },
   };
   const success = { data: { id: "email-id" }, error: null };
+  const templateReads = [];
   const client = {
+    templates: {
+      get: async (alias) => {
+        templateReads.push(alias);
+        return options.templateFailure ?? { data: options.template, error: null };
+      },
+    },
     contacts: {
       get: async () =>
         options.lookupFailure ?? (contact ? { data: contact, error: null } : notFound),
       create: async (payload) => {
         creates.push(payload);
         if (options.createFailure) return options.createFailure;
-        contact = { id: "contact-id", unsubscribed: false, properties: Object.fromEntries(Object.entries(payload.properties ?? {}).map(([key, value]) => [key, { type: 'string', value }])) };
+        contact = {
+          id: "contact-id",
+          unsubscribed: false,
+          properties: Object.fromEntries(
+            Object.entries(payload.properties ?? {}).map(([key, value]) => [
+              key,
+              { type: "string", value },
+            ])
+          ),
+        };
         for (const segment of payload.segments ?? []) segmentIds.add(segment.id);
         return { data: { id: contact.id }, error: null };
       },
@@ -101,6 +118,7 @@ function loadFlow(options = {}) {
       segments: {
         list: async () => ({ data: { data: [...segmentIds].map((id) => ({ id })) }, error: null }),
         add: async (payload) => {
+          addedSegments.push(payload);
           segmentIds.add(payload.segmentId);
           return { data: { id: "waiting-segment" }, error: null };
         },
@@ -141,6 +159,7 @@ function loadFlow(options = {}) {
     "next/server": { after: (task) => void task() },
   };
   const env = {
+    RESEND_HOSTED_TEMPLATES_ENABLED: !!options.hosted,
     RESEND_API_KEY: "test-secret",
     RESEND_FROM_EMAIL: "Sean at PharmaGuide <hello@pharmaguide.io>",
     RESEND_REPLY_TO_EMAIL: "info@pharmaguide.io",
@@ -151,7 +170,7 @@ function loadFlow(options = {}) {
     RESEND_NEWSLETTER_TOPIC_ID: "newsletter-topic",
     RESEND_BETA_WAITING_SEGMENT_ID: options.tracking ? "waiting-segment" : "",
     RESEND_WAITING_SEQUENCE_ENABLED: !!options.enableSequence,
-    RESEND_WAITING_SEQUENCE_STARTED_AT: options.sequenceStartAt ?? '2000-01-01T00:00:00.000Z',
+    RESEND_WAITING_SEQUENCE_STARTED_AT: options.sequenceStartAt ?? "2000-01-01T00:00:00.000Z",
     RESEND_WEBHOOK_SECRET: "whsec_" + Buffer.from("local-webhook-test-secret").toString("base64"),
     UPSTASH_REDIS_REST_URL: "https://redis.example",
     UPSTASH_REDIS_REST_TOKEN: "test",
@@ -220,11 +239,13 @@ function loadFlow(options = {}) {
     route: load("src/app/email/unsubscribe/route.ts"),
     load,
     client,
+    templateReads,
     sends,
     updates,
     topicUpdates,
     topicStates,
     removedSegments,
+    addedSegments,
     events,
     creates,
     getContact: () => contact,
@@ -427,7 +448,11 @@ test("a brief request also joins the newsletter, with an unsubscribe link for ea
   assert.match(text, /Unsubscribe from beta invitations and updates/);
   assert.match(text, /on the beta list too/);
   assert.match(text, /Get your brief https:\/\/pharmaguide\.io\/supplement-safety-brief\.pdf/);
-  assert.match(setup.sends[0].payload.html ?? (await require("@react-email/render").render(setup.sends[0].payload.react)), /brief-cover-email\.jpg/);
+  assert.match(
+    setup.sends[0].payload.html ??
+      (await require("@react-email/render").render(setup.sends[0].payload.react)),
+    /brief-cover-email\.jpg/
+  );
   const header = setup.sends[0].payload.headers["List-Unsubscribe"];
   const token = new URL(header.slice(1, -1)).searchParams.get("token");
   assert.equal(setup.preferences.readEmailPreference(token).list, "newsletter");
@@ -542,7 +567,9 @@ test("branded preference page is private, script-free and offers read-only keep"
 test("optional feedback follows success and never changes consent", async () => {
   const setup = loadFlow({ contact: { ...subscribed } });
   const url = setup.preferences.unsubscribeUrl({ contactId: "contact-id", list: "beta" });
-  const response = await setup.route.POST(new Request(url, { method: "POST", body: "action=unsubscribe" }));
+  const response = await setup.route.POST(
+    new Request(url, { method: "POST", body: "action=unsubscribe" })
+  );
   const html = await response.text();
   assert.match(html, /<label for="reason">/);
   assert.match(html, /<select id="reason" name="reason"/);
@@ -551,7 +578,9 @@ test("optional feedback follows success and never changes consent", async () => 
   assert.doesNotMatch(html, /<textarea|type="text"/);
   const count = setup.topicUpdates.length;
   for (const reason of ["too_many", "not_relevant", "not_using", "did_not_signup", "other"]) {
-    const feedback = await setup.route.POST(new Request(url, { method: "POST", body: `action=feedback&reason=${reason}` }));
+    const feedback = await setup.route.POST(
+      new Request(url, { method: "POST", body: `action=feedback&reason=${reason}` })
+    );
     assert.equal(feedback.status, 200);
     assert.match(await feedback.text(), /Feedback saved/);
     assert.equal(setup.getContact().properties.pg_unsubscribe_feedback.value, `beta:${reason}`);
@@ -565,7 +594,17 @@ test("optional feedback follows success and never changes consent", async () => 
 test("feedback fails closed for invalid forms, active or unverifiable topics", async () => {
   const setup = loadFlow({ contact: { ...subscribed } });
   const url = setup.preferences.unsubscribeUrl({ contactId: "contact-id", list: "newsletter" });
-  for (const body of ["action=feedback&reason=not_relevant", "action=feedback&reason=medical", "action=feedback", "action=feedback&reason=other&reason=too_many", "action=unsubscribe&reason=other", "List-Unsubscribe=One-Click&action=feedback", "action=unsubscribe&extra=x", "action=unsubscribe&action=unsubscribe", "x".repeat(2049)]) {
+  for (const body of [
+    "action=feedback&reason=not_relevant",
+    "action=feedback&reason=medical",
+    "action=feedback",
+    "action=feedback&reason=other&reason=too_many",
+    "action=unsubscribe&reason=other",
+    "List-Unsubscribe=One-Click&action=feedback",
+    "action=unsubscribe&extra=x",
+    "action=unsubscribe&action=unsubscribe",
+    "x".repeat(2049),
+  ]) {
     const response = await setup.route.POST(new Request(url, { method: "POST", body }));
     assert.equal(response.status, 400);
   }
@@ -573,7 +612,9 @@ test("feedback fails closed for invalid forms, active or unverifiable topics", a
   assert.equal(setup.topicUpdates.length, 0);
   for (const options of [{ topicLookupFailure: failure }, { lookupFailure: failure }]) {
     const failed = loadFlow({ contact: { ...subscribed }, betaOptOut: true, ...options });
-    await assert.rejects(() => failed.flow.saveUnsubscribeFeedback({ contactId: "contact-id", list: "beta" }, "other"));
+    await assert.rejects(() =>
+      failed.flow.saveUnsubscribeFeedback({ contactId: "contact-id", list: "beta" }, "other")
+    );
     assert.equal(failed.updates.length, 0);
   }
 });
@@ -581,7 +622,9 @@ test("feedback fails closed for invalid forms, active or unverifiable topics", a
 test("feedback save failure truthfully preserves verified unsubscribe success", async () => {
   const setup = loadFlow({ contact: { ...subscribed }, betaOptOut: true, updateFailure: failure });
   const url = setup.preferences.unsubscribeUrl({ contactId: "contact-id", list: "beta" });
-  const response = await setup.route.POST(new Request(url, { method: "POST", body: "action=feedback&reason=other" }));
+  const response = await setup.route.POST(
+    new Request(url, { method: "POST", body: "action=feedback&reason=other" })
+  );
   assert.equal(response.status, 503);
   const html = await response.text();
   assert.match(html, /still unsubscribed/);
@@ -602,10 +645,16 @@ test("newsletter feedback requires its own opt-out and invalid tokens cannot sav
   for (const target of [url + "x", url + "&token=bad"]) {
     assert.equal((await post(target, "action=feedback&reason=other")).status, 400);
   }
-  for (const body of ["action=feedback&reason=%", "action=feedback&reason=%FF", "action=feedback&reason=other&notes=private"]) {
+  for (const body of [
+    "action=feedback&reason=%",
+    "action=feedback&reason=%FF",
+    "action=feedback&reason=other&notes=private",
+  ]) {
     assert.equal((await post(url, body)).status, 400);
   }
-  await assert.rejects(() => setup.flow.saveUnsubscribeFeedback({ contactId: "contact-id", list: "newsletter" }, "medical"));
+  await assert.rejects(() =>
+    setup.flow.saveUnsubscribeFeedback({ contactId: "contact-id", list: "newsletter" }, "medical")
+  );
   assert.equal(setup.updates.length, count);
 });
 
@@ -631,7 +680,7 @@ test("tampered, malformed, and oversized tokens cannot update a contact", async 
 
 test("visible unsubscribe confirms success, while provider failures return 503", async () => {
   for (const updateFailure of [undefined, failure, { data: null, error: null }]) {
-    const setup = loadFlow({ updateFailure });
+    const setup = loadFlow({ contact: subscribed, updateFailure });
     const url = setup.preferences.unsubscribeUrl({ contactId: "contact-id", list: "beta" });
     const response = await setup.route.POST(
       new Request(url, { method: "POST", body: "action=unsubscribe" })
@@ -709,38 +758,82 @@ test("invited testers leave waiting and never emit a sequence event", async () =
   assert.equal(setup.getContact().properties.pg_beta_status.value, "invited");
 });
 
+test("beta signup without a waiting segment records lifecycle and preference links with sequence off", async () => {
+  const setup = loadFlow();
+  assert.equal((await setup.flow.subscribe({ email: "new@example.com", list: "beta" })).ok, true);
+  assert.equal(setup.creates[0].properties.pg_beta_status, "waiting");
+  assert.equal(setup.creates[0].properties.pg_source, "website");
+  assert.ok(Number.isFinite(Date.parse(setup.creates[0].properties.pg_beta_joined_at)));
+  const properties = setup.getContact().properties;
+  assert.ok(properties.pg_beta_unsubscribe_url.value);
+  assert.ok(properties.pg_beta_poll_url.value);
+  assert.equal(setup.addedSegments.length, 0);
+  assert.equal(setup.events.length, 0);
+});
+
+test("beta sync without a waiting segment stamps existing contacts and honors topic opt-out", async () => {
+  for (const betaOptOut of [false, true]) {
+    const setup = loadFlow({ contact: { ...subscribed }, betaOptOut, enableSequence: true });
+    await setup.load("src/lib/email-tracking.ts").syncBetaContact("contact-id");
+    assert.equal(
+      setup.getContact().properties.pg_beta_status.value,
+      betaOptOut ? "unsubscribed" : "waiting"
+    );
+    if (!betaOptOut) {
+      assert.ok(setup.getContact().properties.pg_status_updated_at.value);
+      assert.ok(setup.getContact().properties.pg_beta_unsubscribe_url.value);
+    }
+    assert.equal(setup.addedSegments.length, 0);
+    assert.equal(setup.removedSegments.length, 0);
+    assert.equal(setup.events.length, 0);
+    assert.equal(setup.sends.length, 0);
+  }
+});
+
 test("live sequence enrolls a new beta signup only once", async () => {
   const setup = loadFlow({ tracking: true, enableSequence: true });
-  assert.equal((await setup.flow.subscribe({ email: 'new@example.com', list: 'beta' })).ok, true);
+  assert.equal((await setup.flow.subscribe({ email: "new@example.com", list: "beta" })).ok, true);
   assert.equal(setup.events.length, 1);
-  assert.equal(setup.getContact().properties.pg_sequence_status.value, 'enrolled');
-  await setup.flow.subscribe({ email: 'new@example.com', list: 'beta' });
+  assert.equal(setup.getContact().properties.pg_sequence_status.value, "enrolled");
+  await setup.flow.subscribe({ email: "new@example.com", list: "beta" });
   assert.equal(setup.events.length, 1);
 });
 
 test("activation never backfills existing beta members or pre-activation joins", async () => {
-  for (const joinedAt of [undefined, '1999-01-01T00:00:00.000Z', 'not-a-date']) {
-    const setup = loadFlow({ tracking: true, enableSequence: true, contact: {
-      ...subscribed, properties: { pg_beta_status: { type: 'string', value: 'waiting' },
-        ...(joinedAt ? { pg_beta_joined_at: { type: 'string', value: joinedAt } } : {}) },
-    } });
-    await setup.flow.subscribe({ email: 'existing@example.com', list: 'beta' });
+  for (const joinedAt of [undefined, "1999-01-01T00:00:00.000Z", "not-a-date"]) {
+    const setup = loadFlow({
+      tracking: true,
+      enableSequence: true,
+      contact: {
+        ...subscribed,
+        properties: {
+          pg_beta_status: { type: "string", value: "waiting" },
+          ...(joinedAt ? { pg_beta_joined_at: { type: "string", value: joinedAt } } : {}),
+        },
+      },
+    });
+    await setup.flow.subscribe({ email: "existing@example.com", list: "beta" });
     assert.equal(setup.events.length, 0);
     assert.equal(setup.getContact().properties.pg_beta_joined_at?.value, joinedAt);
   }
 });
 
 test("an existing newsletter contact can newly join beta without enrolling old beta members", async () => {
-  const setup = loadFlow({ tracking: true, enableSequence: true, missingSegment: true, contact: { ...subscribed } });
-  await setup.flow.subscribe({ email: 'newbeta@example.com', list: 'beta' });
+  const setup = loadFlow({
+    tracking: true,
+    enableSequence: true,
+    missingSegment: true,
+    contact: { ...subscribed },
+  });
+  await setup.flow.subscribe({ email: "newbeta@example.com", list: "beta" });
   assert.equal(setup.events.length, 1);
   assert.ok(setup.getContact().properties.pg_beta_joined_at.value);
 });
 
 test("missing or invalid activation cutoff fails closed", async () => {
-  for (const sequenceStartAt of ['', 'invalid', '2999-01-01T00:00:00.000Z']) {
+  for (const sequenceStartAt of ["", "invalid", "2999-01-01T00:00:00.000Z"]) {
     const setup = loadFlow({ tracking: true, enableSequence: true, sequenceStartAt });
-    await setup.flow.subscribe({ email: 'new@example.com', list: 'beta' });
+    await setup.flow.subscribe({ email: "new@example.com", list: "beta" });
     assert.equal(setup.events.length, 0);
   }
 });
@@ -869,42 +962,62 @@ test("webhook signatures are verified before any contact update", async () => {
 
 test("poll GET is read-only and confirmation saves only a general interest", async () => {
   const setup = loadFlow({ contact: { ...subscribed } });
-  const { pollUrl } = require('../src/lib/email-poll.cjs');
-  const url = pollUrl('contact-id', setup.env.EMAIL_UNSUBSCRIBE_SECRET) + '&choice=interactions';
-  const route = setup.load('src/app/email/beta-interest/route.ts');
+  const { pollUrl } = require("../src/lib/email-poll.cjs");
+  const url = pollUrl("contact-id", setup.env.EMAIL_UNSUBSCRIBE_SECRET) + "&choice=interactions";
+  const route = setup.load("src/app/email/beta-interest/route.ts");
   const page = await route.GET(new Request(url));
   assert.equal(page.status, 200);
   const pageHtml = await page.text();
   assert.match(pageHtml, /type="hidden" name="choice" value="interactions"/);
   assert.match(pageHtml, /You chose/);
-  assert.ok(!pageHtml.includes('<select'));
-  assert.match(await (await route.GET(new Request(url + '&change=1'))).text(), /<select/);
+  assert.ok(!pageHtml.includes("<select"));
+  assert.match(await (await route.GET(new Request(url + "&change=1"))).text(), /<select/);
   assert.equal(setup.updates.length, 0);
-  const confirm = (body) => route.POST(new Request(url, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body }));
-  assert.equal((await confirm('choice=invalid')).status, 400);
-  assert.equal((await confirm('choice=other&choice=interactions')).status, 400);
-  assert.equal((await confirm('choice=interactions')).status, 200);
-  assert.equal(setup.getContact().properties.pg_beta_interest.value, 'interactions');
+  const confirm = (body) =>
+    route.POST(
+      new Request(url, {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body,
+      })
+    );
+  assert.equal((await confirm("choice=invalid")).status, 400);
+  assert.equal((await confirm("choice=other&choice=interactions")).status, 400);
+  assert.equal((await confirm("choice=interactions")).status, 200);
+  assert.equal(setup.getContact().properties.pg_beta_interest.value, "interactions");
   const count = setup.updates.length;
-  assert.equal((await confirm('choice=interactions')).status, 200);
+  assert.equal((await confirm("choice=interactions")).status, 200);
   assert.equal(setup.updates.length, count);
-  for (const choice of ['whole_stack', 'evidence', 'condition_fit', 'overlap', 'other']) {
+  for (const choice of ["whole_stack", "evidence", "condition_fit", "overlap", "other"]) {
     assert.equal((await confirm(`choice=${choice}`)).status, 200);
     assert.equal(setup.getContact().properties.pg_beta_interest.value, choice);
   }
-  assert.equal((await confirm('choice=condition_fit&condition=example')).status, 400);
+  assert.equal((await confirm("choice=condition_fit&condition=example")).status, 400);
   assert.equal(setup.topicUpdates.length, 0);
   assert.equal(setup.sends.length, 0);
-  assert.equal((await route.GET(new Request(url + 'x'))).status, 200);
-  assert.equal((await route.GET(new Request('https://pharmaguide.io/email/beta-interest?token=invalid'))).status, 400);
+  assert.equal((await route.GET(new Request(url + "x"))).status, 200);
+  assert.equal(
+    (await route.GET(new Request("https://pharmaguide.io/email/beta-interest?token=invalid")))
+      .status,
+    400
+  );
 });
 
 test("poll failures and non-beta contacts never report a saved answer", async () => {
-  const { pollUrl } = require('../src/lib/email-poll.cjs');
-  for (const options of [{ updateFailure: { error: { message: 'failed' }, data: null } }, { missingSegment: true }]) {
+  const { pollUrl } = require("../src/lib/email-poll.cjs");
+  for (const options of [
+    { updateFailure: { error: { message: "failed" }, data: null } },
+    { missingSegment: true },
+  ]) {
     const setup = loadFlow({ contact: { ...subscribed }, ...options });
-    const route = setup.load('src/app/email/beta-interest/route.ts');
-    const response = await route.POST(new Request(pollUrl('contact-id', setup.env.EMAIL_UNSUBSCRIBE_SECRET), { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: 'choice=other' }));
+    const route = setup.load("src/app/email/beta-interest/route.ts");
+    const response = await route.POST(
+      new Request(pollUrl("contact-id", setup.env.EMAIL_UNSUBSCRIBE_SECRET), {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body: "choice=other",
+      })
+    );
     assert.equal(response.status, 503);
     assert.equal(setup.topicUpdates.length, 0);
   }
@@ -922,4 +1035,360 @@ test("review tooling cannot send broadcasts, emails, or real enrollment events",
     assert.throws(() => assertReviewOnlyRequest("POST", resource, body));
   }
   assert.doesNotThrow(() => assertReviewOnlyRequest("POST", "/broadcasts", { send: false }));
+});
+
+const hostedTemplate = () => ({
+  id: "template-id",
+  alias: "pg-beta-welcome-v2",
+  status: "published",
+  published_at: "2026-11-05",
+  has_unpublished_versions: false,
+  subject: "Dashboard subject",
+  html: '<p>Published copy</p><a href="{{UNSUBSCRIBE_URL}}">Leave</a><p>{{NEWSLETTER_SUBSCRIPTION_COPY}}</p>{{{NEWSLETTER_PREFERENCE_LINK}}}',
+  text: "Published copy {{UNSUBSCRIBE_URL}} {{NEWSLETTER_SUBSCRIPTION_COPY}} {{NEWSLETTER_PREFERENCE_LINK}}",
+  variables: [{ key: "UNSUBSCRIBE_URL", type: "string" }],
+});
+
+test("hosted welcome snapshots published dashboard copy and signed preferences before an uncertain retry", async () => {
+  const template = hostedTemplate();
+  const h = loadFlow({ hosted: true, template, send: failure });
+  assert.equal((await h.flow.subscribe({ email: "hosted@example.com", list: "beta" })).ok, false);
+  template.html = "Changed dashboard body";
+  assert.equal((await h.flow.subscribe({ email: "hosted@example.com", list: "beta" })).ok, true);
+  assert.equal(h.templateReads.length, 1);
+  assert.equal(h.templateReads[0], "pg-beta-welcome-v2");
+  assert.equal(h.sends[0].payload.html, h.sends[1].payload.html);
+  assert.equal(h.sends[0].payload.subject, "Dashboard subject");
+  assert.match(h.sends[0].payload.html, /Published copy/);
+  assert.match(h.sends[0].payload.headers["List-Unsubscribe"], /email\/unsubscribe/);
+  assert.equal(h.sends[0].payload.template, undefined);
+});
+
+test("hosted mode fails closed for missing, unpublished, edited or unresolved templates", async () => {
+  for (const template of [
+    undefined,
+    { ...hostedTemplate(), status: "draft" },
+    { ...hostedTemplate(), has_unpublished_versions: true },
+    { ...hostedTemplate(), html: "{{UNKNOWN}}" },
+  ]) {
+    const h = loadFlow({ hosted: true, template });
+    assert.equal((await h.flow.subscribe({ email: "fail@example.com", list: "beta" })).ok, false);
+    assert.equal(h.sends.length, 0);
+  }
+});
+
+test("disabled hosted switch preserves legacy templates without fetching drafts", async () => {
+  const h = loadFlow();
+  assert.equal((await h.flow.subscribe({ email: "legacy@example.com", list: "beta" })).ok, true);
+  assert.equal(h.templateReads.length, 0);
+  assert.equal(h.sends[0].payload.subject, "You're on the PharmaGuide beta list");
+});
+
+test("hosted dashboard draft edits use the last verified published snapshot for new signups", async () => {
+  const template = hostedTemplate();
+  const h = loadFlow({ hosted: true, template });
+  assert.equal((await h.flow.subscribe({ email: "first@example.com", list: "beta" })).ok, true);
+  template.has_unpublished_versions = true;
+  template.html = "UNAPPROVED DRAFT";
+  const key = h.load("src/lib/email-delivery.ts").welcomeKey("second@example.com", "beta");
+  await h.load("src/lib/email-delivery.ts").reserveWelcome(key);
+  assert.equal((await h.flow.subscribe({ email: "second@example.com", list: "beta" })).ok, true);
+  assert.equal(h.sends.length, 2);
+  assert.match(h.sends[1].payload.html, /Published copy/);
+  assert.doesNotMatch(h.sends[1].payload.html, /UNAPPROVED/);
+});
+
+test("hosted brief uses confirmed subscription copy and preserves available preference headers", async () => {
+  const template = {
+    ...hostedTemplate(),
+    alias: "pg-brief-delivery-v2",
+    html: "<p>{{{NEWSLETTER_SUBSCRIPTION_COPY}}}</p><p>{{{BETA_SUBSCRIPTION_COPY}}}</p>{{{BETA_PREFERENCE_LINK}}}{{{NEWSLETTER_PREFERENCE_LINK}}}",
+    text: "{{NEWSLETTER_SUBSCRIPTION_COPY}} {{BETA_SUBSCRIPTION_COPY}} {{BETA_PREFERENCE_LINK}} {{NEWSLETTER_PREFERENCE_LINK}}",
+  };
+  const h = loadFlow({ hosted: true, template, betaOptOut: true });
+  assert.equal((await h.flow.sendSafetyBrief("brief@example.com")).ok, true);
+  assert.equal(h.templateReads[0], "pg-brief-delivery-v2");
+  assert.match(h.sends[0].payload.html, /monthly notes/);
+  assert.match(h.sends[0].payload.html, /couldn&#39;t confirm an active beta/);
+  assert.doesNotMatch(h.sends[0].payload.html, /You&#39;re on the beta list too/);
+  const header = h.sends[0].payload.headers["List-Unsubscribe"].slice(1, -1);
+  assert.equal(
+    h.preferences.readEmailPreference(new URL(header).searchParams.get("token")).list,
+    "newsletter"
+  );
+  assert.equal(h.topicUpdates.length, 0);
+});
+
+test("hosted templates cannot drop required preference variables from either format", async () => {
+  for (const missing of ["html", "text"]) {
+    const template = { ...hostedTemplate(), [missing]: "No preferences here" };
+    const h = loadFlow({ hosted: true, template });
+    assert.equal(
+      (await h.flow.subscribe({ email: "preferences@example.com", list: "beta" })).ok,
+      false
+    );
+    assert.equal(h.sends.length, 0);
+  }
+});
+
+test("real journey templates integrate with hosted delivery, preferences and dashboard HTML edits", async () => {
+  const { journey, renderJourney } = await import("../scripts/lib/email-journey-v2.mjs");
+  const published = async (key) => ({
+    ...hostedTemplate(),
+    ...(await renderJourney(key)),
+    alias: journey[key].alias,
+    subject: journey[key].subject,
+  });
+  for (const [key, list] of [
+    ["betaWelcome", "beta"],
+    ["newsletterWelcome", "newsletter"],
+  ]) {
+    const template = await published(key);
+    const h = loadFlow({ hosted: true, template });
+    assert.equal((await h.flow.subscribe({ email: `${list}@example.com`, list })).ok, true);
+    const message = h.sends[0].payload;
+    assert.equal(message.subject, journey[key].subject);
+    assert.match(message.text, /Here's to taking good care of yourself\./);
+    assert.doesNotMatch(message.html + message.text, /\{\{|\}\}/);
+    const url = message.headers["List-Unsubscribe"].slice(1, -1);
+    assert.equal(
+      h.preferences.readEmailPreference(new URL(url).searchParams.get("token")).list,
+      list
+    );
+    assert.ok(message.html.includes(`href="${url.replace(/&/g, "&amp;")}"`));
+    assert.ok(message.text.includes(url));
+
+    // Editing HTML in Resend's code editor can preserve the existing text and
+    // variable contract. The next clean published version is authoritative.
+    const originalText = message.text;
+    template.html = template.html.replace(
+      "</body>",
+      "<p>Reviewed dashboard HTML update</p></body>"
+    );
+    const receipts = h.load("src/lib/email-delivery.ts");
+    await receipts.reserveWelcome(receipts.welcomeKey(`next-${list}@example.com`, list));
+    assert.equal((await h.flow.subscribe({ email: `next-${list}@example.com`, list })).ok, true);
+    assert.match(h.sends[1].payload.html, /Reviewed dashboard HTML update/);
+    assert.equal(h.sends[1].payload.text, originalText);
+
+    // URL values are escaped once in actual renderer attribute placeholders.
+    const helper = h.load("src/lib/email-hosted-templates.ts");
+    const escaped = await helper.prepareHostedTemplate(h.client, journey[key].alias, {
+      UNSUBSCRIBE_URL: helper.plainVariable(
+        "https://pharmaguide.io/email/unsubscribe?token=example&source=inbox"
+      ),
+      ...(list === "beta"
+        ? {
+            NEWSLETTER_SUBSCRIPTION_COPY: helper.plainVariable(""),
+            NEWSLETTER_PREFERENCE_LINK: helper.plainVariable(""),
+          }
+        : {}),
+    });
+    assert.match(escaped.html, /token=example&amp;source=inbox/);
+    assert.doesNotMatch(escaped.html, /&amp;amp;/);
+    assert.match(escaped.text, /token=example&source=inbox/);
+  }
+  for (const newsletterOptOut of [false, true]) {
+    const h = loadFlow({
+      hosted: true,
+      template: await published("brief"),
+      betaOptOut: true,
+      newsletterOptOut,
+    });
+    assert.equal((await h.flow.sendSafetyBrief("requested@example.com")).ok, true);
+    const message = h.sends[0].payload;
+    assert.doesNotMatch(message.html + message.text, /\{\{|\}\}/);
+    assert.match(message.text, /couldn't confirm an active beta subscription/);
+    assert.doesNotMatch(message.text, /You're on the beta list too/);
+    assert.equal(
+      message.text.includes("You're also signed up for our monthly notes"),
+      !newsletterOptOut
+    );
+    assert.equal(message.html.includes("Unsubscribe from monthly notes"), !newsletterOptOut);
+    assert.equal(h.topicUpdates.length, 0);
+  }
+});
+
+test("disclosed beta signup joins monthly notes once without a newsletter welcome receipt", async () => {
+  const h = loadFlow();
+  assert.equal(
+    (await h.flow.subscribe({ email: "both@example.com", list: "beta", includeNewsletter: true }))
+      .ok,
+    true
+  );
+  assert.ok(h.addedSegments.some((s) => s.segmentId === "newsletter-audience"));
+  assert.equal(h.sends.length, 1);
+  assert.match(h.sends[0].payload.text, /also signed up for our monthly notes/);
+  assert.match(h.sends[0].payload.text, /Unsubscribe from monthly notes/);
+  assert.ok(![...h.receiptStore.keys()].some((k) => k.includes("newsletter/")));
+  await h.flow.subscribe({ email: "both@example.com", list: "beta", includeNewsletter: true });
+  assert.equal(h.sends.length, 1);
+});
+
+test("combined beta signup preserves monthly, beta and global opt-outs", async () => {
+  for (const options of [
+    { newsletterOptOut: true, missingSegment: true },
+    { betaOptOut: true, missingSegment: true },
+    { contact: { ...subscribed, unsubscribed: true }, missingSegment: true },
+  ]) {
+    const h = loadFlow({ contact: { ...subscribed }, ...options });
+    assert.equal(
+      (
+        await h.flow.subscribe({
+          email: "optout@example.com",
+          list: "beta",
+          includeNewsletter: true,
+        })
+      ).ok,
+      true
+    );
+    assert.ok(!h.addedSegments.some((s) => s.segmentId === "newsletter-audience"));
+    assert.equal(h.topicUpdates.length, 0);
+    if (options.newsletterOptOut) {
+      assert.equal(h.sends.length, 1);
+      assert.doesNotMatch(
+        h.sends[0].payload.text,
+        /also signed up for our monthly notes|Unsubscribe from monthly notes/
+      );
+    } else assert.equal(h.sends.length, 0);
+  }
+});
+
+test("beta-only programmatic signups and historical contacts are never backfilled into monthly notes", async () => {
+  for (const options of [{}, { contact: { ...subscribed } }]) {
+    const h = loadFlow(options);
+    await h.flow.subscribe({ email: "old@example.com", list: "beta" });
+    assert.ok(!h.addedSegments.some((s) => s.segmentId === "newsletter-audience"));
+    assert.ok(!h.creates.some((c) => c.segments.some((s) => s.id === "newsletter-audience")));
+    assert.ok(
+      h.sends.every((s) => !s.payload.text.includes("also signed up for our monthly notes"))
+    );
+  }
+});
+
+test("monthly enrollment failure returns a truthful partial failure before sending a welcome", async () => {
+  const h = loadFlow();
+  const add = h.client.contacts.segments.add;
+  h.client.contacts.segments.add = async (payload) =>
+    payload.segmentId === "newsletter-audience" ? failure : add(payload);
+  const result = await h.flow.subscribe({
+    email: "partial@example.com",
+    list: "beta",
+    includeNewsletter: true,
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.code, "newsletter_enrollment_failed");
+  assert.match(result.message, /beta list.*could not confirm.*monthly notes/);
+  assert.equal(h.sends.length, 0);
+});
+
+test("monthly enrollment failure can retry the single combined welcome", async () => {
+  const h = loadFlow();
+  const add = h.client.contacts.segments.add;
+  h.client.contacts.segments.add = async (payload) =>
+    payload.segmentId === "newsletter-audience" ? failure : add(payload);
+  assert.equal(
+    (
+      await h.flow.subscribe({
+        email: "retry-both@example.com",
+        list: "beta",
+        includeNewsletter: true,
+      })
+    ).ok,
+    false
+  );
+  h.client.contacts.segments.add = add;
+  assert.equal(
+    (
+      await h.flow.subscribe({
+        email: "retry-both@example.com",
+        list: "beta",
+        includeNewsletter: true,
+      })
+    ).ok,
+    true
+  );
+  assert.equal(h.sends.length, 1);
+  assert.match(h.sends[0].payload.text, /also signed up for our monthly notes/);
+  await h.flow.subscribe({ email: "retry-both@example.com", list: "newsletter" });
+  assert.equal(h.sends.length, 1);
+});
+
+test("explicit beta form resubmission can join monthly without welcoming historical beta members again", async () => {
+  const h = loadFlow({ contact: { ...subscribed } });
+  const result = await h.flow.subscribe({
+    email: "historical@example.com",
+    list: "beta",
+    includeNewsletter: true,
+  });
+  assert.equal(result.ok, true);
+  assert.match(result.message, /signed up for our monthly notes/);
+  assert.ok(h.addedSegments.some((s) => s.segmentId === "newsletter-audience"));
+  assert.equal(h.sends.length, 0);
+  assert.equal(h.topicUpdates.length, 0);
+});
+
+test("only the disclosed beta form action requests monthly notes enrollment", () => {
+  const source = fs.readFileSync("src/app/actions/subscribe.ts", "utf8");
+  assert.match(
+    source,
+    /subscribe\(\{ email: cleanEmail, list: "beta", includeNewsletter: true \}\)/
+  );
+  assert.equal((source.match(/includeNewsletter: true/g) ?? []).length, 1);
+});
+
+test("hosted combined beta welcome includes monthly copy only after confirmed enrollment", async () => {
+  const { journey, renderJourney } = await import("../scripts/lib/email-journey-v2.mjs");
+  for (const newsletterOptOut of [false, true]) {
+    const h = loadFlow({
+      hosted: true,
+      newsletterOptOut,
+      template: {
+        ...hostedTemplate(),
+        ...(await renderJourney("betaWelcome")),
+        alias: journey.betaWelcome.alias,
+        subject: journey.betaWelcome.subject,
+      },
+    });
+    assert.equal(
+      (
+        await h.flow.subscribe({
+          email: "hosted-both@example.com",
+          list: "beta",
+          includeNewsletter: true,
+        })
+      ).ok,
+      true
+    );
+    const message = h.sends[0].payload;
+    assert.equal(
+      message.text.includes("You're also signed up for our monthly notes"),
+      !newsletterOptOut
+    );
+    assert.equal(message.html.includes("Unsubscribe from monthly notes"), !newsletterOptOut);
+    assert.doesNotMatch(message.html + message.text, /\{\{|\}\}/);
+    if (!newsletterOptOut) {
+      const url = [...message.text.matchAll(/https:\/\/[^\s]+/g)]
+        .map((m) => m[0])
+        .find((url) => {
+          try {
+            return (
+              h.preferences.readEmailPreference(new URL(url).searchParams.get("token"))?.list ===
+              "newsletter"
+            );
+          } catch {
+            return false;
+          }
+        });
+      assert.ok(url);
+    }
+    assert.equal(h.sends.length, 1);
+  }
+});
+
+test('Resend topic preference events stop the waiting journey after a beta opt-out', async()=>{
+ const setup=loadFlow({contact:{...subscribed,properties:{pg_beta_status:{value:'waiting'}}},betaOptOut:true});
+ await setup.load('src/lib/email-tracking.ts').recordEmailEvent({type:'contact.topics.updated',created_at:new Date().toISOString(),data:{email:subscribed.email,topics:[{id:'beta-topic',subscription:'opt_out'}]}},'topic-opt-out');
+ assert.equal(setup.getContact().properties.pg_beta_status.value,'unsubscribed');
+ assert.equal(setup.sends.length,0);
 });

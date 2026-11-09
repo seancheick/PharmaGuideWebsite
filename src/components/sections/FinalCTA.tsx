@@ -182,6 +182,7 @@ export function FinalCTA() {
                   </label>
                   <input
                     id="cta-email"
+                    aria-describedby="cta-subscription-disclosure"
                     type="email"
                     inputMode="email"
                     autoComplete="email"
@@ -206,6 +207,12 @@ export function FinalCTA() {
                     {submitting ? "Sending…" : "Join the beta list"}
                     {!submitting && <span aria-hidden="true">→</span>}
                   </button>
+                  <p id="cta-subscription-disclosure" className="text-body-sm text-muted">
+                    By joining, you&apos;ll receive beta invitations and monthly notes. Unsubscribe anytime.{" "}
+                    <a href="/privacy" className="underline underline-offset-4 hover:text-ink">
+                      Privacy policy
+                    </a>
+                  </p>
                   {error && (
                     <p role="alert" className="mt-1 text-body-sm text-severity-avoid">
                       {error}

@@ -1,0 +1,10 @@
+# CLI uploads do not inherit .gitignore. Keep private operational data local.
+.tmp/
+.env
+.env.*
+!.env.example
+.next/
+node_modules/
+.codex/
+.git/
+*.tsbuildinfo

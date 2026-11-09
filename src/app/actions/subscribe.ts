@@ -90,7 +90,7 @@ export async function joinBetaWaitlist(args: BetaArgs): Promise<SubscribeResult>
   const rl = await checkSubscribeRateLimit(ip);
   if (!rl.ok) return RATE_LIMIT_RESPONSE;
 
-  return subscribe({ email: cleanEmail, list: "beta" });
+  return subscribe({ email: cleanEmail, list: "beta", includeNewsletter: true });
 }
 
 /**

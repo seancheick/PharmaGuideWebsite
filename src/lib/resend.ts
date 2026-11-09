@@ -3,6 +3,11 @@ import { Resend, type ErrorResponse, type GetContactResponseSuccess } from "rese
 import { render } from "@react-email/render";
 import { after } from "next/server";
 import { env } from "./env";
+import {
+  hostedTemplateAliases,
+  plainVariable,
+  prepareHostedTemplate,
+} from "./email-hosted-templates";
 import { isValidEmail } from "./validation";
 import { log, hashPii } from "./logger";
 import { syncBetaContact } from "./email-tracking";
@@ -43,6 +48,8 @@ export interface SubscribeOptions {
   list: SubscribeList;
   /** First name if collected (none of our forms collect this yet). */
   firstName?: string;
+  /** Only the beta form that discloses monthly notes sets this. */
+  includeNewsletter?: boolean;
 }
 
 export interface SubscribeResult {
@@ -110,11 +117,18 @@ async function addContact(
     if (memberships.error || !memberships.data) throw new Error("Email list lookup failed");
     if (memberships.data.data.some((segment) => segment.id === audienceId)) return scoped;
     await beforeCreate?.();
-    if (audienceId === env.RESEND_AUDIENCE_BETA_ID && !scoped.properties?.pg_beta_joined_at?.value) {
-      const recorded = await resend.contacts.update({ id: scoped.id, properties: {
-        pg_beta_joined_at: new Date().toISOString(),
-      } });
-      if (recorded.error || recorded.data?.id !== scoped.id) throw new Error("Beta signup date was not recorded");
+    if (
+      audienceId === env.RESEND_AUDIENCE_BETA_ID &&
+      !scoped.properties?.pg_beta_joined_at?.value
+    ) {
+      const recorded = await resend.contacts.update({
+        id: scoped.id,
+        properties: {
+          pg_beta_joined_at: new Date().toISOString(),
+        },
+      });
+      if (recorded.error || recorded.data?.id !== scoped.id)
+        throw new Error("Beta signup date was not recorded");
     }
     const membership = await resend.contacts.segments.add({
       contactId: scoped.id,
@@ -130,8 +144,14 @@ async function addContact(
     email,
     segments: [{ id: audienceId }],
     ...(topicId ? { topics: [{ id: topicId, subscription: "opt_in" as const }] } : {}),
-    ...(env.RESEND_BETA_WAITING_SEGMENT_ID && audienceId === env.RESEND_AUDIENCE_BETA_ID
-      ? { properties: { pg_beta_status: "waiting", pg_source: "website", pg_beta_joined_at: new Date().toISOString() } }
+    ...(audienceId === env.RESEND_AUDIENCE_BETA_ID
+      ? {
+          properties: {
+            pg_beta_status: "waiting",
+            pg_source: "website",
+            pg_beta_joined_at: new Date().toISOString(),
+          },
+        }
       : {}),
     ...(firstName ? { firstName } : {}),
   });
@@ -162,6 +182,7 @@ export async function subscribe({
   email,
   list,
   firstName,
+  includeNewsletter = false,
 }: SubscribeOptions): Promise<SubscribeResult> {
   if (!isValidEmail(email)) {
     return {
@@ -185,9 +206,31 @@ export async function subscribe({
           "Your email preferences are unchanged. Contact info@pharmaguide.io if you want to rejoin.",
       };
     }
+    let newsletterEnrolled = false;
+    if (list === "beta" && includeNewsletter) {
+      try {
+        // This is enrollment only: no monthly welcome or monthly receipt.
+        // addContact preserves existing topic and global opt-outs.
+        const newsletter = await addContact(email, listToAudience.newsletter, firstName);
+        newsletterEnrolled = !newsletter.unsubscribed;
+      } catch (err) {
+        log.error("subscribe.newsletter_enrollment_failed", {
+          email_hash: hashPii(email),
+          error: err instanceof Error ? err.message : String(err),
+        });
+        // Leave the beta receipt reserved for a retry. No welcome should claim
+        // that monthly enrollment succeeded when its acknowledgement failed.
+        return {
+          ok: false,
+          message:
+            "You're on the beta list, but we could not confirm your monthly notes signup. Please try again in a moment.",
+          code: "newsletter_enrollment_failed",
+        };
+      }
+    }
     const delivery = await deliverWelcomeOnce(
       deliveryKey,
-      () => prepareWelcomeEmail({ email, list, contactId: contact.id }),
+      () => prepareWelcomeEmail({ email, list, contactId: contact.id, newsletterEnrolled }),
       (message) => sendEmail(message, `welcome/${deliveryKey}`)
     );
     if (list === "beta") {
@@ -206,11 +249,19 @@ export async function subscribe({
     return {
       ok: true,
       message:
-        delivery === "existing"
-          ? "You're already on the list. Your email preferences are unchanged."
-          : delivery === "processing"
-            ? "You're on the list. Your welcome email is being processed. If it doesn't arrive, try again in a minute."
-            : "You're on the list. Check your inbox for your welcome email.",
+        list === "beta" && includeNewsletter
+          ? newsletterEnrolled
+            ? delivery === "existing"
+              ? "You're on the beta list and signed up for our monthly notes."
+              : delivery === "processing"
+                ? "You're on the beta list and signed up for our monthly notes. Your welcome email is being processed."
+                : "You're on the beta list and signed up for our monthly notes. Check your inbox for your welcome email."
+            : "You're on the beta list. Your monthly notes email preferences are unchanged."
+          : delivery === "existing"
+            ? "You're already on the list. Your email preferences are unchanged."
+            : delivery === "processing"
+              ? "You're on the list. Your welcome email is being processed. If it doesn't arrive, try again in a minute."
+              : "You're on the list. Check your inbox for your welcome email.",
     };
   } catch (err) {
     log.error("subscribe.failed", {
@@ -240,11 +291,44 @@ async function prepareWelcomeEmail({
   email,
   list,
   contactId,
+  newsletterEnrolled = false,
 }: {
   email: string;
   list: SubscribeList;
   contactId: string;
+  newsletterEnrolled?: boolean;
 }): Promise<WelcomeMessage> {
+  const newsletterUrl =
+    list === "beta" && newsletterEnrolled
+      ? unsubscribeUrl({ contactId, list: "newsletter" })
+      : undefined;
+  const newsletterCopy = newsletterEnrolled
+    ? "You're also signed up for our monthly notes: clear guides and useful PharmaGuide updates, about once a month. These are general updates, not personal product alerts."
+    : "";
+  if (env.RESEND_HOSTED_TEMPLATES_ENABLED) {
+    const url = unsubscribeUrl({ contactId, list });
+    const content = await prepareHostedTemplate(resend, hostedTemplateAliases[list], {
+      UNSUBSCRIBE_URL: plainVariable(url),
+      ...(list === "beta"
+        ? {
+            NEWSLETTER_SUBSCRIPTION_COPY: plainVariable(newsletterCopy),
+            NEWSLETTER_PREFERENCE_LINK: newsletterUrl
+              ? {
+                  html: `<a href="${plainVariable(newsletterUrl).html}">Unsubscribe from monthly notes</a>`,
+                  text: `Unsubscribe from monthly notes: ${newsletterUrl}`,
+                }
+              : plainVariable(""),
+          }
+        : {}),
+    });
+    return {
+      from: env.RESEND_FROM_EMAIL,
+      to: email,
+      replyTo: env.RESEND_REPLY_TO_EMAIL,
+      ...content,
+      headers: unsubscribeHeaders(url),
+    };
+  }
   const { BetaWelcomeEmail } = await import("@/emails/BetaWelcomeEmail");
   const { NewsletterWelcomeEmail } = await import("@/emails/NewsletterWelcomeEmail");
 
@@ -256,7 +340,12 @@ async function prepareWelcomeEmail({
   const url = unsubscribeUrl({ contactId, list });
   const react =
     list === "beta"
-      ? BetaWelcomeEmail({ email, unsubscribeUrl: url })
+      ? BetaWelcomeEmail({
+          email,
+          unsubscribeUrl: url,
+          newsletterEnrolled,
+          newsletterUnsubscribeUrl: newsletterUrl,
+        })
       : NewsletterWelcomeEmail({ email, unsubscribeUrl: url });
 
   const text = await render(react, { plainText: true });
@@ -274,22 +363,33 @@ async function prepareWelcomeEmail({
 }
 
 export const unsubscribeReasons: readonly string[] = [
-  "too_many", "not_relevant", "not_using", "did_not_signup", "other",
+  "too_many",
+  "not_relevant",
+  "not_using",
+  "did_not_signup",
+  "other",
 ];
 
 export async function saveBetaInterest(contactId: string, choice: string): Promise<void> {
   if (!pollChoices.some(({ value }) => value === choice)) throw new Error("Invalid poll choice");
   const contact = await resend.contacts.get({ id: contactId });
   const segments = await resend.contacts.segments.list({ contactId, limit: 100 });
-  if (contact.error || contact.data?.id !== contactId || segments.error ||
-      !segments.data?.data.some(({ id }) => id === listToAudience.beta))
+  if (
+    contact.error ||
+    contact.data?.id !== contactId ||
+    segments.error ||
+    !segments.data?.data.some(({ id }) => id === listToAudience.beta)
+  )
     throw new Error("Beta contact lookup failed");
   const current = contact.data.properties?.pg_beta_interest;
   if (current?.value === choice) return;
-  const saved = await resend.contacts.update({ id: contactId, properties: {
-    pg_beta_interest: choice,
-    pg_beta_interest_at: new Date().toISOString(),
-  } });
+  const saved = await resend.contacts.update({
+    id: contactId,
+    properties: {
+      pg_beta_interest: choice,
+      pg_beta_interest_at: new Date().toISOString(),
+    },
+  });
   if (saved.error || saved.data?.id !== contactId) throw new Error("Poll answer save failed");
 }
 
@@ -404,27 +504,59 @@ export async function sendSafetyBrief(email: string): Promise<SubscribeResult> {
         }
       });
     }
-    const react = BriefDeliveryEmail({
-      email,
-      betaUnsubscribeUrl: betaUrl,
-      newsletterUnsubscribeUrl: newsletterUrl,
-      betaEnrolled,
-      newsletterEnrolled,
-    });
-    const text = await render(react, { plainText: true });
-    // One-click unsubscribe in the inbox stops the monthly notes, the list
-    // that keeps sending; the footer links cover each list.
+    // One-click preferences keep the existing newsletter-first behavior.
     const headerUrl = newsletterUrl ?? betaUrl;
+    if (env.RESEND_HOSTED_TEMPLATES_ENABLED) {
+      const preferenceLink = (url: string | undefined, label: string) =>
+        url
+          ? { html: `<a href="${plainVariable(url).html}">${label}</a>`, text: `${label}: ${url}` }
+          : plainVariable("");
+      const content = await prepareHostedTemplate(resend, hostedTemplateAliases.brief, {
+        NEWSLETTER_SUBSCRIPTION_COPY: plainVariable(
+          newsletterEnrolled
+            ? "You're also signed up for our monthly notes: clear guides and useful PharmaGuide updates, about once a month. These are general updates, not personal product alerts."
+            : ""
+        ),
+        BETA_SUBSCRIPTION_COPY: plainVariable(
+          betaEnrolled
+            ? "You're on the beta list too, as explained on the request form. We'll send a separate invitation when a testing place is ready."
+            : "We couldn't confirm an active beta subscription for this address. For help with your email preferences, contact info@pharmaguide.io."
+        ),
+        BETA_PREFERENCE_LINK: preferenceLink(
+          betaUrl,
+          "Unsubscribe from beta invitations and updates"
+        ),
+        NEWSLETTER_PREFERENCE_LINK: preferenceLink(newsletterUrl, "Unsubscribe from monthly notes"),
+      });
+      await sendEmail({
+        from: env.RESEND_FROM_EMAIL,
+        to: email,
+        replyTo: env.RESEND_REPLY_TO_EMAIL,
+        ...content,
+        ...(headerUrl ? { headers: unsubscribeHeaders(headerUrl) } : {}),
+      });
+    } else {
+      const react = BriefDeliveryEmail({
+        email,
+        betaUnsubscribeUrl: betaUrl,
+        newsletterUnsubscribeUrl: newsletterUrl,
+        betaEnrolled,
+        newsletterEnrolled,
+      });
+      const text = await render(react, { plainText: true });
+      // One-click unsubscribe in the inbox stops the monthly notes, the list
+      // that keeps sending; the footer links cover each list.
 
-    await sendEmail({
-      from: env.RESEND_FROM_EMAIL,
-      to: email,
-      replyTo: env.RESEND_REPLY_TO_EMAIL,
-      subject: "Your Supplement Safety Brief is here",
-      react,
-      text,
-      ...(headerUrl ? { headers: unsubscribeHeaders(headerUrl) } : {}),
-    });
+      await sendEmail({
+        from: env.RESEND_FROM_EMAIL,
+        to: email,
+        replyTo: env.RESEND_REPLY_TO_EMAIL,
+        subject: "Your Supplement Safety Brief is here",
+        react,
+        text,
+        ...(headerUrl ? { headers: unsubscribeHeaders(headerUrl) } : {}),
+      });
+    }
 
     log.info("brief.sent", { email_hash: hashPii(email) });
 

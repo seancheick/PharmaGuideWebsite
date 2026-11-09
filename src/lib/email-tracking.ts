@@ -51,7 +51,6 @@ async function removeFromWaiting(contactId: string) {
 }
 
 export async function syncBetaContact(contactId: string): Promise<void> {
-  if (!env.RESEND_BETA_WAITING_SEGMENT_ID) return;
   const result = await resend.contacts.get({ id: contactId });
   if (result.error || !result.data?.id) throw new Error("Beta contact lookup failed");
   const contact = result.data;
@@ -86,11 +85,13 @@ export async function syncBetaContact(contactId: string): Promise<void> {
       pg_beta_poll_url: pollUrl(contactId, env.EMAIL_UNSUBSCRIBE_SECRET || env.RESEND_API_KEY),
     },
   });
-  const added = await resend.contacts.segments.add({
-    contactId,
-    segmentId: env.RESEND_BETA_WAITING_SEGMENT_ID,
-  });
-  if (added.error) throw new Error("Waiting-list enrollment failed");
+  if (env.RESEND_BETA_WAITING_SEGMENT_ID) {
+    const added = await resend.contacts.segments.add({
+      contactId,
+      segmentId: env.RESEND_BETA_WAITING_SEGMENT_ID,
+    });
+    if (added.error) throw new Error("Waiting-list enrollment failed");
+  }
   if (!env.RESEND_WAITING_SEQUENCE_ENABLED) return;
   const joinedAt = property(contact, "pg_beta_joined_at");
   const startedAt = Date.parse(env.RESEND_WAITING_SEQUENCE_STARTED_AT);
@@ -126,10 +127,18 @@ export function suppressionReason(event: WebhookEventPayload): string | null {
   return null;
 }
 
-export async function recordEmailEvent(event: WebhookEventPayload, eventId: string): Promise<void> {
-  if (event.type === "contact.updated") {
+type EmailTrackingEvent = WebhookEventPayload | {
+  type: "contact.topics.updated";
+  created_at: string;
+  data: { email: string };
+};
+
+export async function recordEmailEvent(event: EmailTrackingEvent, eventId: string): Promise<void> {
+  if (event.type === "contact.updated" || event.type === "contact.topics.updated") {
     if (!redis) throw new Error("Delivery tracking storage is unavailable");
-    const found = await resend.contacts.get({ id: event.data.id });
+    const found = await resend.contacts.get(
+      event.type === "contact.topics.updated" ? { email: event.data.email } : { id: event.data.id }
+    );
     if (found.error || !found.data?.id) throw new Error("Contact status lookup failed");
     const memberships = await resend.contacts.segments.list({
       contactId: found.data.id,

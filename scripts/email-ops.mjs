@@ -541,7 +541,6 @@ async function review(api, state) {
     : [];
   const newsletterIds = new Set(newsletter.map((contact) => contact.id));
   const betaIds = new Set(beta.map((contact) => contact.id));
-  const waitingIds = new Set(waiting.map((contact) => contact.id));
   const allContacts = new Map([...beta, ...newsletter].map((contact) => [contact.id, contact]));
   const rows = [];
   for (const entry of allContacts.values()) {
@@ -558,7 +557,7 @@ async function review(api, state) {
       betaMember,
       subscribed,
       waiting:
-        subscribed && waitingIds.has(contact.id) && value(contact, "pg_beta_status") === "waiting",
+        subscribed && value(contact, "pg_beta_status") === "waiting",
       newsletter: newsletterIds.has(contact.id) && hasTopic("newsletter"),
       delivery: value(contact, "pg_delivery_status") || "unknown",
     });
@@ -567,6 +566,7 @@ async function review(api, state) {
     betaSubscribed: rows.filter((contact) => contact.subscribed).length,
     newsletterSubscribed: rows.filter((contact) => contact.newsletter).length,
     waiting: rows.filter((contact) => contact.waiting).length,
+    campaignQueue: waiting.length,
     excluded: rows.filter((contact) => contact.betaMember && !contact.subscribed).length,
     automationId: state.automationId,
     automationStatus: state.automationId
@@ -669,6 +669,14 @@ async function main() {
     probe: command.startsWith("probe-"),
   });
   const state = await readState();
+  if (["prepare", "drafts", "refresh-drafts", "topics-upgrade"].includes(command)) {
+    try {
+      await fs.access(path.join(folder, "journey-v2-state.json"));
+      throw new Error("V2 dashboard drafts now own the email review. Use setup-email-review-v2.mjs and preserve dashboard edits; do not restore legacy campaign copy.");
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+  }
   if (command === "poll-report") return pollReport(api, state);
   if (command === "probe-start") return probeStart(api, state);
   if (command === "probe-check") return probeCheck(api, state);

@@ -43,6 +43,7 @@ function requiredInProduction(name: string): string | undefined {
 export const env = {
   // Resend — required everywhere
   RESEND_API_KEY: required("RESEND_API_KEY"),
+  RESEND_HOSTED_TEMPLATES_ENABLED: process.env.RESEND_HOSTED_TEMPLATES_ENABLED === "true",
   EMAIL_UNSUBSCRIBE_SECRET: process.env.EMAIL_UNSUBSCRIBE_SECRET ?? "",
   RESEND_WEBHOOK_SECRET: process.env.RESEND_WEBHOOK_SECRET ?? "",
   RESEND_BETA_WAITING_SEGMENT_ID: process.env.RESEND_BETA_WAITING_SEGMENT_ID ?? "",

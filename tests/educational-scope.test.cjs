@@ -14,13 +14,18 @@ test("personal fit copy describes contextual findings without promising personal
   const copy = read("src/lib/features.ts");
   assert.doesNotMatch(copy, /Goal-driven stack recommendations|reshape every recommendation/);
 });
-test("privacy describes reference chat without claiming current model-provider transmission", () => {
+test("privacy names the AI providers that process website chat messages", () => {
   const copy = read("src/lib/privacy.ts");
-  assert.doesNotMatch(
-    copy,
-    /to answer a chat question we send your message to Google|on to an AI service provider so it can write a reply/
-  );
-  assert.match(copy, /reference replies/);
+  assert.match(copy, /Google \(Gemini\)/);
+  assert.match(copy, /Groq/);
+  assert.doesNotMatch(copy, /does not send your conversation to generative AI model providers|Generative AI model providers are not used/);
+});
+test("chat labels what grounded an answer, never a clinical endorsement", () => {
+  const ui = read("src/components/chat/ChatLauncher.tsx");
+  assert.match(ui, /pharmaguide_record:/);
+  assert.match(ui, /general_background:/);
+  assert.doesNotMatch(ui, /Approved reference information|data\.confidence/);
+  assert.match(ui, /not medical advice/);
 });
 test('privacy avoids promising an unimplemented restore or proven anonymization', () => {
   const copy = read('src/lib/privacy.ts') + read('src/lib/hipaa.ts') + read('src/lib/faq.ts');

@@ -35,12 +35,24 @@ const LEGACY_STORAGE_KEYS = ["pg-chat-history", "pg-chat-state"];
 const HISTORY_SEND_LIMIT = 10;
 const SCROLL_REVEAL_PX = 200;
 
-// Starter questions use supported reference safety topics rather than soliciting regimens.
+// Starter questions: an interaction check, a medication-nutrient question and a research question.
+// Each asks what is known, not for a personal regimen.
 const QUICK_ACTIONS = [
-  "Can St. John's wort interact with sertraline?",
-  "Can kelp interact with levothyroxine?",
-  "What are the vitamin A concerns during pregnancy?",
+  "Can I take St. John's wort with sertraline?",
+  "Does metformin lower any nutrients?",
+  "What does research say about magnesium for sleep?",
 ] as const;
+
+/**
+ * What grounded an answer: the chatbot API's `basis` (src/core/confidence.js there). The label names a
+ * source, never a confidence or a clinical endorsement, so it is drawn in one neutral tone. Unknown
+ * values render no label.
+ */
+const BASIS_LABELS: Record<string, string> = {
+  pharmaguide_record: "From PharmaGuide's interaction records",
+  reference_data: "Uses PharmaGuide reference data",
+  general_background: "General background — check with your pharmacist",
+};
 
 type Role = "user" | "assistant";
 
@@ -58,19 +70,15 @@ interface Message {
   content: string;
   /** True when the assistant message represents an error state */
   error?: boolean;
-  /**
-   * Confidence tier returned by the upstream for assistant replies.
-   * Drives the small badge under the bubble. See `resolveConfidence`
-   * for accepted values — anything unrecognized is dropped silently.
-   */
-  confidence?: string;
+  /** What grounded the reply (see BASIS_LABELS); drives the small label under the bubble. */
+  basis?: string;
 }
 
 interface ChatApiResponse {
   reply?: string;
   error?: string;
   retryAfter?: number;
-  confidence?: string;
+  basis?: string;
   _state?: ConversationState;
 }
 
@@ -226,9 +234,7 @@ export function ChatLauncher() {
             id: `a-${Date.now()}`,
             role: "assistant",
             content: data.reply!,
-            ...(typeof data.confidence === "string"
-              ? { confidence: data.confidence }
-              : {}),
+            ...(typeof data.basis === "string" ? { basis: data.basis } : {}),
           },
         ]);
       } catch {
@@ -352,11 +358,11 @@ export function ChatLauncher() {
                 </span>
                 <div className="flex min-w-0 flex-1 flex-col leading-tight">
                   <span className="font-serif text-body italic text-ink">
-                    PharmaGuide reference
+                    PharmaGuide AI
                   </span>
                   <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
                     <span className="block h-1.5 w-1.5 rounded-full bg-severity-safe" />
-                    Approved reference information
+                    Research explained · not medical advice
                   </span>
                 </div>
                 {messages.length > 0 && (
@@ -442,7 +448,7 @@ export function ChatLauncher() {
                   every subsequent message. Footer placement matches
                   the calm-clinical tone (footnote, not banner). */}
               <p className="border-t border-border/60 bg-surface px-4 py-2 text-center text-[10.5px] leading-snug text-subtle">
-                Reference information only. Ask your doctor or pharmacist before changing what you take.
+                Reference information, not medical advice. Ask your doctor or pharmacist before changing what you take.
               </p>
             </m.div>
           </>
@@ -505,7 +511,11 @@ function MessageBubble({ message }: { message: Message }) {
         )}
       >
         <FormattedReply text={message.content} />
-
+        {!message.error && message.basis && BASIS_LABELS[message.basis] && (
+          <p className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.12em] text-subtle">
+            {BASIS_LABELS[message.basis]}
+          </p>
+        )}
       </div>
     </li>
   );

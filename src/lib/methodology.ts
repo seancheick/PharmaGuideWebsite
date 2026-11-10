@@ -194,7 +194,7 @@ export const AI_DOES: readonly string[] = [
   "Process and structure data from multiple sources",
   "Identify potential interactions documented in the literature",
   "Generate initial drafts of educational content",
-  "Assist research preparation; the website chat returns supported reference replies",
+  "Explain PharmaGuide's interaction records and published research in the website chat, labelling what each answer is based on",
 ];
 
 export const AI_DOES_NOT: readonly string[] = [

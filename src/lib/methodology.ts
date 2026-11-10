@@ -170,7 +170,7 @@ export const PROCESS_STEPS: readonly ProcessStep[] = [
   {
     num: "03",
     title: "Pharmacist verification",
-    body: "A licensed clinical pharmacist reviews interaction guidance before it ships — checking the science, the framing, and the recommendation against current practice standards.",
+    body: "A licensed clinical pharmacist reviews interaction guidance before it ships — checking the science, the framing, and the guidance against current practice standards.",
     reviewer: PEOPLE["laurie-pham"],
   },
   {

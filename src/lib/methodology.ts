@@ -144,7 +144,7 @@ export const ENGINE_STAGES: readonly EngineStage[] = [
   {
     num: "05",
     title: "Accumulation tracking",
-    body: "Each nutrient is summed across the entire stack and measured against its Recommended Daily Allowance and Tolerable Upper Intake Level — so three products quietly stacking the same mineral don't slip past the safe ceiling.",
+    body: "Nutrient intake is summed across the stack and compared with published intake references, including Recommended Daily Allowances and Tolerable Upper Intake Levels where available. A reference limit is not an individual guarantee of safety.",
     detail: "RDA + UL per nutrient · across the full stack",
   },
   {
@@ -194,7 +194,7 @@ export const AI_DOES: readonly string[] = [
   "Process and structure data from multiple sources",
   "Identify potential interactions documented in the literature",
   "Generate initial drafts of educational content",
-  "Power the AI Guidance Chat for in-app questions",
+  "Assist research preparation; the website chat returns supported reference replies",
 ];
 
 export const AI_DOES_NOT: readonly string[] = [
@@ -213,10 +213,10 @@ export const SCOPE_IS: readonly string[] = [
 ];
 
 export const SCOPE_IS_NOT: readonly string[] = [
-  "A medical device or diagnostic tool",
+  "A diagnostic service or a substitute for clinical assessment",
   "A replacement for professional medical advice",
-  "A source of treatment recommendations",
+  "A prescribing service or an individual treatment plan",
   "A guarantee of supplement safety or efficacy",
 ];
 
-export const METHODOLOGY_LAST_UPDATED = "2026-05-08";
+export const METHODOLOGY_LAST_UPDATED = "2026-11-10";

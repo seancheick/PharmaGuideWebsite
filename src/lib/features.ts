@@ -177,7 +177,7 @@ export const PILLARS: readonly FeaturePillar[] = [
     overview:
       "Active and inactive ingredients parsed, proprietary blends read as disclosed, six-part PG Score per product.",
     intro:
-      "We parse the active ingredients AND the inactive ones — fillers, binders, allergens, and the proprietary blends most apps skip. Every product gets a PG Score out of 100 across six parts, so you can compare brands on substance, not packaging.",
+      "We parse the active ingredients AND the inactive ones — fillers, binders, allergens, and the proprietary blends most apps skip. Products with completed assessments receive a PG Score out of 100 across six parts. This editorial assessment uses available label and research information; it is not a laboratory test, a measure of personal benefit, or a guarantee of safety.",
     illustration: "transparency",
     capabilities: [
       "Active and inactive ingredients parsed — fillers, allergens, excipients",
@@ -223,14 +223,14 @@ export const PILLARS: readonly FeaturePillar[] = [
     overview:
       "Profile-gated warnings tuned to your conditions, medications, and goals — irrelevant alerts stay hidden.",
     intro:
-      "Your conditions, age, current medications, and goals reshape every recommendation. Pregnancy. Hypertension. Anticoagulant therapy. Each modifies the safety calculus. We profile-gate every interaction so you only see warnings that actually apply to you.",
+      "Your profile helps put documented concerns in context, including pregnancy, conditions and current medications. Checks use the information you provide and the available rules; missing information and limited coverage can affect what is found. Bring flagged concerns to your pharmacist or clinician before changing what you take.",
     illustration: "fit",
     capabilities: [
       "Profile gating — irrelevant warnings stay hidden, relevant ones surface clearly",
       "Medication ↔ condition flags — surfaces when something in your stack is risky given a diagnosis you've entered",
       "Pregnancy + breastfeeding flags treated as separate, never combined",
       "Drug-class awareness: SSRIs, statins, anticoagulants, hypoglycemics, more",
-      "Goal-driven stack recommendations (sleep, energy, recovery, longevity)",
+      "Goal context for reviewing supplement information (sleep, energy and recovery)",
     ],
     examples: [
       {

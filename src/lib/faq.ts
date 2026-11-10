@@ -63,12 +63,12 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "privacy",
     q: "Is my health data actually private?",
-    body: "**Yes.** Your medications, conditions and health profile stay on your device by default, and interaction checks run there. If you create an account, we back up the supplement products in your stack so you can restore it — never your medications or conditions. You can separately choose to share a brief or a temporary encrypted snapshot with an AI assistant; the app previews exactly what you selected. Disconnecting cannot erase the assistant’s existing chat history. See our [Privacy Policy](/privacy). We do not sell health data.",
+    body: "**Yes.** Your medications, conditions and health profile stay on your device by default, and interaction checks run there. If you create an account, we store a copy of your supplement product list in your account — never your medications or conditions. You can separately choose to share a brief or a temporary encrypted snapshot with an AI assistant; the app previews exactly what you selected. Disconnecting cannot erase the assistant’s existing chat history. See our [Privacy Policy](/privacy). We do not sell health data.",
   },
   {
     group: "product",
     q: "How accurate is the data?",
-    body: "Every interaction is cross-referenced with **FDA, NIH, PubMed, and DSLD** sources, then reviewed by a licensed pharmacist. Each one carries an evidence level (Established / Probable / Moderate / Limited / Theoretical) so you know how strong the clinical literature is. When evidence is weak, conflicting, or incomplete, we say so directly.",
+    body: "Interaction content is checked against applicable regulatory sources, published research and clinical references, then reviewed by a licensed pharmacist. NIH DSLD supplies label information; inclusion is not agency endorsement or proof of product quality. Each one carries an evidence level (Established / Probable / Moderate / Limited / Theoretical) so you know how strong the clinical literature is. When evidence is weak, conflicting, or incomplete, we say so directly.",
   },
   {
     group: "product",
@@ -78,7 +78,7 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "launch",
     q: "Is it free?",
-    body: "The core interaction checker is **free during beta** — scanning, search, your stack, and every interaction warning with full reasoning. No credit card required. Optional premium features (deep clinical research, advanced personalization, the AI pharmacist conversation layer) will be available later through a subscription.",
+    body: "The core interaction checker is **free during beta** — scanning, search, your stack, and every interaction warning with full reasoning. No credit card required. Optional premium features (deep clinical research, advanced personalization, the educational AI reference chat) will be available later through a subscription.",
   },
   {
     group: "product",
@@ -108,7 +108,7 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "launch",
     q: "When does it launch — and what changes when it does?",
-    body: "Opening in waves through **2026**. The core interaction checker stays **free at launch** — scanning, search, your stack, and every interaction warning with full reasoning. Optional premium features (deep clinical research, advanced personalization, the AI pharmacist conversation layer) become available through a subscription. **Founding beta members get extended free access.** [Join the beta](/#waitlist).",
+    body: "Opening in waves through **2026**. The core interaction checker stays **free at launch** — scanning, search, your stack, and every interaction warning with full reasoning. Optional premium features (deep clinical research, advanced personalization, the educational AI reference chat) become available through a subscription. **Founding beta members get extended free access.** [Join the beta](/#waitlist).",
   },
 ] as const;
 

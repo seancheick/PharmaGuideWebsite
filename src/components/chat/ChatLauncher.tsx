@@ -511,7 +511,7 @@ function MessageBubble({ message }: { message: Message }) {
         )}
       >
         <FormattedReply text={message.content} />
-        {!message.error && message.basis && BASIS_LABELS[message.basis] && (
+        {!message.error && message.basis && Object.hasOwn(BASIS_LABELS, message.basis) && (
           <p className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.12em] text-subtle">
             {BASIS_LABELS[message.basis]}
           </p>

@@ -264,12 +264,12 @@ export const PILLARS: readonly FeaturePillar[] = [
     titleLead: "When 'more' becomes",
     titleEm: "too much.",
     overview:
-      "Tracks every nutrient across your full stack against RDA and Tolerable Upper Intake Level.",
+      "Tracks nutrients across your full stack against the RDA and Tolerable Upper Intake Level where one is published.",
     intro:
-      "Fat-soluble vitamins accumulate. Mineral overdoses are real. We track nutrients across your stack against the **Recommended Daily Allowance (RDA)** and the **Tolerable Upper Intake Level (UL)** — and flag when your intake crosses into the zone where supplementation may do more harm than good.",
+      "Fat-soluble vitamins accumulate. Mineral overdoses are real. We track nutrients across your stack against the **Recommended Daily Allowance (RDA)** and the **Tolerable Upper Intake Level (UL)** where one is published — and flag when your intake crosses into the zone where supplementation may do more harm than good.",
     illustration: "accumulation",
     capabilities: [
-      "RDA + UL tracking per nutrient across the entire stack",
+      "RDA + UL tracking across the entire stack, where a reference is published",
       "Fat-soluble accumulation flags (vitamin A, D, E, K)",
       "Mineral excess detection (iron, zinc, selenium)",
       "Visualized as a per-nutrient meter so you see the headroom",

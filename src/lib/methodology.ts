@@ -145,7 +145,7 @@ export const ENGINE_STAGES: readonly EngineStage[] = [
     num: "05",
     title: "Accumulation tracking",
     body: "Nutrient intake is summed across the stack and compared with published intake references, including Recommended Daily Allowances and Tolerable Upper Intake Levels where available. A reference limit is not an individual guarantee of safety.",
-    detail: "RDA + UL per nutrient · across the full stack",
+    detail: "RDA + UL where published · across the full stack",
   },
   {
     num: "06",

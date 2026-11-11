@@ -148,7 +148,7 @@ If you're in California, the EU, the UK, or another jurisdiction with additional
 
 **Connected AI assistants:** each provider you approve receives your supplement list and any snapshot you separately share to that connection. PharmaGuide does not control the provider's chat retention or training settings. Review those settings before sharing health information. Disconnecting stops future access through PharmaGuide; ask the provider to delete information it already received.
 
-**AI service providers (website chat):** to answer a chat question we send your message and recent conversation to Google (Gemini) and, as a backup, to Groq. They process that text to write the reply, and each provider's own terms govern how it handles it. Please leave out names, contact details and other identifying information. Connected AI assistants are a separate, optional feature described above.
+**AI service providers (website chat):** to answer a chat question we send your message, your recent conversation and health context you mentioned earlier in the chat (such as pregnancy or a condition) to Google (Gemini) and, as a backup, to Groq. That context can still be sent after the earlier messages are no longer part of the recent conversation. They process that text to write the reply, and each provider's own terms govern how it handles it. Please leave out names, contact details and other identifying information. Connected AI assistants are a separate, optional feature described above.
 
 **Third-party links:** the site occasionally links to external sources (FDA, NIH, PubMed, DSLD). When you click those, you leave our site and their privacy policies apply.
 

@@ -35,20 +35,24 @@ const LEGACY_STORAGE_KEYS = ["pg-chat-history", "pg-chat-state"];
 const HISTORY_SEND_LIMIT = 10;
 const SCROLL_REVEAL_PX = 200;
 
-// Three starter questions aligned with the chatbot API's routing.
-// Each showcases a different PharmaGuide capability and is verified
-// to pass the upstream's intent gate (the prior "Check an interaction"
-// + "Supplement timing tips" prompts either got blocked off-topic or
-// produced generic answers with zero KB hits).
-//   1. Clarifier → LLM: asks which med, then grounded interaction check
-//   2. Clarifier → LLM: asks which med, then specific depletion guidance
-//      (the upstream system prompt now has a 9-drug-class depletion section)
-//   3. Wellness-goal LLM: direct answer (melatonin, mag glycinate, L-theanine)
+// Starter questions: an interaction check, a medication-nutrient question and a research question.
+// Each asks what is known, not for a personal regimen.
 const QUICK_ACTIONS = [
-  "Can I take magnesium with my medication?",
-  "Does my medication deplete any nutrients?",
-  "What supplements help with sleep?",
+  "Can I take St. John's wort with sertraline?",
+  "Does metformin lower any nutrients?",
+  "What does research say about magnesium for sleep?",
 ] as const;
+
+/**
+ * What grounded an answer: the chatbot API's `basis` (src/core/confidence.js there). The label names a
+ * source, never a confidence or a clinical endorsement, so it is drawn in one neutral tone. Unknown
+ * values render no label.
+ */
+const BASIS_LABELS: Record<string, string> = {
+  pharmaguide_record: "From PharmaGuide's interaction records",
+  reference_data: "Uses PharmaGuide reference data",
+  general_background: "General background — check with your pharmacist",
+};
 
 type Role = "user" | "assistant";
 
@@ -56,7 +60,7 @@ type Role = "user" | "assistant";
  * Opaque conversation-memory payload from the upstream chatbot API.
  * Carries durable patient context (populations, medications, prior
  * clarifications). We treat it as a black box — read it from each
- * response, send it back on the next request, persist across visits.
+ * response, send it back on the next request, keep in memory for this visit.
  */
 type ConversationState = Record<string, unknown>;
 
@@ -66,19 +70,15 @@ interface Message {
   content: string;
   /** True when the assistant message represents an error state */
   error?: boolean;
-  /**
-   * Confidence tier returned by the upstream for assistant replies.
-   * Drives the small badge under the bubble. See `resolveConfidence`
-   * for accepted values — anything unrecognized is dropped silently.
-   */
-  confidence?: string;
+  /** What grounded the reply (see BASIS_LABELS); drives the small label under the bubble. */
+  basis?: string;
 }
 
 interface ChatApiResponse {
   reply?: string;
   error?: string;
   retryAfter?: number;
-  confidence?: string;
+  basis?: string;
   _state?: ConversationState;
 }
 
@@ -234,9 +234,7 @@ export function ChatLauncher() {
             id: `a-${Date.now()}`,
             role: "assistant",
             content: data.reply!,
-            ...(typeof data.confidence === "string"
-              ? { confidence: data.confidence }
-              : {}),
+            ...(typeof data.basis === "string" ? { basis: data.basis } : {}),
           },
         ]);
       } catch {
@@ -303,7 +301,7 @@ export function ChatLauncher() {
                 className="absolute -bottom-0.5 -right-0.5 block h-2.5 w-2.5 rounded-full border-2 border-surface bg-severity-safe"
               />
             </span>
-            <span className="hidden sm:inline">Ask PharmaGuide AI</span>
+            <span className="hidden sm:inline">Ask PharmaGuide</span>
             <span className="sm:hidden">Ask</span>
           </m.button>
         )}
@@ -364,7 +362,7 @@ export function ChatLauncher() {
                   </span>
                   <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-subtle">
                     <span className="block h-1.5 w-1.5 rounded-full bg-severity-safe" />
-                    Online · educational only
+                    Research explained · not medical advice
                   </span>
                 </div>
                 {messages.length > 0 && (
@@ -450,7 +448,7 @@ export function ChatLauncher() {
                   every subsequent message. Footer placement matches
                   the calm-clinical tone (footnote, not banner). */}
               <p className="border-t border-border/60 bg-surface px-4 py-2 text-center text-[10.5px] leading-snug text-subtle">
-                Educational only · not a substitute for professional medical advice.
+                Reference information, not medical advice. Ask your doctor or pharmacist before changing what you take.
               </p>
             </m.div>
           </>
@@ -502,10 +500,6 @@ function MessageBubble({ message }: { message: Message }) {
       </li>
     );
   }
-  const badge =
-    !message.error && message.confidence
-      ? resolveConfidence(message.confidence)
-      : null;
   return (
     <li className="flex justify-start">
       <div
@@ -517,79 +511,14 @@ function MessageBubble({ message }: { message: Message }) {
         )}
       >
         <FormattedReply text={message.content} />
-        {badge && (
-          <div
-            className={cn(
-              "mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-border/40 bg-surface/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em]",
-              badge.textClass
-            )}
-          >
-            <span
-              aria-hidden="true"
-              className={cn("block h-1.5 w-1.5 rounded-full", badge.dotClass)}
-            />
-            {badge.label}
-          </div>
+        {!message.error && message.basis && Object.hasOwn(BASIS_LABELS, message.basis) && (
+          <p className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.12em] text-subtle">
+            {BASIS_LABELS[message.basis]}
+          </p>
         )}
       </div>
     </li>
   );
-}
-
-/**
- * Map the upstream's `confidence` field to a UI tier. The chatbot
- * dev described three display labels (Clinical guidelines /
- * Available evidence / Verify with pharmacist) but the on-the-wire
- * field could be a short code (`high|medium|low`), a domain code
- * (`clinical_guideline|kb_grounded|general`), or the label itself.
- * We handle all three plausible contracts and return `null` for
- * anything unrecognized — better to drop the badge than fabricate
- * a confidence tier we can't actually verify.
- */
-function resolveConfidence(
-  value: string
-): { label: string; textClass: string; dotClass: string } | null {
-  const v = value.trim().toLowerCase();
-  if (
-    v === "high" ||
-    v === "clinical_guideline" ||
-    v === "clinical_guidelines" ||
-    v === "guideline" ||
-    v === "clinical guidelines"
-  ) {
-    return {
-      label: "Clinical guidelines",
-      textClass: "text-severity-safe",
-      dotClass: "bg-severity-safe",
-    };
-  }
-  if (
-    v === "medium" ||
-    v === "kb_grounded" ||
-    v === "kb" ||
-    v === "available evidence" ||
-    v === "available_evidence"
-  ) {
-    return {
-      label: "Available evidence",
-      textClass: "text-severity-caution",
-      dotClass: "bg-severity-caution",
-    };
-  }
-  if (
-    v === "low" ||
-    v === "general" ||
-    v === "no_kb" ||
-    v === "verify with pharmacist" ||
-    v === "verify_with_pharmacist"
-  ) {
-    return {
-      label: "Verify with pharmacist",
-      textClass: "text-severity-avoid",
-      dotClass: "bg-severity-avoid",
-    };
-  }
-  return null;
 }
 
 /**

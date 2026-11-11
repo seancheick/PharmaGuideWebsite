@@ -24,13 +24,13 @@ export const PRIVACY_DOC: LegalDocument = {
   titleLead: "Your health details are yours to share.",
   titleEm: "By design.",
   subhead:
-    "Your health details stay on your device unless you choose to share them. This page explains account backups, optional AI-assistant sharing, and your controls.",
-  lastUpdated: "2026-11-05",
+    "Your health details stay on your device unless you choose to share them. This page explains account storage, optional AI-assistant sharing, and your controls.",
+  lastUpdated: "2026-11-10",
   summary: {
     title: "The short version",
     points: [
       "Your **health profile, conditions and medications** stay on your device by default, and interaction checks run there. You can explicitly share a scoped brief or a temporary snapshot with an AI assistant.",
-      "If you create an account, we keep your **email** and a **backup of the supplement products in your stack** so you can restore it. Without an account, your stack stays on your device.",
+      "If you create an account, we keep your **email** and a **server copy of the supplement products in your stack**. Without an account, your stack stays on your device.",
       "We **never sell** your data. We don't share it with advertisers, brokers, or insurance companies.",
       "The **website chat** doesn't save your conversations: they stay in your browser until you close the page, and the text is processed by AI service providers to write each reply.",
       "You can **delete your account** and the data we hold at any time. A full in-app data export is on the way.",
@@ -56,19 +56,19 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
 
 **Information collected automatically:** standard server logs (IP address, device type, app version, crash reports). Used to keep the service running and diagnose bugs.
 
-**If you create an account:** we back up the supplement products in your stack (the product name and catalog ID, the ingredient identifiers we use for checks, and when you added or removed it) so you can restore your stack. Doses, schedules, notes and medications are not included. Without an account, your stack is not sent to us.
+**If you create an account:** we store a server copy of the supplement products in your stack (the product name and catalog ID, the ingredient identifiers we use for checks, and when you added or removed it). The app does not currently restore that list to a new phone. Doses, schedules, notes and medications are not included. Without an account, your stack is not sent to us.
 
 **When you search for a medication:** the name you type is sent to the U.S. National Library of Medicine's RxNorm service (rxnav.nlm.nih.gov) to identify the medication. We do not attach your account to that request, and the medication you select is stored only on your device.
 
 **When you choose to submit a product:** the photos and details you submit for a product we don't have yet are sent to us for review.
 
-**When you use the chat on this website:** the messages you type, and the last few messages from the same visit, are sent to our server and on to an AI service provider so it can write a reply. There is no account for chat, and we don't save your messages in a database. The conversation stays in your browser's memory for the current visit only; closing or reloading the page clears it. To limit abuse we rate-limit requests using a one-way hash of your IP address, not the address itself. We keep anonymous, topic-level usage statistics, never the messages. The chat window is masked from our session recordings.
+**When you use the chat on this website:** the messages you type, and the last few messages from the same visit, are sent to our server and on to an AI service provider so it can write a reply that explains PharmaGuide's records and published research. There is no account for chat, and we don't save your messages in a database. The conversation stays in your browser's memory for the current visit only; closing or reloading the page clears it. To limit abuse we rate-limit requests using a one-way hash of your IP address, not the address itself. We record usage and diagnostic categories, such as topic, medication classes and response route, without storing message text in those analytics events. The chat window is masked from our session recordings.
 
 **Optional AI-assistant sharing:** connecting an assistant lets it read your synced supplement list until you disconnect for a durable connection, or until the expiry shown for a time-limited connection. Connecting alone does not share medications or your health profile. In the app, Access settings lets you separately choose categories, review the text, and tap Save to upload a temporary copy for one connected assistant. Medication and profile switches start off. The snapshot may contain the categories and derived findings you explicitly selected. Copying a brief into another app sends it through that app, without storing an AI-share snapshot on PharmaGuide.
 
 **Automatic updates:** this separate option starts off. When enabled, local stack changes can refresh the snapshot using the last selected categories and duration, including new entries within those categories. Turning it off stops future automatic updates; use Disconnect to remove the existing server copy.
 
-**Outside those choices:** medications, conditions, age, goals, allergies and other health-profile details are not part of ordinary account backup. Scan history stays on your device.
+**Outside those choices:** medications, conditions, age, goals, allergies and other health-profile details are not part of ordinary account sync. Scan history stays on your device.
 
 **What we do NOT collect from you ever:** social security number, government ID, financial account numbers, biometric data, precise location.`,
     },
@@ -90,7 +90,7 @@ By using PharmaGuide, you agree to the practices described here. If you don't ag
       title: "Storage and security",
       body: `**Where data lives:**
 On your device (protected by your phone's built-in storage encryption): your full supplement stack, medications, conditions, profile, scan history and interaction history.
-On our servers (encrypted in transit and at rest): your email, account metadata, the supplement backup described above if you have an account, product submissions you send, anonymized usage logs, assistant connection/access metadata, and any AI-share snapshot you explicitly send. Snapshot text travels over an encrypted connection and is encrypted with AES-GCM by our server before storage. PharmaGuide can decrypt it to provide the authorized assistant access; this is not end-to-end encryption.
+On our servers (encrypted in transit and at rest): your email, account metadata, the supplement copy described above if you have an account, product submissions you send, usage and diagnostic logs, assistant connection/access metadata, and any AI-share snapshot you explicitly send. Snapshot text travels over an encrypted connection and is encrypted with AES-GCM by our server before storage. PharmaGuide can decrypt it to provide the authorized assistant access; this is not end-to-end encryption.
 
 **Security measures:** encryption in transit and at rest on our servers, the platform's secure keystore for sign-in credentials on your device, scoped service-account access for our servers, and a security reporting contact at [security@pharmaguide.io](mailto:security@pharmaguide.io).
 
@@ -104,7 +104,7 @@ On our servers (encrypted in transit and at rest): your email, account metadata,
       title: "Who we share with",
       body: `**Service providers:** the small number of vendors we use (email delivery, app hosting, error monitoring) only see what they need to do their job. Optional AI sharing is an exception to device-only storage: our hosting provider stores the encrypted snapshot, and the assistant provider you choose receives the selected text. The assistant handles and retains that text under its own policies. Our infrastructure providers process data under their applicable service and data-processing terms. A connected assistant is an independent provider chosen by you, not a processor acting solely on our instructions.
 
-**Assistant connection infrastructure:** Supabase provides account sign-in, the synced supplement backup, connection records and encrypted snapshot storage. WorkOS manages assistant authorization; we send it your verified account ID and email, and it processes authorization and connection metadata. We do not send your supplement list, medications or snapshot text to WorkOS as part of this authorization flow. Vercel hosts the website and connection-management endpoints. See [Supabase’s data-processing terms](https://supabase.com/legal/customer-resources/data-processing-addendum) and [WorkOS’s data-processing terms](https://workos.com/legal/data-processing-addendum).
+**Assistant connection infrastructure:** Supabase provides account sign-in, the synced supplement copy, connection records and encrypted snapshot storage. WorkOS manages assistant authorization; we send it your verified account ID and email, and it processes authorization and connection metadata. We do not send your supplement list, medications or snapshot text to WorkOS as part of this authorization flow. Vercel hosts the website and connection-management endpoints. See [Supabase’s data-processing terms](https://supabase.com/legal/customer-resources/data-processing-addendum) and [WorkOS’s data-processing terms](https://workos.com/legal/data-processing-addendum).
 
 **Optional beta poll:** if you confirm an answer, we store your latest general testing interest and its submission date with your Resend contact. Opening a poll link does not save an answer. The poll collects no personal medical details and does not change your subscriptions.
 
@@ -148,7 +148,7 @@ If you're in California, the EU, the UK, or another jurisdiction with additional
 
 **Connected AI assistants:** each provider you approve receives your supplement list and any snapshot you separately share to that connection. PharmaGuide does not control the provider's chat retention or training settings. Review those settings before sharing health information. Disconnecting stops future access through PharmaGuide; ask the provider to delete information it already received.
 
-**AI service providers (website chat):** to answer a chat question we send your message to Google (Gemini) and, as a backup, to Groq. They process that text to generate the reply, and each provider's own terms govern how it handles it. Don't type details you wouldn't want processed that way, such as your name or contact information.
+**AI service providers (website chat):** to answer a chat question we send your message, your recent conversation and health context you mentioned earlier in the chat (such as pregnancy or a condition) to Google (Gemini) and, as a backup, to Groq. That context can still be sent after the earlier messages are no longer part of the recent conversation. They process that text to write the reply, and each provider's own terms govern how it handles it. Please leave out names, contact details and other identifying information. Connected AI assistants are a separate, optional feature described above.
 
 **Third-party links:** the site occasionally links to external sources (FDA, NIH, PubMed, DSLD). When you click those, you leave our site and their privacy policies apply.
 

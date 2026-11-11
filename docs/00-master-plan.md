@@ -210,3 +210,11 @@ Integrated private qualification mechanism (PR12): the existing authorization ro
 App PR135 and website PR8 merged; both connector migrations applied with explicit approval. Public personal access remains disabled. Real Google sign-in succeeded; WorkOS complete returned200 with `/oauth2/external/callback`, which the website rejected. Added that exact observed path to the existing issuer-pinned allowlist; fail-first regression503vs200 now passes, including hostile-origin/userinfo/fragment negatives. Existing route remains the authorization owner; no new identity or clinical logic. All41 connector tests and private production build pass. Local browser now reaches actual WorkOS consent and installed Codex reports OAuth success. Heading clearance, review action, loading feedback and recovery copy improved locally; browser render checked. This correction is not yet merged/deployed.
 
 Private test runtime initially used HTTP setup URL and hit the existing HTTPS guard; corrected harness configuration without changing that guard. Actual Codex now creates pending approval in hosted Supabase. Real-phone approval, read access, scoped snapshot/expiry and disconnect/reconnect acceptance remain pending; no completion claim.
+
+## Educational scope alignment — November 10, 2026 (local candidate)
+
+Owner: existing chat UI, methodology/FAQ/features and Privacy/HIPAA disclosure owners. Builds on Codex's claims and privacy fixes (score meaning, profile/input limits, label-source provenance, no categorical regulatory exemption, push-only supplement-list storage without a restore promise; verified: the app only upserts `user_stacks`, it never reads it back).
+
+The chat keeps its AI, paired with chatbot API branch `claude/grounded-chat`: answers report what sources found and never prescribe, and each answer carries `basis` (`pharmaguide_record` / `reference_data` / `general_background`), rendered as a neutral source label instead of the old confidence-to-guideline badge. Privacy again names Google (Gemini) and Groq as the chat's AI providers.
+
+Deploy the chatbot API branch before this website candidate: the UI reads `basis`. No push, merge or deployment yet. Clinical-rule review, the FAQ "reviewed by a licensed pharmacist" claim, and regulatory classification remain open.

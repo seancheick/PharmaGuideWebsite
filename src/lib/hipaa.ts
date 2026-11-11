@@ -17,7 +17,7 @@ export const HIPAA_DOC: LegalDocument = {
       "PharmaGuide is a **direct-to-consumer service for adults**. We do not currently operate on behalf of a healthcare organization or under business associate contracts.",
       "This statement is **not a HIPAA compliance certification**. HIPAA applicability depends on the data and the relationships involved, not just whether an app contains health information.",
       "Your **medications, conditions and health profile stay on your device by default**. An optional, explicitly shared AI snapshot is stored encrypted on our server and disclosed to your chosen assistant.",
-      "Our [Privacy Policy](/privacy) explains account backups, assistant access, retention, deletion and incident notification.",
+      "Our [Privacy Policy](/privacy) explains account storage, assistant access, retention, deletion and incident notification.",
     ],
   },
   sections: [
@@ -49,9 +49,9 @@ These are descriptions of current controls, not a claim that we have completed a
       title: "Why on-device data changes the equation",
       body: `The most sensitive things you put into PharmaGuide — your medications, your conditions, your health profile, your scan history, your interaction history — live in a local database on your phone, protected by your phone's built-in storage encryption. Interaction checks run on the device.
 
-Ordinary stack backup excludes these health details. If you explicitly share an AI snapshot, PharmaGuide stores the selected text encrypted for a limited time and can decrypt it for that assistant. It is not end-to-end encrypted.
+Ordinary stack sync excludes these health details. If you explicitly share an AI snapshot, PharmaGuide stores the selected text encrypted for a limited time and can decrypt it for that assistant. It is not end-to-end encrypted.
 
-An account also enables a backup of the supplement products in your stack, so you can restore it. It does not include your medications, conditions, doses or schedules. Read the [Privacy Policy](/privacy) for the exact data inventory.
+An account also stores a copy of your supplement product list. The app does not currently restore that list to a new phone. It does not include your medications, conditions, doses or schedules. Read the [Privacy Policy](/privacy) for the exact data inventory.
 
 AI sharing creates an additional disclosure of health information. The consent preview explains the categories, duration and destination. Disconnecting ends future access but cannot erase the assistant’s existing chat history; see the privacy policy for removal and offline limits.`,
     },
@@ -59,7 +59,7 @@ AI sharing creates an additional disclosure of health information. The consent p
       id: "what-we-do-hold",
       num: "4",
       title: "What we do hold (and how it's protected)",
-      body: `On our servers we hold your **email address** (required for account auth), the **supplement backup** if you have an account, **product submissions** you choose to send, **anonymized usage logs** (server logs, crash reports, aggregated analytics), **opt-in newsletter subscription records**, **AI connection/access metadata**, and any **temporary AI-share snapshot** you explicitly send.
+      body: `On our servers we hold your **email address** (required for account auth), the **supplement copy** if you have an account, **product submissions** you choose to send, **usage and diagnostic logs** (server logs, crash reports, aggregated analytics), **opt-in newsletter subscription records**, **AI connection/access metadata**, and any **temporary AI-share snapshot** you explicitly send.
 
 Server data is encrypted in transit and at rest. Optional snapshots can contain selected health information, and our server can read them for the authorized assistant. Connection lifetime, snapshot expiry and account deletion are distinct controls.
 

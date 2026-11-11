@@ -175,8 +175,8 @@ export async function POST(req: Request) {
     // brand opaque about which LLM is under the hood. `_state` IS
     // passed through: the client persists it across turns and echoes
     // it back, which is how the assistant remembers patient context
-    // (pregnancy, medications, prior clarifications). `confidence`
-    // also passes through so the bubble can render its tier badge.
+    // (pregnancy, medications, prior clarifications). `basis` also
+    // passes through so the bubble can say what grounded the answer.
     delete data.model;
 
     return NextResponse.json(data, { status: 200 });

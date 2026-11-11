@@ -23,7 +23,7 @@
     "blog:check-reviews": "node scripts/blog-check-reviews.mjs",
     "test:email": "node --test tests/resend-contract.test.cjs tests/email-theme.test.cjs tests/email-poll.test.cjs tests/email-journey-v2.test.cjs tests/email-review-setup.test.cjs tests/email-audiences.test.cjs",
     "test:ai-connector": "tsc -p tests/tsconfig.ai-connector.json && node --test tests/ai-connector.test.cjs",
-    "test:ai-privacy": "node --test tests/analytics-privacy.test.cjs",
+    "test:ai-privacy": "node --test tests/analytics-privacy.test.cjs tests/educational-scope.test.cjs",
     "test:mcp-routing": "node --test tests/mcp-routing.test.cjs",
     "recalls:digest": "node scripts/recall-digest.mjs",
     "test:recalls": "node --test tests/recall-digest.test.mjs"

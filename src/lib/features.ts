@@ -177,7 +177,7 @@ export const PILLARS: readonly FeaturePillar[] = [
     overview:
       "Active and inactive ingredients parsed, proprietary blends read as disclosed, six-part PG Score per product.",
     intro:
-      "We parse the active ingredients AND the inactive ones — fillers, binders, allergens, and the proprietary blends most apps skip. Every product gets a PG Score out of 100 across six parts, so you can compare brands on substance, not packaging.",
+      "We parse the active ingredients AND the inactive ones — fillers, binders, allergens, and the proprietary blends most apps skip. Products with completed assessments receive a PG Score out of 100 across six parts. This editorial assessment uses available label and research information; it is not a laboratory test, a measure of personal benefit, or a guarantee of safety.",
     illustration: "transparency",
     capabilities: [
       "Active and inactive ingredients parsed — fillers, allergens, excipients",
@@ -223,14 +223,14 @@ export const PILLARS: readonly FeaturePillar[] = [
     overview:
       "Profile-gated warnings tuned to your conditions, medications, and goals — irrelevant alerts stay hidden.",
     intro:
-      "Your conditions, age, current medications, and goals reshape every recommendation. Pregnancy. Hypertension. Anticoagulant therapy. Each modifies the safety calculus. We profile-gate every interaction so you only see warnings that actually apply to you.",
+      "Your profile helps put documented concerns in context, including pregnancy, conditions and current medications. Checks use the information you provide and the available rules; missing information and limited coverage can affect what is found. Bring flagged concerns to your pharmacist or clinician before changing what you take.",
     illustration: "fit",
     capabilities: [
       "Profile gating — irrelevant warnings stay hidden, relevant ones surface clearly",
       "Medication ↔ condition flags — surfaces when something in your stack is risky given a diagnosis you've entered",
       "Pregnancy + breastfeeding flags treated as separate, never combined",
       "Drug-class awareness: SSRIs, statins, anticoagulants, hypoglycemics, more",
-      "Goal-driven stack recommendations (sleep, energy, recovery, longevity)",
+      "Goal context for reviewing supplement information (sleep, energy and recovery)",
     ],
     examples: [
       {
@@ -264,12 +264,12 @@ export const PILLARS: readonly FeaturePillar[] = [
     titleLead: "When 'more' becomes",
     titleEm: "too much.",
     overview:
-      "Tracks every nutrient across your full stack against RDA and Tolerable Upper Intake Level.",
+      "Tracks nutrients across your full stack against the RDA and Tolerable Upper Intake Level where one is published.",
     intro:
-      "Fat-soluble vitamins accumulate. Mineral overdoses are real. We track nutrients across your stack against the **Recommended Daily Allowance (RDA)** and the **Tolerable Upper Intake Level (UL)** — and flag when your intake crosses into the zone where supplementation may do more harm than good.",
+      "Fat-soluble vitamins accumulate. Mineral overdoses are real. We track nutrients across your stack against the **Recommended Daily Allowance (RDA)** and the **Tolerable Upper Intake Level (UL)** where one is published — and flag when your intake crosses into the zone where supplementation may do more harm than good.",
     illustration: "accumulation",
     capabilities: [
-      "RDA + UL tracking per nutrient across the entire stack",
+      "RDA + UL tracking across the entire stack, where a reference is published",
       "Fat-soluble accumulation flags (vitamin A, D, E, K)",
       "Mineral excess detection (iron, zinc, selenium)",
       "Visualized as a per-nutrient meter so you see the headroom",

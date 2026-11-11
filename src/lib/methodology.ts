@@ -144,8 +144,8 @@ export const ENGINE_STAGES: readonly EngineStage[] = [
   {
     num: "05",
     title: "Accumulation tracking",
-    body: "Each nutrient is summed across the entire stack and measured against its Recommended Daily Allowance and Tolerable Upper Intake Level — so three products quietly stacking the same mineral don't slip past the safe ceiling.",
-    detail: "RDA + UL per nutrient · across the full stack",
+    body: "Nutrient intake is summed across the stack and compared with published intake references, including Recommended Daily Allowances and Tolerable Upper Intake Levels where available. A reference limit is not an individual guarantee of safety.",
+    detail: "RDA + UL where published · across the full stack",
   },
   {
     num: "06",
@@ -170,7 +170,7 @@ export const PROCESS_STEPS: readonly ProcessStep[] = [
   {
     num: "03",
     title: "Pharmacist verification",
-    body: "A licensed clinical pharmacist reviews interaction guidance before it ships — checking the science, the framing, and the recommendation against current practice standards.",
+    body: "A licensed clinical pharmacist reviews interaction guidance before it ships — checking the science, the framing, and the guidance against current practice standards.",
     reviewer: PEOPLE["laurie-pham"],
   },
   {
@@ -194,7 +194,7 @@ export const AI_DOES: readonly string[] = [
   "Process and structure data from multiple sources",
   "Identify potential interactions documented in the literature",
   "Generate initial drafts of educational content",
-  "Power the AI Guidance Chat for in-app questions",
+  "Explain PharmaGuide's interaction records and published research in the website chat, labelling what each answer is based on",
 ];
 
 export const AI_DOES_NOT: readonly string[] = [
@@ -213,10 +213,10 @@ export const SCOPE_IS: readonly string[] = [
 ];
 
 export const SCOPE_IS_NOT: readonly string[] = [
-  "A medical device or diagnostic tool",
+  "A diagnostic service or a substitute for clinical assessment",
   "A replacement for professional medical advice",
-  "A source of treatment recommendations",
+  "A prescribing service or an individual treatment plan",
   "A guarantee of supplement safety or efficacy",
 ];
 
-export const METHODOLOGY_LAST_UPDATED = "2026-05-08";
+export const METHODOLOGY_LAST_UPDATED = "2026-11-10";

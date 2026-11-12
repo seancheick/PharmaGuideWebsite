@@ -58,7 +58,7 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "product",
     q: "What is PharmaGuide?",
-    body: "PharmaGuide is a supplement and medication interaction checker. Scan any product to see how it interacts with your other supplements, your prescriptions, and your timing. Every interaction includes the mechanism, evidence level, and clinical reasoning behind the verdict — **reviewed by a licensed pharmacist before it ships**.",
+    body: "PharmaGuide helps you check supplement quality, ingredient overlap and documented interactions. Scan a supported product to see its label information and available assessment. Add what you take to check combinations, even if you take no medications.",
   },
   {
     group: "privacy",
@@ -68,22 +68,32 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "product",
     q: "How accurate is the data?",
-    body: "Interaction content is checked against applicable regulatory sources, published research and clinical references, then reviewed by a licensed pharmacist. NIH DSLD supplies label information; inclusion is not agency endorsement or proof of product quality. Each one carries an evidence level (Established / Probable / Moderate / Limited / Theoretical) so you know how strong the clinical literature is. When evidence is weak, conflicting, or incomplete, we say so directly.",
+    body: "Interaction content is checked against applicable regulatory sources, published research and clinical references. NIH DSLD supplies label information; inclusion is not agency endorsement or proof of product quality. Interaction findings can include an evidence level (Established / Probable / Moderate / Limited / Theoretical) so you know how strong the clinical literature is. When evidence is weak, conflicting, or incomplete, we say so directly.",
   },
   {
     group: "product",
     q: "Does it work offline?",
-    body: `**Yes.** The **product catalog** is pre-loaded on your device. Scanning, search, interaction checks, and stack analysis all run locally — works in pharmacies, on flights, anywhere with one bar of signal. Only optional features that pull live citations need an internet connection.`,
+    body: `**Yes.** The **product catalog** is pre-loaded on your device. Scanning, search, interaction checks, and stack analysis all run locally — works in pharmacies, on flights, anywhere with one bar of signal. Catalog updates and online features such as AI chat require an internet connection.`,
   },
   {
     group: "launch",
     q: "Is it free?",
-    body: "The core interaction checker is **free during beta** — scanning, search, your stack, and every interaction warning with full reasoning. No credit card required. Optional premium features (deep clinical research, advanced personalization, the educational AI reference chat) will be available later through a subscription.",
+    body: "**Basic use is free forever.** Beta includes all available features. After beta, Free includes barcode scans, available quality assessments, interaction and condition findings, recall alerts and details, and a limited stack and chat allowance. Optional Premium adds supplement search by name, larger stacks and more chat.",
   },
   {
     group: "product",
     q: "How is this different from the interaction checker on my pharmacy app?",
     body: "Most apps only check drug-to-drug interactions. PharmaGuide checks **supplement-to-supplement, drug-to-supplement, timing conflicts, and ingredient quality** — all personalized to your conditions, medications, and goals. Computed on your device. Reviewed by clinicians. Built for what you actually take.",
+  },
+  {
+    group: "product",
+    q: "Can I use PharmaGuide if I don't take medications?",
+    body: "Yes. Scan supplements for available quality assessments and check products together for documented interactions and overlapping ingredients. You can also add health context such as pregnancy or breastfeeding to see relevant documented concerns.",
+  },
+  {
+    group: "product",
+    q: "How do recall alerts work?",
+    body: "When updated catalog information identifies a recall affecting a supplement or medication you've saved, PharmaGuide updates its status and shows the recall date, reason and source. You'll receive an alert if notifications are enabled. Recall alerts and details are included in beta and stay free after beta.",
   },
   {
     group: "product",
@@ -108,7 +118,7 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "launch",
     q: "When does it launch — and what changes when it does?",
-    body: "Opening in waves through **2026**. The core interaction checker stays **free at launch** — scanning, search, your stack, and every interaction warning with full reasoning. Optional premium features (deep clinical research, advanced personalization, the educational AI reference chat) become available through a subscription. **Founding beta members get extended free access.** [Join the beta](/#waitlist).",
+    body: "Join the waitlist to request a beta invitation. Once invited, start by scanning two supplements you already take and checking them together. [Join the beta](/#waitlist).",
   },
 ] as const;
 

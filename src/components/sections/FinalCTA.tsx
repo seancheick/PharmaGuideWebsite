@@ -309,7 +309,7 @@ function SuccessState({ message }: { message: string }) {
           />
         </svg>
       </span>
-      <p className="font-serif text-h3 italic text-ink">Thanks for checking in.</p>
+      <p className="font-serif text-h3 italic text-ink">You&apos;re on the beta list.</p>
       <p className="text-body-sm text-muted">{message}</p>
     </m.div>
   );

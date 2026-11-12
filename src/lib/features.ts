@@ -299,15 +299,15 @@ export const PILLARS: readonly FeaturePillar[] = [
     num: "06",
     id: "recall-safety",
     eyebrow: "Recall & Safety",
-    titleLead: "When the FDA pulls something,",
-    titleEm: "you find out.",
+    titleLead: "Stay informed about",
+    titleEm: "product recalls.",
     overview:
-      "FDA recall and banned-ingredient monitoring for dietary supplements.",
+      "Recall monitoring for saved supplements and medications.",
     intro:
-      "The FDA recalls dietary supplements regularly — adulterated formulations, undeclared pharmaceuticals, contamination, mislabeling. Most users never hear about it. PharmaGuide checks products against FDA recalls and banned or adulterant ingredients, so a product in your stack doesn't quietly become unsafe without you noticing.",
+      "When updated catalog information identifies a recall affecting a saved supplement or medication, PharmaGuide updates its status with the recall date, reason and source. Enable notifications to receive an alert. Recall alerts and details are included in beta and stay free after beta.",
     illustration: "recalls",
     capabilities: [
-      "FDA recall monitoring for dietary supplements",
+      "Recall updates for affected saved supplements and medications",
       "Banned and adulterant ingredients flagged with the reason and the FDA source",
       "Recalled products stay findable — a scan shows the recall instead of \"not found\"",
       "FDA warning letter awareness for flagged brands",

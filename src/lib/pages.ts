@@ -62,8 +62,8 @@ export const PAGES: Record<PageKey, PageEntry> = {
     label: "Home",
     og: {
       eyebrow: "The supplement & medication co-pilot",
-      headline: "Your supplements don’t act in isolation.",
-      accent: "Neither should your check.",
+      headline: "Know what you're taking.",
+      accent: "Understand how it works together.",
     },
     sitemap: { priority: 1, changeFrequency: "weekly" },
     llms: { section: "product", summary: "What PharmaGuide is and why it exists" },

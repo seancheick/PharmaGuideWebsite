@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { PhoneMockup } from "@/components/hero/PhoneMockup";
 import { WaitlistLink } from "@/components/shared/WaitlistLink";
-import { SOURCE_LABEL_COUNT } from "@/lib/site";
 
 /**
  * Hero — first viewport, two-column on desktop, stacked on mobile.
@@ -49,27 +48,16 @@ export function Hero() {
               The supplement &amp; medication co-pilot
             </p>
 
-            {/* "act", not "work" — "don't work in isolation" reads as an
-                efficacy claim (they're ineffective alone), which is not what
-                we mean and not a claim we want to make. "Act" is the
-                pharmacologic verb and carries only the intended reading.
-                Matters most where this line travels without its subhead:
-                the OG image, search snippets, the business card.        */}
             <h1 className="text-display-hero text-ink">
-              Your supplements don&apos;t act in isolation.
+              Know what you&apos;re taking.
               <br />
-              <span className="text-accent">Neither should your check.</span>
+              <span className="text-accent">Understand how it works together.</span>
             </h1>
 
-            {/* One personal promise — replaces the feature inventory
-                (interactions, depletions, dose overlap, recalls, quality)
-                that used to live here. That list is real, but it made the
-                hero a spec sheet; it now lives on /features, linked below
-                the trust pills. What the hero owes a first-time visitor is
-                the outcome, stated as decision support — not advice.   */}
             <p className="max-w-prose animate-fade-up text-body-lg text-muted sm:text-body-xl">
-              Know whether this supplement is right for you — before it conflicts with your
-              medications, conditions, or existing stack.
+              Scan a supplement to understand its ingredients, quality, and evidence.
+              Check for ingredient overlap and documented concerns based on your other
+              supplements, medications, and health conditions.
             </p>
 
             <div className="order-last flex animate-fade-up flex-wrap items-center gap-x-5 gap-y-2 text-body-sm text-muted [animation-delay:80ms] max-lg:mt-4 lg:order-none">
@@ -90,8 +78,7 @@ export function Hero() {
                   <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                   <line x1="12" y1="22.08" x2="12" y2="12" />
                 </svg>
-                Sourced from <span className="tnum font-medium text-ink">{SOURCE_LABEL_COUNT}</span>{" "}
-                NIH labels
+                Built on NIH supplement label data
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <svg
@@ -135,13 +122,22 @@ export function Hero() {
             {/* Tertiary deep-dive link — pulled out of the subhead so it
                 stops competing with the primary CTA. Quiet mono caps,
                 under the trust row, above the action buttons.          */}
-            <Link
-              href="/features"
-              className="order-last inline-flex w-fit animate-fade-up items-center gap-1.5 font-mono text-eyebrow uppercase text-accent transition-colors duration-fast ease-smooth [animation-delay:120ms] hover:text-accent-strong lg:order-none"
-            >
-              See everything we check
-              <span aria-hidden="true">→</span>
-            </Link>
+            <div className="order-last flex flex-wrap items-center gap-x-5 gap-y-2 lg:order-none">
+              <Link
+                href="/features"
+                className="order-last inline-flex w-fit animate-fade-up items-center gap-1.5 font-mono text-eyebrow uppercase text-accent transition-colors duration-fast ease-smooth [animation-delay:120ms] hover:text-accent-strong lg:order-none"
+              >
+                See everything we check
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link
+                href="/features#recall-safety"
+                className="inline-flex w-fit items-center gap-1.5 font-mono text-eyebrow uppercase text-accent hover:text-accent-strong"
+              >
+                Product recall alerts
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
 
             {/* CTA pair. The primary says exactly what the click does — join
                 the beta — and the secondary keeps the visitor on the page
@@ -175,14 +171,8 @@ export function Hero() {
                 </Link>
               </div>
 
-              {/* Sets expectation before the click, not after it: what you're
-                  signing up for (a phone app — the privacy policy and press
-                  kit already name both platforms) and where it stands. Not
-                  "opening in waves": that reads as a queue, and the first
-                  testers are being added by hand now. Update the day the app
-                  opens to everyone — it dates itself on purpose. */}
               <p className="mt-3 text-body-sm text-subtle">
-                iPhone &amp; Android app · free in beta · we&apos;re adding the first testers now
+                iPhone &amp; Android · Basic use is free forever · All available features included during beta.
               </p>
             </div>
           </div>

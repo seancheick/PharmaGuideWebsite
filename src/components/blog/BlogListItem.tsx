@@ -20,7 +20,14 @@ import { BlogCardCover } from "./BlogCardCover";
  * accent. Image scales 1.04 (handled by BlogCardCover's group-hover).
  */
 
-export function BlogListItem({ post }: { post: BlogCardPost }) {
+export function BlogListItem({
+  post,
+  compact = false,
+}: {
+  post: BlogCardPost;
+  /** Homepage shelf: smaller thumbnail, no excerpt or byline. */
+  compact?: boolean;
+}) {
   const cat = getCategory(post.category);
 
   return (
@@ -29,7 +36,13 @@ export function BlogListItem({ post }: { post: BlogCardPost }) {
       className="group flex items-start gap-4 rounded-2xl border border-border bg-surface p-4 shadow-xs transition-[transform,box-shadow,border-color,background-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-raised hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent sm:gap-5 sm:p-5 md:items-center"
     >
       {/* Thumbnail — 1:1 square, fixed-size based on viewport */}
-      <div className="relative aspect-square h-24 w-24 shrink-0 overflow-hidden rounded-xl sm:h-28 sm:w-28 md:h-32 md:w-32">
+      <div
+        className={
+          compact
+            ? "relative aspect-square h-20 w-20 shrink-0 overflow-hidden rounded-xl"
+            : "relative aspect-square h-24 w-24 shrink-0 overflow-hidden rounded-xl sm:h-28 sm:w-28 md:h-32 md:w-32"
+        }
+      >
         <BlogCardCover
           post={post}
           sizes="(max-width: 768px) 128px, 144px"
@@ -58,12 +71,14 @@ export function BlogListItem({ post }: { post: BlogCardPost }) {
 
         {/* Excerpt — clamped tighter in list view (1 line on mobile,
             2 on desktop) so each row stays compact + scannable */}
-        <p className="line-clamp-1 text-body-sm leading-relaxed text-muted md:line-clamp-2">
-          {post.description}
-        </p>
+        {!compact && (
+          <p className="line-clamp-1 text-body-sm leading-relaxed text-muted md:line-clamp-2">
+            {post.description}
+          </p>
+        )}
 
         {/* Meta strip — author + read time */}
-        <div className="flex items-center gap-3 pt-1 text-body-sm text-muted">
+        <div className={compact ? "hidden" : "flex items-center gap-3 pt-1 text-body-sm text-muted"}>
           <span className="text-foreground/85">{displayName(PEOPLE[post.authorId])}</span>
           <span aria-hidden="true" className="text-border-strong">·</span>
           <span className="font-mono text-[10.5px] uppercase tracking-[0.12em]">

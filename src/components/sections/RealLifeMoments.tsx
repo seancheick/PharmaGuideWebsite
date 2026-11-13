@@ -142,7 +142,7 @@ export function RealLifeMoments() {
     <section
       id="real-life-moments"
       aria-labelledby="moments-heading"
-      className="relative bg-surface-subtle py-section-y"
+      className="relative bg-surface-subtle py-section-y-sm"
     >
       {/* Header */}
       <div className="container mx-auto">
@@ -151,7 +151,7 @@ export function RealLifeMoments() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-15%" }}
-          className="max-w-3xl"
+          className="max-w-4xl"
         >
           <m.p
             variants={fadeUpItem}
@@ -163,16 +163,15 @@ export function RealLifeMoments() {
           <m.h2
             id="moments-heading"
             variants={fadeUpItem}
-            className="mt-5 text-balance text-display-lg text-ink"
+            className="mt-3 text-balance text-display-sm text-ink"
           >
-            The moments people don&apos;t realize
-            <br />
+            The moments people don&apos;t realize{" "}
             <span className="font-serif italic text-accent">they need this.</span>
           </m.h2>
 
           <m.p
             variants={fadeUpItem}
-            className="mt-6 max-w-prose text-body-lg leading-relaxed text-muted"
+            className="mt-3 max-w-prose text-body leading-relaxed text-muted"
           >
             From morning prescriptions to trending supplements, PharmaGuide catches the combinations
             people usually miss.
@@ -190,7 +189,7 @@ export function RealLifeMoments() {
         aria-label="Real-life moments"
         style={{ marginLeft: "var(--carousel-inset)" }}
         className={cn(
-          "mt-12 flex gap-3 overflow-x-auto overflow-y-hidden pb-6 pr-5 pt-2 sm:gap-4 sm:pr-8 md:mt-16 md:pr-10",
+          "mt-8 flex gap-3 overflow-x-auto overflow-y-hidden pb-6 pr-5 pt-2 sm:gap-4 sm:pr-8 md:mt-10 md:pr-10",
           // Carousel left-inset by viewport tier:
           //   mobile  20px     · sm 24px    · lg+  scales with viewport
           //
@@ -334,14 +333,16 @@ const MomentCard = ({
         "group relative shrink-0 cursor-pointer snap-start overflow-hidden rounded-3xl bg-ink shadow-md",
         // Closed widths/heights. Mobile pulled in from 80vw → 76vw so the
         // next card peeks more clearly (carousel affordance).
-        "h-[480px] w-[76vw] sm:h-[520px] sm:w-[360px] md:h-[540px] md:w-[360px] lg:h-[560px] lg:w-[380px] xl:h-[580px] xl:w-[400px]",
+        // Reduced 2026-11-13 (was 380×560 on desktop, 76vw×480 on phones): four
+        // cards now show at once on desktop and two on a phone.
+        "h-[340px] w-[58vw] sm:h-[400px] sm:w-[280px] md:h-[420px] md:w-[290px] lg:h-[420px] lg:w-[300px]",
         "transition-[transform,box-shadow] duration-[700ms] ease-[cubic-bezier(0.32,0.72,0.24,1)]",
         // Open widths/heights — bumped on mobile and sm so the expand is
         // actually felt. Mobile: 76vw→94vw + 480px→620px. sm: 360px→
         // 600px + 520px→640px. Desktop sizes unchanged (already worked).
         // Framer Motion layout prop handles the size transition via FLIP.
         isOpen
-          ? "h-[620px] w-[94vw] cursor-default shadow-2xl sm:h-[640px] sm:w-[600px] md:h-[540px] md:w-[700px] lg:h-[560px] lg:w-[860px] xl:h-[580px] xl:w-[920px]"
+          ? "h-[620px] w-[94vw] cursor-default shadow-2xl sm:h-[640px] sm:w-[600px] md:h-[420px] md:w-[700px] lg:h-[420px] lg:w-[860px] xl:w-[920px]"
           : "hover:-translate-y-1 hover:shadow-xl"
       )}
     >

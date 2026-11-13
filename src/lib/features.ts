@@ -1,4 +1,5 @@
 import { SOURCE_LABEL_COUNT } from "./site";
+import { QUALITY_PILLARS } from "./quality-score";
 
 /**
  * /features page — single source of truth for the 6-pillar capabilities
@@ -154,7 +155,10 @@ export const PILLARS: readonly FeaturePillar[] = [
       },
       {
         trigger: "Fish oil + turmeric + warfarin",
-        result: "**Two bleeding-risk flags** — fish oil and turmeric each add to warfarin's effect; review with your prescriber",
+        // Pipeline: fish oil × anticoagulants = monitor (established; trials
+        // show no overall bleeding increase); turmeric/curcumin × anticoagulants
+        // = caution (theoretical, lab data). Neither is "adds to warfarin".
+        result: "**Two flags** — fish oil (Monitor) and turmeric (Caution, limited evidence); tell your prescriber about both and report unusual bruising or bleeding",
       },
       {
         trigger: "Iron supplement + calcium-rich multi + thyroid medication",
@@ -183,7 +187,7 @@ export const PILLARS: readonly FeaturePillar[] = [
       "Active and inactive ingredients parsed — fillers, allergens, excipients",
       "Proprietary blends read as printed — the total and the ingredients inside, with undisclosed amounts marked unknown, never guessed",
       "Probiotic strain + CFU and prebiotic fiber checks — strains named, live counts and fiber type verified, not just 'blend'",
-      "PG Score across six parts: Formulation 20, Dose 20, Evidence 20, Transparency 15, Verification 15, Safety & Hygiene 10",
+      `PG Score across six parts: ${QUALITY_PILLARS.map((p) => `${p.name} ${p.max}`).join(", ")}`,
       "Third-party certifications (USP, NSF, Informed Sport) earn full credit only when confirmed in the certifier's registry; a label claim alone counts for less",
     ],
     examples: [
@@ -199,7 +203,10 @@ export const PILLARS: readonly FeaturePillar[] = [
       },
       {
         trigger: "Capsule with magnesium stearate + titanium dioxide",
-        result: "**Inactive-ingredient flag** — relevant for some autoimmune conditions",
+        // Pipeline: titanium dioxide (E171) is on the watchlist — banned as a
+        // food additive in the EU since 2022-02-07 (Reg. (EU) 2022/63), still
+        // permitted in the US; magnesium stearate is low concern.
+        result: "**Additive flag** — titanium dioxide is no longer allowed in EU foods or supplements; magnesium stearate is low concern",
       },
       {
         trigger: "Two melatonin brands, same dose",
@@ -235,11 +242,11 @@ export const PILLARS: readonly FeaturePillar[] = [
     examples: [
       {
         trigger: "St. John's Wort + sertraline + 'mood support' goal",
-        result: "**Contraindicated** — serotonin syndrome risk; do not combine",
+        result: "**Avoid** — serotonin syndrome risk; avoid unless your prescriber directs and monitors it",
       },
       {
         trigger: "Potassium + ACE inhibitor + 'kidney disease' profile",
-        result: "**Avoid** — hyperkalemia risk with reduced kidney function; surfaced because all three are in your profile",
+        result: "**Caution** — hyperkalemia risk with reduced kidney function; check with your kidney-care team first. Surfaced because all three are in your profile",
       },
       {
         trigger: "Vitamin A over 10,000 IU + 'pregnancy' profile flag",
@@ -331,21 +338,47 @@ export const PILLARS: readonly FeaturePillar[] = [
 
 // ─── Bonus: Clinician-Ready Reports + Built On strip ─────────────────
 
-export const CLINICIAN_REPORT = {
-  eyebrow: "Bonus capability",
-  title: "A report your clinician can actually read.",
-  body: "Export your full stack — every supplement, every medication, every flagged interaction with mechanism and evidence — as a clean PDF sized for the 7-minute primary care visit. Or copy-paste it straight into MyChart's secure messaging.",
-  bullets: [
-    "PDF export sized for clinical workflow",
-    "Plain-text version for MyChart and patient portals",
-    "Includes evidence levels and recommendation language",
+/**
+ * Share your stack — the app's three share options, in its order
+ * (lib/features/stack/widgets/stack_share_sheet.dart), worded from:
+ *   • clinician: services/sharing/clinician_pdf_builder.dart — findings with
+ *     evidence, mechanism, management and source; limitations; questions. No
+ *     plain-text portal export exists, so none is claimed.
+ *   • assistant: lib/ai-connector.ts + the privacy page — a connection reads
+ *     the synced supplement list only; medications and profile go only in a
+ *     snapshot the user switches on, previews and saves (24 h by default).
+ *   • friends: "Product names and brands only."
+ */
+export const SHARE_STACK = {
+  eyebrow: "Share your stack",
+  title: "Shared on your terms.",
+  body: "You choose exactly what leaves your phone, and who gets it.",
+  channels: [
+    {
+      who: "Your clinician",
+      short: "A PDF for your clinician",
+      title: "A report your clinician can actually read.",
+      body: "A PDF of your supplements and medications, with each flagged finding's mechanism, evidence level and source, plus what could not be checked. Preview it before you share or print.",
+    },
+    {
+      who: "Your AI assistant",
+      short: "Claude or ChatGPT",
+      title: "Ask Claude or ChatGPT about your own stack.",
+      body: "Connect your assistant and it can read your supplement list. To share more, such as PharmaGuide's findings or your medications, switch each one on, preview the exact text and save it; it expires after 24 hours by default. Disconnect anytime.",
+    },
+    {
+      who: "Friends and family",
+      short: "Friends and family",
+      title: "Show what you take.",
+      body: "Send your supplement list as product names and brands only. Medications and your health profile are never included.",
+    },
   ],
-};
+} as const;
 
 export const BUILT_ON = [
   {
     label: `Sourced from ${SOURCE_LABEL_COUNT} NIH labels`,
-    detail: "Catalog pre-loaded on your device. Sub-10ms lookup. Updates over the air.",
+    detail: "Catalog stored on your device, so lookups work offline. Updates over the air.",
   },
   {
     label: "Offline-first",
@@ -360,6 +393,24 @@ export const BUILT_ON = [
     detail: "Interaction guidance reviewed by licensed pharmacists.",
   },
 ];
+
+/**
+ * A product the catalog doesn't have yet. App flow:
+ * features/scanner/scanner_not_found_sheet.dart → "Help add this product" →
+ * missing_product_submission_sheet.dart (panel photos, blur check, panel
+ * auto-labelling, human review of every entry, notification). The "few days"
+ * timing is Sean's (2026-11-13); the app itself promises no date.
+ */
+export const ADD_PRODUCT = {
+  label: "Not in the catalog? You can add it.",
+  detail:
+    "The catalog grows with the people who use it, in any market. A human reviewer checks every label before it goes live.",
+  steps: [
+    { title: "Scan", body: "The barcode isn't in the catalog yet. Tap Help add this product." },
+    { title: "Photograph", body: "Front, Supplement Facts, ingredients, barcode. The app labels each panel and asks for a retake if one is blurry." },
+    { title: "Get notified", body: "Approved products ship in the next catalog update, usually within a few days." },
+  ],
+} as const;
 
 export const BOUNDARIES = {
   title: "What we don't do",

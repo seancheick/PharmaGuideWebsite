@@ -18,7 +18,7 @@ import type { IllustrationKey } from "@/lib/features";
  *   • Custom-built — no stock icons, no clip art
  *
  * Medication Depletion is the hero illustration — it gets a richer
- * pill→arrow→nutrient→replenishment flow because it's the unique
+ * pill→arrow→nutrient→clinician-check flow because it's the unique
  * differentiator. The other 5 are abstract diagrammatic panels.
  */
 
@@ -37,7 +37,7 @@ const stagger = {
 // ─── 1. Medication Depletion ─────────────────────────────────────────
 // Hero illustration: medication card on the left with name + class,
 // connector line with directional arrow, depleted nutrient list on
-// the right, and a subtle "replenishment suggested" footer. Abstract
+// the right, and a subtle "ask your clinician" footer. Abstract
 // in-app panel — feels like a real PharmaGuide screen.
 
 function DepletionIllustration() {
@@ -93,7 +93,7 @@ function DepletionIllustration() {
           </svg>
         </m.div>
 
-        {/* Bottom: depleted nutrients + replenishment */}
+        {/* Bottom: affected nutrient + clinician check */}
         <m.div variants={reveal} className="flex flex-1 flex-col gap-2">
           {[
             { name: "Vitamin B12", note: "lower with long-term use" },
@@ -121,7 +121,7 @@ function DepletionIllustration() {
           variants={reveal}
           className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle"
         >
-          ↘ replenishment suggested · discuss with clinician
+          ↘ ask your clinician about a B12 check
         </m.p>
       </div>
     </m.div>

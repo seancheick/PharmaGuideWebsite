@@ -2,45 +2,40 @@ import { qualityBand } from "./quality-score";
 
 /**
  * Demo products — every product the marketing site shows with a quality
- * score, certification or ingredient claim. One record each, copied from
- * the shipped catalog; components read from here and never type a score.
+ * score. One record each; components read from here and never type a score.
  *
- * Source: PharmaGuide_Pipeline scripts/final_db_output/pharmaguide_core.db
- * (products_core), read 2026-10-04. Re-check when the catalog is rebuilt:
- *   sqlite3 pharmaguide_core.db "select dsld_id, quality_score_v4_100,
- *     quality_tier, cert_programs, has_third_party_testing,
- *     has_harmful_additives, top_warnings from products_core
- *     where dsld_id = 298074"
+ * These are SAMPLE products, not catalog records (decided 2026-11-13). The
+ * site used to show a real product's score, and the catalog re-scored it
+ * (92 → 87) while the page still said 92. A sample cannot go stale: its
+ * score is illustrative and every surface that shows it says "Sample
+ * product". No brand, no certification, no DSLD id — nothing here claims to
+ * describe something on a shelf.
  *
- * Brands are recorded for traceability but not shown: the site presents a
- * score, not an endorsement. Only state what the record supports — e.g. the
- * magnesium carries a low-risk additive flag (monk fruit sweetener), so it
- * is never called a "clean ingredient list".
+ * What stays real is the clinical finding the sample is used to demonstrate
+ * (see components/hero/stories.ts); that is copied from a published record.
  */
 
 export interface DemoProduct {
-  dsldId: number;
-  brand: string;
   name: string;
   dose: string;
+  /** Illustrative. Shown only next to `SAMPLE_PRODUCT_LABEL`. */
   score: number;
   /** Verdict word, derived from the score with the app's bands. */
   tier: string;
-  certification?: string;
 }
+
+/** The words that accompany a sample score wherever it is shown. */
+export const SAMPLE_PRODUCT_LABEL = "Sample product";
 
 function product(p: Omit<DemoProduct, "tier">): DemoProduct {
   return { ...p, tier: qualityBand(p.score).label };
 }
 
 export const DEMO_PRODUCTS = {
-  /** Hero story 1 and How It Works step 3. Record tier: "Excellent". */
-  magnesium: product({
-    dsldId: 298074,
-    brand: "Thorne",
-    name: "Magnesium Bisglycinate",
-    dose: "1 scoop",
-    score: 92,
-    certification: "NSF Certified for Sport",
+  /** Hero story 1 and the homepage scan section. */
+  calcium: product({
+    name: "Calcium + Vitamin D3",
+    dose: "1 tablet",
+    score: 88,
   }),
 } as const satisfies Record<string, DemoProduct>;

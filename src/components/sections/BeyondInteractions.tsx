@@ -1,61 +1,119 @@
-"use client";
-
 import Link from "next/link";
-import { m } from "framer-motion";
-import { fadeUpContainer, fadeUpItem } from "@/lib/tokens";
+import { NUTRIENT_METERS, nutrientFrame } from "@/components/features/nutrient-demo";
+import { ALERT_EXAMPLES, LABEL_EXAMPLE } from "@/components/features/remaining-demo";
+import { SHARE_STACK } from "@/lib/features";
 
 /**
- * Beyond Interactions — homepage broadening section.
+ * Beyond Interactions — the four checks the scan section did not show.
  *
- * Sits between the Interaction Ladder (which shows ONE capability deep)
- * and Real-Life Moments (which brings the product to people). Its job:
- * widen perception in 6 cards before the page goes back to lifestyle.
- *
- * Each card teases one /features pillar with a small mono-numbered
- * badge + italic-serif title + 1-line muted descriptor + arrow link
- * to the deep-dive section anchor.
- *
- * No bullet stacks, no checklist vibe — same typography rhythm as the
- * rest of the site. Cards have a hairline border and a subtle hover
- * lift that telegraphs "click for more."
+ * Was six equal text cards (2026-11-13). Stack intelligence and Personal
+ * fit are now demonstrated by the scan section directly above, so they left
+ * this grid (both still have their /features sections). The four that
+ * remain each carry a small proof instead of a paragraph, and every proof
+ * reuses an example already published on /features — no new claim is made
+ * here:
+ *   depletion      src/lib/features.ts (metformin → vitamin B12)
+ *   accumulation   features/nutrient-demo.ts (vitamin D vs. the adult UL)
+ *   transparency   features/remaining-demo.ts LABEL_EXAMPLE
+ *   recalls        features/remaining-demo.ts ALERT_EXAMPLES
  */
+
+const VITAMIN_D = NUTRIENT_METERS[0];
+const D_FRAME = nutrientFrame(VITAMIN_D, 1);
+const RECALL = ALERT_EXAMPLES[0];
+
+const row = "flex items-center justify-between gap-3 text-[11.5px] leading-none text-ink";
+const mono = "font-mono text-[9.5px] font-medium uppercase tracking-[0.1em]";
 
 const CAPABILITIES = [
   {
-    num: "01",
     title: "Medication depletion",
     body: "Flags common medication-linked nutrient depletion patterns.",
     href: "/features#medication-depletion",
+    proof: (
+      <div>
+        <div className="flex items-center gap-2 text-[12px] text-ink">
+          <span className="rounded-pill border border-border bg-surface px-2.5 py-1.5 leading-none">
+            Metformin
+          </span>
+          <svg
+            width="22"
+            height="8"
+            viewBox="0 0 22 8"
+            fill="none"
+            aria-hidden="true"
+            className="shrink-0 text-subtle"
+          >
+            <path
+              d="M0 4h20M17 1l3 3-3 3"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="rounded-pill border border-accent/25 bg-accent-soft px-2.5 py-1.5 leading-none text-accent-strong">
+            Vitamin B12
+          </span>
+        </div>
+        <p className={`${mono} mt-2.5 text-subtle`}>Lower levels more likely, long-term</p>
+      </div>
+    ),
   },
   {
-    num: "02",
-    title: "Stack intelligence",
-    body: "Checks supplement–supplement, supplement–drug, and drug–drug combinations, timing, and dose overlap.",
-    href: "/features#stack-intelligence",
-  },
-  {
-    num: "03",
-    title: "Ingredient transparency",
-    body: "Shows active ingredients, excipients, blends, and label gaps.",
-    href: "/features#ingredient-transparency",
-  },
-  {
-    num: "04",
-    title: "Personal fit",
-    body: "Flags when a supplement or medication clashes with one of your conditions — across 14, including pregnancy, trying to conceive, diabetes, and upcoming surgery.",
-    href: "/features#personal-fit",
-  },
-  {
-    num: "05",
     title: "Nutrient accumulation",
     body: "Catches when multiple products push the same nutrient too high.",
     href: "/features#nutrient-accumulation",
+    proof: (
+      <div>
+        <div className={row}>
+          <span>{VITAMIN_D.name} across 3 products</span>
+          <span className="tabular-nums text-severity-caution">
+            {VITAMIN_D.val.toLocaleString("en-US")} {VITAMIN_D.unit}
+          </span>
+        </div>
+        {/* The limit sits at the bar's midpoint; the fill is the total against twice the limit. */}
+        <div className="relative mt-2.5 h-[6px] rounded-full bg-border">
+          <div
+            className="h-full rounded-full bg-severity-caution"
+            style={{ width: `${D_FRAME.fill * 100}%` }}
+          />
+          <span aria-hidden="true" className="absolute -top-1 left-1/2 h-[14px] w-px bg-ink" />
+        </div>
+        <p className={`${mono} mt-2 text-center text-subtle`}>
+          Adult upper limit {VITAMIN_D.ul.toLocaleString("en-US")} {VITAMIN_D.unit}
+        </p>
+      </div>
+    ),
   },
   {
-    num: "06",
+    title: "Ingredient transparency",
+    body: "Shows active ingredients, excipients, blends, and label gaps.",
+    href: "/features#ingredient-transparency",
+    proof: (
+      <div className="flex flex-col gap-2">
+        <div className={row}>
+          <span>{LABEL_EXAMPLE.active[0].name}</span>
+          <span className="tabular-nums text-muted">{LABEL_EXAMPLE.active[0].amount}</span>
+        </div>
+        <div className={row}>
+          <span>Proprietary blend · {LABEL_EXAMPLE.blend.length} herbs</span>
+          <span className="tabular-nums text-muted">{LABEL_EXAMPLE.blendAmount}</span>
+        </div>
+        <p className={`${mono} text-severity-caution`}>Amount of each herb not disclosed</p>
+      </div>
+    ),
+  },
+  {
     title: "Recall + safety alerts",
     body: "See recall status, date and reason for affected products. Enable notifications for alerts about saved items.",
     href: "/features#recall-safety",
+    proof: (
+      <div>
+        <p className={`${mono} text-severity-avoid`}>{RECALL.label} · sample</p>
+        <p className="mt-2 text-[12px] leading-snug text-ink">{RECALL.title}</p>
+      </div>
+    ),
   },
 ] as const;
 
@@ -64,81 +122,51 @@ export function BeyondInteractions() {
     <section
       id="beyond-interactions"
       aria-labelledby="beyond-heading"
-      className="section-y relative"
+      className="section-y-sm relative"
     >
-      {/* Faint accent halos for ambient depth */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          className="absolute h-[160px] w-[520px] rounded-pill bg-accent/[0.05] blur-3xl"
-          style={{ top: "5%", right: "-180px", transform: "rotate(-8deg)" }}
-        />
-        <div
-          className="absolute h-[120px] w-[380px] rounded-pill bg-accent/[0.04] blur-3xl"
-          style={{ bottom: "8%", left: "-140px", transform: "rotate(12deg)" }}
-        />
-      </div>
-
-      <div className="container relative mx-auto">
-        {/* Header */}
-        <m.div
-          variants={fadeUpContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-15%" }}
-          className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center md:gap-7"
-        >
-          <m.p
-            variants={fadeUpItem}
-            className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
+      <div className="container mx-auto">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-10">
+          <div>
+            <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
+              Beyond interactions
+            </p>
+            <h2 id="beyond-heading" className="mt-3 text-balance text-display-sm text-ink">
+              Interactions are{" "}
+              <span className="font-serif italic text-accent">just the start.</span>
+            </h2>
+            <p className="mt-3 max-w-prose text-body leading-relaxed text-muted">
+              Four more things PharmaGuide checks that no single label can show you.
+            </p>
+          </div>
+          <Link
+            href="/features"
+            className="group inline-flex shrink-0 items-center gap-2 self-start rounded-pill border border-border bg-surface px-5 py-2.5 text-body-sm font-medium text-ink shadow-xs transition-[transform,border-color] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent md:self-auto"
           >
-            Beyond interactions
-          </m.p>
+            See all six capabilities
+            <span
+              aria-hidden="true"
+              className="transition-transform duration-fast ease-smooth group-hover:translate-x-0.5"
+            >
+              →
+            </span>
+          </Link>
+        </div>
 
-          <m.h2
-            id="beyond-heading"
-            variants={fadeUpItem}
-            className="text-balance text-display-lg leading-[1.06] text-ink"
-          >
-            Interactions are <span className="font-serif italic text-accent">just the start.</span>
-          </m.h2>
-
-          <m.p
-            variants={fadeUpItem}
-            className="max-w-prose text-body-lg leading-relaxed text-muted"
-          >
-            PharmaGuide checks the full picture: interactions, nutrient depletion, dose overlap,
-            ingredient quality, personal fit, and recall alerts.
-          </m.p>
-        </m.div>
-
-        {/* Capability grid */}
-        <m.ul
-          variants={{
-            hidden: {},
-            visible: {
-              transition: { staggerChildren: 0.08, delayChildren: 0.15 },
-            },
-          }}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-10%" }}
-          className="mx-auto mt-14 grid max-w-6xl gap-4 sm:grid-cols-2 md:mt-20 lg:grid-cols-3"
-        >
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CAPABILITIES.map((cap) => (
-            <m.li key={cap.num} variants={fadeUpItem} className="group">
+            <li key={cap.title}>
               <Link
                 href={cap.href}
-                className="focus-visible:outline-offset-3 flex h-full flex-col gap-3 rounded-2xl border border-border bg-surface p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-1 hover:border-border-strong hover:shadow-md focus-visible:outline-2 focus-visible:outline-accent md:p-7"
+                className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-4 shadow-xs transition-[transform,box-shadow,border-color] duration-fast ease-smooth hover:-translate-y-1 hover:border-border-strong hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                <span className="font-mono text-[10.5px] font-medium uppercase tabular-nums tracking-[0.18em] text-accent">
-                  {cap.num}
-                </span>
-
-                <h3 className="font-serif text-h3 italic leading-snug text-ink">{cap.title}</h3>
-
-                <p className="text-body-sm leading-relaxed text-muted">{cap.body}</p>
-
-                <span className="mt-auto inline-flex items-center gap-1.5 pt-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent">
+                <div className="flex min-h-[92px] flex-col justify-center rounded-xl bg-surface-subtle/70 px-3.5 py-3">
+                  {cap.proof}
+                </div>
+                <h3 className="mt-4 font-serif text-h3 italic leading-snug text-ink">
+                  {cap.title}
+                </h3>
+                <p className="mt-1.5 hidden text-body-sm leading-relaxed text-muted sm:block">{cap.body}</p>
+                <span className="mt-auto inline-flex items-center gap-1.5 pt-3 font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent">
                   See how
                   <span
                     aria-hidden="true"
@@ -148,44 +176,37 @@ export function BeyondInteractions() {
                   </span>
                 </span>
               </Link>
-            </m.li>
+            </li>
           ))}
-        </m.ul>
+        </ul>
 
-        {/* Footer links — primary pill to /features (depth) +
-            secondary link to /blog (long-form reading). Two separate
-            paths for two different appetites: skim deep-dives vs.
-            read evidence-graded guides. */}
-        <m.div
-          className="mt-12 flex flex-col items-center gap-4 md:mt-14 md:flex-row md:justify-center md:gap-6"
+        {/* One slim row, not a fifth tile: sharing is what you do with the
+            result, and the row costs far less height than a card. */}
+        <Link
+          href="/features#share"
+          className="group mt-4 flex flex-col gap-x-6 gap-y-2 rounded-2xl border border-border bg-surface px-5 py-4 shadow-xs transition-[border-color,box-shadow] duration-fast ease-smooth hover:border-border-strong hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent md:flex-row md:items-center"
         >
-          {/* Primary CTA pill — same teal-on-white treatment as the
-              hero's "Request Access" and FinalCTA's submit button, so
-              the user instantly recognizes this as the page's primary
-              "go deeper" action. */}
-          <Link
-            href="/features"
-            className="focus-visible:outline-offset-3 inline-flex items-center gap-2 rounded-pill bg-accent px-6 py-3.5 text-body font-medium text-white shadow-sm transition-[background-color,box-shadow,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:bg-accent-strong hover:shadow-glow focus-visible:outline-2 focus-visible:outline-accent"
-          >
-            See all six capabilities in depth
-            <span aria-hidden="true">→</span>
-          </Link>
-          {/* Secondary action — accent-colored text link with the
-              animated arrow. Previously muted gray, which made it read
-              as prose rather than a clickable destination. */}
-          <Link
-            href="/blog"
-            className="focus-visible:outline-offset-3 group inline-flex items-center gap-1.5 text-body-sm font-medium text-accent transition-colors duration-fast ease-smooth hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-accent"
-          >
-            Or read our evidence-graded guides
+          <span className="font-serif text-h3 italic leading-snug text-ink">
+            Then share it, on your terms.
+          </span>
+          <span className="flex flex-wrap gap-x-5 gap-y-1 text-body-sm text-muted md:flex-1">
+            {SHARE_STACK.channels.map((c) => (
+              <span key={c.who} className="inline-flex items-center gap-2">
+                <span aria-hidden="true" className="h-1 w-1 rounded-full bg-accent" />
+                {c.short}
+              </span>
+            ))}
+          </span>
+          <span className="inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-accent">
+            See how
             <span
               aria-hidden="true"
               className="transition-transform duration-fast ease-smooth group-hover:translate-x-0.5"
             >
               →
             </span>
-          </Link>
-        </m.div>
+          </span>
+        </Link>
       </div>
     </section>
   );

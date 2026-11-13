@@ -1,7 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FeaturesClient } from "@/components/features/FeaturesClient";
-import { PILLARS, CLINICIAN_REPORT } from "@/lib/features";
+import { PILLARS, SHARE_STACK } from "@/lib/features";
 import { site } from "@/lib/site";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { PAGES, pageMetadata, pageSchema } from "@/lib/pages";
@@ -41,7 +41,7 @@ export default function FeaturesPage() {
       // agent reading the schema gets features, not taglines.
       featureList: [
         ...PILLARS.map((p) => `${p.eyebrow}: ${p.overview}`),
-        `Clinician report: ${CLINICIAN_REPORT.title}`,
+        ...SHARE_STACK.channels.map((c) => `Share with ${c.who.toLowerCase()}: ${c.title}`),
       ],
       offers: {
         "@type": "Offer",

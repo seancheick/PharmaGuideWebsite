@@ -5,7 +5,7 @@ import { m } from "framer-motion";
 import { WaitlistLink } from "@/components/shared/WaitlistLink";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { SOURCE_LABEL_COUNT } from "@/lib/site";
-import { PILLARS, CLINICIAN_REPORT, BUILT_ON, BOUNDARIES } from "@/lib/features";
+import { PILLARS, SHARE_STACK, BUILT_ON, ADD_PRODUCT, BOUNDARIES } from "@/lib/features";
 import { Illustration } from "./Illustrations";
 
 /**
@@ -350,9 +350,10 @@ export function FeaturesClient() {
         );
       })}
 
-      {/* ━━━━━━━━━━━━━━━━━━ CLINICIAN BONUS ━━━━━━━━━━━━━━━━━━ */}
+      {/* ━━━━━━━━━━━━━━━━━━ SHARE YOUR STACK ━━━━━━━━━━━━━━━━━━ */}
       <section
-        aria-labelledby="clinician-heading"
+        id="share"
+        aria-labelledby="share-heading"
         className="section-y-sm relative bg-surface-raised/40"
       >
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-border" />
@@ -369,39 +370,44 @@ export function FeaturesClient() {
               variants={fadeUpItem}
               className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
             >
-              {CLINICIAN_REPORT.eyebrow}
+              {SHARE_STACK.eyebrow}
             </m.p>
             <m.h2
-              id="clinician-heading"
+              id="share-heading"
               variants={fadeUpItem}
               className="text-balance text-display-md text-ink"
             >
-              <span className="font-serif italic">{CLINICIAN_REPORT.title}</span>
+              <span className="font-serif italic">{SHARE_STACK.title}</span>
             </m.h2>
             <m.p
               variants={fadeUpItem}
               className="max-w-prose text-body-lg leading-relaxed text-muted"
             >
-              {CLINICIAN_REPORT.body}
+              {SHARE_STACK.body}
             </m.p>
-            <m.ul
-              variants={fadeUpItem}
-              className="mt-2 flex flex-col gap-2 text-left sm:flex-row sm:flex-wrap sm:justify-center sm:gap-x-8 sm:gap-y-2"
-            >
-              {CLINICIAN_REPORT.bullets.map((b) => (
-                <li
-                  key={b}
-                  className="flex items-start gap-2.5 text-body-sm leading-relaxed text-foreground/85"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="mt-[8px] block h-1 w-1 shrink-0 rounded-full bg-accent"
-                  />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </m.ul>
           </m.div>
+
+          <m.ul
+            variants={fadeUpContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-10%" }}
+            className="mx-auto mt-10 grid max-w-5xl gap-4 md:mt-12 md:grid-cols-3 md:gap-5"
+          >
+            {SHARE_STACK.channels.map((c) => (
+              <m.li
+                key={c.who}
+                variants={fadeUpItem}
+                className="flex flex-col rounded-2xl border border-border bg-surface p-6 shadow-sm"
+              >
+                <p className="font-mono text-overline font-medium uppercase tracking-[0.12em] text-accent-strong">
+                  {c.who}
+                </p>
+                <h3 className="mt-3 font-serif text-h3 italic leading-snug text-ink">{c.title}</h3>
+                <p className="mt-3 text-body-sm leading-relaxed text-muted">{c.body}</p>
+              </m.li>
+            ))}
+          </m.ul>
         </div>
       </section>
 
@@ -453,6 +459,26 @@ export function FeaturesClient() {
                 <p className="mt-3 text-body-sm leading-relaxed text-muted">{item.detail}</p>
               </m.li>
             ))}
+            <m.li
+              id="add-a-product"
+              variants={fadeUpItem}
+              className="scroll-mt-28 rounded-2xl border border-accent/25 bg-accent/[0.04] p-6 shadow-sm md:col-span-2 md:p-7"
+            >
+              <p className="font-serif text-h3 italic leading-tight text-ink">{ADD_PRODUCT.label}</p>
+              <p className="mt-3 max-w-prose text-body-sm leading-relaxed text-muted">
+                {ADD_PRODUCT.detail}
+              </p>
+              <ol className="mt-5 grid gap-4 md:grid-cols-3 md:gap-6">
+                {ADD_PRODUCT.steps.map((step, i) => (
+                  <li key={step.title} className="border-t border-border pt-3">
+                    <p className="font-mono text-overline font-medium uppercase tracking-[0.12em] text-accent-strong">
+                      {String(i + 1).padStart(2, "0")} · {step.title}
+                    </p>
+                    <p className="mt-2 text-body-sm leading-relaxed text-muted">{step.body}</p>
+                  </li>
+                ))}
+              </ol>
+            </m.li>
           </m.ul>
         </div>
       </section>

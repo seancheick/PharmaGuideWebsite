@@ -156,3 +156,17 @@ export function bandForTierId(tierId: string): QualityBand | undefined {
   const id = LEGACY_TIER_IDS[normalized] ?? normalized;
   return QUALITY_BANDS.find((b) => b.id === id);
 }
+
+/**
+ * The six parts of the PG Score, with their maximum points, as the app shows
+ * them. App source: `lib/core/scoring/v4_pillars.dart` → `kV4PillarSpec`;
+ * pipeline: `scoring_v4/quality_score.py`. Change those first, then this.
+ */
+export const QUALITY_PILLARS = [
+  { name: "Formulation", max: 20 },
+  { name: "Dose", max: 20 },
+  { name: "Evidence", max: 20 },
+  { name: "Transparency", max: 15 },
+  { name: "Testing & Brand", max: 15 },
+  { name: "Formula & quality checks", max: 10 },
+] as const;

@@ -129,7 +129,7 @@ export const MOMENTS: readonly Moment[] = [
     description:
       "Most interaction problems don't start with a supplement. They start when something new enters the stack.",
     learnMore: "Learn about prescription transitions",
-    preview: "Contraindicated · St. John's Wort + Sertraline",
+    preview: "Avoid · St. John's Wort + Sertraline",
     image: "/images/moments/medication.jpg",
     imageAlt:
       "Open palm holding a mix of different-colored pills and capsules against a dark background.",
@@ -140,13 +140,16 @@ export const MOMENTS: readonly Moment[] = [
     quote:
       "My pharmacist caught it three days later. PharmaGuide caught it before I left the clinic.",
     flag: {
+      // Pipeline: st_johns_wort × antidepressants_ssri_snri — "avoid",
+      // established (clinical review 2026-11-12: contraindicated only with
+      // an exact source, and no SSRI/SNRI label contraindicates it).
       name: "St. John's Wort + Sertraline",
-      severity: "contraindicated",
-      severityLabel: "Contraindicated",
+      severity: "avoid",
+      severityLabel: "Avoid",
       description:
         "St. John's wort raises serotonin activity. With an SSRI such as sertraline, the combination can cause serotonin syndrome, which can be life-threatening.",
       metaLeft: "Severity",
-      metaRight: "Do not combine",
+      metaRight: "Avoid unless prescribed",
     },
   },
 
@@ -272,7 +275,7 @@ export const MOMENTS: readonly Moment[] = [
     description:
       "The same capsule can be fine for one person and risky for another. Your conditions and medications change the math — quietly.",
     learnMore: "Learn about condition-aware checks",
-    preview: "Avoid · Potassium + kidney disease",
+    preview: "Caution · Potassium + kidney disease",
     image: "/images/moments/condition.jpg",
     imageAlt:
       "A middle-aged person at a kitchen table holding a single supplement capsule, a row of prescription bottles and a glass of water nearby, considering it carefully in soft morning light.",
@@ -283,9 +286,12 @@ export const MOMENTS: readonly Moment[] = [
     quote:
       "Nobody flagged that a potassium supplement was a problem with my kidney condition and my blood-pressure medication.",
     flag: {
+      // Pipeline: potassium × kidney_disease and potassium ×
+      // antihypertensives (the class ACE inhibitors match) are both
+      // "caution", established. Only potassium-sparing diuretics are "avoid".
       name: "Potassium + ACE inhibitor",
-      severity: "avoid",
-      severityLabel: "Avoid · your profile",
+      severity: "caution",
+      severityLabel: "Caution · your profile",
       description:
         "Reduced kidney function clears potassium poorly, and an ACE inhibitor raises it further, so added potassium risks hyperkalemia — a dangerous rise in blood potassium. Surfaced because all three are in your profile.",
       metaLeft: "Risk",

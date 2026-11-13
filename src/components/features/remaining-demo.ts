@@ -12,7 +12,7 @@ export const PROFILE_EXAMPLE = {
   tags: ["Pregnant · 22w", "Hypertension", "SSRI", "Goal · sleep"],
   findings: [
     { name: "Magnesium glycinate · evening", verdict: "Good fit", tone: "safe" },
-    { name: "St. John's Wort", verdict: "Contraindicated · SSRI", tone: "avoid" },
+    { name: "St. John's Wort", verdict: "Avoid · SSRI", tone: "avoid" },
     { name: "Vitamin A over 10,000 IU", verdict: "Contraindicated · pregnancy", tone: "avoid" },
     { name: "Iron + multi", verdict: "Caution · timing", tone: "caution" },
   ],

@@ -84,7 +84,7 @@ const TIERS: readonly TierData[] = [
     label: "Caution",
     meaning: "Take with care. Timing, dose or context matters.",
     pair: "Calcium + levothyroxine",
-    why: "Calcium binds levothyroxine in the gut, reducing its absorption by about 20–30% when taken together.",
+    why: "Calcium binds levothyroxine in the gut and reduces how much is absorbed when the two are taken together.",
     action: "Separate doses by at least 4 hours. Take levothyroxine on an empty stomach.",
     evidence: "Established",
     basis: "Multiple controlled studies · FDA-labeled",

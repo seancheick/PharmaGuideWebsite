@@ -1,165 +1,123 @@
 "use client";
 
-import { AnimatePresence, m } from "framer-motion";
 import { useState } from "react";
-import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
 import { cn } from "@/lib/utils";
 
 /**
- * Interaction Ladder — interactive tier selector + detail panel.
+ * Interaction Ladder — the five levels a finding can land on.
  *
- * Hover, focus, or tap any of the five tiers to update the detail panel
- * below with that tier's representative pair, mechanism, recommendation,
- * evidence level, and study basis. The two halves form a single bordered
- * unit so the relationship is visible: "these tiers produce these verdicts."
+ * Rebuilt 2026-11-13 from a tab strip + wide detail panel into an actual
+ * ladder: five rungs, each one line (level, plain meaning, one example),
+ * one rung open at a time for the reasoning. It opens on Caution with
+ * calcium + levothyroxine, the finding the scan section above just showed.
  *
- * Evidence levels match the in-app schema (Established / Probable /
- * Moderate / Limited / Theoretical) — NOT the A/B/C/D letter grades
- * that an earlier marketing pass invented but never shipped.
+ * Every example is a current pipeline rule, re-read on 2026-11-13 from
+ * PharmaGuide_Pipeline scripts/data/ingredient_interaction_rules.json. The
+ * tier and the evidence word are the rule's own `severity` and
+ * `evidence_level`; the text condenses its `mechanism` and `action`. When a
+ * rule changes tier, change the example — an example under the wrong rung
+ * is a wrong clinical claim (the previous set had drifted on two of five).
  *
- * Each tier has a unique geometric shape (triangle / circle / diamond /
- * ring / square) — character without color. Headline punchline is set in
- * italic serif (Newsreader) to add typographic variety.
+ *   contraindicated  5_htp × antidepressants_ssri_snri      established
+ *   avoid            st_johns_wort × doacs                  established
+ *   caution          calcium × thyroid_medications          established
+ *   monitor          coq10 × vitamin_k_antagonists          probable
+ *   informational    l_theanine × antihypertensives         theoretical
  *
- * Mobile: same model — tap to switch. No hover, but the panel updates
- * inline below as the user taps each tier.
+ * The evidence levels are deliberately not all "Established": the section
+ * says we state it when evidence is incomplete, so two rungs show it.
+ *
+ * Each tier keeps its own shape (triangle / circle / diamond / ring /
+ * square) so the level never depends on colour alone.
  */
 
 type TierId = "contraindicated" | "avoid" | "caution" | "monitor" | "safe";
 type Shape = "triangle" | "circle" | "diamond" | "ring" | "square";
-
-/**
- * Evidence levels — matches the in-app `ingredient_interaction_rules`
- * schema (5-level system, 592 rules). Source-of-truth labels:
- *
- *   established  Strong clinical evidence (RCTs, meta-analyses)
- *   probable     Good evidence, likely clinically relevant
- *   moderate     Mixed or moderate-quality evidence
- *   limited      Sparse or preliminary human data
- *   theoretical  Mechanistic plausibility, no/minimal human data
- *
- * The previous iteration used fictional A/B/C/D letter grades that
- * don't exist anywhere in the actual product — fixed.
- */
-type EvidenceLevel =
-  | "Established"
-  | "Probable"
-  | "Moderate"
-  | "Limited"
-  | "Theoretical";
+/** The pipeline's `evidence_level` vocabulary. */
+type EvidenceLevel = "Established" | "Probable" | "Moderate" | "Limited" | "Theoretical";
 
 interface TierData {
   id: TierId;
   label: string;
-  brief: string;
+  /** What this level means, in a few words. */
+  meaning: string;
   pair: string;
-  headline: string;
-  mechanism: string;
-  recommendation: string;
+  why: string;
+  action: string;
   evidence: EvidenceLevel;
-  studies: string;
+  basis: string;
   shape: Shape;
   textClass: string;
   barClass: string;
-  // Active-state styles for the mobile pill — tinted bg + ring in the
-  // tier's severity color so it's unmistakably "this is selected." On
-  // desktop the active state is the bottom accent bar (barClass); on
-  // mobile (where the bar isn't visible) we need the bg + border to
-  // do the work. Static strings so Tailwind's JIT compiles them.
-  bgActiveClass: string;
-  borderActiveClass: string;
 }
 
-// Evidence-level assignments below match the cited `studies` for each
-// pair (in-app source-of-truth):
-//   • Meta-analysis + multiple RCTs  → Established
-//   • Multiple cohort studies        → Probable
-//   • PK studies / mixed quality     → Moderate or Limited
 const TIERS: readonly TierData[] = [
   {
     id: "contraindicated",
     label: "Contraindicated",
-    brief: "Do not combine.",
-    pair: "St. John's Wort + Sertraline",
-    headline: "Serotonin syndrome risk",
-    mechanism:
-      "St. John's Wort inhibits serotonin reuptake, adding to SSRI activity and risking serotonin syndrome.",
-    recommendation: "Do not combine. Consult your clinician before starting or stopping either.",
+    meaning: "Do not combine.",
+    pair: "5-HTP + an SSRI antidepressant",
+    why: "5-HTP is turned into serotonin, and SSRIs keep serotonin active for longer. Together they can raise serotonin activity enough to contribute to serotonin syndrome.",
+    action:
+      "Do not take them together, and do not stop or switch your antidepressant to use 5-HTP. Your prescriber plans any change.",
     evidence: "Established",
-    studies: "Case reports · FDA warning",
+    basis: "Health Canada 5-HTP monograph",
     shape: "triangle",
     textClass: "text-severity-contraindicated",
     barClass: "bg-severity-contraindicated",
-    bgActiveClass: "bg-severity-contraindicated/[0.10]",
-    borderActiveClass: "border-severity-contraindicated/40",
   },
   {
     id: "avoid",
     label: "Avoid",
-    brief: "Strong reason to separate.",
-    pair: "St. John's Wort + Apixaban",
-    headline: "May reduce clot protection",
-    mechanism:
-      "St. John's Wort speeds up the pathways that clear apixaban and similar blood thinners, lowering drug levels and protection against stroke or clots.",
-    recommendation: "Avoid combining unless your prescriber explicitly manages it.",
+    meaning: "Avoid unless your prescriber manages it.",
+    pair: "St. John's wort + apixaban",
+    why: "St. John's wort speeds up the pathways that clear apixaban and similar blood thinners, lowering drug levels and protection against stroke or clots.",
+    action: "Avoid combining unless your prescriber explicitly manages it.",
     evidence: "Established",
-    studies: "FDA drug labeling",
+    basis: "FDA drug labeling",
     shape: "circle",
     textClass: "text-severity-avoid",
     barClass: "bg-severity-avoid",
-    bgActiveClass: "bg-severity-avoid/[0.10]",
-    borderActiveClass: "border-severity-avoid/40",
   },
   {
     id: "caution",
     label: "Caution",
-    brief: "Risk depends on context.",
-    pair: "Calcium + Levothyroxine",
-    headline: "Reduced thyroid absorption",
-    mechanism:
-      "Calcium binds levothyroxine in the gut, reducing its absorption by about 20–30% when taken together.",
-    recommendation: "Separate doses by at least 4 hours. Take levothyroxine on an empty stomach.",
+    meaning: "Take with care. Timing, dose or context matters.",
+    pair: "Calcium + levothyroxine",
+    why: "Calcium binds levothyroxine in the gut, reducing its absorption by about 20–30% when taken together.",
+    action: "Separate doses by at least 4 hours. Take levothyroxine on an empty stomach.",
     evidence: "Established",
-    studies: "Multiple controlled studies · FDA-labeled",
+    basis: "Multiple controlled studies · FDA-labeled",
     shape: "diamond",
     textClass: "text-severity-caution",
     barClass: "bg-severity-caution",
-    bgActiveClass: "bg-severity-caution/[0.12]",
-    borderActiveClass: "border-severity-caution/40",
   },
   {
     id: "monitor",
     label: "Monitor",
-    brief: "Manage with timing.",
-    pair: "Garlic + Warfarin",
-    headline: "May add to bleeding risk",
-    mechanism:
-      "Garlic supplements may increase the risk of bleeding, which can add to the effect of blood thinners.",
-    recommendation: "Tell your prescriber, and watch for unusual bruising or bleeding.",
-    evidence: "Established",
-    studies: "NIH NCCIH guidance",
+    meaning: "Keep your prescriber informed and watch for changes.",
+    pair: "CoQ10 + warfarin",
+    why: "The warfarin label lists CoQ10 among products that may reduce warfarin's effect. Clinical evidence is mixed.",
+    action:
+      "Tell your anticoagulation team before you start, stop or change CoQ10, so they can decide whether your INR needs extra checks.",
+    evidence: "Probable",
+    basis: "FDA drug labeling · mixed clinical studies",
     shape: "ring",
     textClass: "text-severity-monitor",
     barClass: "bg-severity-monitor",
-    bgActiveClass: "bg-severity-monitor/[0.12]",
-    borderActiveClass: "border-severity-monitor/40",
   },
   {
     id: "safe",
     label: "Informational",
-    brief: "FYI — no action needed.",
-    pair: "Potassium + Spironolactone",
-    headline: "A note until it applies to you",
-    mechanism:
-      "Potassium supplements can push blood potassium dangerously high in people taking spironolactone-type diuretics. Without one in your profile, PharmaGuide shows this as a note, not an alert.",
-    recommendation: "Nothing to do now. If you start spironolactone, it becomes an Avoid alert.",
-    evidence: "Established",
-    studies: "FDA drug labeling",
+    meaning: "Good to know.",
+    pair: "L-theanine + blood-pressure medicine",
+    why: "L-theanine has blunted short-term rises in blood pressure in small studies. Those studies do not establish a harmful interaction with blood-pressure medicines.",
+    action: "Mention L-theanine to your prescriber. Nothing else to do.",
+    evidence: "Theoretical",
+    basis: "Small human studies · animal data",
     shape: "square",
     textClass: "text-severity-safe",
     barClass: "bg-severity-safe",
-    bgActiveClass: "bg-severity-safe/[0.12]",
-    borderActiveClass: "border-severity-safe/40",
   },
 ];
 
@@ -200,258 +158,132 @@ function TierShape({ shape, className }: { shape: Shape; className: string }) {
 }
 
 export function InteractionLadder() {
-  const [activeId, setActiveId] = useState<TierId>("caution");
-  const active = TIERS.find((t) => t.id === activeId) ?? TIERS[2]!;
-
-  // WAI-ARIA Tabs: arrow keys move between tabs, wrapping at edges
-  const handleTabKeyDown = (e: React.KeyboardEvent, idx: number) => {
-    let next = idx;
-    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-      e.preventDefault();
-      next = (idx + 1) % TIERS.length;
-    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-      e.preventDefault();
-      next = (idx - 1 + TIERS.length) % TIERS.length;
-    } else if (e.key === "Home") {
-      e.preventDefault();
-      next = 0;
-    } else if (e.key === "End") {
-      e.preventDefault();
-      next = TIERS.length - 1;
-    } else {
-      return;
-    }
-    setActiveId(TIERS[next]!.id);
-    // Focus the newly active tab
-    const tabEl = document.getElementById(`tier-tab-${TIERS[next]!.id}`);
-    tabEl?.focus();
-  };
+  const [openId, setOpenId] = useState<TierId>("caution");
 
   return (
     <section
       id="interaction-ladder"
       aria-labelledby="ladder-heading"
-      className="relative section-y bg-surface-subtle"
+      className="section-y-sm relative bg-surface-subtle"
     >
-      <div className="container relative mx-auto">
-        {/* Header */}
-        <m.div
-          variants={fadeUpContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-15%" }}
-          className="mx-auto flex max-w-3xl flex-col items-center gap-7 text-center md:gap-9"
-        >
-          <m.p
-            variants={fadeUpItem}
-            className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80"
-          >
+      <div className="container mx-auto grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)] lg:items-start lg:gap-14">
+        <div className="lg:sticky lg:top-28">
+          <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-foreground/80">
             The ladder
-          </m.p>
+          </p>
+          <h2 id="ladder-heading" className="mt-3 text-balance text-display-sm text-ink lg:mt-4">
+            Five levels. <span className="font-serif italic text-accent">One clear next step.</span>
+          </h2>
+          <p className="mt-3 max-w-[38ch] text-body leading-relaxed text-muted lg:mt-4">
+            Every finding lands on one of five levels, with the reason, the evidence behind it and
+            what to do.
+          </p>
+          <p className="mt-4 max-w-[38ch] font-serif text-body italic text-muted">
+            When evidence is incomplete, we say so directly.
+          </p>
+          <p className="mt-5 font-mono text-overline font-medium uppercase tracking-[0.12em] text-subtle">
+            <span className="lg:hidden">Tap a level to see an example ↓</span>
+            <span className="hidden lg:inline">Click a level to see an example →</span>
+          </p>
+        </div>
 
-          <m.h2
-            id="ladder-heading"
-            variants={fadeUpItem}
-            className="text-display-lg text-ink"
-          >
-            Not just warnings.
-            <br />
-            <span className="font-serif italic text-accent">Reasoning.</span>
-          </m.h2>
-
-          <m.p
-            variants={fadeUpItem}
-            className="max-w-prose text-body-xl text-muted"
-          >
-            Every verdict includes the reason, the evidence level, and what to do
-            next.{" "}
-            <span className="text-foreground/70">
-              <span className="hidden md:inline">Hover or tap a tier.</span>
-              <span className="md:hidden">Tap a tier below.</span>
-            </span>
-          </m.p>
-        </m.div>
-
-        {/* Connected tier ladder + detail panel */}
-        <m.div
-          initial={{ y: 20 }}
-          whileInView={{ y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={transitions.reveal}
-          className="mx-auto mt-16 max-w-6xl overflow-hidden rounded-2xl border border-border bg-surface shadow-sm md:mt-20"
-        >
-          {/* Tier row — horizontal scroll pills on mobile, 5-col grid on desktop.
-              Mobile pills show shape + label only (no brief) to stay compact.
-              Desktop shows the full card with brief description.
-
-              Mobile scroll affordance: a right-edge mask-image fade tells
-              the eye "there's more here, scroll right." Without it, the
-              5 tier pills look like they end at viewport edge. The mask
-              is removed at md+ where the grid is fully visible.        */}
-          <div
-            role="tablist"
-            aria-label="Severity tiers"
-            className="flex gap-2 overflow-x-auto px-4 py-4 [mask-image:linear-gradient(to_right,black_82%,transparent_100%)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-5 lg:gap-0 lg:overflow-visible lg:p-0 lg:[mask-image:none]"
-          >
-            {TIERS.map((tier, i) => {
-              const isActive = tier.id === activeId;
-              return (
-                <button
-                  key={tier.id}
-                  id={`tier-tab-${tier.id}`}
-                  role="tab"
-                  aria-selected={isActive}
-                  aria-controls="tier-detail"
-                  tabIndex={isActive ? 0 : -1}
-                  onMouseEnter={() => setActiveId(tier.id)}
-                  onFocus={() => setActiveId(tier.id)}
-                  onClick={() => setActiveId(tier.id)}
-                  onKeyDown={(e) => handleTabKeyDown(e, i)}
+        <ol className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+          {TIERS.map((tier, i) => {
+            const open = tier.id === openId;
+            return (
+              <li key={tier.id} className={cn("relative", i > 0 && "border-t border-border")}>
+                <span
+                  aria-hidden="true"
                   className={cn(
-                    "group relative transition-[background-color,border-color,box-shadow] duration-fast ease-smooth",
-                    // Mobile: compact pill with shape + label
-                    "flex shrink-0 items-center gap-2 rounded-pill border px-3.5 py-2.5 text-left",
-                    // Desktop: full card layout
-                    "lg:flex-col lg:items-start lg:gap-3 lg:rounded-none lg:border-0 lg:px-6 lg:py-7",
-                    // Desktop hairline dividers (right, except last)
-                    i < TIERS.length - 1 && "lg:border-r lg:border-border",
-                    // Active state — on mobile the pill takes on the
-                    // tier's severity color (tinted bg + border) so
-                    // it's unmistakably "selected." On desktop the
-                    // active state is the bottom accent bar (below)
-                    // plus the surface-raised background.
-                    isActive
-                      ? cn(
-                          tier.bgActiveClass,
-                          tier.borderActiveClass,
-                          "lg:border-transparent lg:bg-surface-raised"
-                        )
-                      : "border-border bg-surface hover:bg-surface-raised/60 focus-visible:bg-surface-raised/60 lg:border-transparent"
+                    "duration-base absolute inset-y-0 left-0 w-[3px] transition-opacity ease-smooth",
+                    tier.barClass,
+                    open ? "opacity-100" : "opacity-0"
                   )}
-                >
-                  {/* Active accent bar — desktop only, bottom edge */}
-                  <span
-                    aria-hidden="true"
+                />
+                <h3>
+                  <button
+                    type="button"
+                    id={`tier-${tier.id}`}
+                    aria-expanded={open}
+                    aria-controls={`tier-panel-${tier.id}`}
+                    onClick={() => setOpenId(tier.id)}
                     className={cn(
-                      "absolute inset-x-0 bottom-0 hidden h-[2px] transition-opacity duration-fast ease-smooth lg:block",
-                      tier.barClass,
-                      isActive ? "opacity-100" : "opacity-0"
+                      "grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 px-5 py-3.5 text-left transition-colors duration-fast ease-smooth focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent sm:grid-cols-[auto_11.5rem_minmax(0,1fr)_auto] sm:px-6",
+                      open ? "bg-surface-raised" : "hover:bg-surface-raised/60"
                     )}
-                  />
-
-                  <div className="flex items-center gap-2.5">
+                  >
                     <TierShape shape={tier.shape} className={tier.textClass} />
                     <span
                       className={cn(
-                        "font-mono text-eyebrow font-medium uppercase tracking-[0.08em] transition-colors duration-fast ease-smooth",
-                        isActive ? tier.textClass : "text-muted"
+                        "font-mono text-eyebrow font-medium uppercase tracking-[0.1em]",
+                        tier.textClass
                       )}
                     >
                       {tier.label}
                     </span>
-                  </div>
-                  {/* Brief — hidden on mobile pills, shown on desktop */}
-                  <p className="hidden text-body-sm leading-snug text-muted lg:block">{tier.brief}</p>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Detail panel — re-keys on tier change, cross-fades content */}
-          <div
-            id="tier-detail"
-            role="tabpanel"
-            aria-labelledby={`tier-tab-${activeId}`}
-            aria-live="polite"
-            className="border-t border-border bg-surface-raised p-6 sm:p-8 md:p-10"
-          >
-            <AnimatePresence mode="wait">
-              <m.div
-                key={active.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.26, ease: [0.32, 0.72, 0, 1] }}
-                className="grid gap-8 md:grid-cols-[200px_1fr_180px] md:gap-10"
-              >
-                {/* Left: tier label + pair */}
-                <div>
-                  <p
-                    className={cn(
-                      "font-mono text-eyebrow font-medium uppercase tracking-[0.12em]",
-                      active.textClass
-                    )}
-                  >
-                    {active.label}
-                  </p>
-                  <p className="mt-3 font-serif text-h2 italic leading-tight text-ink">
-                    {active.pair}
-                  </p>
-                </div>
-
-                {/* Middle: headline + mechanism + recommendation */}
-                <div>
-                  <p className="font-serif text-h3 italic leading-snug text-ink">
-                    {active.headline}
-                  </p>
-
-                  <div className="mt-4">
-                    <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.1em] text-subtle">
-                      Mechanism
-                    </p>
-                    <p className="mt-1 text-body leading-relaxed text-muted">
-                      {active.mechanism}
-                    </p>
-                  </div>
-
-                  <div className="mt-5 border-t border-border pt-4">
-                    <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.1em] text-subtle">
-                      Recommendation
-                    </p>
-                    <p className="mt-1 text-body text-ink">{active.recommendation}</p>
-                  </div>
-                </div>
-
-                {/* Right: evidence column.
-                    Pill renders the in-app evidence level (Established /
-                    Probable / Moderate / Limited / Theoretical) — the
-                    actual labels from `ingredient_interaction_rules`.
-                    No more A/B/C/D letter grades (those were marketing
-                    fiction; never existed in the product).             */}
-                <div className="border-t border-border pt-4 md:border-l md:border-t-0 md:pl-6 md:pt-0">
-                  <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-subtle">
-                    Evidence level
-                  </p>
-                  <span className="mt-2 inline-flex items-center gap-2 rounded-pill bg-accent-soft px-3.5 py-1.5">
-                    <span
-                      aria-hidden="true"
-                      className="block h-1.5 w-1.5 rounded-full bg-accent-strong"
-                    />
-                    <span className="font-serif text-h3 italic leading-none text-accent-strong">
-                      {active.evidence}
+                    <span className="col-span-3 col-start-1 mt-1 text-body-sm leading-snug text-ink sm:col-span-1 sm:col-start-auto sm:mt-0">
+                      {tier.meaning}
                     </span>
-                  </span>
-
-                  <div className="mt-5">
-                    <p className="font-mono text-eyebrow font-medium uppercase tracking-[0.12em] text-subtle">
-                      Studies
-                    </p>
-                    <p className="mt-1 font-mono text-body-sm tabular-nums text-muted">
-                      {active.studies}
-                    </p>
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      aria-hidden="true"
+                      className={cn(
+                        "duration-base col-start-3 row-start-1 text-subtle transition-transform ease-smooth sm:col-start-4",
+                        open && "rotate-180"
+                      )}
+                    >
+                      <path
+                        d="M2.5 4.5L6 8l3.5-3.5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </h3>
+                {/* Grid-rows 0fr → 1fr: the reasoning opens without a measured
+                    height, and stays in the markup for crawlers and no-JS. */}
+                <div
+                  id={`tier-panel-${tier.id}`}
+                  role="region"
+                  aria-labelledby={`tier-${tier.id}`}
+                  className={cn(
+                    "grid transition-[grid-template-rows] duration-slow ease-emphasized motion-reduce:transition-none",
+                    open ? "grid-rows-[1fr] bg-surface-raised" : "grid-rows-[0fr]"
+                  )}
+                >
+                  <div className={cn("overflow-hidden", !open && "invisible")}>
+                    <div className="grid gap-x-8 gap-y-3 px-5 pb-5 pt-1 sm:px-6 md:grid-cols-[minmax(0,1fr)_11rem]">
+                      <div>
+                        <p className="font-serif text-h3 italic leading-snug text-ink">
+                          {tier.pair}
+                        </p>
+                        <p className="mt-2 text-body-sm leading-relaxed text-muted">{tier.why}</p>
+                        <p className="mt-2 text-body-sm leading-relaxed text-ink">
+                          <span className="font-medium">What to do: </span>
+                          {tier.action}
+                        </p>
+                      </div>
+                      <div className="border-t border-border pt-3 md:border-l md:border-t-0 md:pl-6 md:pt-0">
+                        <p className="font-mono text-overline font-medium uppercase tracking-[0.12em] text-subtle">
+                          Evidence
+                        </p>
+                        <p className="mt-1 font-serif text-[19px] italic leading-none text-accent-strong">
+                          {tier.evidence}
+                        </p>
+                        <p className="mt-2 text-[12px] leading-snug text-muted">{tier.basis}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </m.div>
-            </AnimatePresence>
-          </div>
-        </m.div>
-
-        {/* Honesty note — quiet editorial caption */}
-        <m.p
-          className="mt-8 text-center font-serif text-body italic text-muted"
-        >
-          When evidence is incomplete, we say so directly.
-        </m.p>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );

@@ -44,10 +44,16 @@ All motion tokens defined in `src/app/globals.css`. JS mirror in `src/lib/tokens
 ### Infrastructure Strip
 - Single fade-in, no stagger, `duration-slow` + `ease-decelerate`
 
-### Problem
-- Headline: fade-up `duration-slower`
-- Three statements: stagger left-to-right, 100ms between, `duration-slow`
-- Closing thesis: fade-up after statements complete, slight scale (0.96 → 1)
+### Scan story (replaced Problem + How It Works, 2026-11-13)
+- The one GSAP surface on the site (`gsap`, DrawSVG, MotionPath), dynamically imported when the
+  section is within one viewport. Everything else stays on Framer Motion.
+- Server markup is the finished state; the timeline rewinds it off-screen and plays once at 30% in
+  view (~5.5 s): bottle turns once and settles label-forward (1.4 s, `power3.out`) → scan line down
+  the label → three light paths draw in turn, each followed by its answer (score count-up, stack
+  chips, verdict).
+- Never loops. Pause / Replay under the bottle; holds while off-screen or in a background tab.
+- Reduced motion: no GSAP is loaded; poster bottle and finished content.
+- Bottle frames come from `~/Studio/brands/pharmaguide/productions/scan-bottle` (Blender, headless).
 
 ### Interaction Ladder
 - Headline + subhead: standard fade-up

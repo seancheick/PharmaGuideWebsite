@@ -98,7 +98,11 @@ export const FAQ_ITEMS: readonly FAQItem[] = [
   {
     group: "product",
     q: "What if my supplement isn't in your database?",
-    body: `The catalog is sourced from **NIH's ${SOURCE_LABEL_COUNT} supplement labels** and grows weekly. If yours isn't there, snap a photo of the label and submit it — most submissions get added within a few days. Your contribution helps the next person looking up the same product.`,
+    // App flow: features/scanner/scanner_not_found_sheet.dart ("Help add this
+    // product") → missing_product_submission_sheet.dart (panels: front,
+    // Supplement Facts, ingredients, barcode; blur check; reviewer approves
+    // every entry; "we'll also notify you"). Timing is Sean's (2026-11-13).
+    body: `You can add it yourself. When a scan comes back "not in your catalog yet", tap **Help add this product** and photograph the label: the front, the Supplement Facts panel, the ingredients and the barcode. The app reads each photo, labels the panel for you and asks for a retake if one is too blurry to read. A human reviewer checks every label before it enters the catalog, which is sourced from **NIH's ${SOURCE_LABEL_COUNT} supplement labels**. Approved products ship in the next catalog update, usually within a few days, and you get a notification when yours is in. You can follow it under Settings → Product submissions.`,
   },
   {
     group: "privacy",

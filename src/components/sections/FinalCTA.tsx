@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { m } from "framer-motion";
 import { useState } from "react";
 import { fadeUpContainer, fadeUpItem, transitions } from "@/lib/tokens";
@@ -232,6 +233,15 @@ export function FinalCTA() {
                   ·
                 </span>
                 We never sell your health data
+              </p>
+              <p className="mt-3 text-body-sm text-muted">
+                Questions about privacy, pricing or a product we don&rsquo;t have yet?{" "}
+                <Link
+                  href="/faq"
+                  className="font-medium text-ink underline decoration-border-strong underline-offset-4 transition-colors duration-fast hover:decoration-accent"
+                >
+                  Read the FAQ →
+                </Link>
               </p>
             </m.div>
           </div>

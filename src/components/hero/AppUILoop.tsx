@@ -172,25 +172,11 @@ export function AppUILoop({ story, frame }: { story: HeroStory; frame: ScreenFra
                 <span className="text-[10px] text-muted">{story.added.quality.label}</span>
               </div>
             ) : null}
-            {story.added.quality?.badge ? (
-              <m.span
-                initial={{ opacity: 0, y: 3 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: EASE, delay: 0.55 }}
-                className="mt-1.5 inline-flex items-center gap-1 rounded-pill bg-severity-safe/10 px-1.5 py-0.5 font-mono text-[8px] font-medium uppercase tracking-[0.08em] text-severity-safe"
-              >
-                <svg width="7" height="7" viewBox="0 0 8 8" fill="none">
-                  <path
-                    d="M1.5 4L3.3 5.8L6.5 2.2"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                {story.added.quality.badge}
-              </m.span>
-            ) : story.added.quality ? null : (
+            {story.added.quality ? (
+              <p className="mt-1.5 font-mono text-[8px] font-medium uppercase tracking-[0.08em] text-subtle">
+                {story.added.quality.note} · illustrative score
+              </p>
+            ) : (
               <p className="mt-0.5 text-[10.5px] text-muted">Found in catalog</p>
             )}
           </m.div>

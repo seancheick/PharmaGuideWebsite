@@ -2,8 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { InfrastructureStrip } from "@/components/sections/InfrastructureStrip";
-import { Problem } from "@/components/sections/Problem";
-import { HowItWorks } from "@/components/sections/HowItWorks";
+import { ScanStory } from "@/components/sections/ScanStory";
 import { InteractionLadder } from "@/components/sections/InteractionLadder";
 import { BeyondInteractions } from "@/components/sections/BeyondInteractions";
 import { RealLifeMoments } from "@/components/sections/RealLifeMoments";
@@ -15,15 +14,13 @@ import { pageMetadata, pageSchema } from "@/lib/pages";
 import { schemaId } from "@/lib/schema";
 
 /**
- * Homepage — 8 sections after dropping TrustBlock and folding the Your Fit
- * section into How It Works step 3 (2026-10-04).
+ * Homepage — 7 sections.
  *
- * TrustBlock ("How we think — Built to explain uncertainty…") was removed
- * because its content overlapped the Infrastructure Strip and the new
- * footer's trust-badges + disclaimer bars. The credentials line
- * (Cross-referenced with FDA · NIH · PubMed · DSLD + the lead reviewer) was
- * folded into HowItWorks as a single statement line. The "we don't"
- * restraint promises live in the footer's trust-badges bar now.
+ * 2026-11-13: Problem and How It Works merged into ScanStory, one compact
+ * animated stage (bottle → quality, stack, you). The Problem section's
+ * lines and its CDC figure live on inside it as captions.
+ * 2026-10-04: TrustBlock dropped (its content overlapped the Infrastructure
+ * Strip and the footer's trust badges) and Your Fit folded into How It Works.
  *
  * Page is statically generated. ISR revalidates every 5 days so the
  * footer's "Last reviewed" date stays fresh in production without
@@ -42,12 +39,7 @@ export default function Home() {
       <main id="main">
         <Hero />
         <InfrastructureStrip />
-        <Problem />
-        {/* Warm fade into HowItWorks — subtle depth between pure-type sections */}
-        <div aria-hidden="true" className="fade-warm h-16 md:h-24" />
-        <HowItWorks />
-        {/* Warm fade into the darker surface-subtle ladder section */}
-        <div aria-hidden="true" className="fade-warm h-10 md:h-14" />
+        <ScanStory />
         <InteractionLadder />
         <BeyondInteractions />
         <RealLifeMoments />

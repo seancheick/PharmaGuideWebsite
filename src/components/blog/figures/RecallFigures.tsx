@@ -74,9 +74,10 @@ export function RecallCard({
 
       {children && (
         // Identifier tables must fit a phone without scrolling: a saved card
-        // that cuts off a UPC is worse than useless. Compact cells, numbers
-        // in tabular mono so 12-digit UPCs stay readable.
-        <div className="mt-4 text-body-sm leading-relaxed text-foreground/85 [&_p]:mt-3 [&_p]:text-body-sm [&_p]:leading-relaxed [&_ul]:mt-2 [&_ul]:text-body-sm [&_table]:text-[13px] [&_td]:px-2 [&_td]:py-1.5 [&_th]:px-2 [&_th]:py-1.5 [&_td+td]:whitespace-nowrap [&_td+td]:font-mono [&_td+td]:tabular-nums">
+        // that cuts off a UPC or lot is worse than useless. Cells wrap, and all
+        // but the last column may break mid-word when they must, so a UPC in
+        // the last column stays whole. Numbers in tabular mono.
+        <div className="mt-4 text-body-sm leading-relaxed text-foreground/85 [&_p]:mt-3 [&_p]:text-body-sm [&_p]:leading-relaxed [&_ul]:mt-2 [&_ul]:text-body-sm [&_table]:text-[13px] [&_td]:px-2 [&_td]:py-1.5 [&_th]:px-2 [&_th]:py-1.5 [&_td:not(:last-child)]:[overflow-wrap:anywhere] [&_td+td]:font-mono [&_td+td]:tabular-nums">
           {children}
         </div>
       )}

@@ -22,7 +22,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
     const label = recallCountLabel(post.recall);
     return renderOgCard({
       eyebrow: "PharmaGuide Weekly",
-      headline: "Supplement recalls",
+      headline: post.recall.subject,
       accent: post.recall.week,
       stat: { value: String(post.recall.count), label: label.replace(/^\d+ /, "") },
       footnote: "Restated from official FDA notices · Exact lots",

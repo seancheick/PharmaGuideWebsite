@@ -97,7 +97,7 @@ Pick the **format** from the reader's task; pick the **category** for where it l
 | Evidence comparison | Compares findings, preparations, populations or claims | 1,200–2,200 words, comparison figures |
 | Reference guide | A broader subject readers return to | as long as the subject needs |
 | Research or safety update | What changed, who is affected, verified implications | only the detail needed |
-| Recall digest | Weekly U.S. supplement recalls and safety updates | one entry per product; see [recall-digest.md](references/recall-digest.md) |
+| Recall digest | Weekly U.S. supplement recalls and safety updates, plus a separate weekly medication recall post | one entry per product; see [recall-digest.md](references/recall-digest.md) |
 
 For anything longer than a focused answer, build three depths: **a quick answer** near the top (the conclusion and its essential qualification), **the practical explanation** (examples, comparisons, how to apply it), and **supporting detail** (evidence, limits, methods, sources).
 
